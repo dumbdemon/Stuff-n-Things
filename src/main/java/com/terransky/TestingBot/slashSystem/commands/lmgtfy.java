@@ -39,7 +39,7 @@ public class lmgtfy implements ISlash {
     @Override
     public void slashExecute(@NotNull SlashCommandInteractionEvent event) {
         String search = "https://lmgtfy.app/?q=" + event.getOption("search", "", OptionMapping::getAsString).replace("\s", "+") + (Objects.equals(event.getSubcommandName(), "images") ? "&t=i" : "");
-        User victim = event.getOption("victim", null, OptionMapping::getAsUser);
+        User victim = event.getOption("victim", OptionMapping::getAsUser);
 
         event.reply((victim != null ? victim.getAsMention() + ", this is for you: " : "") + search).queue();
     }

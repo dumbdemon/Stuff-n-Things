@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Random;
 
 public class kill implements ISlash {
     private final String[] killStringsRandom = new killStringsRandom().strings;
@@ -45,6 +45,7 @@ public class kill implements ISlash {
     @SuppressWarnings("ConstantConditions")
     @Override
     public void slashExecute(@NotNull SlashCommandInteractionEvent event) {
+        Random random = new Random();
         List<String> victims = new ArrayList<>();
         String subCommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
@@ -61,15 +62,15 @@ public class kill implements ISlash {
 
         switch (subCommand) {
             case "random" -> {
-                String message = String.format(killStringsRandom[(int) (Math.random() * killStringsRandom.length)],
-                        targets[(int) (Math.random() * targets.length)],
-                        targets[(int) (Math.random() * targets.length)],
-                        targets[(int) (Math.random() * targets.length)],
-                        targets[(int) (Math.random() * targets.length)]
+                String message = String.format(killStringsRandom[random.nextInt(killStringsRandom.length)],
+                        targets[random.nextInt(targets.length)],
+                        targets[random.nextInt(targets.length)],
+                        targets[random.nextInt(targets.length)],
+                        targets[random.nextInt(targets.length)]
                 );
 
                 eb.setColor(cmn.defaultEmbedColor)
-                        .setTitle(Objects.requireNonNull(event.getMember()).getEffectiveName())
+                        .setTitle(event.getMember().getEffectiveName())
                         .setDescription("\u2026 " + message)
                         .setFooter("Requested by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
 
@@ -95,7 +96,7 @@ public class kill implements ISlash {
                 if (target.equals(event.getJDA().getSelfUser().getAsMention())) {
                     target = event.getJDA().getSelfUser().getAsMention() + " (hey wait a second...)";
                 }
-                eb.setTitle(Objects.requireNonNull(event.getMember()).getEffectiveName())
+                eb.setTitle(event.getMember().getEffectiveName())
                         .setDescription("\u2026 tried to kill %s but they couldn't because that's bad manners!\n~~This sub command is not ready yet, come back later.~~".formatted(target))
                         .setFooter("Requested by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
                 event.replyEmbeds(eb.build()).queue();

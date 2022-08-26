@@ -11,6 +11,8 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Random;
+
 public class getDadJoke implements IButton {
     @Override
     public String getButtonID() {
@@ -19,11 +21,12 @@ public class getDadJoke implements IButton {
 
     @Override
     public void buttonExecute(@NotNull ButtonInteractionEvent event) {
+        Random random = new Random();
         String[] dadJokesList = new dadJokes().strings;
 
         Message message = new MessageBuilder()
                 .setEmbeds(new EmbedBuilder()
-                        .setDescription(dadJokesList[(int) (Math.random() * dadJokesList.length)])
+                        .setDescription(dadJokesList[random.nextInt(dadJokesList.length)])
                         .setColor(new Commons().defaultEmbedColor)
                         .setFooter("Requested by %s".formatted(event.getUser().getAsTag()))
                         .build()

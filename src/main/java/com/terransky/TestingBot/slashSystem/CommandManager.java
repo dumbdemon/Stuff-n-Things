@@ -33,7 +33,6 @@ public class CommandManager extends ListenerAdapter {
         addCommand(new ping());
         addCommand(new robFailChance());
         addCommand(new say());
-        addCommand(new spam());
         addCommand(new suggest());
         addCommand(new test());
         addCommand(new userInfo());

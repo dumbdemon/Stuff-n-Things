@@ -34,7 +34,7 @@ public class say implements ISlash {
         EmbedBuilder eb = new EmbedBuilder()
                 .setColor(new Commons().defaultEmbedColor);
 
-        String message = event.getOption("message", "This is a message!", OptionMapping::getAsString);
+        String message = event.getOption("message", OptionMapping::getAsString);
         MessageChannel channel = (MessageChannel) event.getOption("channel", event.getChannel().asGuildMessageChannel(), OptionMapping::getAsChannel);
 
         eb.setDescription(message)
