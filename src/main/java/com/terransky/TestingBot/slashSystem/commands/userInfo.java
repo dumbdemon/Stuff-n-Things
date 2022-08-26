@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +28,7 @@ public class userInfo implements ISlash {
     @Override
     public CommandData commandData() {
         return Commands.slash(this.getName(), "Get info on a specific user on the server! Defaults to you.")
-                .addOptions(new OptionData(OptionType.USER, "user", "Who you want to know about."));
+                .addOption(OptionType.USER, "user", "Who you want to know about.");
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -82,7 +81,7 @@ public class userInfo implements ISlash {
                 .addField(new MessageEmbed.Field("Server Permissions", finalSTR, false))
                 .addField(new MessageEmbed.Field("Joined Server on", "<t:" + mVictim.getTimeJoined().toEpochSecond() + ":F>", true))
                 .addField(new MessageEmbed.Field("Joined Discord on", "<t:" + uVictim.getTimeCreated().toEpochSecond() + ":F>", true))
-                .setFooter("Requested by " + event.getUser().getAsTag() + " | " + event.getUser().getId());
+                .setFooter("Requested by " + event.getUser().getAsTag() + " | " + event.getUser().getId(), event.getMember().getEffectiveAvatarUrl());
 
         if (!uVictim.isBot()) {
             String boostedText;

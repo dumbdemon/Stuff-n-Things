@@ -106,7 +106,7 @@ public class CommandManager extends ListenerAdapter {
                 log.debug("Full command path that triggered error :: [" + event.getCommandPath() + "]");
                 log.error(String.valueOf(e));
                 e.printStackTrace();
-                if (!event.isAcknowledged()) {
+                if (event.isAcknowledged()) {
                     event.getHook().sendMessageEmbeds(embed.build()).queue();
                 } else event.replyEmbeds(embed.build()).setEphemeral(true).queue();
             }

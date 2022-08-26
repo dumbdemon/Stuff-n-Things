@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 
-@SuppressWarnings("ALL")
 public class robFailChance implements ISlash {
     @Override
     public String getName() {
@@ -30,11 +29,13 @@ public class robFailChance implements ISlash {
                 );
     }
 
+    @SuppressWarnings({"ConstantConditions", "SpellCheckingInspection"})
     @Override
     public void slashExecute(@NotNull SlashCommandInteractionEvent event) {
         EmbedBuilder eb = new EmbedBuilder()
                 .setColor(new Commons().defaultEmbedColor);
         DecimalFormat largeNumber = new DecimalFormat("##,###");
+        String uBoatInvite = "https://discord.com/oauth2/authorize?client_id=292953664492929025&scope=bot%20applications.commands&permissions=829811966&response_type=code&redirect_uri=https://unbelievaboat.com/landing";
 
         double yourNetWorth = event.getOption("your-net-worth", OptionMapping::getAsDouble),
                 theirCash = event.getOption("their-cash", OptionMapping::getAsDouble),
@@ -49,7 +50,7 @@ public class robFailChance implements ISlash {
             event.replyEmbeds(eb.build()).queue();
         } else {
             eb.setDescription("**UnbelievaBoat is not on this sever!**\s" +
-                    "To get the **maximum** value out of this command, ask your admins to invite the bot [here](https://unb.gg/invite).");
+                    "To get the **maximum** value out of this command, ask your admins to invite the bot [here](%s).".formatted(uBoatInvite));
             event.replyEmbeds(eb.build()).queue();
         }
     }
