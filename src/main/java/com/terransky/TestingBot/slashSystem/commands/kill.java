@@ -52,7 +52,7 @@ public class kill implements ISlash {
         if (event.getGuild() != null) memberList = event.getGuild().getMembers();
 
         for (Member member : memberList) {
-            if (!member.getUser().isBot()) {
+            if (!member.getUser().isBot() || member.getUser().equals(event.getJDA().getSelfUser())) {
                 victims.add(member.getAsMention());
             }
         }
