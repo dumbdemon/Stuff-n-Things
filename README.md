@@ -5,8 +5,10 @@ The source code for my Discord™ bot Stuff'n'Things. Mostly an entertainment bo
 `<>` - Required<br>
 `[]` - Optional
 * `/about`
+* `/dad-joke`
 * `/get-invite`
 * `/kill random`
+* `/kill target`
 * `/kill suggest`
 * `/lmgtfy web <search> [victim]`
 * `/lmgtfy images <search> [victim]`

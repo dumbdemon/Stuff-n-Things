@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import org.jetbrains.annotations.NotNull;
@@ -41,12 +42,12 @@ public class ListeningForEvents extends ListenerAdapter {
 
         if (Objects.equals(config.get("APP_ID"), config.get("TESTING_BOT"))) {
             event.getGuild().updateCommands().addCommands(globalCommandData).queue();
-            log.info(globalCommandData.size() + " global commands loaded on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
-        }
-
-        if (guildCommandData.size() != 0) {
-            event.getGuild().updateCommands().addCommands(guildCommandData).queue();
-            log.info(guildCommandData.size() + " guild commands loaded on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
+            log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
+        } else {
+            if (guildCommandData.size() != 0) {
+                event.getGuild().updateCommands().addCommands(guildCommandData).queue();
+                log.info(guildCommandData.size() + " guild commands loaded on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
+            }
         }
 
         /*
@@ -73,17 +74,25 @@ public class ListeningForEvents extends ListenerAdapter {
     }
 
     @Override
+    public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
+        /*
+        Member leaves -> Check if in database -> if yes, remove from database
+                                              -> if no, ignore
+         */
+        super.onGuildMemberRemove(event);
+    }
+
+    @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
         final List<CommandData> guildCommandData = new CommandManager().getCommandData(false, event.getGuild().getIdLong());
         if (Objects.equals(config.get("APP_ID"), config.get("TESTING_BOT"))) {
             event.getGuild().updateCommands().addCommands(globalCommandData).queue();
-
-            log.info(globalCommandData.size() + " global commands loaded on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
-        } else event.getGuild().updateCommands().queue();
-
-        if (guildCommandData.size() != 0) {
-            event.getGuild().updateCommands().addCommands(guildCommandData).queue();
-            log.info(guildCommandData.size() + " guild commands loaded on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
+            log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
+        } else {
+            if (guildCommandData.size() != 0) {
+                event.getGuild().updateCommands().addCommands(guildCommandData).queue();
+                log.info(guildCommandData.size() + " guild commands loaded on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
+            }
         }
     }
 }

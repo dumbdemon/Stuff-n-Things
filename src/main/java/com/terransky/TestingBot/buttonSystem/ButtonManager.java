@@ -1,7 +1,7 @@
 package com.terransky.TestingBot.buttonSystem;
 
 import com.terransky.TestingBot.Commons;
-import com.terransky.TestingBot.buttonSystem.buttons.testButton;
+import com.terransky.TestingBot.buttonSystem.buttons.getDadJoke;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -23,7 +23,7 @@ public class ButtonManager extends ListenerAdapter {
     private final List<IButton> iButtonList = new ArrayList<>();
 
     public ButtonManager() {
-        addButton(new testButton());
+        addButton(new getDadJoke());
     }
 
     private void addButton(IButton iButton) {
