@@ -3,13 +3,13 @@ package com.terransky.TestingBot.slashSystem.commands;
 import com.terransky.TestingBot.Commons;
 import com.terransky.TestingBot.slashSystem.ISlash;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -30,14 +30,14 @@ public class getDadJokes implements ISlash {
         Random random = new Random();
         String[] dadJokesList = new com.terransky.TestingBot.slashSystem.cmdResources.dadJokes().strings;
 
-        Message message = new MessageBuilder()
+        MessageCreateData message = new MessageCreateBuilder()
                 .setEmbeds(new EmbedBuilder()
                         .setDescription(dadJokesList[random.nextInt(dadJokesList.length)])
                         .setColor(new Commons().defaultEmbedColor)
                         .setFooter("Requested by %s".formatted(event.getUser().getAsTag()))
                         .build()
                 )
-                .setActionRows(
+                .addComponents(
                         ActionRow.of(Button.primary("get-dad-joke", "Get new Dad Joke!"))
                 )
                 .build();

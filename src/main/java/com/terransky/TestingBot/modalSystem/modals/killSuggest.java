@@ -8,10 +8,10 @@ import com.terransky.TestingBot.Commons;
 import com.terransky.TestingBot.modalSystem.IModal;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -27,13 +27,14 @@ public class killSuggest implements IModal {
         return "kill-suggest";
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void modalExecute(@NotNull ModalInteractionEvent event) {
         event.deferReply().queue();
         List<String> victims = new ArrayList<>();
         String suggestion = Objects.requireNonNull(event.getValue("kill-suggestion")).getAsString();
 
-        for (Member member : Objects.requireNonNull(event.getGuild()).getMembers()) {
+        for (Member member : event.getGuild().getMembers()) {
             if (!member.getUser().isBot()) {
                 victims.add(member.getAsMention());
             }
@@ -67,7 +68,7 @@ public class killSuggest implements IModal {
             client.send(request);
         }
 
-        Message message = new MessageBuilder()
+        MessageCreateData message = new MessageCreateBuilder()
                 .setEmbeds(
                         new EmbedBuilder()
                                 .setColor(cmn.secondaryEmbedColor)
