@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Objects;
 
 public class spam implements ISlash {
     private final Logger log = LoggerFactory.getLogger(spam.class);
@@ -77,7 +76,7 @@ public class spam implements ISlash {
                         "https://cdn.vox-cdn.com/thumbor/UO1hhAGb7ea5G-MuC43l1Sxx9Rw=/0x0:2282x1712/1200x675/filters:focal(0x0:2282x1712)/cdn.vox-cdn.com/uploads/chorus_image/image/50821489/spam-wall.0.0.jpg"
                 };
 
-                if (!Objects.equals(message, defaultMessage)) {
+                if (!message.equals(defaultMessage)) {
                     if (message.length() > MessageEmbed.TITLE_MAX_LENGTH) {
                         callReply.setTitle("Oops!")
                                 .setDescription("Your spam could not be sent because the message cannot be more than " + MessageEmbed.TITLE_MAX_LENGTH + " characters!\n\n" +

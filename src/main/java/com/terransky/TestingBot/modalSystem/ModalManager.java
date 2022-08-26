@@ -11,10 +11,9 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class ModalManager extends ListenerAdapter {
     private final Color embedColor = new Commons().defaultEmbedColor;
@@ -46,6 +45,7 @@ public class ModalManager extends ListenerAdapter {
         return null;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {
         IModal modal = getModal(event.getModalId());
@@ -56,7 +56,7 @@ public class ModalManager extends ListenerAdapter {
                 .setFooter(event.getUser().getAsTag());
 
         if (modal != null) {
-            String origins = event.isFromGuild() ? "%s [%d]".formatted(Objects.requireNonNull(event.getGuild()).getName(), event.getGuild().getIdLong()) : event.getUser().getAsTag() + "'s private channel";
+            String origins = event.isFromGuild() ? "%s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()) : event.getUser().getAsTag() + "'s private channel";
             log.debug("Modal " + modal.getModalID().toUpperCase() + " called on " + origins);
             try {
                 modal.modalExecute(event);

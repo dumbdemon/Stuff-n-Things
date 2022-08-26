@@ -42,10 +42,11 @@ public class kill implements ISlash {
                 );
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void slashExecute(@NotNull SlashCommandInteractionEvent event) {
         List<String> victims = new ArrayList<>();
-        String subCommand = event.getSubcommandName() != null ? event.getSubcommandName() : "targets";
+        String subCommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
                 .setColor(cmn.defaultEmbedColor);
         List<Member> memberList = new ArrayList<>();

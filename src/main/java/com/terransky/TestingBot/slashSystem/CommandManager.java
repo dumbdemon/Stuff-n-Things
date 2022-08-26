@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 public class CommandManager extends ListenerAdapter {
@@ -87,6 +86,7 @@ public class CommandManager extends ListenerAdapter {
         return commandData;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getUser().isBot()) return;
@@ -99,7 +99,7 @@ public class CommandManager extends ListenerAdapter {
                 .setFooter(event.getUser().getAsTag());
 
         if (cmd != null) {
-            String origins = event.isFromGuild() ? "%s [%d]".formatted(Objects.requireNonNull(event.getGuild()).getName(), event.getGuild().getIdLong()) : event.getUser().getAsTag() + "'s private channel";
+            String origins = event.isFromGuild() ? "%s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()) : event.getUser().getAsTag() + "'s private channel";
             log.debug("Command " + cmd.getName().toUpperCase() + " called on " + origins);
             try {
                 cmd.slashExecute(event);

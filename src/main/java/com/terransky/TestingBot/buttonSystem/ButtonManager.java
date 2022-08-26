@@ -47,6 +47,7 @@ public class ButtonManager extends ListenerAdapter {
         return null;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         IButton butt = getButton(Objects.requireNonNull(event.getButton().getId()));
@@ -57,7 +58,7 @@ public class ButtonManager extends ListenerAdapter {
                 .setFooter(event.getUser().getAsTag());
 
         if (butt != null) {
-            String origins = event.isFromGuild() ? "%s [%d]".formatted(Objects.requireNonNull(event.getGuild()).getName(), event.getGuild().getIdLong()) : event.getUser().getAsTag() + "'s private channel";
+            String origins = event.isFromGuild() ? "%s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()) : event.getUser().getAsTag() + "'s private channel";
             log.debug("Button " + butt.getButtonID().toUpperCase() + " called on " + origins);
             try {
                 butt.buttonExecute(event);

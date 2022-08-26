@@ -32,6 +32,7 @@ public class userInfo implements ISlash {
                 .addOptions(new OptionData(OptionType.USER, "user", "Who you want to know about."));
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void slashExecute(@NotNull SlashCommandInteractionEvent event) {
         User uVictim = event.getOption("user", event.getUser(), OptionMapping::getAsUser);
@@ -86,7 +87,7 @@ public class userInfo implements ISlash {
         if (!uVictim.isBot()) {
             String boostedText;
             if (mVictim.isBoosting())
-                boostedText = ":gem: <t:%d:F> (<t:%d:R>)".formatted(Objects.requireNonNull(mVictim.getTimeBoosted()).toEpochSecond(), mVictim.getTimeBoosted().toEpochSecond());
+                boostedText = ":gem: <t:%d:F> (<t:%d:R>)".formatted(mVictim.getTimeBoosted().toEpochSecond(), mVictim.getTimeBoosted().toEpochSecond());
             else boostedText = ":x: Not Boosting.";
             eb.addField(new MessageEmbed.Field("Boosting Since", boostedText, false));
         }

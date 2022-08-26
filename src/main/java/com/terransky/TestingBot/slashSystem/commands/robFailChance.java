@@ -36,8 +36,8 @@ public class robFailChance implements ISlash {
                 .setColor(new Commons().defaultEmbedColor);
         DecimalFormat largeNumber = new DecimalFormat("##,###");
 
-        double yourNetWorth = event.getOption("your-net-worth", null, OptionMapping::getAsDouble),
-                theirCash = event.getOption("their-cash", null, OptionMapping::getAsDouble),
+        double yourNetWorth = event.getOption("your-net-worth", OptionMapping::getAsDouble),
+                theirCash = event.getOption("their-cash", OptionMapping::getAsDouble),
                 failChance = yourNetWorth / (theirCash + yourNetWorth);
 
         eb.setAuthor("Your chance to fail is...")
