@@ -32,7 +32,7 @@ public class killSuggest implements IModal {
     public void modalExecute(@NotNull ModalInteractionEvent event) {
         event.deferReply().queue();
         List<String> victims = new ArrayList<>();
-        String suggestion = Objects.requireNonNull(event.getValue("kill-suggestion")).getAsString();
+        String suggestion = event.getValue("kill-suggestion").getAsString();
 
         for (Member member : event.getGuild().getMembers()) {
             if (!member.getUser().isBot()) {
@@ -50,7 +50,7 @@ public class killSuggest implements IModal {
         });
         builder.setWait(true);
 
-        String testKillString = String.format(suggestion,
+        String testKillString = suggestion.formatted(
                 targets[(int) (Math.random() * targets.length)],
                 targets[(int) (Math.random() * targets.length)],
                 targets[(int) (Math.random() * targets.length)],
@@ -62,7 +62,7 @@ public class killSuggest implements IModal {
                     .setColor(cmn.getIntFromColor(102, 52, 102))
                     .setTitle(new WebhookEmbed.EmbedTitle("Kill-string Suggestion", null))
                     .setDescription(suggestion)
-                    .addField(new WebhookEmbed.EmbedField(false, "From", "@" + event.getUser().getAsTag()))
+                    .addField(new WebhookEmbed.EmbedField(false, "From", "@%s".formatted(event.getUser().getAsTag())))
                     .build();
 
             client.send(request);
