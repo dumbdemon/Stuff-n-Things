@@ -26,6 +26,7 @@ public class CommandManager extends ListenerAdapter {
 
     public CommandManager() {
         addCommand(new about());
+        addCommand(new getDadJokes());
         addCommand(new getInvite());
         addCommand(new kill());
         addCommand(new lmgtfy());

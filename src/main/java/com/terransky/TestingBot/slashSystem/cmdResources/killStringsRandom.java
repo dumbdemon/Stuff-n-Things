@@ -1,7 +1,7 @@
-package com.terransky.TestingBot.slashSystem;
+package com.terransky.TestingBot.slashSystem.cmdResources;
 
-public class longResources {
-    public final String[] killStringsRandom = {
+public class killStringsRandom {
+    public final String[] strings = {
             "was in their chem lab with %s trying to kill them with a 20 gauge shotgun!",
             "proctored the duel between Red [%s] and Blue [%s]. Blue won by a landslide!",
             "shot an arrow at %s, but it bounced off and hit %s instead!",

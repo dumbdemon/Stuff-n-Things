@@ -33,9 +33,9 @@ public class userInfo implements ISlash {
     }
 
     @Override
-    public void slashExecute(@NotNull SlashCommandInteractionEvent slash) {
-        User uVictim = slash.getOption("user", slash.getUser(), OptionMapping::getAsUser);
-        Member mVictim = slash.getOption("user", slash.getMember(), OptionMapping::getAsMember);
+    public void slashExecute(@NotNull SlashCommandInteractionEvent event) {
+        User uVictim = event.getOption("user", event.getUser(), OptionMapping::getAsUser);
+        Member mVictim = event.getOption("user", event.getMember(), OptionMapping::getAsMember);
         StringBuilder permText = new StringBuilder();
         EmbedBuilder eb = new EmbedBuilder().setColor(new Commons().defaultEmbedColor);
         List<Permission> modPerms = new ArrayList<>();
@@ -81,7 +81,7 @@ public class userInfo implements ISlash {
                 .addField(new MessageEmbed.Field("Server Permissions", finalSTR, false))
                 .addField(new MessageEmbed.Field("Joined Server on", "<t:" + mVictim.getTimeJoined().toEpochSecond() + ":F>", true))
                 .addField(new MessageEmbed.Field("Joined Discord on", "<t:" + uVictim.getTimeCreated().toEpochSecond() + ":F>", true))
-                .setFooter("Requested by " + slash.getUser().getAsTag() + " | " + slash.getUser().getId());
+                .setFooter("Requested by " + event.getUser().getAsTag() + " | " + event.getUser().getId());
 
         if (!uVictim.isBot()) {
             String boostedText;
@@ -91,6 +91,6 @@ public class userInfo implements ISlash {
             eb.addField(new MessageEmbed.Field("Boosting Since", boostedText, false));
         }
 
-        slash.replyEmbeds(eb.build()).queue();
+        event.replyEmbeds(eb.build()).queue();
     }
 }

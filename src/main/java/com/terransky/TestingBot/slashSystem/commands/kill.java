@@ -2,11 +2,13 @@ package com.terransky.TestingBot.slashSystem.commands;
 
 import com.terransky.TestingBot.Commons;
 import com.terransky.TestingBot.slashSystem.ISlash;
-import com.terransky.TestingBot.slashSystem.longResources;
+import com.terransky.TestingBot.slashSystem.cmdResources.killStringsRandom;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
@@ -21,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class kill implements ISlash {
-    private final String[] killStrings = new longResources().killStringsRandom;
+    private final String[] killStringsRandom = new killStringsRandom().strings;
     private final Commons cmn = new Commons();
 
     @Override
@@ -34,6 +36,8 @@ public class kill implements ISlash {
         return Commands.slash(this.getName(), "Time to un-alive random members!")
                 .addSubcommands(
                         new SubcommandData("random", "Try your hand at un-aliving someone!"),
+                        new SubcommandData("target", "Target someone for a kill.")
+                                .addOption(OptionType.USER, "target", "Your target", true),
                         new SubcommandData("suggest", "Suggest a kill-string. Use \"%s\" to represent targets. Up to four can be in a kill-string.")
                 );
     }
@@ -42,7 +46,8 @@ public class kill implements ISlash {
     public void slashExecute(@NotNull SlashCommandInteractionEvent event) {
         List<String> victims = new ArrayList<>();
         String subCommand = event.getSubcommandName() != null ? event.getSubcommandName() : "targets";
-        EmbedBuilder eb = new EmbedBuilder();
+        EmbedBuilder eb = new EmbedBuilder()
+                .setColor(cmn.defaultEmbedColor);
         List<Member> memberList = new ArrayList<>();
         if (event.getGuild() != null) memberList = event.getGuild().getMembers();
 
@@ -55,7 +60,7 @@ public class kill implements ISlash {
 
         switch (subCommand) {
             case "random" -> {
-                String message = String.format(killStrings[(int) (Math.random() * killStrings.length)],
+                String message = String.format(killStringsRandom[(int) (Math.random() * killStringsRandom.length)],
                         targets[(int) (Math.random() * targets.length)],
                         targets[(int) (Math.random() * targets.length)],
                         targets[(int) (Math.random() * targets.length)],
@@ -84,9 +89,19 @@ public class kill implements ISlash {
                 event.replyModal(modal).queue();
             }
 
+            case "target" -> {
+                String target = event.getOption("target", event.getJDA().getSelfUser(), OptionMapping::getAsUser).getAsMention();
+                if (target.equals(event.getJDA().getSelfUser().getAsMention())) {
+                    target = event.getJDA().getSelfUser().getAsMention() + " (hey wait a second...)";
+                }
+                eb.setTitle(Objects.requireNonNull(event.getMember()).getEffectiveName())
+                        .setDescription("\u2026 tried to kill %s but they couldn't because that's bad manners!\n~~This sub command is not ready yet, come back later.~~".formatted(target))
+                        .setFooter("Requested by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
+                event.replyEmbeds(eb.build()).queue();
+            }
+
             default -> eb.setTitle("How did you get here?")
-                    .setDescription("No seriously how did you get here?\nThat's impossible.")
-                    .setColor(cmn.defaultEmbedColor);
+                    .setDescription("No seriously how did you get here?\nThat's impossible.");
         }
     }
 }
