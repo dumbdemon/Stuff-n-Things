@@ -1,4 +1,4 @@
-package com.terransky.StuffnThings.slashSystem.commands;
+package com.terransky.StuffnThings.slashSystem.commands.admin;
 
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.database.SQLiteDataSource;
@@ -21,7 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class config implements ISlash {
-    private final Logger log = LoggerFactory.getLogger(kill.class);
+    private final Logger log = LoggerFactory.getLogger(config.class);
     private final Dotenv config = Dotenv.configure().load();
 
     @Override
