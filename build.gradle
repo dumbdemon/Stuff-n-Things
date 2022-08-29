@@ -4,10 +4,10 @@ plugins {
     id'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
-mainClassName = 'com.terransky.TestingBot.core'
+mainClassName = 'com.terransky.stuffnthings.core'
 
-group 'com.terransky.TestingBot'
-version '7'
+group 'com.terransky.stuffnthings'
+version '8'
 compileJava.options.encoding = 'UTF-8'
 
 repositories {
@@ -26,6 +26,8 @@ dependencies {
     implementation('io.github.cdimascio:dotenv-java:2.2.4')
     implementation('com.fasterxml.jackson.core:jackson-databind:2.13.3')
     implementation('org.apache.commons:commons-text:1.9')
+    implementation('com.zaxxer:HikariCP:5.0.1')
+    implementation('org.xerial:sqlite-jdbc:3.39.2.0')
 }
 
 test {
