@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class userInfo implements ISlash {
     @Override
@@ -56,29 +55,20 @@ public class userInfo implements ISlash {
         } else permText.append("Member");
 
         StringBuilder userPerms = new StringBuilder();
-        String[] str = mVictim.getPermissions().toString().replace("[", "").replace("]", "").split(",\s");
-        if (str.length != 0) {
-            for (String perm : str) {
-                if (Objects.equals(perm, str[str.length - 1]))
-                    userPerms.append(WordUtils.capitalize(perm.toLowerCase().replace("_", "\s")));
-                else
-                    userPerms.append(WordUtils.capitalize(perm.toLowerCase().replace("_", "\s"))).append(",\s");
-            }
-        } else userPerms.append("None");
+        String finalUserPerms;
 
-        String finalSTR = userPerms.toString()
-                .replace("\sTts", "\sTTS")
-                .replace("\sExt", "\sEXT")
-                .replace("\sAnd", "\sand")
-                .replace("\sTo", "\sto")
-                .replace("\sIn", "\sin")
-                .replace("\sVad", "\sVAD");
+        if (mVictim.getPermissions().size() != 0) {
+            for (Permission perm : mVictim.getPermissions()) {
+                userPerms.append(perm.getName()).append(",");
+            }
+            finalUserPerms = userPerms.substring(0, userPerms.toString().length() - 1);
+        } else finalUserPerms = "None";
 
         eb.setAuthor(WordUtils.capitalize(mVictim.getEffectiveName()) + "'s Info")
                 .setThumbnail(mVictim.getEffectiveAvatarUrl())
                 .addField(new MessageEmbed.Field("User ID", uVictim.getId(), true))
                 .addField(new MessageEmbed.Field("User Status", permText.toString(), true))
-                .addField(new MessageEmbed.Field("Server Permissions", finalSTR, false))
+                .addField(new MessageEmbed.Field("Server Permissions", finalUserPerms, false))
                 .addField(new MessageEmbed.Field("Joined Server on", "<t:" + mVictim.getTimeJoined().toEpochSecond() + ":F>", true))
                 .addField(new MessageEmbed.Field("Joined Discord on", "<t:" + uVictim.getTimeCreated().toEpochSecond() + ":F>", true))
                 .setFooter("Requested by " + event.getUser().getAsTag() + " | " + event.getUser().getId(), event.getMember().getEffectiveAvatarUrl());
