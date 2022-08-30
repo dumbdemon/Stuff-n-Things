@@ -1,4 +1,4 @@
-package com.terransky.StuffnThings.slashSystem.cmdResources;
+package com.terransky.StuffnThings.commandSystem.cmdResources;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class dadJokes {

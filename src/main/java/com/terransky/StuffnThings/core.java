@@ -1,11 +1,12 @@
 package com.terransky.StuffnThings;
 
 import com.terransky.StuffnThings.buttonSystem.ButtonManager;
+import com.terransky.StuffnThings.commandSystem.CommandManager;
+import com.terransky.StuffnThings.commandSystem.ContextManager;
 import com.terransky.StuffnThings.database.SQLiteDataSource;
 import com.terransky.StuffnThings.listeners.ListeningForEvents;
 import com.terransky.StuffnThings.modalSystem.ModalManager;
 import com.terransky.StuffnThings.selectMenuSystem.SelectMenuManager;
-import com.terransky.StuffnThings.slashSystem.CommandManager;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -32,7 +33,8 @@ public class core {
                 .enableIntents(
                         GatewayIntent.GUILD_MEMBERS,
                         GatewayIntent.GUILD_PRESENCES,
-                        GatewayIntent.DIRECT_MESSAGES
+                        GatewayIntent.DIRECT_MESSAGES,
+                        GatewayIntent.MESSAGE_CONTENT
                 )
                 .enableCache(CacheFlag.ONLINE_STATUS)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
@@ -53,7 +55,8 @@ public class core {
                 new CommandManager(),
                 new ButtonManager(),
                 new ModalManager(),
-                new SelectMenuManager()
+                new SelectMenuManager(),
+                new ContextManager()
         );
     }
 

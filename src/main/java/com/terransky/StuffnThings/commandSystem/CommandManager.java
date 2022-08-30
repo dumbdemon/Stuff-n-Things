@@ -1,9 +1,10 @@
-package com.terransky.StuffnThings.slashSystem;
+package com.terransky.StuffnThings.commandSystem;
 
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.commandSystem.commands.*;
+import com.terransky.StuffnThings.commandSystem.commands.admin.checkPerms;
+import com.terransky.StuffnThings.commandSystem.commands.admin.config;
 import com.terransky.StuffnThings.database.SQLiteDataSource;
-import com.terransky.StuffnThings.slashSystem.commands.*;
-import com.terransky.StuffnThings.slashSystem.commands.admin.config;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -28,17 +29,25 @@ public class CommandManager extends ListenerAdapter {
     private final Logger log = LoggerFactory.getLogger(CommandManager.class);
 
     public CommandManager() {
-        addCommand(new about());
+        //Admin Commands
+        addCommand(new checkPerms());
         addCommand(new config());
+
+        //Fun Commands
+        addCommand(new about());
         addCommand(new getDadJokes());
-        addCommand(new getInvite());
         addCommand(new kill());
         addCommand(new lmgtfy());
         addCommand(new meme());
-        addCommand(new ping());
         addCommand(new robFailChance());
         addCommand(new say());
+
+        //General Commands
+        addCommand(new ping());
         addCommand(new suggest());
+
+        //Dev commands
+        addCommand(new getInvite());
         addCommand(new test());
         addCommand(new userInfo());
     }
@@ -87,6 +96,8 @@ public class CommandManager extends ListenerAdapter {
             }
         }
 
+        commandData.addAll(new ContextManager().getContextData());
+
         return commandData;
     }
 
@@ -106,7 +117,7 @@ public class CommandManager extends ListenerAdapter {
         }
 
         ISlash cmd = getCommand(event.getName());
-        EmbedBuilder embed = new EmbedBuilder()
+        EmbedBuilder eb = new EmbedBuilder()
                 .setTitle("Oops!")
                 .setDescription("An error occurred while executing that command!\nPlease contact <@" + config.get("OWNER_ID") + "> with the command that you used and when.")
                 .setColor(embedColor)
@@ -119,11 +130,11 @@ public class CommandManager extends ListenerAdapter {
                 cmd.slashExecute(event);
             } catch (Exception e) {
                 log.debug("Full command path that triggered error :: [" + event.getCommandPath() + "]");
-                log.error(String.valueOf(e));
+                log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
                 e.printStackTrace();
                 if (event.isAcknowledged()) {
-                    event.getHook().sendMessageEmbeds(embed.build()).queue();
-                } else event.replyEmbeds(embed.build()).setEphemeral(true).queue();
+                    event.getHook().sendMessageEmbeds(eb.build()).queue();
+                } else event.replyEmbeds(eb.build()).setEphemeral(true).queue();
             }
         }
     }

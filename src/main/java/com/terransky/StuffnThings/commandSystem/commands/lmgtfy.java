@@ -1,6 +1,6 @@
-package com.terransky.StuffnThings.slashSystem.commands;
+package com.terransky.StuffnThings.commandSystem.commands;
 
-import com.terransky.StuffnThings.slashSystem.ISlash;
+import com.terransky.StuffnThings.commandSystem.ISlash;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;

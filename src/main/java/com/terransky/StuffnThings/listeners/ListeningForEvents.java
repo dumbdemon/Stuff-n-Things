@@ -1,8 +1,8 @@
 package com.terransky.StuffnThings.listeners;
 
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.commandSystem.CommandManager;
 import com.terransky.StuffnThings.database.SQLiteDataSource;
-import com.terransky.StuffnThings.slashSystem.CommandManager;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;

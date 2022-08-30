@@ -1,7 +1,7 @@
-package com.terransky.StuffnThings.slashSystem.commands;
+package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.slashSystem.ISlash;
+import com.terransky.StuffnThings.commandSystem.ISlash;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;

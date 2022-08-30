@@ -1,8 +1,8 @@
-package com.terransky.StuffnThings.slashSystem.commands;
+package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.slashSystem.ISlash;
-import com.terransky.StuffnThings.slashSystem.cmdResources.killStrings;
+import com.terransky.StuffnThings.commandSystem.ISlash;
+import com.terransky.StuffnThings.commandSystem.cmdResources.killStrings;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
@@ -86,7 +85,7 @@ public class kill implements ISlash {
                         .build();
 
                 Modal modal = Modal.create("kill-suggest", "Suggest Kill-String")
-                        .addActionRows(ActionRow.of(suggestion))
+                        .addActionRow(suggestion)
                         .build();
 
                 event.replyModal(modal).queue();

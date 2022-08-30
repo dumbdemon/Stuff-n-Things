@@ -1,7 +1,7 @@
-package com.terransky.StuffnThings.slashSystem.commands;
+package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.slashSystem.ISlash;
+import com.terransky.StuffnThings.commandSystem.ISlash;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -28,7 +28,7 @@ public class getDadJokes implements ISlash {
     @Override
     public void slashExecute(@NotNull SlashCommandInteractionEvent event) {
         Random random = new Random();
-        String[] dadJokesList = new com.terransky.StuffnThings.slashSystem.cmdResources.dadJokes().strings;
+        String[] dadJokesList = new com.terransky.StuffnThings.commandSystem.cmdResources.dadJokes().strings;
 
         MessageCreateData message = new MessageCreateBuilder()
                 .setEmbeds(new EmbedBuilder()

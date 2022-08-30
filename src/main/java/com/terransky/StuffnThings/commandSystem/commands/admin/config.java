@@ -1,21 +1,28 @@
-package com.terransky.StuffnThings.slashSystem.commands.admin;
+package com.terransky.StuffnThings.commandSystem.commands.admin;
 
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.commandSystem.ISlash;
 import com.terransky.StuffnThings.database.SQLiteDataSource;
-import com.terransky.StuffnThings.slashSystem.ISlash;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.*;
+import net.dv8tion.jda.api.interactions.components.Modal;
+import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,26 +53,105 @@ public class config implements ISlash {
                                                         new OptionData(OptionType.INTEGER, "set-timeout", "Set the timeout of the kill command in whole minutes up to an hour.")
                                                                 .setRequiredRange(1, 60)
                                                 )
+                                ),
+                        new SubcommandGroupData("report", "Change the report webhook.")
+                                .addSubcommands(
+                                        new SubcommandData("set-channel", "Sets the channel for reporting.")
+                                                .addOptions(
+                                                        new OptionData(OptionType.CHANNEL, "channel", "Set the channel for reporting.", true)
+                                                                .setChannelTypes(ChannelType.TEXT)
+                                                ),
+                                        new SubcommandData("auto-response", "The response the bot gives after the user makes a report.")
                                 )
                 );
     }
 
-    @Override
-    public boolean workingCommand() {
-        return config.get("APP_ID").equals(config.get("TESTING_BOT"));
-    }
-
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void slashExecute(@NotNull SlashCommandInteractionEvent event) {
         String subCommandGroup = event.getSubcommandGroup();
         EmbedBuilder eb = new EmbedBuilder()
                 .setColor(new Commons().defaultEmbedColor);
 
-        if ("kill".equals(subCommandGroup)) {
-            this.killConfig(event);
-        } else {
-            eb.setTitle("How did you get here?")
-                    .setDescription("No seriously how did you get here?\nThat's impossible.");
+        switch (subCommandGroup) {
+            case "kill" -> {
+                //this.killConfig(event);
+                eb.setTitle("Config setting not yet available.");
+                event.replyEmbeds(eb.build()).queue();
+            }
+            case "report" -> this.reportConfig(event);
+            default -> event.replyEmbeds(
+                    eb.setTitle("How did you get here?")
+                            .setDescription("No seriously how did you get here?\nThat's impossible.")
+                            .build()
+            ).queue();
+        }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private void reportConfig(@NotNull SlashCommandInteractionEvent event) {
+        String subCommand = event.getSubcommandName();
+        EmbedBuilder eb = new EmbedBuilder()
+                .setColor(new Commons().defaultEmbedColor)
+                .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
+
+        switch (subCommand) {
+            case "set-channel" -> {
+                event.deferReply().queue();
+                StandardGuildMessageChannel channel = (StandardGuildMessageChannel) event.getOption("channel", OptionMapping::getAsChannel);
+                InputStream botLogo;
+                try {
+                    botLogo = new URL(config.get("BOT_LOGO")).openStream();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                try {
+                    channel.createWebhook("%s's Reports".formatted(event.getJDA().getSelfUser().getName()))
+                            .setAvatar(Icon.from(botLogo))
+                            .queue();
+                } catch (PermissionException | IOException e) {
+                    log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
+                    e.printStackTrace();
+                    eb.setTitle("Uh-oh")
+                            .setDescription("I was unable to create/grab the webhook.\n" +
+                                    "Please check my permissions to see if I have `Manage Webhooks` and if a webhook got created in that channel, please delete it and try this command again.");
+                    event.replyEmbeds(eb.build()).queue();
+                    return;
+                }
+
+                channel.retrieveWebhooks().queue(webhooks -> {
+                    for (Webhook wh : webhooks) {
+                        if (wh.getOwnerAsUser() == event.getJDA().getSelfUser()) {
+                            try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
+                                    .prepareStatement("UPDATE guilds SET reporting_wh = ? WHERE guild_id = ?")) {
+                                stmt.setString(1, wh.getUrl());
+                                stmt.setString(2, event.getGuild().getId());
+                                stmt.execute();
+                            } catch (SQLException e) {
+                                event.replyEmbeds(anErrorOccurred(e)).queue();
+                            }
+
+                            eb.setTitle("Config updated")
+                                    .setDescription("The config has been updated to send to that channel.");
+                            event.getHook().sendMessageEmbeds(eb.build()).queue();
+                        }
+                    }
+                });
+            }
+
+            case "auto-response" -> {
+                TextInput autoResponse = TextInput.create("config-ar-text", "Response", TextInputStyle.PARAGRAPH)
+                        .setRequired(true)
+                        .setPlaceholder("What do you want the bot to say?")
+                        .build();
+
+                Modal modal = Modal.create("config-auto-response", "Reporting Auto-Response")
+                        .addActionRow(autoResponse)
+                        .build();
+
+                event.replyModal(modal).queue();
+            }
         }
     }
 
@@ -73,7 +159,8 @@ public class config implements ISlash {
     private void killConfig(@NotNull SlashCommandInteractionEvent event) {
         String subCommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
-                .setColor(new Commons().defaultEmbedColor);
+                .setColor(new Commons().defaultEmbedColor)
+                .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
 
         switch (subCommand) {
             case "max-kills" -> {

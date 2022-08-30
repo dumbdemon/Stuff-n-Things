@@ -1,11 +1,11 @@
-package com.terransky.StuffnThings.slashSystem.commands;
+package com.terransky.StuffnThings.commandSystem.commands;
 
 import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.slashSystem.ISlash;
+import com.terransky.StuffnThings.commandSystem.ISlash;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;

@@ -1,7 +1,7 @@
-package com.terransky.StuffnThings.slashSystem.commands;
+package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.slashSystem.ISlash;
+import com.terransky.StuffnThings.commandSystem.ISlash;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -59,9 +59,9 @@ public class userInfo implements ISlash {
 
         if (mVictim.getPermissions().size() != 0) {
             for (Permission perm : mVictim.getPermissions()) {
-                userPerms.append(perm.getName()).append(",");
+                userPerms.append(perm.getName()).append(", ");
             }
-            finalUserPerms = userPerms.substring(0, userPerms.toString().length() - 1);
+            finalUserPerms = userPerms.substring(0, userPerms.toString().length() - 2);
         } else finalUserPerms = "None";
 
         eb.setAuthor(WordUtils.capitalize(mVictim.getEffectiveName()) + "'s Info")

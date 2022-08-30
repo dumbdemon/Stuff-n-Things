@@ -2,7 +2,7 @@ package com.terransky.StuffnThings.buttonSystem.buttons;
 
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.buttonSystem.IButton;
-import com.terransky.StuffnThings.slashSystem.cmdResources.dadJokes;
+import com.terransky.StuffnThings.commandSystem.cmdResources.dadJokes;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;

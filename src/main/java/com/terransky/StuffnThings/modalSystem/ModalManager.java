@@ -1,6 +1,7 @@
 package com.terransky.StuffnThings.modalSystem;
 
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.modalSystem.modals.configAutoResponse;
 import com.terransky.StuffnThings.modalSystem.modals.killSuggest;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -23,6 +24,7 @@ public class ModalManager extends ListenerAdapter {
 
     public ModalManager() {
         addModal(new killSuggest());
+        addModal(new configAutoResponse());
     }
 
     private void addModal(IModal iModal) {

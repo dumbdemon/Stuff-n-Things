@@ -1,4 +1,4 @@
-package com.terransky.StuffnThings.slashSystem;
+package com.terransky.StuffnThings.commandSystem;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
