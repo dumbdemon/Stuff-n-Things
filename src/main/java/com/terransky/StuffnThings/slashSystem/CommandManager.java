@@ -1,7 +1,9 @@
 package com.terransky.StuffnThings.slashSystem;
 
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.database.SQLiteDataSource;
 import com.terransky.StuffnThings.slashSystem.commands.*;
+import com.terransky.StuffnThings.slashSystem.commands.admin.config;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -13,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,6 +94,16 @@ public class CommandManager extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getUser().isBot()) return;
+
+        //Add user to database or ignore if exists
+        try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
+                .prepareStatement("INSERT OR IGNORE INTO users_" + event.getGuild().getId() + "(user_id) VALUES(?)")) {
+            stmt.setString(1, event.getUser().getId());
+            stmt.execute();
+        } catch (SQLException e) {
+            log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
+            e.printStackTrace();
+        }
 
         ISlash cmd = getCommand(event.getName());
         EmbedBuilder embed = new EmbedBuilder()

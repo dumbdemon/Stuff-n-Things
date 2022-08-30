@@ -41,7 +41,7 @@ public class config implements ISlash {
                                                         new OptionData(OptionType.INTEGER, "set-max", "Set the max kills for the server.")
                                                                 .setRequiredRange(1, 99)
                                                 ),
-                                        new SubcommandData("timeout", "'X' amount of kills within 'Y' amount of time\u2026 what's 'Y'?")
+                                        new SubcommandData("timeout", "\"X\" amount of kills within \"Y\" amount of time\u2026 what's \"Y\"?")
                                                 .addOptions(
                                                         new OptionData(OptionType.INTEGER, "set-timeout", "Set the timeout of the kill command in whole minutes up to an hour.")
                                                                 .setRequiredRange(1, 60)

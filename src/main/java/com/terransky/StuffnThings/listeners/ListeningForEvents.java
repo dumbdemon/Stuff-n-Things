@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
@@ -69,20 +68,20 @@ public class ListeningForEvents extends ListenerAdapter {
         String serverName = event.getGuild().getName();
         long serverID = event.getGuild().getIdLong();
 
-        log.info("I have left " + serverName + " [" + serverID + "]!");
+        log.info("I have left %s [%s]!".formatted(serverName, serverID));
 
         try {
             try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                     .prepareStatement("DELETE FROM guilds WHERE guild_id = ?")) {
                 stmt.setString(1, event.getGuild().getId());
                 stmt.execute();
-                log.info("%s[%s] has been removed the database".formatted(event.getGuild().getName(), event.getGuild().getId()));
+                log.info("%s [%s] has been removed from the guilds table".formatted(event.getGuild().getName(), event.getGuild().getId()));
             }
 
             try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                     .prepareStatement("DROP TABLE users_" + event.getGuild().getId())) {
                 stmt.execute();
-                log.info("Users table for %s[%s] has been removed the database".formatted(event.getGuild().getName(), event.getGuild().getId()));
+                log.info("Users table for %s [%s] has been removed from the database".formatted(event.getGuild().getName(), event.getGuild().getId()));
             }
         } catch (SQLException e) {
             log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
@@ -92,6 +91,8 @@ public class ListeningForEvents extends ListenerAdapter {
 
     @Override
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
+        if (event.getUser().isBot()) return;
+
         String userID = event.getUser().getId(),
                 guildID = event.getGuild().getId();
 
@@ -99,7 +100,7 @@ public class ListeningForEvents extends ListenerAdapter {
                 .prepareStatement("DELETE FROM users_" + guildID + " WHERE user_id = ?")) {
             stmt.setString(1, userID);
             stmt.execute();
-            log.info("Users table for %s[%s] has been removed the database".formatted(event.getGuild().getName(), event.getGuild().getId()));
+            log.info("User %s left %s [%s]. Users table has been updated".formatted(userID, event.getGuild().getName(), guildID));
         } catch (SQLException e) {
             log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
             e.printStackTrace();
@@ -118,35 +119,27 @@ public class ListeningForEvents extends ListenerAdapter {
                 log.info(guildCommandData.size() + " guild commands loaded on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
             }
         }
-        try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                .prepareStatement("SELECT id FROM guilds WHERE guild_id = ?")) {
-            stmt.setString(1, event.getGuild().getId());
-            try (final ResultSet rs = stmt.executeQuery()) {
-                if (!rs.next()) {
-                    addGuildToDB(event.getGuild());
-                }
-            }
-        } catch (SQLException e) {
-            log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-            e.printStackTrace();
-        }
+
+        //If bot is already in a guild add them.
+        addGuildToDB(event.getGuild());
     }
 
     private void addGuildToDB(@NotNull Guild guild) {
+        String guildName = guild.getName(), guildId = guild.getId();
         try (final PreparedStatement sStmt = SQLiteDataSource.getConnection()
-                .prepareStatement("INSERT INTO guilds(guild_id) VALUES(?)")) {
-            sStmt.setString(1, guild.getId());
+                .prepareStatement("INSERT OR IGNORE INTO guilds(guild_id) VALUES(?)")) {
+            sStmt.setString(1, guildId);
             sStmt.execute();
-            log.info("%s[%s] was added to the database".formatted(guild.getName(), guild.getId()));
+            log.info("%s[%s] was added to the database".formatted(guildName, guildId));
 
             try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                    .prepareStatement("CREATE TABLE IF NOT EXISTS users_" + guild.getId() + " (" +
+                    .prepareStatement("CREATE TABLE IF NOT EXISTS users_" + guildId + " (" +
                             "user_id TEXT PRIMARY KEY," +
                             "kill_attempts INTEGER DEFAULT 0," +
                             "kill_under_to INTEGER DEFAULT 0" +
                             ");")) {
                 stmt.execute();
-                log.info("Users table for %s[%s] is ready".formatted(guild.getName(), guild.getId()));
+                log.info("Users table for %s[%s] is ready".formatted(guildName, guildId));
             }
         } catch (SQLException e) {
             log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
