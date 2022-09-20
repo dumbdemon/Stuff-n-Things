@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
 public interface IModal {
-    String getModalID();
+    String getID();
 
-    void modalExecute(@NotNull ModalInteractionEvent event);
+    void execute(@NotNull ModalInteractionEvent event);
 }

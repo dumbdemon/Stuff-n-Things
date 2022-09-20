@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
 public interface IButton {
-    String getButtonID();
+    String getID();
 
-    void buttonExecute(@NotNull ButtonInteractionEvent event);
+    void execute(@NotNull ButtonInteractionEvent event);
 }

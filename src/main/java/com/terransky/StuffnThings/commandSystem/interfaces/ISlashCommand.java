@@ -1,4 +1,4 @@
-package com.terransky.StuffnThings.commandSystem;
+package com.terransky.StuffnThings.commandSystem.interfaces;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface ISlash {
+public interface ISlashCommand {
     String getName();
 
     CommandData commandData();
@@ -28,5 +28,5 @@ public interface ISlash {
     }
 
     //The commands handler
-    void slashExecute(@NotNull SlashCommandInteractionEvent event);
+    void execute(@NotNull SlashCommandInteractionEvent event) throws Exception;
 }

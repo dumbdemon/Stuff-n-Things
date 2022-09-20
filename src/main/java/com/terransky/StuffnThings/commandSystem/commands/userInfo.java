@@ -1,7 +1,7 @@
 package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.commandSystem.ISlash;
+import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class userInfo implements ISlash {
+public class userInfo implements ISlashCommand {
     @Override
     public String getName() {
         return "user-info";
@@ -27,16 +27,16 @@ public class userInfo implements ISlash {
     @Override
     public CommandData commandData() {
         return Commands.slash(this.getName(), "Get info on a specific user on the server! Defaults to you.")
-                .addOption(OptionType.USER, "user", "Who you want to know about.");
+            .addOption(OptionType.USER, "user", "Who you want to know about.");
     }
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public void slashExecute(@NotNull SlashCommandInteractionEvent event) {
+    public void execute(@NotNull SlashCommandInteractionEvent event) {
         User uVictim = event.getOption("user", event.getUser(), OptionMapping::getAsUser);
         Member mVictim = event.getOption("user", event.getMember(), OptionMapping::getAsMember);
         StringBuilder permText = new StringBuilder();
-        EmbedBuilder eb = new EmbedBuilder().setColor(new Commons().defaultEmbedColor);
+        EmbedBuilder eb = new EmbedBuilder().setColor(Commons.defaultEmbedColor);
         List<Permission> modPerms = new ArrayList<>();
         modPerms.add(Permission.KICK_MEMBERS);
         modPerms.add(Permission.BAN_MEMBERS);
@@ -65,13 +65,13 @@ public class userInfo implements ISlash {
         } else finalUserPerms = "None";
 
         eb.setAuthor(WordUtils.capitalize(mVictim.getEffectiveName()) + "'s Info")
-                .setThumbnail(mVictim.getEffectiveAvatarUrl())
-                .addField(new MessageEmbed.Field("User ID", uVictim.getId(), true))
-                .addField(new MessageEmbed.Field("User Status", permText.toString(), true))
-                .addField(new MessageEmbed.Field("Server Permissions", finalUserPerms, false))
-                .addField(new MessageEmbed.Field("Joined Server on", "<t:" + mVictim.getTimeJoined().toEpochSecond() + ":F>", true))
-                .addField(new MessageEmbed.Field("Joined Discord on", "<t:" + uVictim.getTimeCreated().toEpochSecond() + ":F>", true))
-                .setFooter("Requested by " + event.getUser().getAsTag() + " | " + event.getUser().getId(), event.getMember().getEffectiveAvatarUrl());
+            .setThumbnail(mVictim.getEffectiveAvatarUrl())
+            .addField(new MessageEmbed.Field("User ID", uVictim.getId(), true))
+            .addField(new MessageEmbed.Field("User Status", permText.toString(), true))
+            .addField(new MessageEmbed.Field("Server Permissions", finalUserPerms, false))
+            .addField(new MessageEmbed.Field("Joined Server on", "<t:" + mVictim.getTimeJoined().toEpochSecond() + ":F>", true))
+            .addField(new MessageEmbed.Field("Joined Discord on", "<t:" + uVictim.getTimeCreated().toEpochSecond() + ":F>", true))
+            .setFooter("Requested by " + event.getUser().getAsTag() + " | " + event.getUser().getId(), event.getUser().getEffectiveAvatarUrl());
 
         if (!uVictim.isBot()) {
             String boostedText;

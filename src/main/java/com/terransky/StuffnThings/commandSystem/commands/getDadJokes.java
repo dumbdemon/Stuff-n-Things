@@ -1,7 +1,8 @@
 package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.commandSystem.ISlash;
+import com.terransky.StuffnThings.commandSystem.commands.cmdResources.dadJokes;
+import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-public class getDadJokes implements ISlash {
+public class getDadJokes implements ISlashCommand {
     @Override
     public String getName() {
         return "dad-jokes";
@@ -26,21 +27,21 @@ public class getDadJokes implements ISlash {
     }
 
     @Override
-    public void slashExecute(@NotNull SlashCommandInteractionEvent event) {
+    public void execute(@NotNull SlashCommandInteractionEvent event) {
         Random random = new Random();
-        String[] dadJokesList = new com.terransky.StuffnThings.commandSystem.cmdResources.dadJokes().strings;
+        String[] dadJokesList = dadJokes.strings;
 
         MessageCreateData message = new MessageCreateBuilder()
-                .setEmbeds(new EmbedBuilder()
-                        .setDescription(dadJokesList[random.nextInt(dadJokesList.length)])
-                        .setColor(new Commons().defaultEmbedColor)
-                        .setFooter("Requested by %s".formatted(event.getUser().getAsTag()))
-                        .build()
-                )
-                .addComponents(
-                        ActionRow.of(Button.primary("get-dad-joke", "Get new Dad Joke!"))
-                )
-                .build();
+            .setEmbeds(new EmbedBuilder()
+                .setDescription(dadJokesList[random.nextInt(dadJokesList.length)])
+                .setColor(Commons.defaultEmbedColor)
+                .setFooter("Requested by %s".formatted(event.getUser().getAsTag()))
+                .build()
+            )
+            .addComponents(
+                ActionRow.of(Button.primary("get-dad-joke", "Get new Dad Joke!"))
+            )
+            .build();
 
         event.reply(message).queue();
     }

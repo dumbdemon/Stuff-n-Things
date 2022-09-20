@@ -7,7 +7,7 @@ plugins {
 mainClassName = 'com.terransky.StuffnThings.core'
 
 group 'com.terransky.stuffnthings'
-version '8'
+version '10'
 compileJava.options.encoding = 'UTF-8'
 
 repositories {
@@ -22,12 +22,12 @@ dependencies {
         exclude module: 'opus-java'
     }
     implementation("club.minnced:discord-webhooks:0.8.2")
-    implementation('ch.qos.logback:logback-classic:1.2.11')
+    implementation('ch.qos.logback:logback-classic:1.4.0')
     implementation('io.github.cdimascio:dotenv-java:2.2.4')
-    implementation('com.fasterxml.jackson.core:jackson-databind:2.13.3')
+    implementation('com.fasterxml.jackson.core:jackson-databind:2.13.4')
     implementation('org.apache.commons:commons-text:1.9')
     implementation('com.zaxxer:HikariCP:5.0.1')
-    implementation('org.xerial:sqlite-jdbc:3.39.2.1')
+    implementation('org.xerial:sqlite-jdbc:3.39.3.0')
 }
 
 test {

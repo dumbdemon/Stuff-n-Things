@@ -4,8 +4,8 @@ import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.commands.*;
 import com.terransky.StuffnThings.commandSystem.commands.admin.checkPerms;
 import com.terransky.StuffnThings.commandSystem.commands.admin.config;
+import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import com.terransky.StuffnThings.database.SQLiteDataSource;
-import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,9 +22,7 @@ import java.util.List;
 
 
 public class CommandManager extends ListenerAdapter {
-    private final Color embedColor = new Commons().defaultEmbedColor;
-    private final Dotenv config = Dotenv.configure().load();
-    private final List<ISlash> iSlashList = new ArrayList<>();
+    private final List<ISlashCommand> iSlashCommandsList = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(CommandManager.class);
 
     public CommandManager() {
@@ -35,6 +32,7 @@ public class CommandManager extends ListenerAdapter {
 
         //Fun Commands
         addCommand(new about());
+        addCommand(new colorInfo());
         addCommand(new getDadJokes());
         addCommand(new kill());
         addCommand(new lmgtfy());
@@ -52,19 +50,19 @@ public class CommandManager extends ListenerAdapter {
         addCommand(new userInfo());
     }
 
-    private void addCommand(ISlash iSlash) {
-        boolean nameFound = iSlashList.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iSlash.getName()));
+    private void addCommand(ISlashCommand iSlashCommand) {
+        boolean nameFound = iSlashCommandsList.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iSlashCommand.getName()));
 
         if (nameFound) throw new IllegalArgumentException("A command with this name already exists");
 
-        iSlashList.add(iSlash);
+        iSlashCommandsList.add(iSlashCommand);
     }
 
     @Nullable
-    private ISlash getCommand(@NotNull String search) {
+    private ISlashCommand getCommand(@NotNull String search) {
         String toSearch = search.toLowerCase();
 
-        for (ISlash cmd : iSlashList) {
+        for (ISlashCommand cmd : iSlashCommandsList) {
             if (cmd.getName().equals(toSearch)) {
                 return cmd;
             }
@@ -75,15 +73,26 @@ public class CommandManager extends ListenerAdapter {
 
     public List<CommandData> getCommandData(boolean globalCommands, Long... serverID) {
         final List<CommandData> commandData = new ArrayList<>();
+        final List<CommandData> messageContext = new MessageContextManager().getCommandData();
+        final List<CommandData> userContext = new UserContextManager().getCommandData();
 
         if (globalCommands) {
-            for (ISlash command : iSlashList) {
+            for (ISlashCommand command : iSlashCommandsList) {
                 if (command.isGlobalCommand() && command.workingCommand()) {
                     commandData.add(command.commandData());
                 }
             }
+
+            if (!messageContext.isEmpty()) {
+                commandData.addAll(messageContext);
+                log.debug("%d message contexts added".formatted(messageContext.size()));
+            }
+            if (!userContext.isEmpty()) {
+                commandData.addAll(userContext);
+                log.debug("%d user contexts added".formatted(userContext.size()));
+            }
         } else {
-            for (ISlash command : iSlashList) {
+            for (ISlashCommand command : iSlashCommandsList) {
                 if (!command.isGlobalCommand() && command.workingCommand()) {
                     if (serverID.length != 0) {
                         for (Long id : serverID) {
@@ -96,8 +105,6 @@ public class CommandManager extends ListenerAdapter {
             }
         }
 
-        commandData.addAll(new ContextManager().getContextData());
-
         return commandData;
     }
 
@@ -108,7 +115,7 @@ public class CommandManager extends ListenerAdapter {
 
         //Add user to database or ignore if exists
         try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                .prepareStatement("INSERT OR IGNORE INTO users_" + event.getGuild().getId() + "(user_id) VALUES(?)")) {
+            .prepareStatement("INSERT OR IGNORE INTO users_" + event.getGuild().getId() + "(user_id) VALUES(?)")) {
             stmt.setString(1, event.getUser().getId());
             stmt.execute();
         } catch (SQLException e) {
@@ -116,18 +123,18 @@ public class CommandManager extends ListenerAdapter {
             e.printStackTrace();
         }
 
-        ISlash cmd = getCommand(event.getName());
+        ISlashCommand cmd = new CommandManager().getCommand(event.getName());
         EmbedBuilder eb = new EmbedBuilder()
-                .setTitle("Oops!")
-                .setDescription("An error occurred while executing that command!\nPlease contact <@" + config.get("OWNER_ID") + "> with the command that you used and when.")
-                .setColor(embedColor)
-                .setFooter(event.getUser().getAsTag());
+            .setTitle("Oops!")
+            .setDescription("An error occurred while executing that command!\nPlease contact <@" + Commons.config.get("OWNER_ID") + "> with the command that you used and when.")
+            .setColor(Commons.defaultEmbedColor)
+            .setFooter(event.getUser().getAsTag());
 
         if (cmd != null) {
             String origins = event.isFromGuild() ? "%s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()) : event.getUser().getAsTag() + "'s private channel";
             log.debug("Command " + cmd.getName().toUpperCase() + " called on " + origins);
             try {
-                cmd.slashExecute(event);
+                cmd.execute(event);
             } catch (Exception e) {
                 log.debug("Full command path that triggered error :: [" + event.getCommandPath() + "]");
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));

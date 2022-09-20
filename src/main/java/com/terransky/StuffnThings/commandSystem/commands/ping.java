@@ -1,7 +1,7 @@
 package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.commandSystem.ISlash;
+import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
 
-public class ping implements ISlash {
+public class ping implements ISlashCommand {
     @Override
     public String getName() {
         return "ping";
@@ -22,17 +22,17 @@ public class ping implements ISlash {
     }
 
     @Override
-    public void slashExecute(@NotNull SlashCommandInteractionEvent event) {
+    public void execute(@NotNull SlashCommandInteractionEvent event) {
         JDA jda = event.getJDA();
         EmbedBuilder eb = new EmbedBuilder()
-                .setColor(new Commons().defaultEmbedColor)
-                .setTitle("Ping Info")
-                .setFooter("Requested by " + event.getUser().getAsTag());
+            .setColor(Commons.defaultEmbedColor)
+            .setTitle("Ping Info")
+            .setFooter("Requested by " + event.getUser().getAsTag());
 
         jda.getRestPing().queue(ping -> event.replyEmbeds(eb
-                .addField(new MessageEmbed.Field("Reset Ping", ping + "ms", true))
-                .addField(new MessageEmbed.Field("Web Socket Ping", jda.getGatewayPing() + "ms", true))
-                .build()
+            .addField(new MessageEmbed.Field("Reset Ping", ping + "ms", true))
+            .addField(new MessageEmbed.Field("Web Socket Ping", jda.getGatewayPing() + "ms", true))
+            .build()
         ).queue());
     }
 }

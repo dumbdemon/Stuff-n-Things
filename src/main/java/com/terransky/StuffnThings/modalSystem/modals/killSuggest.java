@@ -20,16 +20,15 @@ import java.util.Objects;
 
 public class killSuggest implements IModal {
     private final Dotenv config = Dotenv.configure().load();
-    private final Commons cmn = new Commons();
 
     @Override
-    public String getModalID() {
+    public String getID() {
         return "kill-suggest";
     }
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public void modalExecute(@NotNull ModalInteractionEvent event) {
+    public void execute(@NotNull ModalInteractionEvent event) {
         event.deferReply().queue();
         List<String> victims = new ArrayList<>();
         String suggestion = event.getValue("kill-suggestion").getAsString();
@@ -51,39 +50,39 @@ public class killSuggest implements IModal {
         builder.setWait(true);
 
         String testKillString = suggestion.formatted(
-                targets[(int) (Math.random() * targets.length)],
-                targets[(int) (Math.random() * targets.length)],
-                targets[(int) (Math.random() * targets.length)],
-                targets[(int) (Math.random() * targets.length)]
+            targets[(int) (Math.random() * targets.length)],
+            targets[(int) (Math.random() * targets.length)],
+            targets[(int) (Math.random() * targets.length)],
+            targets[(int) (Math.random() * targets.length)]
         );
 
         try (WebhookClient client = builder.build()) {
             WebhookEmbed request = new WebhookEmbedBuilder()
-                    .setColor(cmn.getIntFromColor(102, 52, 102))
-                    .setTitle(new WebhookEmbed.EmbedTitle("Kill-string Suggestion", null))
-                    .setDescription(suggestion)
-                    .addField(new WebhookEmbed.EmbedField(false, "From", "@%s".formatted(event.getUser().getAsTag())))
-                    .build();
+                .setColor(Commons.getIntFromColor(102, 52, 102))
+                .setTitle(new WebhookEmbed.EmbedTitle("Kill-string Suggestion", null))
+                .setDescription(suggestion)
+                .addField(new WebhookEmbed.EmbedField(false, "From", "@%s".formatted(event.getUser().getAsTag())))
+                .build();
 
             client.send(request);
         }
 
         MessageCreateData message = new MessageCreateBuilder()
-                .setEmbeds(
-                        new EmbedBuilder()
-                                .setColor(cmn.secondaryEmbedColor)
-                                .setTitle("Suggestion received!")
-                                .setDescription("The next embed will show what your suggestion will look like!\n" +
-                                        "***Note: Will not show up automatically!***")
-                                .build(),
-                        new EmbedBuilder()
-                                .setColor(cmn.defaultEmbedColor)
-                                .setTitle(Objects.requireNonNull(event.getMember()).getEffectiveName())
-                                .setDescription("\u2026 " + testKillString)
-                                .setFooter("Suggestion by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
-                                .build()
-                )
-                .build();
+            .setEmbeds(
+                new EmbedBuilder()
+                    .setColor(Commons.secondaryEmbedColor)
+                    .setTitle("Suggestion received!")
+                    .setDescription("The next embed will show what your suggestion will look like!\n" +
+                        "***Note: Will not show up automatically!***")
+                    .build(),
+                new EmbedBuilder()
+                    .setColor(Commons.defaultEmbedColor)
+                    .setTitle(Objects.requireNonNull(event.getMember()).getEffectiveName())
+                    .setDescription("\u2026 " + testKillString)
+                    .setFooter("Suggestion by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+                    .build()
+            )
+            .build();
 
         event.getHook().sendMessage(message).queue();
     }

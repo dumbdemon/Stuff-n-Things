@@ -1,35 +1,26 @@
 package com.terransky.StuffnThings.commandSystem.commands.admin;
 
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.commandSystem.ISlash;
+import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import com.terransky.StuffnThings.database.SQLiteDataSource;
-import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.*;
-import net.dv8tion.jda.api.interactions.components.Modal;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class config implements ISlash {
+public class config implements ISlashCommand {
     private final Logger log = LoggerFactory.getLogger(config.class);
-    private final Dotenv config = Dotenv.configure().load();
 
     @Override
     public String getName() {
@@ -39,138 +30,58 @@ public class config implements ISlash {
     @Override
     public CommandData commandData() {
         return Commands.slash(this.getName(), "The config manager.")
-                .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))
-                .addSubcommandGroups(
-                        new SubcommandGroupData("kill", "Change the config settings for the kill command.")
-                                .addSubcommands(
-                                        new SubcommandData("max-kills", "Get the max kills for the `/kill target` command.")
-                                                .addOptions(
-                                                        new OptionData(OptionType.INTEGER, "set-max", "Set the max kills for the server.")
-                                                                .setRequiredRange(1, 99)
-                                                ),
-                                        new SubcommandData("timeout", "\"X\" amount of kills within \"Y\" amount of time\u2026 what's \"Y\"?")
-                                                .addOptions(
-                                                        new OptionData(OptionType.INTEGER, "set-timeout", "Set the timeout of the kill command in whole minutes up to an hour.")
-                                                                .setRequiredRange(1, 60)
-                                                )
-                                ),
-                        new SubcommandGroupData("report", "Change the report webhook.")
-                                .addSubcommands(
-                                        new SubcommandData("set-channel", "Sets the channel for reporting.")
-                                                .addOptions(
-                                                        new OptionData(OptionType.CHANNEL, "channel", "Set the channel for reporting.", true)
-                                                                .setChannelTypes(ChannelType.TEXT)
-                                                ),
-                                        new SubcommandData("auto-response", "The response the bot gives after the user makes a report.")
-                                )
-                );
+            .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))
+            .addSubcommandGroups(
+                new SubcommandGroupData("kill", "Change the config settings for the kill command.")
+                    .addSubcommands(
+                        new SubcommandData("max-kills", "Get the max kills for the `/kill target` command.")
+                            .addOptions(
+                                new OptionData(OptionType.INTEGER, "set-max", "Set the max kills for the server.")
+                                    .setRequiredRange(1, 99)
+                            ),
+                        new SubcommandData("timeout", "\"X\" amount of kills within \"Y\" amount of time\u2026 what's \"Y\"?")
+                            .addOptions(
+                                new OptionData(OptionType.INTEGER, "set-timeout", "Set the timeout of the kill command in whole minutes up to an hour.")
+                                    .setRequiredRange(1, 60)
+                            )
+                    )
+            );
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
-    public void slashExecute(@NotNull SlashCommandInteractionEvent event) {
+    public void execute(@NotNull SlashCommandInteractionEvent event) throws Exception {
         String subCommandGroup = event.getSubcommandGroup();
         EmbedBuilder eb = new EmbedBuilder()
-                .setColor(new Commons().defaultEmbedColor);
+            .setColor(Commons.defaultEmbedColor);
 
-        switch (subCommandGroup) {
-            case "kill" -> {
-                //this.killConfig(event);
-                eb.setTitle("Config setting not yet available.");
-                event.replyEmbeds(eb.build()).queue();
-            }
-            case "report" -> this.reportConfig(event);
-            default -> event.replyEmbeds(
-                    eb.setTitle("How did you get here?")
-                            .setDescription("No seriously how did you get here?\nThat's impossible.")
-                            .build()
-            ).queue();
+        if (subCommandGroup == null) throw new Exception("Discord API Error: No subcommand group was given.");
+
+        if ("kill".equals(subCommandGroup)) {
+            //this.killConfig(event);
+            eb.setTitle("Config setting not yet available.");
+            event.replyEmbeds(eb.build()).queue();
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
-    private void reportConfig(@NotNull SlashCommandInteractionEvent event) {
+
+    @SuppressWarnings({"ConstantConditions", "unused"})
+    private void killConfig(@NotNull SlashCommandInteractionEvent event) throws Exception {
         String subCommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
-                .setColor(new Commons().defaultEmbedColor)
-                .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
+            .setColor(Commons.defaultEmbedColor)
+            .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
 
-        switch (subCommand) {
-            case "set-channel" -> {
-                event.deferReply().queue();
-                StandardGuildMessageChannel channel = (StandardGuildMessageChannel) event.getOption("channel", OptionMapping::getAsChannel);
-                InputStream botLogo;
-                try {
-                    botLogo = new URL(config.get("BOT_LOGO")).openStream();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-                try {
-                    channel.createWebhook("%s's Reports".formatted(event.getJDA().getSelfUser().getName()))
-                            .setAvatar(Icon.from(botLogo))
-                            .queue();
-                } catch (PermissionException | IOException e) {
-                    log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-                    e.printStackTrace();
-                    eb.setTitle("Uh-oh")
-                            .setDescription("I was unable to create/grab the webhook.\n" +
-                                    "Please check my permissions to see if I have `Manage Webhooks` and if a webhook got created in that channel, please delete it and try this command again.");
-                    event.replyEmbeds(eb.build()).queue();
-                    return;
-                }
-
-                channel.retrieveWebhooks().queue(webhooks -> {
-                    for (Webhook wh : webhooks) {
-                        if (wh.getOwnerAsUser() == event.getJDA().getSelfUser()) {
-                            try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                                    .prepareStatement("UPDATE guilds SET reporting_wh = ? WHERE guild_id = ?")) {
-                                stmt.setString(1, wh.getUrl());
-                                stmt.setString(2, event.getGuild().getId());
-                                stmt.execute();
-                            } catch (SQLException e) {
-                                event.replyEmbeds(anErrorOccurred(e)).queue();
-                            }
-
-                            eb.setTitle("Config updated")
-                                    .setDescription("The config has been updated to send to that channel.");
-                            event.getHook().sendMessageEmbeds(eb.build()).queue();
-                        }
-                    }
-                });
-            }
-
-            case "auto-response" -> {
-                TextInput autoResponse = TextInput.create("config-ar-text", "Response", TextInputStyle.PARAGRAPH)
-                        .setRequired(true)
-                        .setPlaceholder("What do you want the bot to say?")
-                        .build();
-
-                Modal modal = Modal.create("config-auto-response", "Reporting Auto-Response")
-                        .addActionRow(autoResponse)
-                        .build();
-
-                event.replyModal(modal).queue();
-            }
-        }
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private void killConfig(@NotNull SlashCommandInteractionEvent event) {
-        String subCommand = event.getSubcommandName();
-        EmbedBuilder eb = new EmbedBuilder()
-                .setColor(new Commons().defaultEmbedColor)
-                .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
+        if (subCommand == null) throw new Exception("Discord API Error: No subcommand was given.");
 
         switch (subCommand) {
             case "max-kills" -> {
                 event.deferReply(true).queue();
                 int newMax = event.getOption("set-max", 0, OptionMapping::getAsInt),
-                        oldMax;
+                    oldMax;
 
                 if (newMax != 0) {
                     try (final PreparedStatement stmt1 = SQLiteDataSource.getConnection()
-                            .prepareStatement("SELECT killcmd_max FROM guilds WHERE guild_id = ?")) {
+                        .prepareStatement("SELECT killcmd_max FROM guilds WHERE guild_id = ?")) {
                         stmt1.setString(1, event.getGuild().getId());
                         try (final ResultSet rs1 = stmt1.executeQuery()) {
                             oldMax = rs1.getInt("killcmd_max");
@@ -184,14 +95,14 @@ public class config implements ISlash {
                     if (newMax == oldMax) {
                         log.debug("No change for %s".formatted(event.getGuild().getId()));
                         event.getHook().sendMessageEmbeds(eb.setTitle("Config not Updated")
-                                .setDescription("Currently set Max Kills is requested amount: `%d Max Kills`.".formatted(newMax))
-                                .build()
+                            .setDescription("Currently set Max Kills is requested amount: `%d Max Kills`.".formatted(newMax))
+                            .build()
                         ).queue();
                         return;
                     }
 
                     try (final PreparedStatement stmt2 = SQLiteDataSource.getConnection()
-                            .prepareStatement("UPDATE guilds SET killcmd_max = ? WHERE guild_id = ?")) {
+                        .prepareStatement("UPDATE guilds SET killcmd_max = ? WHERE guild_id = ?")) {
                         stmt2.setInt(1, newMax);
                         stmt2.setString(2, event.getGuild().getId());
                         stmt2.execute();
@@ -202,20 +113,20 @@ public class config implements ISlash {
                     }
 
                     eb.setTitle("Config Updated")
-                            .addField("Old Max", String.valueOf(oldMax), true)
-                            .addField("New Max", String.valueOf(newMax), true);
+                        .addField("Old Max", String.valueOf(oldMax), true)
+                        .addField("New Max", String.valueOf(newMax), true);
 
                     event.getHook().sendMessageEmbeds(eb.build()).queue();
                 } else {
                     try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                            .prepareStatement("SELECT killcmd_max FROM guilds WHERE guild_id = ?")) {
+                        .prepareStatement("SELECT killcmd_max FROM guilds WHERE guild_id = ?")) {
                         stmt.setString(1, event.getGuild().getId());
                         try (final ResultSet rs = stmt.executeQuery()) {
                             if (rs.next()) {
                                 log.debug("Retrieved max kills for %s".formatted(event.getGuild().getId()));
                                 event.getHook().sendMessageEmbeds(eb.setTitle("Kill Config")
-                                        .addField("Max Kills", String.valueOf(rs.getInt("killcmd_max")), false)
-                                        .build()
+                                    .addField("Max Kills", String.valueOf(rs.getInt("killcmd_max")), false)
+                                    .build()
                                 ).queue();
                             }
                         }
@@ -229,11 +140,11 @@ public class config implements ISlash {
                 event.deferReply(true).queue();
                 final int toMillis = 60000;
                 int newTimeout = event.getOption("set-timeout", 0, OptionMapping::getAsInt) * toMillis,
-                        oldTimeout = 0;
+                    oldTimeout = 0;
 
                 if (newTimeout != 0) {
                     try (final PreparedStatement stmt1 = SQLiteDataSource.getConnection()
-                            .prepareStatement("SELECT killcmd_timeout FROM guilds WHERE guild_id = ?")) {
+                        .prepareStatement("SELECT killcmd_timeout FROM guilds WHERE guild_id = ?")) {
                         stmt1.setString(1, event.getGuild().getId());
                         try (final ResultSet rs = stmt1.executeQuery()) {
                             if (rs.next()) {
@@ -250,14 +161,14 @@ public class config implements ISlash {
                     if (newTimeout == oldTimeout) {
                         log.debug("No change for %s".formatted(event.getGuild().getId()));
                         event.getHook().sendMessageEmbeds(eb.setTitle("Config not Updated")
-                                .setDescription("Currently set Timeout is requested amount: `%d minutes`.".formatted(newTimeout / toMillis))
-                                .build()
+                            .setDescription("Currently set Timeout is requested amount: `%d minutes`.".formatted(newTimeout / toMillis))
+                            .build()
                         ).queue();
                         return;
                     }
 
                     try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                            .prepareStatement("UPDATE guilds SET killcmd_timeout = ? WHERE guild_id = ?")) {
+                        .prepareStatement("UPDATE guilds SET killcmd_timeout = ? WHERE guild_id = ?")) {
                         stmt.setInt(1, newTimeout);
                         stmt.setString(2, event.getGuild().getId());
                         stmt.execute();
@@ -268,20 +179,20 @@ public class config implements ISlash {
                     }
 
                     eb.setTitle("Config Updated")
-                            .addField("Old Timeout", String.valueOf(oldTimeout), true)
-                            .addField("New Timeout", String.valueOf(newTimeout), true);
+                        .addField("Old Timeout", String.valueOf(oldTimeout), true)
+                        .addField("New Timeout", String.valueOf(newTimeout), true);
 
                     event.getHook().sendMessageEmbeds(eb.build()).queue();
                 } else {
                     try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                            .prepareStatement("SELECT killcmd_timeout FROM guilds WHERE guild_id = ?")) {
+                        .prepareStatement("SELECT killcmd_timeout FROM guilds WHERE guild_id = ?")) {
                         stmt.setString(1, event.getGuild().getId());
                         try (final ResultSet rs = stmt.executeQuery()) {
                             if (rs.next()) {
                                 log.debug("Retrieved timeout for %s".formatted(event.getGuild().getId()));
                                 event.getHook().sendMessageEmbeds(eb.setTitle("Kill Config")
-                                        .addField("Timeout", "%d minutes".formatted(rs.getInt("killcmd_timeout") / toMillis), false)
-                                        .build()
+                                    .addField("Timeout", "%d minutes".formatted(rs.getInt("killcmd_timeout") / toMillis), false)
+                                    .build()
                                 ).queue();
                             }
                         }
@@ -294,12 +205,12 @@ public class config implements ISlash {
     }
 
     protected MessageEmbed anErrorOccurred(@NotNull SQLException e) {
-        EmbedBuilder eb = new EmbedBuilder().setColor(new Commons().defaultEmbedColor);
+        EmbedBuilder eb = new EmbedBuilder().setColor(Commons.defaultEmbedColor);
         log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
         e.printStackTrace();
         SQLiteDataSource.restartConnection();
         eb.setTitle("Uh-oh")
-                .setDescription("An error occurred while executing the command!\n Try again in a moment!");
+            .setDescription("An error occurred while executing the command!\n Try again in a moment!");
         return eb.build();
     }
 }

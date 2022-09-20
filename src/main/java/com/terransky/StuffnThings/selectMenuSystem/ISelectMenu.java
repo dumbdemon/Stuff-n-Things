@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEve
 import org.jetbrains.annotations.NotNull;
 
 public interface ISelectMenu {
-    String getMenuID();
+    String getID();
 
-    void menuExecute(@NotNull SelectMenuInteractionEvent event);
+    void execute(@NotNull SelectMenuInteractionEvent event);
 }

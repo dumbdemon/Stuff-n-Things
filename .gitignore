@@ -2,7 +2,7 @@
 .idea/
 build/
 .gradle/
-src/main/java/com/terransky/stuffnthings/slashSystem/commands/test.java
 gradle/
 /src/main/java/com/terransky/stuffnthings/secretsAndLies.java
 /database.sqlite
+/src/main/java/com/terransky/StuffnThings/commandSystem/commands/test.java

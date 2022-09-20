@@ -1,6 +1,6 @@
 package com.terransky.StuffnThings.commandSystem.commands;
 
-import com.terransky.StuffnThings.commandSystem.ISlash;
+import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class lmgtfy implements ISlash {
+public class lmgtfy implements ISlashCommand {
     @Override
     public String getName() {
         return "lmgtfy";
@@ -22,22 +22,22 @@ public class lmgtfy implements ISlash {
     @Override
     public CommandData commandData() {
         return Commands.slash(this.getName(), "Let me Google that for you!")
-                .addSubcommands(
-                        new SubcommandData("web", "Let me Google that for you!")
-                                .addOptions(
-                                        new OptionData(OptionType.STRING, "search", "What to search for.", true),
-                                        new OptionData(OptionType.USER, "victim", "Ping this person to victimize them!")
-                                ),
-                        new SubcommandData("images", "Let me Google an image for you!")
-                                .addOptions(
-                                        new OptionData(OptionType.STRING, "search", "What to search for.", true),
-                                        new OptionData(OptionType.USER, "victim", "Ping this person to victimize them!")
-                                )
-                );
+            .addSubcommands(
+                new SubcommandData("web", "Let me Google that for you!")
+                    .addOptions(
+                        new OptionData(OptionType.STRING, "search", "What to search for.", true),
+                        new OptionData(OptionType.USER, "victim", "Ping this person to victimize them!")
+                    ),
+                new SubcommandData("images", "Let me Google an image for you!")
+                    .addOptions(
+                        new OptionData(OptionType.STRING, "search", "What to search for.", true),
+                        new OptionData(OptionType.USER, "victim", "Ping this person to victimize them!")
+                    )
+            );
     }
 
     @Override
-    public void slashExecute(@NotNull SlashCommandInteractionEvent event) {
+    public void execute(@NotNull SlashCommandInteractionEvent event) {
         String search = "https://lmgtfy.app/?q=" + event.getOption("search", "", OptionMapping::getAsString).replace("\s", "+") + (Objects.equals(event.getSubcommandName(), "images") ? "&t=i" : "");
         User victim = event.getOption("victim", OptionMapping::getAsUser);
 

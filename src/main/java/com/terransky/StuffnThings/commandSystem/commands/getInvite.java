@@ -1,7 +1,7 @@
 package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.commandSystem.ISlash;
+import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -11,13 +11,11 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class getInvite implements ISlash {
-    private final Color embedColor = new Commons().defaultEmbedColor;
-    private final Dotenv config = Dotenv.configure().load();
+public class getInvite implements ISlashCommand {
+    private final Dotenv config = Commons.config;
 
     @Override
     public String getName() {
@@ -42,11 +40,11 @@ public class getInvite implements ISlash {
     }
 
     @Override
-    public void slashExecute(@NotNull SlashCommandInteractionEvent event) {
-        List<Permission> perms = new Commons().requiredPerms();
+    public void execute(@NotNull SlashCommandInteractionEvent event) {
+        List<Permission> perms = Commons.requiredPerms();
 
-        EmbedBuilder eb = new EmbedBuilder().setColor(embedColor)
-                .setTitle("You can't even use this.", event.getJDA().getInviteUrl(perms));
+        EmbedBuilder eb = new EmbedBuilder().setColor(Commons.defaultEmbedColor)
+            .setTitle("You can't even use this.", event.getJDA().getInviteUrl(perms));
         event.replyEmbeds(eb.build()).queue();
     }
 }

@@ -17,32 +17,32 @@ public class configAutoResponse implements IModal {
     private final Logger log = LoggerFactory.getLogger(configAutoResponse.class);
 
     @Override
-    public String getModalID() {
+    public String getID() {
         return "config-auto-response";
     }
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public void modalExecute(@NotNull ModalInteractionEvent event) {
+    public void execute(@NotNull ModalInteractionEvent event) {
         String autoResponse = event.getValue("config-ar-text").getAsString();
         EmbedBuilder eb = new EmbedBuilder()
-                .setColor(new Commons().secondaryEmbedColor)
-                .setFooter(event.getUser().getAsTag(), event.getMember().getEffectiveAvatarUrl());
+            .setColor(Commons.secondaryEmbedColor)
+            .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
         MessageEmbed testAR = new EmbedBuilder()
-                .setColor(new Commons().defaultEmbedColor)
-                .setTitle("Report Message")
-                .setDescription(autoResponse)
-                .setFooter(event.getUser().getAsTag(), event.getMember().getEffectiveAvatarUrl())
-                .build();
+            .setColor(Commons.defaultEmbedColor)
+            .setTitle("Report Message")
+            .setDescription(autoResponse)
+            .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+            .build();
 
         try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                .prepareStatement("UPDATE guilds SET reporting_ar = ? WHERE guild_id = ?")) {
+            .prepareStatement("UPDATE guilds SET reporting_ar = ? WHERE guild_id = ?")) {
             stmt.setString(1, autoResponse);
             stmt.setString(2, event.getGuild().getId());
             stmt.execute();
 
             eb.setTitle("Config Updated")
-                    .setDescription("You have updated the auto response for the `Report Message` context action.\nThe next embed will show what it will look like.");
+                .setDescription("You have updated the auto response for the `Report Message` context action.\nThe next embed will show what it will look like.");
             event.replyEmbeds(eb.build(), testAR).queue();
         } catch (SQLException e) {
             log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
