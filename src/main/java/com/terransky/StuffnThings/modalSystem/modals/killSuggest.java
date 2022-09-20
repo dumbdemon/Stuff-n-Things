@@ -58,7 +58,7 @@ public class killSuggest implements IModal {
 
         try (WebhookClient client = builder.build()) {
             WebhookEmbed request = new WebhookEmbedBuilder()
-                .setColor(Commons.getIntFromColor(102, 52, 102))
+                .setColor(Commons.defaultEmbedColor.getRGB())
                 .setTitle(new WebhookEmbed.EmbedTitle("Kill-string Suggestion", null))
                 .setDescription(suggestion)
                 .addField(new WebhookEmbed.EmbedField(false, "From", "@%s".formatted(event.getUser().getAsTag())))

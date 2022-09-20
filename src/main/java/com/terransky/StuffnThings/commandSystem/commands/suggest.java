@@ -52,7 +52,7 @@ public class suggest implements ISlashCommand {
 
         try (WebhookClient client = builder.build()) {
             WebhookEmbed request = new WebhookEmbedBuilder()
-                .setColor(Commons.getIntFromColor(102, 52, 102))
+                .setColor(Commons.defaultEmbedColor.getRGB())
                 .setTitle(new WebhookEmbed.EmbedTitle("Command Suggestion", null))
                 .setDescription(description)
                 .addField(new WebhookEmbed.EmbedField(false, "Importance Value", "[" + importance + "/100]"))
