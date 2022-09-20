@@ -14,6 +14,7 @@ public class Commons {
     public static final Color secondaryEmbedColor = new Color(153, 77, 153);
     public static final Dotenv config = Dotenv.configure().load();
 
+    @Contract(pure = true)
     private Commons() {
     }
 
