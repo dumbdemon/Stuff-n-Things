@@ -116,26 +116,24 @@ public class ListeningForEvents extends ListenerAdapter {
     private void addGuildToDB(@NotNull Guild guild) {
         if (config.get("TESTING_MODE").equals("true")) return;
         String guildName = guild.getName(), guildId = guild.getId();
-        if (config.get("TESTING_MODE").equals("true")) {
-            try (final PreparedStatement sStmt = SQLiteDataSource.getConnection()
-                .prepareStatement("INSERT OR IGNORE INTO guilds(guild_id) VALUES(?)")) {
-                sStmt.setString(1, guildId);
-                sStmt.execute();
-                log.info("%s[%s] was added to the database".formatted(guildName, guildId));
+        try (final PreparedStatement sStmt = SQLiteDataSource.getConnection()
+            .prepareStatement("INSERT OR IGNORE INTO guilds(guild_id) VALUES(?)")) {
+            sStmt.setString(1, guildId);
+            sStmt.execute();
+            log.info("%s[%s] was added to the database".formatted(guildName, guildId));
 
-                try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                    .prepareStatement("CREATE TABLE IF NOT EXISTS users_" + guildId + " (" +
-                        "user_id TEXT PRIMARY KEY," +
-                        "kill_attempts INTEGER DEFAULT 0," +
-                        "kill_under_to INTEGER DEFAULT 0" +
-                        ");")) {
-                    stmt.execute();
-                    log.info("Users table for %s[%s] is ready".formatted(guildName, guildId));
-                }
-            } catch (SQLException e) {
-                log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-                e.printStackTrace();
+            try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
+                .prepareStatement("CREATE TABLE IF NOT EXISTS users_" + guildId + " (" +
+                    "user_id TEXT PRIMARY KEY," +
+                    "kill_attempts INTEGER DEFAULT 0," +
+                    "kill_under_to INTEGER DEFAULT 0" +
+                    ");")) {
+                stmt.execute();
+                log.info("Users table for %s[%s] is ready".formatted(guildName, guildId));
             }
+        } catch (SQLException e) {
+            log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
+            e.printStackTrace();
         }
     }
 }
