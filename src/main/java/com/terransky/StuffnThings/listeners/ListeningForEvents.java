@@ -45,7 +45,6 @@ public class ListeningForEvents extends ListenerAdapter {
             event.getGuild().updateCommands().addCommands(globalCommandData).queue();
             log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
         }
-
         addGuildToDB(event.getGuild());
 
         EmbedBuilder eb = new EmbedBuilder()
@@ -62,22 +61,24 @@ public class ListeningForEvents extends ListenerAdapter {
 
         log.info("I have left %s [%s]!".formatted(serverName, serverID));
 
-        try {
-            try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                .prepareStatement("DELETE FROM guilds WHERE guild_id = ?")) {
-                stmt.setString(1, event.getGuild().getId());
-                stmt.execute();
-                log.info("%s [%s] has been removed from the guilds table".formatted(event.getGuild().getName(), event.getGuild().getId()));
-            }
+        if (config.get("TESTING_MODE").equals("true")) {
+            try {
+                try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
+                    .prepareStatement("DELETE FROM guilds WHERE guild_id = ?")) {
+                    stmt.setString(1, event.getGuild().getId());
+                    stmt.execute();
+                    log.info("%s [%s] has been removed from the guilds table".formatted(event.getGuild().getName(), event.getGuild().getId()));
+                }
 
-            try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                .prepareStatement("DROP TABLE users_" + event.getGuild().getId())) {
-                stmt.execute();
-                log.info("Users table for %s [%s] has been removed from the database".formatted(event.getGuild().getName(), event.getGuild().getId()));
+                try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
+                    .prepareStatement("DROP TABLE users_" + event.getGuild().getId())) {
+                    stmt.execute();
+                    log.info("Users table for %s [%s] has been removed from the database".formatted(event.getGuild().getName(), event.getGuild().getId()));
+                }
+            } catch (SQLException e) {
+                log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-            e.printStackTrace();
         }
     }
 
@@ -88,14 +89,16 @@ public class ListeningForEvents extends ListenerAdapter {
         String userID = event.getUser().getId(),
             guildID = event.getGuild().getId();
 
-        try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-            .prepareStatement("DELETE FROM users_" + guildID + " WHERE user_id = ?")) {
-            stmt.setString(1, userID);
-            stmt.execute();
-            log.info("User %s left %s [%s]. Users table has been updated".formatted(userID, event.getGuild().getName(), guildID));
-        } catch (SQLException e) {
-            log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-            e.printStackTrace();
+        if (config.get("TESTING_MODE").equals("true")) {
+            try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
+                .prepareStatement("DELETE FROM users_" + guildID + " WHERE user_id = ?")) {
+                stmt.setString(1, userID);
+                stmt.execute();
+                log.info("User %s left %s [%s]. Users table has been updated".formatted(userID, event.getGuild().getName(), guildID));
+            } catch (SQLException e) {
+                log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
+                e.printStackTrace();
+            }
         }
     }
 
@@ -111,25 +114,28 @@ public class ListeningForEvents extends ListenerAdapter {
     }
 
     private void addGuildToDB(@NotNull Guild guild) {
+        if (config.get("TESTING_MODE").equals("true")) return;
         String guildName = guild.getName(), guildId = guild.getId();
-        try (final PreparedStatement sStmt = SQLiteDataSource.getConnection()
-            .prepareStatement("INSERT OR IGNORE INTO guilds(guild_id) VALUES(?)")) {
-            sStmt.setString(1, guildId);
-            sStmt.execute();
-            log.info("%s[%s] was added to the database".formatted(guildName, guildId));
+        if (config.get("TESTING_MODE").equals("true")) {
+            try (final PreparedStatement sStmt = SQLiteDataSource.getConnection()
+                .prepareStatement("INSERT OR IGNORE INTO guilds(guild_id) VALUES(?)")) {
+                sStmt.setString(1, guildId);
+                sStmt.execute();
+                log.info("%s[%s] was added to the database".formatted(guildName, guildId));
 
-            try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                .prepareStatement("CREATE TABLE IF NOT EXISTS users_" + guildId + " (" +
-                    "user_id TEXT PRIMARY KEY," +
-                    "kill_attempts INTEGER DEFAULT 0," +
-                    "kill_under_to INTEGER DEFAULT 0" +
-                    ");")) {
-                stmt.execute();
-                log.info("Users table for %s[%s] is ready".formatted(guildName, guildId));
+                try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
+                    .prepareStatement("CREATE TABLE IF NOT EXISTS users_" + guildId + " (" +
+                        "user_id TEXT PRIMARY KEY," +
+                        "kill_attempts INTEGER DEFAULT 0," +
+                        "kill_under_to INTEGER DEFAULT 0" +
+                        ");")) {
+                    stmt.execute();
+                    log.info("Users table for %s[%s] is ready".formatted(guildName, guildId));
+                }
+            } catch (SQLException e) {
+                log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-            e.printStackTrace();
         }
     }
 }
