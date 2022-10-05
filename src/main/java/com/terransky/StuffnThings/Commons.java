@@ -6,10 +6,29 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.text.DecimalFormat;
 import java.util.List;
+import java.util.*;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class Commons {
+    private static final NavigableMap<Float, String> suffixes = new TreeMap<>();
+
+    static {
+        suffixes.put(1_000f, " Thousand");
+        suffixes.put(1_000_000f, " Million");
+        suffixes.put(1_000_000_000f, " Billion");
+        suffixes.put(1_000_000_000_000f, " Trillion");
+        suffixes.put(1_000_000_000_000_000f, " Quadrillion");
+        suffixes.put(1_000_000_000_000_000_000f, " Quintillion");
+        suffixes.put(1_000_000_000_000_000_000_000f, " Sextillion");
+        suffixes.put(1_000_000_000_000_000_000_000_000f, " Septillion");
+        suffixes.put(1_000_000_000_000_000_000_000_000_000f, " Octillion");
+        suffixes.put(1_000_000_000_000_000_000_000_000_000_000f, " Nonillion");
+        suffixes.put(1_000_000_000_000_000_000_000_000_000_000_000f, " Decillion");
+        suffixes.put(1_000_000_000_000_000_000_000_000_000_000_000_000f, " Undecillion");
+    }
+
     public static final Color defaultEmbedColor = new Color(102, 51, 102);
     public static final Color secondaryEmbedColor = new Color(153, 77, 153);
     public static final Dotenv config = Dotenv.configure().load();
@@ -18,6 +37,11 @@ public class Commons {
     private Commons() {
     }
 
+    /**
+     * The Bot's minimum required permissions to run all commands.
+     *
+     * @return {@code List} of JDA {@code Permission}s.
+     */
     public static @NotNull List<Permission> requiredPerms() {
         List<Permission> permissionList = new ArrayList<>();
         //For funsies
@@ -33,5 +57,26 @@ public class Commons {
         permissionList.add(Permission.MESSAGE_HISTORY);
 
         return permissionList;
+    }
+
+    /**
+     * Makes extra large numbers look nice~
+     *
+     * @return {@code String} that contains a two-point decimal and the scale of value.
+     */
+    public static String largeNumberFormat(float value) {
+        DecimalFormat simpleNum = new DecimalFormat("#.##");
+
+        if (value == Float.MIN_VALUE) return largeNumberFormat(Float.MIN_VALUE + 1);
+        if (value < 0) return "-" + largeNumberFormat(-value);
+        if (value < 1000) return Float.toString(value);
+
+        Map.Entry<Float, String> e = suffixes.floorEntry(value);
+        float divideBy = e.getKey();
+        String suffix = e.getValue();
+
+        float truncated = value / (divideBy / 10);
+        boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
+        return hasDecimal ? simpleNum.format(truncated / 10d) + suffix : (truncated / 10) + suffix;
     }
 }

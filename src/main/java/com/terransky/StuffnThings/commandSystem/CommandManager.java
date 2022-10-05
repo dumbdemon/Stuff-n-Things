@@ -4,8 +4,10 @@ import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.commands.*;
 import com.terransky.StuffnThings.commandSystem.commands.admin.checkPerms;
 import com.terransky.StuffnThings.commandSystem.commands.admin.config;
+import com.terransky.StuffnThings.commandSystem.commands.mtg.calculateRats;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import com.terransky.StuffnThings.database.SQLiteDataSource;
+import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -24,14 +26,16 @@ import java.util.List;
 public class CommandManager extends ListenerAdapter {
     private final List<ISlashCommand> iSlashCommandsList = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(CommandManager.class);
+    private static final Dotenv config = Commons.config;
 
     public CommandManager() {
         //Admin Commands
         addCommand(new checkPerms());
-        addCommand(new config());
+        if (config.get("TESTING_MODE").equals("true")) addCommand(new config());
 
         //Fun Commands
         addCommand(new about());
+        addCommand(new calculateRats());
         addCommand(new colorInfo());
         addCommand(new getDadJokes());
         addCommand(new kill());
@@ -128,7 +132,7 @@ public class CommandManager extends ListenerAdapter {
             .setTitle("Oops!")
             .setDescription("An error occurred while executing that command!\nPlease contact <@" + Commons.config.get("OWNER_ID") + "> with the command that you used and when.")
             .setColor(Commons.defaultEmbedColor)
-            .setFooter(event.getUser().getAsTag());
+            .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
 
         if (cmd != null) {
             String origins = event.isFromGuild() ? "%s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()) : event.getUser().getAsTag() + "'s private channel";

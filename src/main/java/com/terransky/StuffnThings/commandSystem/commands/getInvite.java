@@ -4,7 +4,6 @@ import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -41,10 +40,11 @@ public class getInvite implements ISlashCommand {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event) {
-        List<Permission> perms = Commons.requiredPerms();
-
-        EmbedBuilder eb = new EmbedBuilder().setColor(Commons.defaultEmbedColor)
-            .setTitle("You can't even use this.", event.getJDA().getInviteUrl(perms));
-        event.replyEmbeds(eb.build()).queue();
+        event.replyEmbeds(
+            new EmbedBuilder()
+                .setColor(Commons.defaultEmbedColor)
+                .setTitle("You can't even use this.", event.getJDA().getInviteUrl(Commons.requiredPerms()))
+                .build()
+        ).queue();
     }
 }
