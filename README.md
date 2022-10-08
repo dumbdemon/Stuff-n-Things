@@ -42,4 +42,6 @@ The source code for my Discord™ bot Stuff'n'Things. Mostly an entertainment bo
   up yet.
 * `secretsAndLies()` class referenced in the main
   class [[core](https://github.com/dumbdemon/Stuff-n-Things/blob/master/src/main/java/com/terransky/StuffnThings/core.java#L49)]
+  and listener
+  class [[ListeningForEvents](https://github.com/dumbdemon/Stuff-n-Things/blob/87ec70d2f9174c042ce784cdd11c580e8866a322/src/main/java/com/terransky/StuffnThings/listeners/ListeningForEvents.java#L45)]
   contains real names and has been removed to avoid doxxing.
