@@ -7,7 +7,6 @@ import com.terransky.StuffnThings.commandSystem.commands.admin.config;
 import com.terransky.StuffnThings.commandSystem.commands.mtg.calculateRats;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import com.terransky.StuffnThings.database.SQLiteDataSource;
-import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -26,12 +25,11 @@ import java.util.List;
 public class CommandManager extends ListenerAdapter {
     private final List<ISlashCommand> iSlashCommandsList = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(CommandManager.class);
-    private static final Dotenv config = Commons.config;
 
     public CommandManager() {
         //Admin Commands
         addCommand(new checkPerms());
-        if (config.get("TESTING_MODE").equals("true")) addCommand(new config());
+        addCommand(new config());
 
         //Fun Commands
         addCommand(new about());
@@ -118,7 +116,7 @@ public class CommandManager extends ListenerAdapter {
         if (event.getUser().isBot()) return;
 
         //Add user to database or ignore if exists
-        if (config.get("TESTING_MODE").equals("true")) {
+        if (Commons.isTestingMode) {
             try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                 .prepareStatement("INSERT OR IGNORE INTO users_" + event.getGuild().getId() + "(user_id) VALUES(?)")) {
                 stmt.setString(1, event.getUser().getId());

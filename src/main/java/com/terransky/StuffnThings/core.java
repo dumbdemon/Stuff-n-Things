@@ -31,7 +31,7 @@ public class core {
     }
 
     public core() throws LoginException, SQLException {
-        if (config.get("TESTING_MODE").equals("true")) {
+        if (Commons.isTestingMode) {
             SQLiteDataSource.getConnection();
         }
 
@@ -58,12 +58,12 @@ public class core {
         ShardManager shardManager = shards.build();
 
         shardManager.addEventListener(
-            new ListeningForEvents(),
-            new CommandManager(),
             new ButtonManager(),
+            new CommandManager(),
+            new ListeningForEvents(),
+            new MessageContextManager(),
             new ModalManager(),
             new SelectMenuManager(),
-            new MessageContextManager(),
             new UserContextManager()
         );
     }

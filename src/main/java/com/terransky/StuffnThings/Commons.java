@@ -12,26 +12,29 @@ import java.util.*;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class Commons {
+    public static final Color defaultEmbedColor = new Color(102, 51, 102);
+    public static final Color secondaryEmbedColor = new Color(153, 102, 153);
+    public static final Dotenv config = Dotenv.configure().load();
+    /**
+     * Checks if config has been set to testing mode.
+     */
+    public static final boolean isTestingMode = config.get("TESTING_MODE").equals("true");
     private static final NavigableMap<Float, String> suffixes = new TreeMap<>();
 
     static {
-        suffixes.put(1_000f, " Thousand");
-        suffixes.put(1_000_000f, " Million");
-        suffixes.put(1_000_000_000f, " Billion");
-        suffixes.put(1_000_000_000_000f, " Trillion");
-        suffixes.put(1_000_000_000_000_000f, " Quadrillion");
-        suffixes.put(1_000_000_000_000_000_000f, " Quintillion");
-        suffixes.put(1_000_000_000_000_000_000_000f, " Sextillion");
-        suffixes.put(1_000_000_000_000_000_000_000_000f, " Septillion");
-        suffixes.put(1_000_000_000_000_000_000_000_000_000f, " Octillion");
-        suffixes.put(1_000_000_000_000_000_000_000_000_000_000f, " Nonillion");
-        suffixes.put(1_000_000_000_000_000_000_000_000_000_000_000f, " Decillion");
-        suffixes.put(1_000_000_000_000_000_000_000_000_000_000_000_000f, " Undecillion");
+        suffixes.put(1_000f, "\sThousand");
+        suffixes.put(1_000_000f, "\sMillion");
+        suffixes.put(1_000_000_000f, "\sBillion");
+        suffixes.put(1_000_000_000_000f, "\sTrillion");
+        suffixes.put(1_000_000_000_000_000f, "\sQuadrillion");
+        suffixes.put(1_000_000_000_000_000_000f, "\sQuintillion");
+        suffixes.put(1_000_000_000_000_000_000_000f, "\sSextillion");
+        suffixes.put(1_000_000_000_000_000_000_000_000f, "\sSeptillion");
+        suffixes.put(1_000_000_000_000_000_000_000_000_000f, "\sOctillion");
+        suffixes.put(1_000_000_000_000_000_000_000_000_000_000f, "\sNonillion");
+        suffixes.put(1_000_000_000_000_000_000_000_000_000_000_000f, "\sDecillion");
+        suffixes.put(1_000_000_000_000_000_000_000_000_000_000_000_000f, "\sUndecillion");
     }
-
-    public static final Color defaultEmbedColor = new Color(102, 51, 102);
-    public static final Color secondaryEmbedColor = new Color(153, 77, 153);
-    public static final Dotenv config = Dotenv.configure().load();
 
     @Contract(pure = true)
     private Commons() {
@@ -78,6 +81,6 @@ public class Commons {
 
         float truncated = value / (divideBy / 10);
         boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
-        return hasDecimal ? simpleNum.format(truncated / 10d) + suffix : (truncated / 10) + suffix;
+        return hasDecimal ? simpleNum.format(truncated / 10d) + suffix : simpleNum.format(truncated / 10) + suffix;
     }
 }

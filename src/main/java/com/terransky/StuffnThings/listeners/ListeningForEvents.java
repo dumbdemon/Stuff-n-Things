@@ -3,8 +3,9 @@ package com.terransky.StuffnThings.listeners;
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.CommandManager;
 import com.terransky.StuffnThings.database.SQLiteDataSource;
-import io.github.cdimascio.dotenv.Dotenv;
+import com.terransky.StuffnThings.secretsAndLies;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.ReadyEvent;
@@ -20,28 +21,38 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class ListeningForEvents extends ListenerAdapter {
     private final Logger log = LoggerFactory.getLogger("Main Listener");
-    private final Dotenv config = Commons.config;
     private final List<CommandData> globalCommandData = new CommandManager().getCommandData(true);
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
-        if (config.get("TESTING_MODE").equals("false")) {
+        if (!Commons.isTestingMode) {
             log.info(globalCommandData.size() + " global commands loaded!");
             event.getJDA().updateCommands().addCommands(globalCommandData).queue();
         } else event.getJDA().updateCommands().queue();
         log.info("Service started!");
+
+        if (!Commons.isTestingMode) {
+            new Timer().scheduleAtFixedRate(new TimerTask() {
+                @Override
+                @SuppressWarnings("ConstantConditions")
+                public void run() {
+                    String[] watchList = secretsAndLies.whatAmIWatching;
+
+                    event.getJDA().getShardManager().setActivity(Activity.playing(watchList[(new Random()).nextInt(watchList.length)]));
+                }
+            }, 0, 600000);
+        }
     }
 
     @Override
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
         User theBot = event.getJDA().getSelfUser();
 
-        if (config.get("TESTING_MODE").equals("true")) {
+        if (Commons.isTestingMode) {
             event.getGuild().updateCommands().addCommands(globalCommandData).queue();
             log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
         }
@@ -61,7 +72,7 @@ public class ListeningForEvents extends ListenerAdapter {
 
         log.info("I have left %s [%s]!".formatted(serverName, serverID));
 
-        if (config.get("TESTING_MODE").equals("true")) {
+        if (Commons.isTestingMode) {
             try {
                 try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                     .prepareStatement("DELETE FROM guilds WHERE guild_id = ?")) {
@@ -89,7 +100,7 @@ public class ListeningForEvents extends ListenerAdapter {
         String userID = event.getUser().getId(),
             guildID = event.getGuild().getId();
 
-        if (config.get("TESTING_MODE").equals("true")) {
+        if (Commons.isTestingMode) {
             try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                 .prepareStatement("DELETE FROM users_" + guildID + " WHERE user_id = ?")) {
                 stmt.setString(1, userID);
@@ -104,7 +115,7 @@ public class ListeningForEvents extends ListenerAdapter {
 
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
-        if (config.get("TESTING_MODE").equals("true")) {
+        if (Commons.isTestingMode) {
             event.getGuild().updateCommands().addCommands(globalCommandData).queue();
             log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
         }
@@ -114,7 +125,7 @@ public class ListeningForEvents extends ListenerAdapter {
     }
 
     private void addGuildToDB(@NotNull Guild guild) {
-        if (config.get("TESTING_MODE").equals("true")) return;
+        if (Commons.isTestingMode) return;
         String guildName = guild.getName(), guildId = guild.getId();
         try (final PreparedStatement sStmt = SQLiteDataSource.getConnection()
             .prepareStatement("INSERT OR IGNORE INTO guilds(guild_id) VALUES(?)")) {

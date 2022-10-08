@@ -28,6 +28,11 @@ public class config implements ISlashCommand {
     }
 
     @Override
+    public boolean workingCommand() {
+        return Commons.isTestingMode;
+    }
+
+    @Override
     public CommandData commandData() {
         return Commands.slash(this.getName(), "The config manager.")
             .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))

@@ -52,7 +52,7 @@ public class calculateRats implements ISlashCommand {
             eb.setDescription("Yes.")
                 .addField("Final Count", "INFINITE", false);
         } else eb.setDescription("No.")
-            .addField("Final Count (Short-Hand)", "%s rats".formatted(Commons.largeNumberFormat(finalCNT).replace(".0\s", "\s")), false)
+            .addField("Final Count (Short-Hand)", ("%s rats".formatted(Commons.largeNumberFormat(finalCNT)).replace(".0\s", "\s")), false)
             .addField("Final Count (Full Number)", "%s rats".formatted(largeNumber.format(finalCNT)), false);
 
         event.getHook().sendMessageEmbeds(eb.build()).queue();
