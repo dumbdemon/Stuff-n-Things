@@ -25,7 +25,7 @@ public class about implements ISlashCommand {
             .setColor(Commons.defaultEmbedColor)
             .setDescription("> *Who am I?*\n> *What am I?*\n> *I think I need help...*")
             .setTitle(event.getJDA().getSelfUser().getName())
-            .setThumbnail("https://cdn.discordapp.com/attachments/1004779062658617346/1004782398564745318/StuffnThings_-_Main.png")
+            .setThumbnail(Commons.config.get("BOT_LOGO"))
             .build()
         ).queue();
     }

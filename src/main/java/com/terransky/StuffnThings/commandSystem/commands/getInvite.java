@@ -2,7 +2,6 @@ package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
-import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -14,8 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class getInvite implements ISlashCommand {
-    private final Dotenv config = Commons.config;
-
     @Override
     public String getName() {
         return "get-invite";
@@ -34,7 +31,7 @@ public class getInvite implements ISlashCommand {
     @Override
     public @Nullable List<Long> getServerRestrictions() {
         final List<Long> ids = new ArrayList<>();
-        ids.add(Long.parseLong(config.get("SUPPORT_GUILD_ID")));
+        ids.add(Long.parseLong(Commons.config.get("SUPPORT_GUILD_ID")));
         return ids;
     }
 

@@ -5,7 +5,6 @@ import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -30,7 +29,6 @@ public class userInfo implements ISlashCommand {
             .addOption(OptionType.USER, "user", "Who you want to know about.");
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event) {
         User uVictim = event.getOption("user", event.getUser(), OptionMapping::getAsUser);
@@ -66,19 +64,19 @@ public class userInfo implements ISlashCommand {
 
         eb.setAuthor(WordUtils.capitalize(mVictim.getEffectiveName()) + "'s Info")
             .setThumbnail(mVictim.getEffectiveAvatarUrl())
-            .addField(new MessageEmbed.Field("User ID", uVictim.getId(), true))
-            .addField(new MessageEmbed.Field("User Status", permText.toString(), true))
-            .addField(new MessageEmbed.Field("Server Permissions", finalUserPerms, false))
-            .addField(new MessageEmbed.Field("Joined Server on", "<t:" + mVictim.getTimeJoined().toEpochSecond() + ":F>", true))
-            .addField(new MessageEmbed.Field("Joined Discord on", "<t:" + uVictim.getTimeCreated().toEpochSecond() + ":F>", true))
+            .addField("User ID", uVictim.getId(), true)
+            .addField("User Status", permText.toString(), true)
+            .addField("Server Permissions", finalUserPerms, false)
+            .addField("Joined Server on", "<t:" + mVictim.getTimeJoined().toEpochSecond() + ":F>", true)
+            .addField("Joined Discord on", "<t:" + uVictim.getTimeCreated().toEpochSecond() + ":F>", true)
             .setFooter("Requested by " + event.getUser().getAsTag() + " | " + event.getUser().getId(), event.getUser().getEffectiveAvatarUrl());
 
         if (!uVictim.isBot()) {
             String boostedText;
-            if (mVictim.isBoosting())
+            if (mVictim.getTimeBoosted() != null)
                 boostedText = ":gem: <t:%d:F> (<t:%d:R>)".formatted(mVictim.getTimeBoosted().toEpochSecond(), mVictim.getTimeBoosted().toEpochSecond());
             else boostedText = ":x: Not Boosting.";
-            eb.addField(new MessageEmbed.Field("Boosting Since", boostedText, false));
+            eb.addField("Boosting Since", boostedText, false);
         }
 
         event.replyEmbeds(eb.build()).queue();

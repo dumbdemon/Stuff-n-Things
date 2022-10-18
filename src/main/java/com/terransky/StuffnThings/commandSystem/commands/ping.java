@@ -4,7 +4,6 @@ import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -29,10 +28,10 @@ public class ping implements ISlashCommand {
             .setTitle("Ping Info")
             .setFooter("Requested by " + event.getUser().getAsTag());
 
-        jda.getRestPing().queue(ping -> event.replyEmbeds(eb
-            .addField(new MessageEmbed.Field("Reset Ping", ping + "ms", true))
-            .addField(new MessageEmbed.Field("Web Socket Ping", jda.getGatewayPing() + "ms", true))
-            .build()
+        jda.getRestPing().queue(ping -> event.replyEmbeds(
+            eb.addField("Reset Ping", ping + "ms", true)
+                .addField("Web Socket Ping", jda.getGatewayPing() + "ms", true)
+                .build()
         ).queue());
     }
 }

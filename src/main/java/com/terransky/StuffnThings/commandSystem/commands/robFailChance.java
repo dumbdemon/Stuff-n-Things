@@ -3,7 +3,6 @@ package com.terransky.StuffnThings.commandSystem.commands;
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -14,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class robFailChance implements ISlashCommand {
     @Override
     public String getName() {
@@ -29,22 +29,22 @@ public class robFailChance implements ISlashCommand {
             );
     }
 
-    @SuppressWarnings({"ConstantConditions", "SpellCheckingInspection"})
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event) {
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(Commons.defaultEmbedColor);
         DecimalFormat largeNumber = new DecimalFormat("##,###");
         String uBoatInvite = "https://discord.com/oauth2/authorize?client_id=292953664492929025&scope=bot%20applications.commands&permissions=829811966&response_type=code&redirect_uri=https://unbelievaboat.com/landing";
+        if (event.getGuild() == null) return;
 
-        double yourNetWorth = event.getOption("your-net-worth", OptionMapping::getAsDouble),
-            theirCash = event.getOption("their-cash", OptionMapping::getAsDouble),
-            failChance = yourNetWorth / (theirCash + yourNetWorth);
+        double yourNetWorth = event.getOption("your-net-worth", 0d, OptionMapping::getAsDouble),
+            theirCash = event.getOption("their-cash", 0d, OptionMapping::getAsDouble);
+        String failChance = String.format("%.2f", (yourNetWorth / (theirCash + yourNetWorth)) * 100) + "%";
 
         eb.setAuthor("Your chance to fail is...")
-            .addField(new MessageEmbed.Field("Your Net-Worth", largeNumber.format(yourNetWorth), true))
-            .addField(new MessageEmbed.Field("Their Cash", largeNumber.format(theirCash), true))
-            .addField(new MessageEmbed.Field("Failure Chance", String.format("%.2f", failChance * 100) + "%", true));
+            .addField("Your Net-Worth", largeNumber.format(yourNetWorth), true)
+            .addField("Their Cash", largeNumber.format(theirCash), true)
+            .addField("Failure Chance", failChance, true);
 
         if (event.getGuild().getRoleByBot(356950275044671499L) != null || event.getGuild().getRoleByBot(292953664492929025L) != null) {
             event.replyEmbeds(eb.build()).queue();

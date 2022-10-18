@@ -48,7 +48,7 @@ public class core {
 
         String[] whatAmIWatching = secretsAndLies.whatAmIWatching;
 
-        if (config.get("TESTING_MODE").equals("true")) {
+        if (Commons.isTestingMode) {
             shards.setStatus(OnlineStatus.INVISIBLE);
         } else {
             Random random = new Random();

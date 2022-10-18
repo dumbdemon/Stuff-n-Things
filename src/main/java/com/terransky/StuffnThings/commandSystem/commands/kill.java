@@ -41,7 +41,7 @@ public class kill implements ISlashCommand {
             );
     }
 
-    @SuppressWarnings("ConstantConditions")
+    //@SuppressWarnings("ConstantConditions")
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event) throws Exception {
         Random random = new Random();
@@ -59,6 +59,8 @@ public class kill implements ISlashCommand {
         }
         String[] targets = victims.toArray(new String[0]);
         if (subCommand == null) throw new Exception("Discord API Error: No subcommand was given.");
+        String killer = "";
+        if (event.getMember() != null) killer = event.getMember().getEffectiveName();
 
         switch (subCommand) {
             case "random" -> {
@@ -70,7 +72,7 @@ public class kill implements ISlashCommand {
                 );
 
                 eb.setColor(Commons.defaultEmbedColor)
-                    .setTitle(event.getMember().getEffectiveName())
+                    .setTitle(killer)
                     .setDescription("\u2026 " + message)
                     .setFooter("Requested by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
 
@@ -96,14 +98,11 @@ public class kill implements ISlashCommand {
                 if (target.equals(event.getJDA().getSelfUser().getAsMention())) {
                     target = event.getJDA().getSelfUser().getAsMention() + " (hey wait a second...)";
                 }
-                eb.setTitle(event.getMember().getEffectiveName())
+                eb.setTitle(killer)
                     .setDescription("\u2026 %s".formatted(targetStrings[random.nextInt(targetStrings.length)]).formatted(target))
                     .setFooter("Requested by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
                 event.replyEmbeds(eb.build()).queue();
             }
-
-            default -> eb.setTitle("How did you get here?")
-                .setDescription("No seriously how did you get here?\nThat's impossible.");
         }
     }
 }

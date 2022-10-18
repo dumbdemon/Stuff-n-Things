@@ -5,6 +5,7 @@ import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
@@ -40,19 +41,20 @@ public class checkPerms implements ISlashCommand {
             .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_ROLES));
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event) throws Exception {
         EnumSet<Permission> myPerms;
         GuildChannel toCheck = null;
         if (event.getSubcommandName() == null) throw new Exception("Discord API Error: No subcommand was given.");
+        Guild guild = null;
+        if (event.getGuild() != null) guild = event.getGuild();
 
         if (event.getSubcommandName().equals("server")) {
-            myPerms = event.getGuild().getSelfMember().getPermissions();
+            myPerms = guild.getSelfMember().getPermissions();
         } else {
             toCheck = event.getOption("check-channel", OptionMapping::getAsChannel);
             assert toCheck != null;
-            myPerms = event.getGuild().getSelfMember().getPermissions(toCheck);
+            myPerms = guild.getSelfMember().getPermissions(toCheck);
         }
 
         List<Permission> requiredPerms = Commons.requiredPerms(),
@@ -69,9 +71,9 @@ public class checkPerms implements ISlashCommand {
         }
 
         if (dontHaveThis.size() == 0) {
-            event.replyEmbeds(eb.setDescription("I have all necessary permissions. Thank you! :heart:").build()).queue();
+            event.replyEmbeds(eb.setDescription("I have all necessary permissions for %s. Thank you! :heart:".formatted(toCheck != null ? toCheck.getAsMention() : "this server")).build()).queue();
         } else {
-            eb.setDescription("I'm missing the following permissions%s:".formatted(toCheck != null ? " for %s".formatted(toCheck.getAsMention()) : ""));
+            eb.setDescription("I'm missing the following permissions for %s:".formatted(toCheck != null ? toCheck.getAsMention() : "this server"));
             for (Permission permission : dontHaveThis) {
                 eb.addField(permission.getName(), "false", false);
             }

@@ -30,7 +30,7 @@ public class suggest implements ISlashCommand {
             .addOptions(
                 new OptionData(OptionType.STRING, "suggestion", "What do you want the bot to do?", true),
                 new OptionData(OptionType.INTEGER, "importance", "How important on a scale. Where 1 is low, 50 is semi, 100 is high, and everything in-between.", true)
-                    .setMinValue(1).setMaxValue(100)
+                    .setRequiredRange(1, 100)
             );
     }
 
