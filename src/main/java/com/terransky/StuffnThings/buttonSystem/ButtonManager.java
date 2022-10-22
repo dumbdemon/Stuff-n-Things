@@ -4,6 +4,7 @@ import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.buttonSystem.buttons.getMoreDadJokes;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class ButtonManager extends ListenerAdapter {
     private final Dotenv config = Dotenv.configure().load();
@@ -46,25 +46,26 @@ public class ButtonManager extends ListenerAdapter {
         return null;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
-        IButton butt = getButton(Objects.requireNonNull(event.getButton().getId()));
-        EmbedBuilder eb = new EmbedBuilder()
+        if (event.getGuild() == null || event.getButton().getId() == null) return;
+
+        IButton butt = getButton(event.getButton().getId());
+        MessageEmbed buttonFailed = new EmbedBuilder()
             .setTitle("Oops!")
-            .setDescription("An error occurred while executing the button!\nPlease contact <@" + config.get("OWNER_ID") + "> with the button you click/tapped on and when.")
+            .setDescription("An error occurred while executing the button!\nPlease contact <@" + config.get("OWNER_ID") + "> with the button you clicked/tapped on and when.")
             .setColor(Commons.defaultEmbedColor)
-            .setFooter(event.getUser().getAsTag());
+            .setFooter(event.getUser().getAsTag())
+            .build();
 
         if (butt != null) {
-            String origins = event.isFromGuild() ? "%s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()) : event.getUser().getAsTag() + "'s private channel";
-            log.debug("Button " + butt.getID().toUpperCase() + " called on " + origins);
+            log.debug("Button " + butt.getID().toUpperCase() + " called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
             try {
                 butt.execute(event);
             } catch (Exception e) {
-                log.debug(event.getButton().getId() + " interaction on " + origins);
+                log.debug(event.getButton().getId() + " interaction on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
                 log.error(e.getClass().getName() + ": " + e.getMessage());
-                event.replyEmbeds(eb.build()).setEphemeral(true).queue();
+                event.replyEmbeds(buttonFailed).setEphemeral(true).queue();
             }
         }
     }

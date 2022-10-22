@@ -44,9 +44,10 @@ public class ModalManager extends ListenerAdapter {
         return null;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {
+        if (event.getGuild() == null) return;
+
         IModal modal = getModal(event.getModalId());
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle("Oops!")
@@ -55,12 +56,11 @@ public class ModalManager extends ListenerAdapter {
             .setFooter(event.getUser().getAsTag());
 
         if (modal != null) {
-            String origins = event.isFromGuild() ? "%s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()) : event.getUser().getAsTag() + "'s private channel";
-            log.debug("Modal " + modal.getID().toUpperCase() + " called on " + origins);
+            log.debug("Modal " + modal.getID().toUpperCase() + " called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
             try {
                 modal.execute(event);
             } catch (Exception e) {
-                log.debug(event.getModalId() + " interaction on " + origins);
+                log.debug(event.getModalId() + " interaction on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
                 log.error(e.getClass().getName() + ": " + e.getMessage());
                 if (event.isAcknowledged()) {
                     event.getHook().sendMessageEmbeds(eb.build()).queue();

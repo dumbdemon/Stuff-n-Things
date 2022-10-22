@@ -43,7 +43,7 @@ public class Commons {
     /**
      * The Bot's minimum required permissions to run all commands.
      *
-     * @return {@code List} of JDA {@link Permission}s.
+     * @return {@link List} of JDA {@link Permission}s.
      */
     public static @NotNull List<Permission> requiredPerms() {
         List<Permission> permissionList = new ArrayList<>();
