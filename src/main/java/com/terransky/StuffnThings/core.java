@@ -38,9 +38,7 @@ public class core {
         DefaultShardManagerBuilder shards = DefaultShardManagerBuilder.createDefault(config.get("TOKEN"))
             .enableIntents(
                 GatewayIntent.GUILD_MEMBERS,
-                GatewayIntent.GUILD_PRESENCES,
-                GatewayIntent.DIRECT_MESSAGES,
-                GatewayIntent.MESSAGE_CONTENT
+                GatewayIntent.GUILD_PRESENCES
             )
             .enableCache(CacheFlag.ONLINE_STATUS)
             .setMemberCachePolicy(MemberCachePolicy.ALL)
