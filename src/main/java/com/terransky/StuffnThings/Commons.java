@@ -43,7 +43,7 @@ public class Commons {
     /**
      * The Bot's minimum required permissions to run all commands.
      *
-     * @return {@code List} of JDA {@code Permission}s.
+     * @return {@code List} of JDA {@link Permission}s.
      */
     public static @NotNull List<Permission> requiredPerms() {
         List<Permission> permissionList = new ArrayList<>();
@@ -66,7 +66,7 @@ public class Commons {
      * Makes extra large numbers look nice~ <br />
      * Code Courtesy of <a href="https://stackoverflow.com/questions/4753251/how-to-go-about-formatting-1200-to-1-2k-in-java">assylias's answer</a> on stackoverflow.
      *
-     * @return {@code String} that contains a two-point decimal and the scale of value.
+     * @return {@link String} that contains a two-point decimal and the scale of value.
      */
     public static String largeNumberFormat(float value) {
         DecimalFormat simpleNum = new DecimalFormat("#.##");

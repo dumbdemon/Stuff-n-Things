@@ -33,7 +33,7 @@ public class freshMemeData {
     private String message;
 
 
-    public boolean isNsfw() {
+    public boolean isExplicit() {
         return nsfw;
     }
 
