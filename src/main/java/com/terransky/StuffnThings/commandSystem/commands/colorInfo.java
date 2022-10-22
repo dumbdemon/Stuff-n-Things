@@ -2,6 +2,7 @@ package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
+import com.terransky.StuffnThings.exceptions.DiscordAPIException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -94,7 +95,7 @@ public class colorInfo implements ISlashCommand {
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle(WordUtils.capitalize(this.getName().replace("-", "\s")))
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
-        if (subCommand == null) throw new Exception("Discord API Error: No subcommand was given.");
+        if (subCommand == null) throw new DiscordAPIException("No subcommand was given.");
 
         switch (subCommand) {
             case "hex-triplet" -> {

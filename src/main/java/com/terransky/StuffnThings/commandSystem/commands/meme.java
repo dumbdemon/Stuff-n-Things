@@ -3,6 +3,7 @@ package com.terransky.StuffnThings.commandSystem.commands;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
+import com.terransky.StuffnThings.exceptions.DiscordAPIException;
 import com.terransky.StuffnThings.jacksonMapper.freshMemeData;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -42,7 +43,7 @@ public class meme implements ISlashCommand {
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(Commons.defaultEmbedColor);
         String subCommand = event.getSubcommandName();
-        if (subCommand == null) throw new Exception("Discord API Error: No subcommand was given.");
+        if (subCommand == null) throw new DiscordAPIException("No subcommand was given.");
 
         event.deferReply().queue();
 

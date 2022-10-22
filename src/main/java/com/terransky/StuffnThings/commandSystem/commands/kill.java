@@ -3,6 +3,7 @@ package com.terransky.StuffnThings.commandSystem.commands;
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.commands.cmdResources.killStrings;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
+import com.terransky.StuffnThings.exceptions.DiscordAPIException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -58,7 +59,7 @@ public class kill implements ISlashCommand {
             }
         }
         String[] targets = victims.toArray(new String[0]);
-        if (subCommand == null) throw new Exception("Discord API Error: No subcommand was given.");
+        if (subCommand == null) throw new DiscordAPIException("No subcommand was given.");
         String killer = "";
         if (event.getMember() != null) killer = event.getMember().getEffectiveName();
 
