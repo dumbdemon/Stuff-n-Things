@@ -13,6 +13,7 @@ The source code for my Discord™ bot Stuff'n'Things. Mostly an entertainment bo
 * `/config kill max-kills`
 * `/config kill set-timeout`
 * `/dad-joke`
+* `/dictionary <word>`
 * `/get-invite`
 * `/kill random`
 * `/kill target`
@@ -25,6 +26,9 @@ The source code for my Discord™ bot Stuff'n'Things. Mostly an entertainment bo
 * `/say <message> [channel]`
 * `/suggest-command <suggestion> <importance>`
 * `/user-info [user]`
+* `/mtg-standard all`
+* `/mtg-standard sets`
+* `/mtg-standard bans [include-reason]`
 
 ## Things to Note
 

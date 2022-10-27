@@ -5,6 +5,7 @@ import com.terransky.StuffnThings.commandSystem.commands.*;
 import com.terransky.StuffnThings.commandSystem.commands.admin.checkPerms;
 import com.terransky.StuffnThings.commandSystem.commands.admin.config;
 import com.terransky.StuffnThings.commandSystem.commands.mtg.calculateRats;
+import com.terransky.StuffnThings.commandSystem.commands.mtg.whatsInStandard;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import com.terransky.StuffnThings.database.SQLiteDataSource;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -37,12 +38,14 @@ public class CommandManager extends ListenerAdapter {
         addCommand(new about());
         addCommand(new calculateRats());
         addCommand(new colorInfo());
+        addCommand(new dictionary());
         addCommand(new getDadJokes());
         addCommand(new kill());
         addCommand(new lmgtfy());
         addCommand(new meme());
         addCommand(new robFailChance());
         addCommand(new say());
+        addCommand(new whatsInStandard());
 
         //General Commands
         addCommand(new ping());

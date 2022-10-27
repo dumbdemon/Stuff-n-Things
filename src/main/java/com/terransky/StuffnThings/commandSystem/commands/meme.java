@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import com.terransky.StuffnThings.exceptions.DiscordAPIException;
-import com.terransky.StuffnThings.jacksonMapper.freshMemeData;
+import com.terransky.StuffnThings.jacksonMapper.freshMemes.FreshMemeData;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -52,7 +52,7 @@ public class meme implements ISlashCommand {
             String redditLogo = "https://cdn.discordapp.com/attachments/1004795281734377564/1005203741026299954/Reddit_Mark_OnDark.png";
             try {
                 URL memeURL = new URL("https://meme-api.herokuapp.com/gimme/" + subreddit);
-                freshMemeData memeData = om.readValue(memeURL, freshMemeData.class);
+                FreshMemeData memeData = om.readValue(memeURL, FreshMemeData.class);
                 eb.setFooter("Reddit | u/%s | r/%s".formatted(memeData.getAuthor(), memeData.getSubreddit()), redditLogo);
 
                 if (memeData.isSpoiler()) {
