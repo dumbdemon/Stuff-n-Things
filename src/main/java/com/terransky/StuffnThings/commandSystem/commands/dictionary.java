@@ -80,7 +80,7 @@ public class dictionary implements ISlashCommand {
                 event.replyEmbeds(defEmbedList).queue();
             }
             case 401, 429 -> event.replyEmbeds(
-                eb.setDescription("Unable to get the definition of [%s]. Please wait a couple minutes and try again. If this message continues to appear, please contact <@%s> to fis this.".formatted(toLookUp.toUpperCase(), Commons.config.get("OWNER_ID")))
+                eb.setDescription("Unable to get the definition of [%s]. Please wait a couple minutes and try again. If this message continues to appear, please contact <@%s> to fix this.".formatted(toLookUp.toUpperCase(), Commons.config.get("OWNER_ID")))
                     .build()
             ).queue();
             case 404 -> event.replyEmbeds(
