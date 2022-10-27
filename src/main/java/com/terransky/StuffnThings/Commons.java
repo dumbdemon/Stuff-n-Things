@@ -56,8 +56,6 @@ public class Commons {
         permissionList.add(Permission.VIEW_CHANNEL);
 
         //Moderation
-        permissionList.add(Permission.MANAGE_WEBHOOKS);
-        permissionList.add(Permission.MESSAGE_HISTORY);
 
         return permissionList;
     }

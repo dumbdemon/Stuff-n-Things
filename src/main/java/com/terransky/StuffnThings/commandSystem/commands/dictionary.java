@@ -53,7 +53,6 @@ public class dictionary implements ISlashCommand {
         switch (owlBotConnection.getResponseCode()) {
             case 200 -> {
                 ObjectMapper om = new ObjectMapper();
-
                 OwlBotData definitions = om.readValue(new InputStreamReader(owlBotConnection.getInputStream()), OwlBotData.class);
 
                 List<MessageEmbed> defEmbedList = new ArrayList<>();
