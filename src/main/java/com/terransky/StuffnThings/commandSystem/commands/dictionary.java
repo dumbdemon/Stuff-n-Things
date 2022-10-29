@@ -63,6 +63,7 @@ public class dictionary implements ISlashCommand {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event) throws Exception {
+        event.deferReply().queue();
         String[] userWords = event.getOption("word", "", OptionMapping::getAsString).split("\s");
         EmbedBuilder eb1 = new EmbedBuilder()
             .setTitle("Dictionary")
@@ -75,7 +76,7 @@ public class dictionary implements ISlashCommand {
             .setImage("https://languages.oup.com/wp-content/uploads/ol-logo-colour-300px-sfw.jpg")
             .setColor(Commons.secondaryEmbedColor);
         if (userWords.length > 1) {
-            event.replyEmbeds(
+            event.getHook().sendMessageEmbeds(
                 eb1.setDescription("Only one word can looked up at one time. Please try again.")
                     .build()
             ).queue();
@@ -136,6 +137,16 @@ public class dictionary implements ISlashCommand {
                     }
                 }
 
+                if (i == 0) {
+                    event.getHook().sendMessageEmbeds(
+                        eb1.setTitle("Definition - %s".formatted(returnedWord.toUpperCase()))
+                            .setDescription("%s is in the dictionary; however, there appears to be no definitions. Try using a different variation of the word"
+                                .formatted(WordUtils.capitalize(returnedWord))
+                            ).build()
+                    ).queue();
+                    return;
+                }
+
                 boolean moreThanOne = i > 1;
 
                 eb1.setTitle("Definition - %s".formatted(returnedWord.toUpperCase()))
@@ -155,11 +166,11 @@ public class dictionary implements ISlashCommand {
                     for (MessageEmbed.Field field : fieldOverflow) {
                         eb2.addField(field);
                     }
-                    event.replyEmbeds(eb1.build(), eb2.build()).queue();
-                } else event.replyEmbeds(eb1.build()).queue();
+                    event.getHook().sendMessageEmbeds(eb1.build(), eb2.build()).queue();
+                } else event.getHook().sendMessageEmbeds(eb1.build()).queue();
             }
             case 400 -> {
-                event.replyEmbeds(
+                event.getHook().sendMessageEmbeds(
                     eb1.setDescription("Unable to get the definition of [%s]. Make sure you have typed the word correctly, If this message continues to appear, please contact <@%s> to fix this."
                         .formatted(toLookUp.toUpperCase(), Commons.config.get("OWNER_ID"))
                     ).build()
@@ -169,7 +180,7 @@ public class dictionary implements ISlashCommand {
                 log.error("400 Bad Request: %s".formatted(message));
             }
             case 403 -> {
-                event.replyEmbeds(
+                event.getHook().sendMessageEmbeds(
                     eb1.setDescription("")
                         .build()
                 ).queue();
@@ -177,13 +188,13 @@ public class dictionary implements ISlashCommand {
                 String message = om.readValue(new InputStreamReader(oxfordConnection.getInputStream()), OxfordError.class).getError();
                 log.error("403 Authentication failed: %s".formatted(message));
             }
-            case 404 -> event.replyEmbeds(
+            case 404 -> event.getHook().sendMessageEmbeds(
                 eb1.setTitle("Definition - %s".formatted(toLookUp.toUpperCase()))
                     .setDescription("There are no *%s* definitions for [%s].\n\nEither the word does not exist or you have mistyped.".formatted(e.getKey(), toLookUp.toUpperCase()))
                     .build()
             ).queue();
             case 500 -> {
-                event.replyEmbeds(
+                event.getHook().sendMessageEmbeds(
                     eb1.setDescription("Looks like something went wrong with the API. Please let <@%s> know so he can send a message to Oxford."
                             .formatted(Commons.config.get("OWNER_ID")))
                         .build()
@@ -192,12 +203,12 @@ public class dictionary implements ISlashCommand {
                 String message = om.readValue(new InputStreamReader(oxfordConnection.getInputStream()), OxfordError.class).getError();
                 log.error("500 Internal Server Error: %s".formatted(message));
             }
-            case 414 -> event.replyEmbeds(
+            case 414 -> event.getHook().sendMessageEmbeds(
                 eb1.setDescription("Your word can be at most 128 characters. Please look up a different word.")
                     .build()
             ).queue();
             case 502 -> {
-                event.replyEmbeds(
+                event.getHook().sendMessageEmbeds(
                     eb1.setDescription("The API server is currently down or being upgraded. Please try this command later.\n\n[https://downforeveryoneorjustme.com/languages.oup.com?proto=https](Click me to check.)")
                         .build()
                 ).queue();
@@ -209,7 +220,7 @@ public class dictionary implements ISlashCommand {
                 boolean isIt503 = responseCode == 503;
                 String serviceUnavailable = "there appear to be too many requests in the queue";
                 String gatewayTimeout = "something went wrong while in queue";
-                event.replyEmbeds(
+                event.getHook().sendMessageEmbeds(
                     eb1.setDescription("The API servers are up, but %s. Please wait a couple moments and try again.".formatted(isIt503 ? serviceUnavailable : gatewayTimeout))
                         .build()
                 ).queue();
