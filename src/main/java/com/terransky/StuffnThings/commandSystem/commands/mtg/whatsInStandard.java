@@ -99,8 +99,10 @@ public class whatsInStandard implements ISlashCommand {
             case "all" ->
                 eb.setDescription("**Sets**:\n%s\n**Current Bans**:\n%s".formatted(this.getSets(wisData.getSets()), this.getBans(wisData.getBans(), false)));
             case "sets" -> eb.setDescription("**Sets**:\n%s".formatted(this.getSets(wisData.getSets())));
-            case "bans" ->
-                eb.setDescription("**Current Bans**:\n%s".formatted(this.getBans(wisData.getBans(), event.getOption("include-reason", false, OptionMapping::getAsBoolean))));
+            case "bans" -> {
+                boolean withReason = event.getOption("include-reason", false, OptionMapping::getAsBoolean);
+                eb.setDescription("**Current Bans**:\n%s".formatted(this.getBans(wisData.getBans(), withReason)));
+            }
         }
 
         event.getHook().sendMessageEmbeds(eb.build()).queue();

@@ -10,6 +10,7 @@ The source code for my Discord™ bot Stuff'n'Things. Mostly an entertainment bo
 * `/color-info hex-triplet <triplet>`
 * `/color-info rgb <red> <green> <blue>`
 * `/color-info cmyk <cyan> <magenta> <yellow> <black>`
+* `/dictionary <word> [language]` [Powered by Oxford Languages.](https://languages.oup.com/)
 * `/config kill max-kills`
 * `/config kill set-timeout`
 * `/dad-joke`

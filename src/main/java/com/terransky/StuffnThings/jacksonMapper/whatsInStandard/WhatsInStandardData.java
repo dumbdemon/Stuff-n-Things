@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.annotation.Generated;
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -23,9 +24,9 @@ public class WhatsInStandardData {
     @JsonProperty("deprecated")
     private boolean deprecated;
     @JsonProperty("sets")
-    private List<Set> sets = null;
+    private List<Set> sets = new ArrayList<>();
     @JsonProperty("bans")
-    private List<Ban> bans = null;
+    private List<Ban> bans = new ArrayList<>();
 
     @JsonProperty("$schema")
     public String get$schema() {
