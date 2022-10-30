@@ -6,5 +6,5 @@ import org.jetbrains.annotations.NotNull;
 public interface IButton {
     String getID();
 
-    void execute(@NotNull ButtonInteractionEvent event);
+    void execute(@NotNull ButtonInteractionEvent event) throws Exception;
 }

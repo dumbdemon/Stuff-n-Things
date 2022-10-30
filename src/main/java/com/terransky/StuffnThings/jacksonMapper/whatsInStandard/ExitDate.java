@@ -1,4 +1,3 @@
-
 package com.terransky.StuffnThings.jacksonMapper.whatsInStandard;
 
 import com.fasterxml.jackson.annotation.JsonInclude;

@@ -1,6 +1,7 @@
 package com.terransky.StuffnThings.buttonSystem;
 
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.buttonSystem.buttons.expiredButton;
 import com.terransky.StuffnThings.buttonSystem.buttons.getMoreDadJokes;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -21,6 +22,7 @@ public class ButtonManager extends ListenerAdapter {
     private final List<IButton> iButtonList = new ArrayList<>();
 
     public ButtonManager() {
+        addButton(new expiredButton());
         addButton(new getMoreDadJokes());
     }
 
