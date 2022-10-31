@@ -23,7 +23,6 @@ public class getMoreDadJokes implements IButton {
     @Override
     public void execute(@NotNull ButtonInteractionEvent event) throws Exception {
         URL iCanHazDadJoke = new URL("https://icanhazdadjoke.com/");
-        String iCanHazDadJokeLogo = "https://icanhazdadjoke.com/static/smile.svg";
         HttpURLConnection dadJoke = (HttpURLConnection) iCanHazDadJoke.openConnection();
         dadJoke.addRequestProperty("User-Agent", Commons.config.get("BOT_USER_AGENT")); //https://icanhazdadjoke.com/api#custom-user-agent
         dadJoke.addRequestProperty("Accept", "application/json");
@@ -33,7 +32,6 @@ public class getMoreDadJokes implements IButton {
         MessageEditData message = new MessageEditBuilder()
             .setEmbeds(new EmbedBuilder()
                 .setDescription(theJoke.getJoke())
-                .setThumbnail(iCanHazDadJokeLogo)
                 .setColor(Commons.defaultEmbedColor)
                 .setFooter("Requested by %s | ID#%s".formatted(event.getUser().getAsTag(), theJoke.getId()))
                 .build()

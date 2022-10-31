@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 public class killSuggest implements IModal {
     private final Dotenv config = Dotenv.configure().load();
@@ -29,12 +30,13 @@ public class killSuggest implements IModal {
     @SuppressWarnings("ConstantConditions")
     @Override
     public void execute(@NotNull ModalInteractionEvent event) {
+        Random rando = new Random();
         event.deferReply().queue();
         List<String> victims = new ArrayList<>();
         String suggestion = event.getValue("kill-suggestion").getAsString();
 
         for (Member member : event.getGuild().getMembers()) {
-            if (!member.getUser().isBot()) {
+            if (!member.getUser().isBot() || member.getUser().equals(event.getJDA().getSelfUser())) {
                 victims.add(member.getAsMention());
             }
         }
@@ -50,10 +52,10 @@ public class killSuggest implements IModal {
         builder.setWait(true);
 
         String testKillString = suggestion.formatted(
-            targets[(int) (Math.random() * targets.length)],
-            targets[(int) (Math.random() * targets.length)],
-            targets[(int) (Math.random() * targets.length)],
-            targets[(int) (Math.random() * targets.length)]
+            targets[rando.nextInt(targets.length)],
+            targets[rando.nextInt(targets.length)],
+            targets[rando.nextInt(targets.length)],
+            targets[rando.nextInt(targets.length)]
         );
 
         try (WebhookClient client = builder.build()) {

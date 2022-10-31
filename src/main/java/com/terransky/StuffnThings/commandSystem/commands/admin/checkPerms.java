@@ -2,6 +2,7 @@ package com.terransky.StuffnThings.commandSystem.commands.admin;
 
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
+import com.terransky.StuffnThings.exceptions.DiscordAPIException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -45,7 +46,7 @@ public class checkPerms implements ISlashCommand {
     public void execute(@NotNull SlashCommandInteractionEvent event) throws Exception {
         EnumSet<Permission> myPerms;
         GuildChannel toCheck = null;
-        if (event.getSubcommandName() == null) throw new Exception("Discord API Error: No subcommand was given.");
+        if (event.getSubcommandName() == null) throw new DiscordAPIException("No subcommand was given.");
         Guild guild = null;
         if (event.getGuild() != null) guild = event.getGuild();
 
@@ -70,10 +71,11 @@ public class checkPerms implements ISlashCommand {
             if (!havePerm) dontHaveThis.add(requiredPerm);
         }
 
+        boolean ifToCheck = toCheck != null;
         if (dontHaveThis.size() == 0) {
-            event.replyEmbeds(eb.setDescription("I have all necessary permissions for %s. Thank you! :heart:".formatted(toCheck != null ? toCheck.getAsMention() : "this server")).build()).queue();
+            event.replyEmbeds(eb.setDescription("I have all necessary permissions for %s. Thank you! :heart:".formatted(ifToCheck ? toCheck.getAsMention() : "this server")).build()).queue();
         } else {
-            eb.setDescription("I'm missing the following permissions for %s:".formatted(toCheck != null ? toCheck.getAsMention() : "this server"));
+            eb.setDescription("I'm missing the following permissions for %s:".formatted(ifToCheck ? toCheck.getAsMention() : "this server"));
             for (Permission permission : dontHaveThis) {
                 eb.addField(permission.getName(), "false", false);
             }

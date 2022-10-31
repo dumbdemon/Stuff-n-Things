@@ -23,7 +23,11 @@ public class about implements ISlashCommand {
     public void execute(@NotNull SlashCommandInteractionEvent event) {
         event.replyEmbeds(new EmbedBuilder()
             .setColor(Commons.defaultEmbedColor)
-            .setDescription("> *Who am I?*\n> *What am I?*\n> *I think I need help...*")
+            .setDescription("""
+                > *Who am I?*
+                > *What am I?*
+                > *I think I need help...*
+                """)
             .setTitle(event.getJDA().getSelfUser().getName())
             .setThumbnail(Commons.config.get("BOT_LOGO"))
             .build()

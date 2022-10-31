@@ -55,7 +55,9 @@ public class ListeningForEvents extends ListenerAdapter {
         if (Commons.isTestingMode) {
             event.getGuild().updateCommands().addCommands(globalCommandData).queue();
             log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
-        }
+        } else if ((new CommandManager().getCommandData(false, event.getGuild().getIdLong())).size() > 0) {
+            event.getGuild().updateCommands().addCommands(new CommandManager().getCommandData(false, event.getGuild().getIdLong())).queue();
+        } else event.getGuild().updateCommands().queue();
         addGuildToDB(event.getGuild());
 
         EmbedBuilder eb = new EmbedBuilder()
@@ -97,10 +99,10 @@ public class ListeningForEvents extends ListenerAdapter {
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
         if (event.getUser().isBot()) return;
 
-        String userID = event.getUser().getId(),
-            guildID = event.getGuild().getId();
-
         if (Commons.isTestingMode) {
+            String userID = event.getUser().getId(),
+                guildID = event.getGuild().getId();
+
             try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                 .prepareStatement("DELETE FROM users_" + guildID + " WHERE user_id = ?")) {
                 stmt.setString(1, userID);
@@ -118,7 +120,9 @@ public class ListeningForEvents extends ListenerAdapter {
         if (Commons.isTestingMode) {
             event.getGuild().updateCommands().addCommands(globalCommandData).queue();
             log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
-        }
+        } else if ((new CommandManager().getCommandData(false, event.getGuild().getIdLong())).size() > 0) {
+            event.getGuild().updateCommands().addCommands(new CommandManager().getCommandData(false, event.getGuild().getIdLong())).queue();
+        } else event.getGuild().updateCommands().queue();
 
         //If bot is already in a guild add them.
         addGuildToDB(event.getGuild());

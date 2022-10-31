@@ -11,8 +11,6 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 public class lmgtfy implements ISlashCommand {
     @Override
     public String getName() {
@@ -38,7 +36,7 @@ public class lmgtfy implements ISlashCommand {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event) {
-        String search = "https://lmgtfy.app/?q=" + event.getOption("search", "", OptionMapping::getAsString).replace("\s", "+") + (Objects.equals(event.getSubcommandName(), "images") ? "&t=i" : "");
+        String search = "https://lmgtfy.app/?q=" + event.getOption("search", "", OptionMapping::getAsString).replace("\s", "+") + ("images".equals(event.getSubcommandName()) ? "&t=i" : "");
         User victim = event.getOption("victim", OptionMapping::getAsUser);
 
         event.reply((victim != null ? victim.getAsMention() + ", this is for you: " : "") + search).queue();

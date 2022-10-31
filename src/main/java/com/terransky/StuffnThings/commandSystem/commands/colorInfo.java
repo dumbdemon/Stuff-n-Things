@@ -153,9 +153,9 @@ public class colorInfo implements ISlashCommand {
                 String h = hsb.format(hsv[0]),
                     s = hsb.format(hsv[1]),
                     v = hsb.format(hsv[2]);
-                String hexTriplet = "%02X%02X%02X".formatted(r, g, b);
+                String hexTriplet = "#%02X%02X%02X".formatted(r, g, b);
 
-                eb.addField("Hex Triplet", "#" + hexTriplet, false)
+                eb.addField("Hex Triplet", hexTriplet, false)
                     .addField("RGB", "R **%d** G **%d** B **%d**".formatted(r, g, b), false)
                     .addField("CMYK", "C **%d** M **%d** Y **%d** K **%d**".formatted(c, m, y, k), false)
                     .addField("HSB/HSV", "Hue **%s**\nSaturation **%s**\nBrightness **%s**".formatted(h, s, v), false)
@@ -177,9 +177,9 @@ public class colorInfo implements ISlashCommand {
                 String h = hsb.format(hsv[0]),
                     s = hsb.format(hsv[1]),
                     v = hsb.format(hsv[2]);
-                String hexTriplet = "%02X%02X%02X".formatted(r, g, b);
+                String hexTriplet = "#%02X%02X%02X".formatted(r, g, b);
 
-                eb.addField("Hex Triplet", "#" + hexTriplet, false)
+                eb.addField("Hex Triplet", hexTriplet, false)
                     .addField("RGB", "R **%d** G **%d** B **%d**".formatted(r, g, b), false)
                     .addField("CMYK", "C **%d** M **%d** Y **%d** K **%d**".formatted(c, m, y, k), false)
                     .addField("HSB/HSV", "Hue **%s**\nSaturation **%s**\nBrightness **%s**".formatted(h, s, v), false)

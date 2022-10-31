@@ -210,7 +210,7 @@ public class dictionary implements ISlashCommand {
             ).queue();
             case 502 -> {
                 event.getHook().sendMessageEmbeds(
-                    eb1.setDescription("The API server is currently down or being upgraded. Please try this command later.\n\n[https://downforeveryoneorjustme.com/languages.oup.com?proto=https](Click me to check.)")
+                    eb1.setDescription("The API server is currently down or being upgraded. Please try this command later.\n\n[Click me to check.](https://downforeveryoneorjustme.com/languages.oup.com?proto=https)")
                         .build()
                 ).queue();
 
