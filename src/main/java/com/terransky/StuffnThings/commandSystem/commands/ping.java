@@ -23,13 +23,12 @@ public class ping implements ISlashCommand {
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event) {
         JDA jda = event.getJDA();
-        EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.defaultEmbedColor)
-            .setTitle("Ping Info")
-            .setFooter("Requested by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
-
         jda.getRestPing().queue(ping -> event.replyEmbeds(
-            eb.addField("Rest Ping", ping + "ms", true)
+            new EmbedBuilder()
+                .setColor(Commons.defaultEmbedColor)
+                .setTitle("Ping Info")
+                .setFooter("Requested by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+                .addField("Rest Ping", ping + "ms", true)
                 .addField("Web Socket Ping", jda.getGatewayPing() + "ms", true)
                 .build()
         ).queue());
