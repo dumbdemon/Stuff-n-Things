@@ -26,10 +26,10 @@ public class ping implements ISlashCommand {
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(Commons.defaultEmbedColor)
             .setTitle("Ping Info")
-            .setFooter("Requested by " + event.getUser().getAsTag());
+            .setFooter("Requested by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
 
         jda.getRestPing().queue(ping -> event.replyEmbeds(
-            eb.addField("Reset Ping", ping + "ms", true)
+            eb.addField("Rest Ping", ping + "ms", true)
                 .addField("Web Socket Ping", jda.getGatewayPing() + "ms", true)
                 .build()
         ).queue());
