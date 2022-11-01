@@ -31,9 +31,7 @@ public class core {
     }
 
     public core() throws LoginException, SQLException {
-        if (Commons.isTestingMode) {
-            SQLiteDataSource.getConnection();
-        }
+        if (Commons.enableDatabase) SQLiteDataSource.getConnection();
 
         DefaultShardManagerBuilder shards = DefaultShardManagerBuilder.createDefault(config.get("TOKEN"))
             .enableIntents(
