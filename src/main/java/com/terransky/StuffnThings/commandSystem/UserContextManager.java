@@ -28,10 +28,10 @@ public class UserContextManager extends ListenerAdapter {
         boolean nameFound = iMessageContexts.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iUserContext.getName()));
 
         if (nameFound) throw new IllegalArgumentException("A context menu with this name already exists");
+
         if (iMessageContexts.size() > Commands.MAX_USER_COMMANDS)
             throw new IndexOutOfBoundsException("You can only have at most %d user contexts".formatted(Commands.MAX_USER_COMMANDS));
-
-        iMessageContexts.add(iUserContext);
+        else iMessageContexts.add(iUserContext);
     }
 
     @Nullable

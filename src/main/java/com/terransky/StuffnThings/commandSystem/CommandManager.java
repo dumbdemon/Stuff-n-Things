@@ -62,7 +62,9 @@ public class CommandManager extends ListenerAdapter {
 
         if (nameFound) throw new IllegalArgumentException("A command with this name already exists");
 
-        iSlashCommandsList.add(iSlashCommand);
+        if (iSlashCommandsList.size() > Commands.MAX_SLASH_COMMANDS)
+            throw new IndexOutOfBoundsException("You can only have at most %d slash commands.".formatted(Commands.MAX_SLASH_COMMANDS));
+        else iSlashCommandsList.add(iSlashCommand);
     }
 
     @Nullable
@@ -82,10 +84,10 @@ public class CommandManager extends ListenerAdapter {
      * Get the command data of all slash commands, message contexts, and user contexts.
      *
      * @param globalCommands If {@code true}, return all non-guild commands.
-     * @param serverID       A list of server IDs (typically one) for checking. Required for guild commands.
+     * @param serverID       Server ID for checking. Required for guild commands.
      * @return Returns a list of {@link CommandData}.
      */
-    public List<CommandData> getCommandData(boolean globalCommands, Long... serverID) {
+    public List<CommandData> getCommandData(boolean globalCommands, @Nullable Long serverID) {
         final List<CommandData> commandData = new ArrayList<>();
         final List<CommandData> messageContext = new MessageContextManager().getCommandData();
         final List<CommandData> userContext = new UserContextManager().getCommandData();
@@ -108,19 +110,14 @@ public class CommandManager extends ListenerAdapter {
         } else {
             for (ISlashCommand command : iSlashCommandsList) {
                 if (!command.isGlobalCommand() && command.workingCommand()) {
-                    if (serverID.length != 0) {
-                        for (Long id : serverID) {
-                            boolean addToServer = command.getServerRestrictions().stream().anyMatch(it -> it.equals(id));
+                    if (serverID != null) {
+                        boolean addToServer = command.getServerRestrictions().stream().anyMatch(it -> it.equals(serverID));
 
-                            if (addToServer) commandData.add(command.commandData());
-                        }
+                        if (addToServer) commandData.add(command.commandData());
                     } else commandData.add(command.commandData());
                 }
             }
         }
-
-        if (iSlashCommandsList.size() > Commands.MAX_SLASH_COMMANDS)
-            throw new IndexOutOfBoundsException("You can only have at most %d slash commands.".formatted(Commands.MAX_SLASH_COMMANDS));
 
         return commandData;
     }

@@ -25,7 +25,7 @@ import java.util.*;
 
 public class ListeningForEvents extends ListenerAdapter {
     private final Logger log = LoggerFactory.getLogger("Main Listener");
-    private final List<CommandData> globalCommandData = new CommandManager().getCommandData(true);
+    private final List<CommandData> globalCommandData = new CommandManager().getCommandData(true, null);
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
