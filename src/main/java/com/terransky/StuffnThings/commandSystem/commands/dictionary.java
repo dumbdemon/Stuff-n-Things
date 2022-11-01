@@ -71,7 +71,6 @@ public class dictionary implements ISlashCommand {
             .setImage("https://languages.oup.com/wp-content/uploads/ol-logo-colour-300px-sfw.jpg")
             .setColor(Commons.defaultEmbedColor);
         EmbedBuilder eb2 = new EmbedBuilder()
-            .setTitle("Dictionary")
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
             .setImage("https://languages.oup.com/wp-content/uploads/ol-logo-colour-300px-sfw.jpg")
             .setColor(Commons.secondaryEmbedColor);

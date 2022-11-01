@@ -9,7 +9,7 @@
     <timestamp key="theDate" datePattern="yyyyMMdd'T'HHmmss"/>
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>./logs/snt_log-${theDate}.log</file>
+        <file>./logs/snt_log.log</file>
         <immediateFlush>true</immediateFlush>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>snt_log-%d.zip</fileNamePattern>
