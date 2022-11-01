@@ -15,10 +15,8 @@ public class Commons {
     public static final Color defaultEmbedColor = new Color(102, 51, 102);
     public static final Color secondaryEmbedColor = new Color(153, 102, 153);
     public static final Dotenv config = Dotenv.configure().load();
-    /**
-     * Checks if config has been set to testing mode.
-     */
     public static final boolean isTestingMode = config.get("TESTING_MODE").equals("true");
+    public static final boolean enableDatabase = config.get("ENABLE_DATABASE").equals("true");
     private static final NavigableMap<Float, String> suffixes = new TreeMap<>();
 
     static {

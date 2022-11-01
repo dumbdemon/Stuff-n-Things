@@ -45,9 +45,9 @@ public class SelectMenuManager extends ListenerAdapter {
         return null;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void onSelectMenuInteraction(@NotNull SelectMenuInteractionEvent event) {
+        if (event.getGuild() == null) return;
         ISelectMenu menu = getMenu(event.getId());
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle("Oops")

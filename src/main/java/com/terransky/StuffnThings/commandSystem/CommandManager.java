@@ -130,7 +130,7 @@ public class CommandManager extends ListenerAdapter {
         if (event.getUser().isBot() || event.getGuild() == null) return;
 
         //Add user to database or ignore if exists
-        if (Commons.isTestingMode) {
+        if (Commons.enableDatabase) {
             try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                 .prepareStatement("INSERT OR IGNORE INTO users_" + event.getGuild().getId() + "(user_id) VALUES(?)")) {
                 stmt.setString(1, event.getUser().getId());

@@ -120,13 +120,13 @@ public class colorInfo implements ISlashCommand {
                         y = cmyk[2],
                         k = cmyk[3];
                     float[] hsv = Color.RGBtoHSB(r, g, b, null);
-                    String h = hsb.format(hsv[0]),
+                    String h = hsb.format(hsv[0]).replace("%", "\u00B0"),
                         s = hsb.format(hsv[1]),
                         v = hsb.format(hsv[2]);
 
-                    eb.addField("Hex Triplet", hexCode, false)
-                        .addField("RGB", "R **%d** G **%d** B **%d**".formatted(r, g, b), false)
-                        .addField("CMYK", "C **%d** M **%d** Y **%d** K **%d**".formatted(c, m, y, k), false)
+                    eb.addField("Hex Triplet", hexCode, true)
+                        .addField("RGB", "rgb(**%d**, **%d**, **%d**)".formatted(r, g, b), true)
+                        .addField("CMYK", "**%d**, **%d**, **%d**, **%d**".formatted(c, m, y, k), true)
                         .addField("HSB/HSV", "Hue **%s**\nSaturation **%s**\nBrightness **%s**".formatted(h, s, v), false)
                         .addField("More Info", "[link](https://www.colorhexa.com/%s)".formatted(hexCode.substring(1)), false)
                         .setColor(color);
@@ -150,14 +150,14 @@ public class colorInfo implements ISlashCommand {
                     y = cmyk[2],
                     k = cmyk[3];
                 float[] hsv = Color.RGBtoHSB(r, g, b, null);
-                String h = hsb.format(hsv[0]),
+                String h = hsb.format(hsv[0]).replace("%", "\u00B0"),
                     s = hsb.format(hsv[1]),
                     v = hsb.format(hsv[2]);
                 String hexTriplet = "#%02X%02X%02X".formatted(r, g, b);
 
-                eb.addField("Hex Triplet", hexTriplet, false)
-                    .addField("RGB", "R **%d** G **%d** B **%d**".formatted(r, g, b), false)
-                    .addField("CMYK", "C **%d** M **%d** Y **%d** K **%d**".formatted(c, m, y, k), false)
+                eb.addField("Hex Triplet", hexTriplet, true)
+                    .addField("RGB", "rgb(**%d**, **%d**, **%d**)".formatted(r, g, b), true)
+                    .addField("CMYK", "**%d**, **%d**, **%d**, **%d**".formatted(c, m, y, k), true)
                     .addField("HSB/HSV", "Hue **%s**\nSaturation **%s**\nBrightness **%s**".formatted(h, s, v), false)
                     .addField("More Info", "[link](https://www.colorhexa.com/%s)".formatted(hexTriplet), false)
                     .setColor(new Color(r, g, b));
@@ -174,14 +174,14 @@ public class colorInfo implements ISlashCommand {
                     g = rgb[1],
                     b = rgb[2];
                 float[] hsv = Color.RGBtoHSB(r, g, b, null);
-                String h = hsb.format(hsv[0]),
+                String h = hsb.format(hsv[0]).replace("%", "\u00B0"),
                     s = hsb.format(hsv[1]),
                     v = hsb.format(hsv[2]);
                 String hexTriplet = "#%02X%02X%02X".formatted(r, g, b);
 
-                eb.addField("Hex Triplet", hexTriplet, false)
-                    .addField("RGB", "R **%d** G **%d** B **%d**".formatted(r, g, b), false)
-                    .addField("CMYK", "C **%d** M **%d** Y **%d** K **%d**".formatted(c, m, y, k), false)
+                eb.addField("Hex Triplet", hexTriplet, true)
+                    .addField("RGB", "rgb(**%d**, **%d**, **%d**)".formatted(r, g, b), true)
+                    .addField("CMYK", "**%d**, **%d**, **%d**, **%d**".formatted(c, m, y, k), true)
                     .addField("HSB/HSV", "Hue **%s**\nSaturation **%s**\nBrightness **%s**".formatted(h, s, v), false)
                     .addField("More Info", "[link](https://www.colorhexa.com/%s)".formatted(hexTriplet), false)
                     .setColor(new Color(r, g, b));

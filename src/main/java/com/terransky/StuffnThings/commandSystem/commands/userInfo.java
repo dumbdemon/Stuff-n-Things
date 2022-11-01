@@ -31,6 +31,7 @@ public class userInfo implements ISlashCommand {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event) {
+        if (event.getGuild() == null) return;
         User uVictim = event.getOption("user", event.getUser(), OptionMapping::getAsUser);
         Member mVictim = event.getOption("user", event.getMember(), OptionMapping::getAsMember);
         StringBuilder permText = new StringBuilder();
@@ -52,6 +53,10 @@ public class userInfo implements ISlashCommand {
             }
         } else permText.append("Member");
 
+        if (uVictim.getId().equals(Commons.config.get("OWNER_ID"))) {
+            permText.append(", Developer");
+        }
+
         StringBuilder userPerms = new StringBuilder();
         String finalUserPerms;
 
@@ -62,20 +67,23 @@ public class userInfo implements ISlashCommand {
             finalUserPerms = userPerms.substring(0, userPerms.toString().length() - 2);
         } else finalUserPerms = "None";
 
+        if (!mVictim.hasTimeJoined()) {
+            mVictim = event.getGuild().retrieveMemberById(mVictim.getId()).complete();
+        }
+
         eb.setAuthor(WordUtils.capitalize(mVictim.getEffectiveName()) + "'s Info")
             .setThumbnail(mVictim.getEffectiveAvatarUrl())
             .addField("User ID", uVictim.getId(), true)
             .addField("User Status", permText.toString(), true)
-            .addField("Server Permissions", finalUserPerms, false)
-            .addField("Joined Server on", "<t:" + mVictim.getTimeJoined().toEpochSecond() + ":F>", true)
-            .addField("Joined Discord on", "<t:" + uVictim.getTimeCreated().toEpochSecond() + ":F>", true)
+            .addField("Server Permissions", "```%s```".formatted(finalUserPerms), false)
+            .addField("Joined Server on", "<t:%s:F>".formatted(mVictim.getTimeJoined().toEpochSecond()), true)
+            .addField("Joined Discord on", "<t:%s:F>".formatted(uVictim.getTimeCreated().toEpochSecond()), true)
             .setFooter("Requested by " + event.getUser().getAsTag() + " | " + event.getUser().getId(), event.getUser().getEffectiveAvatarUrl());
 
         if (!uVictim.isBot()) {
-            String boostedText;
-            if (mVictim.getTimeBoosted() != null)
-                boostedText = ":gem: <t:%d:F> (<t:%d:R>)".formatted(mVictim.getTimeBoosted().toEpochSecond(), mVictim.getTimeBoosted().toEpochSecond());
-            else boostedText = ":x: Not Boosting.";
+            String boostedText =
+                (mVictim.getTimeBoosted() != null) ? ":gem: <t:%d:F> (<t:%d:R>)".formatted(mVictim.getTimeBoosted().toEpochSecond(), mVictim.getTimeBoosted().toEpochSecond()) :
+                    ":x: Not Boosting.";
             eb.addField("Boosting Since", boostedText, false);
         }
 

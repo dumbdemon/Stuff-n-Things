@@ -35,7 +35,7 @@ public class ListeningForEvents extends ListenerAdapter {
         } else event.getJDA().updateCommands().queue();
         log.info("Service started!");
 
-        if (!Commons.isTestingMode) {
+        if (Commons.enableDatabase) {
             new Timer().scheduleAtFixedRate(new TimerTask() {
                 @Override
                 @SuppressWarnings("ConstantConditions")
@@ -74,7 +74,7 @@ public class ListeningForEvents extends ListenerAdapter {
 
         log.info("I have left %s [%s]!".formatted(serverName, serverID));
 
-        if (Commons.isTestingMode) {
+        if (Commons.enableDatabase) {
             try {
                 try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                     .prepareStatement("DELETE FROM guilds WHERE guild_id = ?")) {
@@ -99,7 +99,7 @@ public class ListeningForEvents extends ListenerAdapter {
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
         if (event.getUser().isBot()) return;
 
-        if (Commons.isTestingMode) {
+        if (Commons.enableDatabase) {
             String userID = event.getUser().getId(),
                 guildID = event.getGuild().getId();
 
@@ -129,7 +129,7 @@ public class ListeningForEvents extends ListenerAdapter {
     }
 
     private void addGuildToDB(@NotNull Guild guild) {
-        if (!Commons.isTestingMode) return;
+        if (!Commons.enableDatabase) return;
         String guildName = guild.getName(), guildId = guild.getId();
         try (final PreparedStatement sStmt = SQLiteDataSource.getConnection()
             .prepareStatement("INSERT OR IGNORE INTO guilds(guild_id) VALUES(?)")) {
