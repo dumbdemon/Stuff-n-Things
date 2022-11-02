@@ -10,7 +10,7 @@
         <file>./logs/snt_log.log</file>
         <immediateFlush>true</immediateFlush>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>snt_log-%d.zip</fileNamePattern>
+            <fileNamePattern>./logs/snt_log-%d.zip</fileNamePattern>
             <maxHistory>30</maxHistory>
             <totalSizeCap>3GB</totalSizeCap>
         </rollingPolicy>
