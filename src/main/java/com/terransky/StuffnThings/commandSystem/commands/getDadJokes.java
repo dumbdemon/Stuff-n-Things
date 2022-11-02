@@ -51,7 +51,7 @@ public class getDadJokes implements ISlashCommand {
                 .setDescription(theJoke.getJoke())
                 .setThumbnail(iCanHazDadJokeLogo)
                 .setColor(Commons.defaultEmbedColor)
-                .setFooter("Requested by %s | ID#%s".formatted(event.getUser().getAsTag(), theJoke.getId()))
+                .setFooter("Requested by %s | ID #%s".formatted(event.getUser().getAsTag(), theJoke.getId()))
                 .build()
             )
             .addComponents(
@@ -65,7 +65,7 @@ public class getDadJokes implements ISlashCommand {
                     ActionRow.of(Button.danger("expired-button", "Get new Dad Joke!"))
                 )
                 .build();
-            msg.editOriginal(editData).queueAfter(10L, TimeUnit.MINUTES, msg2 ->
+            msg.editOriginal(editData).queueAfter(10, TimeUnit.MINUTES, msg2 ->
                 log.debug("Button on message [%s] on server with ID [%s] has expired.".formatted(msg2.getId(), msg2.getGuild().getId()))
             );
         });

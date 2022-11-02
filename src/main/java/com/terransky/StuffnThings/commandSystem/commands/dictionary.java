@@ -76,7 +76,7 @@ public class dictionary implements ISlashCommand {
             .setColor(Commons.secondaryEmbedColor);
         if (userWords.length > 1) {
             event.getHook().sendMessageEmbeds(
-                eb1.setDescription("Only one word can looked up at one time. Please try again.")
+                eb1.setDescription("Only one word can be looked up at one time. Please try again.")
                     .build()
             ).queue();
             return;
@@ -157,7 +157,7 @@ public class dictionary implements ISlashCommand {
                             e.getKey(),
                             moreThanOne ? "s" : "",
                             returnedWord,
-                            (e.getKey().equalsIgnoreCase("US English") || e.getKey().equalsIgnoreCase("UK English")) ? "" : "\n\n**Warning**: You are searching in a language other than English. Certain characters may not show if your browser/device does not support it."
+                            e.getKey().endsWith("English") ? "" : "\n\n**Warning**: You are searching in a language other than English. Certain characters may not show if your browser/device does not support it."
                         )
                     );
 

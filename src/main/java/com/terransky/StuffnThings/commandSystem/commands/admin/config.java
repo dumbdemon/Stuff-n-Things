@@ -3,6 +3,7 @@ package com.terransky.StuffnThings.commandSystem.commands.admin;
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import com.terransky.StuffnThings.database.SQLiteDataSource;
+import com.terransky.StuffnThings.exceptions.DiscordAPIException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -68,15 +69,15 @@ public class config implements ISlashCommand {
         }
     }
 
-
-    @SuppressWarnings({"ConstantConditions", "unused"})
+    @SuppressWarnings("unused")
     private void killConfig(@NotNull SlashCommandInteractionEvent event) throws Exception {
         String subCommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(Commons.defaultEmbedColor)
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
 
-        if (subCommand == null) throw new Exception("Discord API Error: No subcommand was given.");
+        if (subCommand == null) throw new DiscordAPIException("No subcommand was given.");
+        if (event.getGuild() == null) return;
 
         switch (subCommand) {
             case "max-kills" -> {

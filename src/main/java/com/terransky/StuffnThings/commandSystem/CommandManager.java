@@ -111,10 +111,10 @@ public class CommandManager extends ListenerAdapter {
             for (ISlashCommand command : iSlashCommandsList) {
                 if (!command.isGlobalCommand() && command.workingCommand()) {
                     if (serverID != null) {
-                        boolean addToServer = command.getServerRestrictions().stream().anyMatch(it -> it.equals(serverID));
+                        boolean addToServer = command.getServerRestrictions().stream().anyMatch(it -> it.equals(serverID)) || command.getServerRestrictions().size() == 0;
 
                         if (addToServer) commandData.add(command.commandData());
-                    } else commandData.add(command.commandData());
+                    }
                 }
             }
         }
