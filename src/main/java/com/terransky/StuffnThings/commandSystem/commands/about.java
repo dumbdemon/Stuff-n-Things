@@ -2,6 +2,7 @@ package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.CommandManager;
+import com.terransky.StuffnThings.commandSystem.commands.mtg.calculateRats;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -66,7 +67,7 @@ public class about implements ISlashCommand {
                 .setTitle(event.getJDA().getSelfUser().getName(), Commons.config.get("REPO_LINK"))
                 .setThumbnail(Commons.config.get("BOT_LOGO"))
                 .addField("Servers", "%d servers".formatted(guildCount), true)
-                .addField("Users", "%s users".formatted(userCount), true)
+                .addField("Users", "%s users".formatted(calculateRats.largeNumberFormat(userCount).replace(".0\s", "\s")), true)
                 .addField("Your Shard", "[%s/%s]".formatted(event.getJDA().getShardInfo().getShardId(), event.getJDA().getShardInfo().getShardTotal()), true)
                 .addField("Start Time", "<t:%s:F>".formatted((int) Math.floor(rb.getStartTime() / 1_000f)), false)
                 .addField("Uptime", uptime.toString(), false)
