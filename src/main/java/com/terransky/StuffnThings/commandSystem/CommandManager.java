@@ -83,41 +83,40 @@ public class CommandManager extends ListenerAdapter {
     /**
      * Get the command data of all slash commands, message contexts, and user contexts.
      *
-     * @param globalCommands If {@code true}, return all non-guild commands.
-     * @param serverID       Server ID for checking. Required for guild commands.
+     * @param serverID Server ID for checking. Required for guild commands.
      * @return Returns a list of {@link CommandData}.
      */
-    public List<CommandData> getCommandData(boolean globalCommands, @Nullable Long serverID) {
+    public List<CommandData> getCommandData(@Nullable Long serverID) {
         final List<CommandData> commandData = new ArrayList<>();
         final List<CommandData> messageContext = new MessageContextManager().getCommandData();
         final List<CommandData> userContext = new UserContextManager().getCommandData();
 
-        if (globalCommands) {
-            for (ISlashCommand command : iSlashCommandsList) {
-                if (command.isGlobalCommand() && command.workingCommand()) {
-                    commandData.add(command.commandData());
-                }
-            }
-
-            if (!messageContext.isEmpty()) {
-                commandData.addAll(messageContext);
-                log.debug("%d message contexts added".formatted(messageContext.size()));
-            } else log.debug("No message contexts were added.");
-            if (!userContext.isEmpty()) {
-                commandData.addAll(userContext);
-                log.debug("%d user contexts added".formatted(userContext.size()));
-            } else log.debug("No user contexts were added.");
-        } else {
+        if (serverID != null) {
             for (ISlashCommand command : iSlashCommandsList) {
                 if (!command.isGlobalCommand() && command.workingCommand()) {
-                    if (serverID != null) {
-                        boolean addToServer = command.getServerRestrictions().stream().anyMatch(it -> it.equals(serverID)) || command.getServerRestrictions().size() == 0;
+                    boolean addToServer = command.getServerRestrictions().stream().anyMatch(it -> it.equals(serverID)) || command.getServerRestrictions().size() == 0;
 
-                        if (addToServer) commandData.add(command.commandData());
-                    }
+                    if (addToServer) commandData.add(command.commandData());
                 }
             }
+
+            return commandData;
         }
+
+        for (ISlashCommand command : iSlashCommandsList) {
+            if (command.isGlobalCommand() && command.workingCommand()) {
+                commandData.add(command.commandData());
+            }
+        }
+
+        if (!messageContext.isEmpty()) {
+            commandData.addAll(messageContext);
+            log.debug("%d message contexts added".formatted(messageContext.size()));
+        } else log.debug("No message contexts were added.");
+        if (!userContext.isEmpty()) {
+            commandData.addAll(userContext);
+            log.debug("%d user contexts added".formatted(userContext.size()));
+        } else log.debug("No user contexts were added.");
 
         return commandData;
     }

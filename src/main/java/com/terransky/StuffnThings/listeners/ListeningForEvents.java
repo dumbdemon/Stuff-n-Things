@@ -25,7 +25,7 @@ import java.util.*;
 
 public class ListeningForEvents extends ListenerAdapter {
     private final Logger log = LoggerFactory.getLogger("Main Listener");
-    private final List<CommandData> globalCommandData = new CommandManager().getCommandData(true, null);
+    private final List<CommandData> globalCommandData = new CommandManager().getCommandData(null);
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
@@ -55,8 +55,8 @@ public class ListeningForEvents extends ListenerAdapter {
         if (Commons.isTestingMode) {
             event.getGuild().updateCommands().addCommands(globalCommandData).queue();
             log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
-        } else if ((new CommandManager().getCommandData(false, event.getGuild().getIdLong())).size() > 0) {
-            event.getGuild().updateCommands().addCommands(new CommandManager().getCommandData(false, event.getGuild().getIdLong())).queue();
+        } else if ((new CommandManager().getCommandData(event.getGuild().getIdLong())).size() > 0) {
+            event.getGuild().updateCommands().addCommands(new CommandManager().getCommandData(event.getGuild().getIdLong())).queue();
         } else event.getGuild().updateCommands().queue();
         addGuildToDB(event.getGuild());
 
@@ -120,8 +120,8 @@ public class ListeningForEvents extends ListenerAdapter {
         if (Commons.isTestingMode) {
             event.getGuild().updateCommands().addCommands(globalCommandData).queue();
             log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
-        } else if ((new CommandManager().getCommandData(false, event.getGuild().getIdLong())).size() > 0) {
-            event.getGuild().updateCommands().addCommands(new CommandManager().getCommandData(false, event.getGuild().getIdLong())).queue();
+        } else if ((new CommandManager().getCommandData(event.getGuild().getIdLong())).size() > 0) {
+            event.getGuild().updateCommands().addCommands(new CommandManager().getCommandData(event.getGuild().getIdLong())).queue();
         } else event.getGuild().updateCommands().queue();
 
         //If bot is already in a guild add them.
