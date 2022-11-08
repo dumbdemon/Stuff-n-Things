@@ -60,7 +60,7 @@ public class killSuggest implements IModal {
 
         try (WebhookClient client = builder.build()) {
             WebhookEmbed request = new WebhookEmbedBuilder()
-                .setColor(Commons.defaultEmbedColor.getRGB())
+                .setColor(Commons.DEFAULT_EMBED_COLOR.getRGB())
                 .setTitle(new WebhookEmbed.EmbedTitle("Kill-string Suggestion", null))
                 .setDescription(suggestion)
                 .addField(new WebhookEmbed.EmbedField(false, "From", "@%s".formatted(event.getUser().getAsTag())))
@@ -72,13 +72,13 @@ public class killSuggest implements IModal {
         MessageCreateData message = new MessageCreateBuilder()
             .setEmbeds(
                 new EmbedBuilder()
-                    .setColor(Commons.secondaryEmbedColor)
+                    .setColor(Commons.SECONDARY_EMBED_COLOR)
                     .setTitle("Suggestion received!")
                     .setDescription("The next embed will show what your suggestion will look like!\n" +
                         "***Note: Will not show up automatically!***")
                     .build(),
                 new EmbedBuilder()
-                    .setColor(Commons.defaultEmbedColor)
+                    .setColor(Commons.DEFAULT_EMBED_COLOR)
                     .setTitle(Objects.requireNonNull(event.getMember()).getEffectiveName())
                     .setDescription("\u2026 " + testKillString)
                     .setFooter("Suggestion by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())

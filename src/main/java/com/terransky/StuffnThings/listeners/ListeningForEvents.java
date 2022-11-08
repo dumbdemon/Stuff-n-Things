@@ -24,18 +24,18 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class ListeningForEvents extends ListenerAdapter {
-    private final Logger log = LoggerFactory.getLogger("Main Listener");
-    private final List<CommandData> globalCommandData = new CommandManager().getCommandData(null);
+    private final Logger log = LoggerFactory.getLogger(ListeningForEvents.class);
+    private final List<CommandData> globalCommandData = new CommandManager().getCommandData();
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
-        if (!Commons.isTestingMode) {
+        if (!Commons.IS_TESTING_MODE) {
             log.info(globalCommandData.size() + " global commands loaded!");
             event.getJDA().updateCommands().addCommands(globalCommandData).queue();
         } else event.getJDA().updateCommands().queue();
         log.info("Service started!");
 
-        if (Commons.enableDatabase) {
+        if (Commons.ENABLE_DATABASE) {
             new Timer().scheduleAtFixedRate(new TimerTask() {
                 @Override
                 @SuppressWarnings("ConstantConditions")
@@ -52,16 +52,16 @@ public class ListeningForEvents extends ListenerAdapter {
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
         User theBot = event.getJDA().getSelfUser();
 
-        if (Commons.isTestingMode) {
+        if (Commons.IS_TESTING_MODE) {
             event.getGuild().updateCommands().addCommands(globalCommandData).queue();
             log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
-        } else if ((new CommandManager().getCommandData(event.getGuild().getIdLong())).size() > 0) {
+        } else if (new CommandManager().getCommandData(event.getGuild().getIdLong()).size() > 0) {
             event.getGuild().updateCommands().addCommands(new CommandManager().getCommandData(event.getGuild().getIdLong())).queue();
         } else event.getGuild().updateCommands().queue();
         addGuildToDB(event.getGuild());
 
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.defaultEmbedColor)
+            .setColor(Commons.DEFAULT_EMBED_COLOR)
             .setAuthor(theBot.getName(), null, theBot.getAvatarUrl())
             .setDescription("> *What am I doing here?*\n> *Why am I here?*\n> *Am I supposed to be here?*");
         Objects.requireNonNull(event.getGuild().getDefaultChannel()).asTextChannel().sendMessageEmbeds(eb.build()).queue();
@@ -74,7 +74,7 @@ public class ListeningForEvents extends ListenerAdapter {
 
         log.info("I have left %s [%s]!".formatted(serverName, serverID));
 
-        if (Commons.enableDatabase) {
+        if (Commons.ENABLE_DATABASE) {
             try {
                 try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                     .prepareStatement("DELETE FROM guilds WHERE guild_id = ?")) {
@@ -99,7 +99,7 @@ public class ListeningForEvents extends ListenerAdapter {
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
         if (event.getUser().isBot()) return;
 
-        if (Commons.enableDatabase) {
+        if (Commons.ENABLE_DATABASE) {
             String userID = event.getUser().getId(),
                 guildID = event.getGuild().getId();
 
@@ -117,10 +117,10 @@ public class ListeningForEvents extends ListenerAdapter {
 
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
-        if (Commons.isTestingMode) {
+        if (Commons.IS_TESTING_MODE) {
             event.getGuild().updateCommands().addCommands(globalCommandData).queue();
             log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
-        } else if ((new CommandManager().getCommandData(event.getGuild().getIdLong())).size() > 0) {
+        } else if (new CommandManager().getCommandData(event.getGuild().getIdLong()).size() > 0) {
             event.getGuild().updateCommands().addCommands(new CommandManager().getCommandData(event.getGuild().getIdLong())).queue();
         } else event.getGuild().updateCommands().queue();
 
@@ -129,7 +129,7 @@ public class ListeningForEvents extends ListenerAdapter {
     }
 
     private void addGuildToDB(@NotNull Guild guild) {
-        if (!Commons.enableDatabase) return;
+        if (!Commons.ENABLE_DATABASE) return;
         String guildName = guild.getName(), guildId = guild.getId();
         try (final PreparedStatement sStmt = SQLiteDataSource.getConnection()
             .prepareStatement("INSERT OR IGNORE INTO guilds(guild_id) VALUES(?)")) {

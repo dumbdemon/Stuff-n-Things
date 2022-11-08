@@ -1,4 +1,4 @@
-package com.terransky.StuffnThings.jacksonMapper.oxfordDictionary;
+package com.terransky.StuffnThings.sources.oxfordDictionary;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

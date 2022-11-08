@@ -58,7 +58,7 @@ public class colorInfo implements ISlashCommand {
     }
 
     @Override
-    public CommandData commandData() {
+    public CommandData getCommandData() {
         return Commands.slash(this.getName(), "Get more info on a color.")
             .addSubcommands(
                 new SubcommandData("hex-triplet", "Get more info on a hex triplet. EX: #663366")
@@ -134,7 +134,7 @@ public class colorInfo implements ISlashCommand {
                 } else {
                     eb.setTitle("Invalid Hex Triplet!")
                         .setDescription("You've given an invalid hex triplet!\nCorrect example: `#663366` or `#636`")
-                        .setColor(Commons.defaultEmbedColor)
+                        .setColor(Commons.DEFAULT_EMBED_COLOR)
                         .addField("Provided", hexCode, false);
                     event.replyEmbeds(eb.build()).setEphemeral(true).queue();
                 }

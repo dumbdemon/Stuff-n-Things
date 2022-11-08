@@ -49,7 +49,8 @@ public class MessageContextManager extends ListenerAdapter {
         final List<CommandData> commandData = new ArrayList<>();
 
         for (IMessageContext iMessageContext : iMessageContexts) {
-            commandData.add(iMessageContext.commandData());
+            if (iMessageContext.workingCommand())
+                commandData.add(iMessageContext.getCommandData());
         }
 
         return commandData;
@@ -62,8 +63,8 @@ public class MessageContextManager extends ListenerAdapter {
         IMessageContext menu = getMessageMenu(event.getName());
         MessageEmbed menuFailed = new EmbedBuilder()
             .setTitle("Oops!")
-            .setDescription("An error occurred while executing that context menu!\nPlease contact <@" + Commons.config.get("OWNER_ID") + "> with the context menu that you used and when.")
-            .setColor(Commons.defaultEmbedColor)
+            .setDescription("An error occurred while executing that context menu!\nPlease contact <@" + Commons.CONFIG.get("OWNER_ID") + "> with the context menu that you used and when.")
+            .setColor(Commons.DEFAULT_EMBED_COLOR)
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
             .build();
 

@@ -24,7 +24,7 @@ public class userInfo implements ISlashCommand {
     }
 
     @Override
-    public CommandData commandData() {
+    public CommandData getCommandData() {
         return Commands.slash(this.getName(), "Get info on a specific user on the server! Defaults to you.")
             .addOption(OptionType.USER, "user", "Who you want to know about.");
     }
@@ -35,7 +35,7 @@ public class userInfo implements ISlashCommand {
         User uVictim = event.getOption("user", event.getUser(), OptionMapping::getAsUser);
         Member mVictim = event.getOption("user", event.getMember(), OptionMapping::getAsMember);
         StringBuilder permText = new StringBuilder();
-        EmbedBuilder eb = new EmbedBuilder().setColor(Commons.defaultEmbedColor);
+        EmbedBuilder eb = new EmbedBuilder().setColor(Commons.DEFAULT_EMBED_COLOR);
         List<Permission> modPerms = new ArrayList<>();
         modPerms.add(Permission.KICK_MEMBERS);
         modPerms.add(Permission.BAN_MEMBERS);
@@ -53,7 +53,7 @@ public class userInfo implements ISlashCommand {
             }
         } else permText.append("Member");
 
-        if (uVictim.getId().equals(Commons.config.get("OWNER_ID"))) {
+        if (uVictim.getId().equals(Commons.CONFIG.get("OWNER_ID"))) {
             permText.append(", Developer");
         }
 

@@ -21,7 +21,7 @@ public class about implements ISlashCommand {
     }
 
     @Override
-    public CommandData commandData() {
+    public CommandData getCommandData() {
         return Commands.slash(this.getName(), "What am I? Who am I?");
     }
 
@@ -30,7 +30,7 @@ public class about implements ISlashCommand {
         event.deferReply().queue();
         RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
 
-        int commandCnt = new CommandManager().getCommandData(null).size();
+        int commandCnt = new CommandManager().getCommandData().size();
         if (event.getGuild() != null)
             commandCnt += new CommandManager().getCommandData(event.getGuild().getIdLong()).size();
 
@@ -56,16 +56,16 @@ public class about implements ISlashCommand {
 
         event.getHook().sendMessageEmbeds(
             new EmbedBuilder()
-                .setColor(Commons.defaultEmbedColor)
+                .setColor(Commons.DEFAULT_EMBED_COLOR)
                 .setDescription("""
                     > *Who am I?*
                     I am %s
                     > *What am I?*
                     An entertainment bot.
                     > [*I think I need help...*](%s)
-                    """.formatted(event.getJDA().getSelfUser().getAsMention(), Commons.config.get("SUPPORT_GUILD_INVITE")))
-                .setTitle(event.getJDA().getSelfUser().getName(), Commons.config.get("REPO_LINK"))
-                .setThumbnail(Commons.config.get("BOT_LOGO"))
+                    """.formatted(event.getJDA().getSelfUser().getAsMention(), Commons.CONFIG.get("SUPPORT_GUILD_INVITE")))
+                .setTitle(event.getJDA().getSelfUser().getName(), Commons.CONFIG.get("REPO_LINK"))
+                .setThumbnail(Commons.CONFIG.get("BOT_LOGO"))
                 .addField("Servers", "%d servers".formatted(guildCount), true)
                 .addField("Users", "%s users".formatted(calculateRats.largeNumberFormat(userCount).replace(".0\s", "\s")), true)
                 .addField("Your Shard", "[%s/%s]".formatted(event.getJDA().getShardInfo().getShardId(), event.getJDA().getShardInfo().getShardTotal()), true)

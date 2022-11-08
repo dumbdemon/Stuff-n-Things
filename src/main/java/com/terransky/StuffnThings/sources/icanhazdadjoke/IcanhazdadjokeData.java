@@ -1,4 +1,4 @@
-package com.terransky.StuffnThings.jacksonMapper.icanhazdadjoke;
+package com.terransky.StuffnThings.sources.icanhazdadjoke;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

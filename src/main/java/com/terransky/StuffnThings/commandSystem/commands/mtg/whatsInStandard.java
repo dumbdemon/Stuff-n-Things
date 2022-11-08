@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import com.terransky.StuffnThings.exceptions.DiscordAPIException;
-import com.terransky.StuffnThings.jacksonMapper.whatsInStandard.Ban;
-import com.terransky.StuffnThings.jacksonMapper.whatsInStandard.Set;
-import com.terransky.StuffnThings.jacksonMapper.whatsInStandard.WhatsInStandardData;
+import com.terransky.StuffnThings.sources.whatsInStandard.Ban;
+import com.terransky.StuffnThings.sources.whatsInStandard.Set;
+import com.terransky.StuffnThings.sources.whatsInStandard.WhatsInStandardData;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -64,7 +64,7 @@ public class whatsInStandard implements ISlashCommand {
     }
 
     @Override
-    public CommandData commandData() {
+    public CommandData getCommandData() {
         return Commands.slash(this.getName(), "Get Magic: the Gathering's set list for the standard format.")
             .addSubcommands(
                 new SubcommandData("all", "Get all info about the standard format."),
@@ -79,7 +79,7 @@ public class whatsInStandard implements ISlashCommand {
         event.deferReply().queue();
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle("What's in standard?")
-            .setColor(Commons.defaultEmbedColor);
+            .setColor(Commons.DEFAULT_EMBED_COLOR);
         String subCommand = event.getSubcommandName();
         if (subCommand == null) throw new DiscordAPIException("No subcommand received");
         String version = "6";
@@ -89,7 +89,7 @@ public class whatsInStandard implements ISlashCommand {
         WhatsInStandardData wisData = om.readValue(wis, WhatsInStandardData.class);
         if (wisData.isDeprecated()) {
             event.getHook().sendMessageEmbeds(
-                eb.setDescription("Version %s has been deprecated. Please contact <@%s> to update it.".formatted(version, Commons.config.get("OWNER_ID")))
+                eb.setDescription("Version %s has been deprecated. Please contact <@%s> to update it.".formatted(version, Commons.CONFIG.get("OWNER_ID")))
                     .build()
             ).queue();
             return;

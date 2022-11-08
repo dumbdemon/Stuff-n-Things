@@ -32,7 +32,7 @@ public class kill implements ISlashCommand {
     }
 
     @Override
-    public CommandData commandData() {
+    public CommandData getCommandData() {
         return Commands.slash(this.getName(), "Time to un-alive random members!")
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),
@@ -49,7 +49,7 @@ public class kill implements ISlashCommand {
         List<String> victims = new ArrayList<>();
         String subCommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.defaultEmbedColor);
+            .setColor(Commons.DEFAULT_EMBED_COLOR);
         List<Member> memberList = new ArrayList<>();
         if (event.getGuild() != null) memberList = event.getGuild().getMembers();
 
@@ -72,7 +72,7 @@ public class kill implements ISlashCommand {
                     targets[random.nextInt(targets.length)]
                 );
 
-                eb.setColor(Commons.defaultEmbedColor)
+                eb.setColor(Commons.DEFAULT_EMBED_COLOR)
                     .setTitle(killer)
                     .setDescription("\u2026 " + message)
                     .setFooter("Requested by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());

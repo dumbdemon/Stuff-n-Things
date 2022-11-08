@@ -27,11 +27,11 @@ public class core {
     private final Dotenv config;
 
     {
-        config = Commons.config;
+        config = Commons.CONFIG;
     }
 
     public core() throws LoginException, SQLException {
-        if (Commons.enableDatabase) SQLiteDataSource.getConnection();
+        if (Commons.ENABLE_DATABASE) SQLiteDataSource.getConnection();
 
         DefaultShardManagerBuilder shards = DefaultShardManagerBuilder.createDefault(config.get("TOKEN"))
             .enableIntents(
@@ -44,7 +44,7 @@ public class core {
 
         String[] whatAmIWatching = secretsAndLies.whatAmIWatching;
 
-        if (Commons.isTestingMode) {
+        if (Commons.IS_TESTING_MODE) {
             shards.setStatus(OnlineStatus.INVISIBLE);
         } else {
             Random random = new Random();

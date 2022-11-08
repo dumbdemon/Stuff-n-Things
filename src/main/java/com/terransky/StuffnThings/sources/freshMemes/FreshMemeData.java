@@ -1,4 +1,4 @@
-package com.terransky.StuffnThings.jacksonMapper.freshMemes;
+package com.terransky.StuffnThings.sources.freshMemes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.annotation.Generated;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +43,7 @@ public class FreshMemeData {
     @JsonProperty("ups")
     private long ups;
     @JsonProperty("preview")
-    private List<String> preview = null;
+    private List<String> preview = new LinkedList<>();
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
