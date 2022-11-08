@@ -21,7 +21,7 @@ public class robFailChance implements ISlashCommand {
     }
 
     @Override
-    public CommandData commandData() {
+    public CommandData getCommandData() {
         return Commands.slash(this.getName(), "Calculate the fail chance to rob a member for the UnbelievaBoat bot!")
             .addOptions(
                 new OptionData(OptionType.INTEGER, "your-net-worth", "Your net-worth.", true),
@@ -32,7 +32,7 @@ public class robFailChance implements ISlashCommand {
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event) {
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.defaultEmbedColor);
+            .setColor(Commons.DEFAULT_EMBED_COLOR);
         DecimalFormat largeNumber = new DecimalFormat("##,###");
         String uBoatInvite = "https://discord.com/oauth2/authorize?client_id=292953664492929025&scope=bot%20applications.commands&permissions=829811966&response_type=code&redirect_uri=https://unbelievaboat.com/landing";
         if (event.getGuild() == null) return;

@@ -62,7 +62,7 @@ public class calculateRats implements ISlashCommand {
     }
 
     @Override
-    public CommandData commandData() {
+    public CommandData getCommandData() {
         return Commands.slash(this.getName(), "How many rats you have?")
             .addOptions(
                 new OptionData(OptionType.INTEGER, "start-count", "How many do you have right now?", true)
@@ -80,7 +80,7 @@ public class calculateRats implements ISlashCommand {
         float finalCNT = startCNT;
         DecimalFormat largeNumber = new DecimalFormat("##,###");
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.defaultEmbedColor)
+            .setColor(Commons.DEFAULT_EMBED_COLOR)
             .setTitle("Is there enough rats?")
             .addField("Starting total", "%s rats".formatted(largeNumber.format(startCNT)), true)
             .addField("Iterations", "%s triggers".formatted(largeNumber.format(iterations)), true)

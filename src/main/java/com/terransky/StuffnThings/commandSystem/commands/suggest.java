@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 
 public class suggest implements ISlashCommand {
-    private final Dotenv config = Commons.config;
+    private final Dotenv config = Commons.CONFIG;
 
     @Override
     public String getName() {
@@ -25,7 +25,7 @@ public class suggest implements ISlashCommand {
     }
 
     @Override
-    public CommandData commandData() {
+    public CommandData getCommandData() {
         return Commands.slash(this.getName(), "Have something you want the bot to do? Suggest here!")
             .addOptions(
                 new OptionData(OptionType.STRING, "suggestion", "What do you want the bot to do?", true),
@@ -38,7 +38,7 @@ public class suggest implements ISlashCommand {
     public void execute(@NotNull SlashCommandInteractionEvent event) {
         String suggestion = event.getOption("suggestion", OptionMapping::getAsString);
         int importance = event.getOption("importance", 50, OptionMapping::getAsInt);
-        EmbedBuilder callReply = new EmbedBuilder().setColor(Commons.defaultEmbedColor);
+        EmbedBuilder callReply = new EmbedBuilder().setColor(Commons.DEFAULT_EMBED_COLOR);
         String description = "```\n" + suggestion + "\n```";
 
         WebhookClientBuilder builder = new WebhookClientBuilder(config.get("REQUEST_WEBHOOK"));
@@ -52,7 +52,7 @@ public class suggest implements ISlashCommand {
 
         try (WebhookClient client = builder.build()) {
             WebhookEmbed request = new WebhookEmbedBuilder()
-                .setColor(Commons.defaultEmbedColor.getRGB())
+                .setColor(Commons.DEFAULT_EMBED_COLOR.getRGB())
                 .setTitle(new WebhookEmbed.EmbedTitle("Command Suggestion", null))
                 .setDescription(description)
                 .addField(new WebhookEmbed.EmbedField(false, "Importance Value", "[" + importance + "/100]"))

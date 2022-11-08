@@ -18,7 +18,7 @@ public class expiredButton implements IButton {
             new EmbedBuilder()
                 .setTitle("Button Expired")
                 .setDescription("This button has expired. Please issue the command again.")
-                .setColor(Commons.defaultEmbedColor)
+                .setColor(Commons.DEFAULT_EMBED_COLOR)
                 .build()
         ).setEphemeral(true).queue();
     }

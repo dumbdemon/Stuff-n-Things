@@ -3,7 +3,7 @@ package com.terransky.StuffnThings.buttonSystem.buttons;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.buttonSystem.IButton;
-import com.terransky.StuffnThings.jacksonMapper.icanhazdadjoke.IcanhazdadjokeData;
+import com.terransky.StuffnThings.sources.icanhazdadjoke.IcanhazdadjokeData;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
@@ -24,7 +24,7 @@ public class getMoreDadJokes implements IButton {
     public void execute(@NotNull ButtonInteractionEvent event) throws Exception {
         URL iCanHazDadJoke = new URL("https://icanhazdadjoke.com/");
         HttpURLConnection dadJoke = (HttpURLConnection) iCanHazDadJoke.openConnection();
-        dadJoke.addRequestProperty("User-Agent", Commons.config.get("BOT_USER_AGENT")); //https://icanhazdadjoke.com/api#custom-user-agent
+        dadJoke.addRequestProperty("User-Agent", Commons.CONFIG.get("BOT_USER_AGENT")); //https://icanhazdadjoke.com/api#custom-user-agent
         dadJoke.addRequestProperty("Accept", "application/json");
         ObjectMapper om = new ObjectMapper();
         IcanhazdadjokeData theJoke = om.readValue(new InputStreamReader(dadJoke.getInputStream()), IcanhazdadjokeData.class);
@@ -32,7 +32,7 @@ public class getMoreDadJokes implements IButton {
         MessageEditData message = new MessageEditBuilder()
             .setEmbeds(new EmbedBuilder()
                 .setDescription(theJoke.getJoke())
-                .setColor(Commons.defaultEmbedColor)
+                .setColor(Commons.DEFAULT_EMBED_COLOR)
                 .setFooter("Requested by %s | ID#%s".formatted(event.getUser().getAsTag(), theJoke.getId()))
                 .build()
             ).build();

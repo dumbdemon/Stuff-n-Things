@@ -1,6 +1,7 @@
 package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.commandSystem.commands.admin.checkPerms;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -19,7 +20,7 @@ public class getInvite implements ISlashCommand {
     }
 
     @Override
-    public CommandData commandData() {
+    public CommandData getCommandData() {
         return Commands.slash(this.getName(), "Get an invite for the bot.");
     }
 
@@ -31,7 +32,7 @@ public class getInvite implements ISlashCommand {
     @Override
     public @Nullable List<Long> getServerRestrictions() {
         final List<Long> ids = new ArrayList<>();
-        ids.add(Long.parseLong(Commons.config.get("SUPPORT_GUILD_ID")));
+        ids.add(Long.parseLong(Commons.CONFIG.get("SUPPORT_GUILD_ID")));
         return ids;
     }
 
@@ -39,8 +40,8 @@ public class getInvite implements ISlashCommand {
     public void execute(@NotNull SlashCommandInteractionEvent event) {
         event.replyEmbeds(
             new EmbedBuilder()
-                .setColor(Commons.defaultEmbedColor)
-                .setTitle("You can't even use this.", event.getJDA().getInviteUrl(Commons.requiredPerms()))
+                .setColor(Commons.DEFAULT_EMBED_COLOR)
+                .setTitle("You can't even use this.", event.getJDA().getInviteUrl(checkPerms.requiredPerms()))
                 .build()
         ).queue();
     }

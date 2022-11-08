@@ -18,7 +18,7 @@ public class lmgtfy implements ISlashCommand {
     }
 
     @Override
-    public CommandData commandData() {
+    public CommandData getCommandData() {
         return Commands.slash(this.getName(), "Let me Google that for you!")
             .addSubcommands(
                 new SubcommandData("web", "Let me Google that for you!")

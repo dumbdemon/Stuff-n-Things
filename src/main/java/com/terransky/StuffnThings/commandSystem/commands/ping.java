@@ -16,7 +16,7 @@ public class ping implements ISlashCommand {
     }
 
     @Override
-    public CommandData commandData() {
+    public CommandData getCommandData() {
         return Commands.slash(this.getName(), "Get the ping of the bot.");
     }
 
@@ -25,7 +25,7 @@ public class ping implements ISlashCommand {
         JDA jda = event.getJDA();
         jda.getRestPing().queue(ping -> event.replyEmbeds(
             new EmbedBuilder()
-                .setColor(Commons.defaultEmbedColor)
+                .setColor(Commons.DEFAULT_EMBED_COLOR)
                 .setTitle("Ping Info")
                 .setFooter("Requested by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
                 .addField("Rest Ping", ping + "ms", true)

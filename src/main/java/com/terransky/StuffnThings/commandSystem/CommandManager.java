@@ -83,29 +83,16 @@ public class CommandManager extends ListenerAdapter {
     /**
      * Get the command data of all slash commands, message contexts, and user contexts.
      *
-     * @param serverID Server ID for checking. Required for guild commands.
      * @return Returns a list of {@link CommandData}.
      */
-    public List<CommandData> getCommandData(@Nullable Long serverID) {
+    public List<CommandData> getCommandData() {
         final List<CommandData> commandData = new ArrayList<>();
         final List<CommandData> messageContext = new MessageContextManager().getCommandData();
         final List<CommandData> userContext = new UserContextManager().getCommandData();
 
-        if (serverID != null) {
-            for (ISlashCommand command : iSlashCommandsList) {
-                if (!command.isGlobalCommand() && command.workingCommand()) {
-                    boolean addToServer = command.getServerRestrictions().stream().anyMatch(it -> it.equals(serverID)) || command.getServerRestrictions().size() == 0;
-
-                    if (addToServer) commandData.add(command.commandData());
-                }
-            }
-
-            return commandData;
-        }
-
         for (ISlashCommand command : iSlashCommandsList) {
             if (command.isGlobalCommand() && command.workingCommand()) {
-                commandData.add(command.commandData());
+                commandData.add(command.getCommandData());
             }
         }
 
@@ -121,12 +108,32 @@ public class CommandManager extends ListenerAdapter {
         return commandData;
     }
 
+    /**
+     * Get the command data of all slash commands specifically for a server.
+     *
+     * @param serverId The ID of the server to check for.
+     * @return Returns a list of {@link CommandData}. Could potentially return an empty list.
+     */
+    public List<CommandData> getCommandData(long serverId) {
+        final List<CommandData> commandData = new ArrayList<>();
+
+        for (ISlashCommand command : iSlashCommandsList) {
+            if (!command.isGlobalCommand() && command.workingCommand()) {
+                boolean addToServer = command.getServerRestrictions().stream().anyMatch(it -> it.equals(serverId)) || command.getServerRestrictions().size() == 0;
+
+                if (addToServer) commandData.add(command.getCommandData());
+            }
+        }
+
+        return commandData;
+    }
+
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getUser().isBot() || event.getGuild() == null) return;
 
         //Add user to database or ignore if exists
-        if (Commons.enableDatabase) {
+        if (Commons.ENABLE_DATABASE) {
             try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                 .prepareStatement("INSERT OR IGNORE INTO users_" + event.getGuild().getId() + "(user_id) VALUES(?)")) {
                 stmt.setString(1, event.getUser().getId());
@@ -140,8 +147,8 @@ public class CommandManager extends ListenerAdapter {
         ISlashCommand cmd = new CommandManager().getCommand(event.getName());
         MessageEmbed cmdFailed = new EmbedBuilder()
             .setTitle("Oops!")
-            .setDescription("An error occurred while executing that command!\nPlease contact <@" + Commons.config.get("OWNER_ID") + "> with the command that you used and when.")
-            .setColor(Commons.defaultEmbedColor)
+            .setDescription("An error occurred while executing that command!\nPlease contact <@" + Commons.CONFIG.get("OWNER_ID") + "> with the command that you used and when.")
+            .setColor(Commons.DEFAULT_EMBED_COLOR)
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
             .build();
 

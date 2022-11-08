@@ -20,7 +20,7 @@ public class say implements ISlashCommand {
     }
 
     @Override
-    public CommandData commandData() {
+    public CommandData getCommandData() {
         return Commands.slash(this.getName(), "Make the bot say anything!")
             .addOptions(
                 new OptionData(OptionType.STRING, "message", "The message you want sent.", true),
@@ -32,7 +32,7 @@ public class say implements ISlashCommand {
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event) {
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.defaultEmbedColor);
+            .setColor(Commons.DEFAULT_EMBED_COLOR);
 
         String message = event.getOption("message", OptionMapping::getAsString);
         MessageChannel channel = (MessageChannel) event.getOption("channel", event.getChannel().asGuildMessageChannel(), OptionMapping::getAsChannel);

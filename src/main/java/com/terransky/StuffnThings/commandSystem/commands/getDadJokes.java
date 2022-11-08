@@ -3,7 +3,7 @@ package com.terransky.StuffnThings.commandSystem.commands;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
-import com.terransky.StuffnThings.jacksonMapper.icanhazdadjoke.IcanhazdadjokeData;
+import com.terransky.StuffnThings.sources.icanhazdadjoke.IcanhazdadjokeData;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -32,7 +32,7 @@ public class getDadJokes implements ISlashCommand {
     }
 
     @Override
-    public CommandData commandData() {
+    public CommandData getCommandData() {
         return Commands.slash(this.getName(), "Why was 6 afraid of 7? Because 7 was a registered 6 offender.");
     }
 
@@ -41,7 +41,7 @@ public class getDadJokes implements ISlashCommand {
         URL iCanHazDadJoke = new URL("https://icanhazdadjoke.com/");
         String iCanHazDadJokeLogo = "https://icanhazdadjoke.com/static/smile.svg";
         HttpURLConnection dadJoke = (HttpURLConnection) iCanHazDadJoke.openConnection();
-        dadJoke.addRequestProperty("User-Agent", Commons.config.get("BOT_USER_AGENT"));  //https://icanhazdadjoke.com/api#custom-user-agent
+        dadJoke.addRequestProperty("User-Agent", Commons.CONFIG.get("BOT_USER_AGENT"));  //https://icanhazdadjoke.com/api#custom-user-agent
         dadJoke.addRequestProperty("Accept", "application/json");
         ObjectMapper om = new ObjectMapper();
         IcanhazdadjokeData theJoke = om.readValue(new InputStreamReader(dadJoke.getInputStream()), IcanhazdadjokeData.class);
@@ -50,7 +50,7 @@ public class getDadJokes implements ISlashCommand {
             .setEmbeds(new EmbedBuilder()
                 .setDescription(theJoke.getJoke())
                 .setThumbnail(iCanHazDadJokeLogo)
-                .setColor(Commons.defaultEmbedColor)
+                .setColor(Commons.DEFAULT_EMBED_COLOR)
                 .setFooter("Requested by %s | ID #%s".formatted(event.getUser().getAsTag(), theJoke.getId()))
                 .build()
             )

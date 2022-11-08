@@ -23,13 +23,29 @@ import java.util.EnumSet;
 import java.util.List;
 
 public class checkPerms implements ISlashCommand {
+
+    public static @NotNull List<Permission> requiredPerms() {
+        List<Permission> permissionList = new ArrayList<>();
+        //For funsies
+        permissionList.add(Permission.MESSAGE_SEND);
+        permissionList.add(Permission.MESSAGE_ADD_REACTION);
+        permissionList.add(Permission.MESSAGE_EMBED_LINKS);
+        permissionList.add(Permission.MESSAGE_EXT_EMOJI);
+        permissionList.add(Permission.MESSAGE_EXT_STICKER);
+        permissionList.add(Permission.VIEW_CHANNEL);
+
+        //Moderation
+
+        return permissionList;
+    }
+
     @Override
     public String getName() {
         return "check-perms";
     }
 
     @Override
-    public CommandData commandData() {
+    public CommandData getCommandData() {
         return Commands.slash(this.getName(), "Check if I have all of my perms needed for all of my commands.")
             .addSubcommands(
                 new SubcommandData("server", "Check if I have all of my perms needed for all of my commands for the server."),
@@ -58,10 +74,10 @@ public class checkPerms implements ISlashCommand {
             myPerms = guild.getSelfMember().getPermissions(toCheck);
         }
 
-        List<Permission> requiredPerms = Commons.requiredPerms(),
+        List<Permission> requiredPerms = requiredPerms(),
             dontHaveThis = new ArrayList<>();
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.defaultEmbedColor)
+            .setColor(Commons.DEFAULT_EMBED_COLOR)
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
             .setTitle("Permission Checker");
 

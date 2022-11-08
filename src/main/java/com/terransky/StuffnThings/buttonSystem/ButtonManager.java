@@ -56,7 +56,7 @@ public class ButtonManager extends ListenerAdapter {
         MessageEmbed buttonFailed = new EmbedBuilder()
             .setTitle("Oops!")
             .setDescription("An error occurred while executing the button!\nPlease contact <@" + config.get("OWNER_ID") + "> with the button you clicked/tapped on and when.")
-            .setColor(Commons.defaultEmbedColor)
+            .setColor(Commons.DEFAULT_EMBED_COLOR)
             .setFooter(event.getUser().getAsTag())
             .build();
 

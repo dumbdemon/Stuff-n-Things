@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import com.terransky.StuffnThings.exceptions.DiscordAPIException;
-import com.terransky.StuffnThings.jacksonMapper.oxfordDictionary.*;
+import com.terransky.StuffnThings.sources.oxfordDictionary.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -52,7 +52,7 @@ public class dictionary implements ISlashCommand {
     }
 
     @Override
-    public CommandData commandData() {
+    public CommandData getCommandData() {
         return Commands.slash(this.getName(), "Look up a word in the dictionary in up to 9 different languages.")
             .addOptions(
                 new OptionData(OptionType.STRING, "word", "The word to look up.", true),
@@ -69,11 +69,11 @@ public class dictionary implements ISlashCommand {
             .setTitle("Dictionary")
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
             .setImage("https://languages.oup.com/wp-content/uploads/ol-logo-colour-300px-sfw.jpg")
-            .setColor(Commons.defaultEmbedColor);
+            .setColor(Commons.DEFAULT_EMBED_COLOR);
         EmbedBuilder eb2 = new EmbedBuilder()
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
             .setImage("https://languages.oup.com/wp-content/uploads/ol-logo-colour-300px-sfw.jpg")
-            .setColor(Commons.secondaryEmbedColor);
+            .setColor(Commons.SECONDARY_EMBED_COLOR);
         if (userWords.length > 1) {
             event.getHook().sendMessageEmbeds(
                 eb1.setDescription("Only one word can be looked up at one time. Please try again.")
@@ -89,8 +89,8 @@ public class dictionary implements ISlashCommand {
         URL dictionary = new URL("https://od-api.oxforddictionaries.com/api/v2/entries/%s/%s?fields=definitions&strictMatch=false".formatted(e.getValue(), toLookUp));
         HttpURLConnection oxfordConnection = (HttpURLConnection) dictionary.openConnection();
         oxfordConnection.addRequestProperty("Accept", "application/json");
-        oxfordConnection.addRequestProperty("app_id", Commons.config.get("OXFORD_ID"));
-        oxfordConnection.addRequestProperty("app_key", Commons.config.get("OXFORD_KEY"));
+        oxfordConnection.addRequestProperty("app_id", Commons.CONFIG.get("OXFORD_ID"));
+        oxfordConnection.addRequestProperty("app_key", Commons.CONFIG.get("OXFORD_KEY"));
         int responseCode = oxfordConnection.getResponseCode();
         ObjectMapper om = new ObjectMapper();
 
@@ -172,7 +172,7 @@ public class dictionary implements ISlashCommand {
             case 400 -> {
                 event.getHook().sendMessageEmbeds(
                     eb1.setDescription("Unable to get the definition of [%s]. Make sure you have typed the word correctly, If this message continues to appear, please contact <@%s> to fix this."
-                        .formatted(toLookUp.toUpperCase(Locale.forLanguageTag(e.getValue())), Commons.config.get("OWNER_ID"))
+                        .formatted(toLookUp.toUpperCase(Locale.forLanguageTag(e.getValue())), Commons.CONFIG.get("OWNER_ID"))
                     ).build()
                 ).queue();
 
@@ -196,7 +196,7 @@ public class dictionary implements ISlashCommand {
             case 500 -> {
                 event.getHook().sendMessageEmbeds(
                     eb1.setDescription("Looks like something went wrong with the API. Please let <@%s> know so he can send a message to Oxford."
-                            .formatted(Commons.config.get("OWNER_ID")))
+                            .formatted(Commons.CONFIG.get("OWNER_ID")))
                         .build()
                 ).queue();
 

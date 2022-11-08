@@ -16,7 +16,7 @@ import java.util.List;
 
 public class SelectMenuManager extends ListenerAdapter {
     private final List<ISelectMenu> iSelectMenus = new ArrayList<>();
-    private final Color embedColor = Commons.defaultEmbedColor;
+    private final Color embedColor = Commons.DEFAULT_EMBED_COLOR;
     private final Dotenv config = Dotenv.configure().load();
     private final Logger log = LoggerFactory.getLogger(SelectMenuManager.class);
 

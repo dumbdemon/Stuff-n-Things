@@ -30,11 +30,11 @@ public class config implements ISlashCommand {
 
     @Override
     public boolean workingCommand() {
-        return Commons.isTestingMode;
+        return Commons.IS_TESTING_MODE;
     }
 
     @Override
-    public CommandData commandData() {
+    public CommandData getCommandData() {
         return Commands.slash(this.getName(), "The config manager.")
             .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))
             .addSubcommandGroups(
@@ -58,7 +58,7 @@ public class config implements ISlashCommand {
     public void execute(@NotNull SlashCommandInteractionEvent event) throws Exception {
         String subCommandGroup = event.getSubcommandGroup();
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.defaultEmbedColor);
+            .setColor(Commons.DEFAULT_EMBED_COLOR);
 
         if (subCommandGroup == null) throw new Exception("Discord API Error: No subcommand group was given.");
 
@@ -73,7 +73,7 @@ public class config implements ISlashCommand {
     private void killConfig(@NotNull SlashCommandInteractionEvent event) throws Exception {
         String subCommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.defaultEmbedColor)
+            .setColor(Commons.DEFAULT_EMBED_COLOR)
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
 
         if (subCommand == null) throw new DiscordAPIException("No subcommand was given.");
@@ -211,7 +211,7 @@ public class config implements ISlashCommand {
     }
 
     protected MessageEmbed anErrorOccurred(@NotNull SQLException e) {
-        EmbedBuilder eb = new EmbedBuilder().setColor(Commons.defaultEmbedColor);
+        EmbedBuilder eb = new EmbedBuilder().setColor(Commons.DEFAULT_EMBED_COLOR);
         log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
         e.printStackTrace();
         SQLiteDataSource.restartConnection();

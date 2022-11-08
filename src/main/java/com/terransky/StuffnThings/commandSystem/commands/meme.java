@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import com.terransky.StuffnThings.exceptions.DiscordAPIException;
-import com.terransky.StuffnThings.jacksonMapper.freshMemes.FreshMemeData;
+import com.terransky.StuffnThings.sources.freshMemes.FreshMemeData;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -29,7 +29,7 @@ public class meme implements ISlashCommand {
     }
 
     @Override
-    public CommandData commandData() {
+    public CommandData getCommandData() {
         return Commands.slash(this.getName(), "Get a random meme.")
             .addSubcommands(
                 new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, and r/me_irl.")
@@ -43,7 +43,7 @@ public class meme implements ISlashCommand {
         DecimalFormat largeNumber = new DecimalFormat("##,###");
         ObjectMapper om = new ObjectMapper();
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.defaultEmbedColor);
+            .setColor(Commons.DEFAULT_EMBED_COLOR);
         String subCommand = event.getSubcommandName();
         if (subCommand == null) throw new DiscordAPIException("No subcommand was given.");
 
