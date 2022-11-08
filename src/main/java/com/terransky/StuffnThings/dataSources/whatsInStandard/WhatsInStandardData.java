@@ -1,4 +1,4 @@
-package com.terransky.StuffnThings.sources.whatsInStandard;
+package com.terransky.StuffnThings.dataSources.whatsInStandard;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

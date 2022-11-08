@@ -3,7 +3,7 @@ package com.terransky.StuffnThings.buttonSystem.buttons;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.buttonSystem.IButton;
-import com.terransky.StuffnThings.sources.icanhazdadjoke.IcanhazdadjokeData;
+import com.terransky.StuffnThings.dataSources.icanhazdadjoke.IcanhazdadjokeData;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;

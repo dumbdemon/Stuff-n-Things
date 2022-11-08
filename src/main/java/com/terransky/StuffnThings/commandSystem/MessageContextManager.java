@@ -49,7 +49,7 @@ public class MessageContextManager extends ListenerAdapter {
         final List<CommandData> commandData = new ArrayList<>();
 
         for (IMessageContext iMessageContext : iMessageContexts) {
-            if (iMessageContext.workingCommand())
+            if (iMessageContext.isWorkingCommand())
                 commandData.add(iMessageContext.getCommandData());
         }
 

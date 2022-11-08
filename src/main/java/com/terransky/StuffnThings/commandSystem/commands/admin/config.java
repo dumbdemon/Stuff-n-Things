@@ -29,7 +29,7 @@ public class config implements ISlashCommand {
     }
 
     @Override
-    public boolean workingCommand() {
+    public boolean isWorkingCommand() {
         return Commons.IS_TESTING_MODE;
     }
 

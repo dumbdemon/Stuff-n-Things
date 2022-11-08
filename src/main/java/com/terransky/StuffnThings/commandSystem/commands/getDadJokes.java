@@ -3,7 +3,7 @@ package com.terransky.StuffnThings.commandSystem.commands;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
-import com.terransky.StuffnThings.sources.icanhazdadjoke.IcanhazdadjokeData;
+import com.terransky.StuffnThings.dataSources.icanhazdadjoke.IcanhazdadjokeData;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;

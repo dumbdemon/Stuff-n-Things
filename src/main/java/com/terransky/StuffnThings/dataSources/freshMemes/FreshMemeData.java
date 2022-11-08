@@ -1,4 +1,4 @@
-package com.terransky.StuffnThings.sources.freshMemes;
+package com.terransky.StuffnThings.dataSources.freshMemes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;

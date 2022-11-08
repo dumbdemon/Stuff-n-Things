@@ -91,7 +91,7 @@ public class CommandManager extends ListenerAdapter {
         final List<CommandData> userContext = new UserContextManager().getCommandData();
 
         for (ISlashCommand command : iSlashCommandsList) {
-            if (command.isGlobalCommand() && command.workingCommand()) {
+            if (command.isGlobalCommand() && command.isWorkingCommand()) {
                 commandData.add(command.getCommandData());
             }
         }
@@ -118,7 +118,7 @@ public class CommandManager extends ListenerAdapter {
         final List<CommandData> commandData = new ArrayList<>();
 
         for (ISlashCommand command : iSlashCommandsList) {
-            if (!command.isGlobalCommand() && command.workingCommand()) {
+            if (!command.isGlobalCommand() && command.isWorkingCommand()) {
                 boolean addToServer = command.getServerRestrictions().stream().anyMatch(it -> it.equals(serverId)) || command.getServerRestrictions().size() == 0;
 
                 if (addToServer) commandData.add(command.getCommandData());

@@ -9,7 +9,7 @@ public interface IBaseCommand {
     CommandData getCommandData();
 
     //Whether the command works and whether it should be pushed to the public version.
-    default boolean workingCommand() {
+    default boolean isWorkingCommand() {
         return true;
     }
 }

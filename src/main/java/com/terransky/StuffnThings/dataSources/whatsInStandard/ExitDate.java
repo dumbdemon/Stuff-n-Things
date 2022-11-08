@@ -1,4 +1,4 @@
-package com.terransky.StuffnThings.sources.whatsInStandard;
+package com.terransky.StuffnThings.dataSources.whatsInStandard;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,7 +13,7 @@ import java.util.Date;
     "rough"
 })
 @Generated("jsonschema2pojo")
-public class EnterDate {
+public class ExitDate {
 
     @JsonProperty("exact")
     private Date exact;
