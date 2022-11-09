@@ -67,7 +67,7 @@ public class calculateRats implements ISlashCommand {
     public ExtraDetails getExtraDetails() {
         return new ExtraDetails(this.getName(), """
             *M:tG Command*
-            Returns an amount of 1/1 black Rat creature tokens after X triggers created by the interaction between [Marrow-Gnawer](%s) and[Thornbite Staff](%s).
+            Returns an amount of 1/1 black Rat creature tokens after X triggers created by the interaction between [Marrow-Gnawer](%s) equipped with [Thornbite Staff](%s).
             """.formatted("https://scryfall.com/card/chk/124/marrow-gnawer", "https://scryfall.com/card/mor/145/thornbite-staff"), Mastermind.DEVELOPER);
     }
 

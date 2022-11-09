@@ -68,6 +68,9 @@ public class whatsInStandard implements ISlashCommand {
     @Override
     public ExtraDetails getExtraDetails() {
         return new ExtraDetails(this.getName(), """
+            *M:tG Command*
+            Prints out the sets and ban list information for Magic: the Gathering's standard formant created by Wizards of the Coast.
+            Information the bot uses is provided by [WhatsInStandard.com](https://whatsinstandard.com).
             """, Mastermind.DEVELOPER);
     }
 
