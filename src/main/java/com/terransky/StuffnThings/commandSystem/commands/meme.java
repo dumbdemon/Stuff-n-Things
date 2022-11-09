@@ -2,6 +2,8 @@ package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import com.terransky.StuffnThings.dataSources.freshMemes.FreshMemeData;
 import com.terransky.StuffnThings.exceptions.DiscordAPIException;
@@ -29,10 +31,18 @@ public class meme implements ISlashCommand {
     }
 
     @Override
+    public ExtraDetails getExtraDetails() {
+        return new ExtraDetails(this.getName(), """
+            Get your fresh hot (or cold) memes here!
+            Reddit pulls from [r/memes](https://www.reddit.com/r/memes), [r/dankmemes](https://www.reddit.com/r/dankmemes), or from [r/me_irl](https://www.reddit.com/r/me_irl).
+            """, Mastermind.DEVELOPER);
+    }
+
+    @Override
     public CommandData getCommandData() {
         return Commands.slash(this.getName(), "Get a random meme.")
             .addSubcommands(
-                new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, and r/me_irl.")
+                new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, or from r/me_irl.")
                     .addOption(OptionType.STRING, "subreddit", "You can specify a subreddit outside of the default.")
             );
     }

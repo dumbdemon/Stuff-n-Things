@@ -2,6 +2,8 @@ package com.terransky.StuffnThings.commandSystem.commands.mtg;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import com.terransky.StuffnThings.dataSources.whatsInStandard.Ban;
 import com.terransky.StuffnThings.dataSources.whatsInStandard.Set;
@@ -61,6 +63,12 @@ public class whatsInStandard implements ISlashCommand {
     @Override
     public String getName() {
         return "mtg-standard";
+    }
+
+    @Override
+    public ExtraDetails getExtraDetails() {
+        return new ExtraDetails(this.getName(), """
+            """, Mastermind.DEVELOPER);
     }
 
     @Override

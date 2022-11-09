@@ -1,5 +1,7 @@
 package com.terransky.StuffnThings.commandSystem.commands;
 
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -15,6 +17,13 @@ public class lmgtfy implements ISlashCommand {
     @Override
     public String getName() {
         return "lmgtfy";
+    }
+
+    @Override
+    public ExtraDetails getExtraDetails() {
+        return new ExtraDetails(this.getName(), """
+            When a person is too lazy to search it up themselves, call this on 'em.
+            """, Mastermind.DEVELOPER);
     }
 
     @Override

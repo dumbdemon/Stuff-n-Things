@@ -1,6 +1,8 @@
 package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import com.terransky.StuffnThings.exceptions.DiscordAPIException;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -55,6 +57,13 @@ public class colorInfo implements ISlashCommand {
     @Override
     public String getName() {
         return "color-info";
+    }
+
+    @Override
+    public ExtraDetails getExtraDetails() {
+        return new ExtraDetails(this.getName(), """
+            Given a hex triplet, RGB, or CMYK code, it will return the other values and give a link to more info.
+            """, Mastermind.DEVELOPER);
     }
 
     @Override
