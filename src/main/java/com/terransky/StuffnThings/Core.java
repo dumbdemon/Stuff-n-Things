@@ -23,14 +23,14 @@ import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
 import java.util.Random;
 
-public class core {
+public class Core {
     private final Dotenv config;
 
     {
         config = Commons.CONFIG;
     }
 
-    public core() throws LoginException, SQLException {
+    public Core() throws LoginException, SQLException {
         if (Commons.ENABLE_DATABASE) SQLiteDataSource.getConnection();
 
         DefaultShardManagerBuilder shards = DefaultShardManagerBuilder.createDefault(config.get("TOKEN"))
@@ -65,6 +65,6 @@ public class core {
     }
 
     public static void main(String @NotNull [] args) throws LoginException, SQLException {
-        new core();
+        new Core();
     }
 }

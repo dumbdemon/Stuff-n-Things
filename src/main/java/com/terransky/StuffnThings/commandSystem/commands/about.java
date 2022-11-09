@@ -2,17 +2,24 @@ package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.CommandManager;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
 import com.terransky.StuffnThings.commandSystem.commands.mtg.calculateRats;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.time.Duration;
+import java.util.Optional;
 
 public class about implements ISlashCommand {
     @Override
@@ -21,13 +28,56 @@ public class about implements ISlashCommand {
     }
 
     @Override
+    public ExtraDetails getExtraDetails() {
+        return new ExtraDetails(this.getName(), """
+            The about command. What else did you expect?
+            """, Mastermind.DEVELOPER);
+    }
+
+    @Override
     public CommandData getCommandData() {
-        return Commands.slash(this.getName(), "What am I? Who am I?");
+        return Commands.slash(this.getName(), "What am I? Who am I?")
+            .addOptions(
+                new OptionData(OptionType.STRING, "command", "Get more info on a Command.")
+                    .addChoices(new CommandManager().getCommandsAsChoices())
+            );
     }
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event) {
         event.deferReply().queue();
+        String command = event.getOption("command", "none", OptionMapping::getAsString);
+
+        if (!command.equals("none")) {
+            Optional<ExtraDetails> extraDetails = new CommandManager().getExtraDetails(command);
+            ExtraDetails details = extraDetails.orElse(this.getExtraDetails());
+
+            if (details.minPerms().length != 0) {
+                if (event.getMember() != null && !event.getMember().hasPermission(details.minPerms())) {
+                    event.replyEmbeds(
+                        new EmbedBuilder()
+                            .setTitle("About Command")
+                            .setDescription("You don't have access to this command to see its details.")
+                            .setColor(Commons.DEFAULT_EMBED_COLOR)
+                            .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+                            .build()
+                    ).queue();
+                    return;
+                }
+            }
+
+            event.getHook().sendMessageEmbeds(
+                new EmbedBuilder()
+                    .setTitle("About Command - %s".formatted(WordUtils.capitalize(details.commandName().replace("-", "\s"))))
+                    .setDescription(details.longDescription())
+                    .setColor(Commons.DEFAULT_EMBED_COLOR)
+                    .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+                    .addField("Mastermind", details.mastermind().getWho(), true)
+                    .build()
+            ).queue();
+            return;
+        }
+
         RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
 
         int commandCnt = new CommandManager().getCommandData().size();
@@ -50,7 +100,7 @@ public class about implements ISlashCommand {
             uptime.append("%s minute%s ".formatted(minutes, minutes > 1 ? "s" : ""));
         uptime.append("%s.%s secs".formatted(seconds, millis));
 
-        //Replace with database calls when fully implemented.
+        //TODO: Replace with database calls when fully implemented.
         long guildCount = event.getJDA().getGuildCache().stream().distinct().count();
         long userCount = event.getJDA().getUserCache().stream().distinct().filter(user -> !user.isBot()).count();
 
@@ -67,7 +117,7 @@ public class about implements ISlashCommand {
                 .setTitle(event.getJDA().getSelfUser().getName(), Commons.CONFIG.get("REPO_LINK"))
                 .setThumbnail(Commons.CONFIG.get("BOT_LOGO"))
                 .addField("Servers", "%d servers".formatted(guildCount), true)
-                .addField("Users", "%s users".formatted(calculateRats.largeNumberFormat(userCount).replace(".0\s", "\s")), true)
+                .addField("Users", "%s users".formatted(calculateRats.largeNumberFormat(userCount)).replace(".0\s", "\s"), true)
                 .addField("Your Shard", "[%s/%s]".formatted(event.getJDA().getShardInfo().getShardId(), event.getJDA().getShardInfo().getShardTotal()), true)
                 .addField("Start Time", "<t:%s:F>".formatted((int) Math.floor(rb.getStartTime() / 1_000f)), false)
                 .addField("Uptime", uptime.toString(), false)

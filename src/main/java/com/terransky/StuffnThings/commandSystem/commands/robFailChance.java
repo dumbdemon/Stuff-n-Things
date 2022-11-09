@@ -1,6 +1,8 @@
 package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -15,9 +17,19 @@ import java.text.DecimalFormat;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class robFailChance implements ISlashCommand {
+
+    private final String uBoatInvite = "https://discord.com/oauth2/authorize?client_id=292953664492929025&scope=bot%20applications.commands&permissions=829811966&response_type=code&redirect_uri=https://unbelievaboat.com/landing";
+
     @Override
     public String getName() {
         return "rob-fail-chance";
+    }
+
+    @Override
+    public ExtraDetails getExtraDetails() {
+        return new ExtraDetails(this.getName(), """
+            Returns the chance of failure of the `/rob` command of the bot UnbelievaBoat. If you don't have the bot, you can ask your admins to invite it [here](%s).
+            """.formatted(uBoatInvite), Mastermind.DEVELOPER);
     }
 
     @Override
@@ -34,7 +46,6 @@ public class robFailChance implements ISlashCommand {
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(Commons.DEFAULT_EMBED_COLOR);
         DecimalFormat largeNumber = new DecimalFormat("##,###");
-        String uBoatInvite = "https://discord.com/oauth2/authorize?client_id=292953664492929025&scope=bot%20applications.commands&permissions=829811966&response_type=code&redirect_uri=https://unbelievaboat.com/landing";
         if (event.getGuild() == null) return;
 
         double yourNetWorth = event.getOption("your-net-worth", 0d, OptionMapping::getAsDouble),

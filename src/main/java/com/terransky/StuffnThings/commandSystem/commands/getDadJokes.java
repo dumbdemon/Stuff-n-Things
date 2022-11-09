@@ -2,6 +2,8 @@ package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import com.terransky.StuffnThings.dataSources.icanhazdadjoke.IcanhazdadjokeData;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -29,6 +31,13 @@ public class getDadJokes implements ISlashCommand {
     @Override
     public String getName() {
         return "dad-jokes";
+    }
+
+    @Override
+    public ExtraDetails getExtraDetails() {
+        return new ExtraDetails(this.getName(), """
+            *This a temporary placeholder until the user has given their description.*
+            """, Mastermind.USER);
     }
 
     @Override

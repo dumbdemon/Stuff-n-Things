@@ -1,6 +1,8 @@
 package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -17,6 +19,15 @@ public class say implements ISlashCommand {
     @Override
     public String getName() {
         return "say";
+    }
+
+    @Override
+    public ExtraDetails getExtraDetails() {
+        return new ExtraDetails(this.getName(), """
+            Make the bot say anything!
+                        
+            ~~Subject to your server's rules and Discord Community Guidelines.~~
+            """, Mastermind.DEVELOPER);
     }
 
     @Override

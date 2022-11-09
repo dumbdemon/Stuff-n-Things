@@ -1,6 +1,8 @@
 package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
 import com.terransky.StuffnThings.commandSystem.commands.cmdResources.killStrings;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import com.terransky.StuffnThings.exceptions.DiscordAPIException;
@@ -29,6 +31,13 @@ public class kill implements ISlashCommand {
     @Override
     public String getName() {
         return "kill";
+    }
+
+    @Override
+    public ExtraDetails getExtraDetails() {
+        return new ExtraDetails(this.getName(), """
+            Take a chance and try to kill a random member in your server! Or just *that guy* cause they're annoying you recently.
+            """, Mastermind.USER);
     }
 
     @Override

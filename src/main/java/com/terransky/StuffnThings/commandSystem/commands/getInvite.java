@@ -1,6 +1,8 @@
 package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
 import com.terransky.StuffnThings.commandSystem.commands.admin.checkPerms;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -17,6 +19,13 @@ public class getInvite implements ISlashCommand {
     @Override
     public String getName() {
         return "get-invite";
+    }
+
+    @Override
+    public ExtraDetails getExtraDetails() {
+        return new ExtraDetails(this.getName(), """
+            Returns the invite of the bot.
+            """, Mastermind.DEFAULT);
     }
 
     @Override

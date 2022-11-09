@@ -1,6 +1,8 @@
 package com.terransky.StuffnThings.commandSystem.commands.admin;
 
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import com.terransky.StuffnThings.exceptions.DiscordAPIException;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -39,9 +41,28 @@ public class checkPerms implements ISlashCommand {
         return permissionList;
     }
 
+    private @NotNull String requiredPermsAsString() {
+        var permString = new StringBuilder();
+
+        for (Permission requiredPerm : requiredPerms()) {
+            permString.append(requiredPerm.getName()).append(", ");
+        }
+        return permString.substring(0, permString.length() - 2);
+    }
+
     @Override
     public String getName() {
         return "check-perms";
+    }
+
+    @Override
+    public ExtraDetails getExtraDetails() {
+        return new ExtraDetails(this.getName(), """
+            Checks if the bot has all necessary permissions for this server or channel.
+            Currently the bot requires:
+            ```
+            %s```
+            """.formatted(requiredPermsAsString()), Mastermind.DEVELOPER, Permission.MANAGE_ROLES);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.terransky.StuffnThings.commandSystem.commands.admin;
 
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
 import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import com.terransky.StuffnThings.database.SQLiteDataSource;
 import com.terransky.StuffnThings.exceptions.DiscordAPIException;
@@ -26,6 +28,13 @@ public class config implements ISlashCommand {
     @Override
     public String getName() {
         return "config";
+    }
+
+    @Override
+    public ExtraDetails getExtraDetails() {
+        return new ExtraDetails(this.getName(), """
+            Sets certain constant values of specific commands.
+            """, Mastermind.DEVELOPER, Permission.MANAGE_SERVER);
     }
 
     @Override

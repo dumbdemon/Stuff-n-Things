@@ -1,6 +1,7 @@
 package com.terransky.StuffnThings.commandSystem;
 
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
 import com.terransky.StuffnThings.commandSystem.commands.*;
 import com.terransky.StuffnThings.commandSystem.commands.admin.checkPerms;
 import com.terransky.StuffnThings.commandSystem.commands.admin.config;
@@ -12,6 +13,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +25,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 public class CommandManager extends ListenerAdapter {
@@ -78,6 +81,25 @@ public class CommandManager extends ListenerAdapter {
         }
 
         return null;
+    }
+
+    public List<Command.Choice> getCommandsAsChoices() {
+        List<Command.Choice> choices = new ArrayList<>();
+        for (ISlashCommand iSlashCommand : iSlashCommandsList.stream().filter(it -> it.isGlobalCommand() && it.isWorkingCommand()).toList()) {
+            choices.add(new Command.Choice(iSlashCommand.getName(), iSlashCommand.getName()));
+        }
+        return choices;
+    }
+
+    public Optional<ExtraDetails> getExtraDetails(@NotNull String search) {
+        String toSearch = search.toLowerCase();
+
+        for (ISlashCommand cmd : iSlashCommandsList) {
+            if (cmd.getName().equals(toSearch)) {
+                return Optional.of(cmd.getExtraDetails());
+            }
+        }
+        return Optional.empty();
     }
 
     /**
