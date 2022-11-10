@@ -85,7 +85,7 @@ public class CommandManager extends ListenerAdapter {
 
     public List<Command.Choice> getCommandsAsChoices() {
         List<Command.Choice> choices = new ArrayList<>();
-        for (ISlashCommand iSlashCommand : iSlashCommandsList.stream().filter(it -> it.isGlobalCommand() && it.isWorkingCommand()).toList()) {
+        for (ISlashCommand iSlashCommand : iSlashCommandsList.stream().filter(it -> it.isGlobalCommand() && it.isWorkingCommand()).sorted().toList()) {
             choices.add(new Command.Choice(iSlashCommand.getName(), iSlashCommand.getName()));
         }
         return choices;
