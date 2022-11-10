@@ -5,14 +5,15 @@ import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.modalSystem.IModal;
-import io.github.cdimascio.dotenv.Dotenv;
+import com.terransky.StuffnThings.interfaces.IModal;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,27 +21,27 @@ import java.util.Objects;
 import java.util.Random;
 
 public class killSuggest implements IModal {
-    private final Dotenv config = Dotenv.configure().load();
+    private final Logger log = LoggerFactory.getLogger(killSuggest.class);
 
     @Override
-    public String getID() {
+    public String getName() {
         return "kill-suggest";
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
-    public void execute(@NotNull ModalInteractionEvent event) {
+    public void execute(@NotNull ModalInteractionEvent event) throws Exception {
         Random rando = new Random();
         event.deferReply().queue();
         List<String> victims = new ArrayList<>();
-        String suggestion = event.getValue("kill-suggestion").getAsString();
+        String suggestion = Objects.requireNonNull(event.getValue("kill-suggestion")).getAsString();
 
-        for (Member member : event.getGuild().getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList()) {
+        List<Member> members = new ArrayList<>();
+        if (event.getGuild() != null) members = event.getGuild().getMembers();
+        for (Member member : members.stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList()) {
             victims.add(member.getAsMention());
         }
-        String[] targets = victims.toArray(new String[0]);
 
-        WebhookClientBuilder builder = new WebhookClientBuilder(config.get("REQUEST_WEBHOOK"));
+        WebhookClientBuilder builder = new WebhookClientBuilder(Commons.CONFIG.get("REQUEST_WEBHOOK"));
         builder.setThreadFactory(job -> {
             Thread thread = new Thread(job);
             thread.setName("Kill_Suggestion");
@@ -50,10 +51,10 @@ public class killSuggest implements IModal {
         builder.setWait(true);
 
         String testKillString = suggestion.formatted(
-            targets[rando.nextInt(targets.length)],
-            targets[rando.nextInt(targets.length)],
-            targets[rando.nextInt(targets.length)],
-            targets[rando.nextInt(targets.length)]
+            victims.get(rando.nextInt(victims.size())),
+            victims.get(rando.nextInt(victims.size())),
+            victims.get(rando.nextInt(victims.size())),
+            victims.get(rando.nextInt(victims.size()))
         );
 
         try (WebhookClient client = builder.build()) {

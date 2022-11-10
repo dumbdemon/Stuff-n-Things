@@ -4,7 +4,7 @@ import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
 import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
 import com.terransky.StuffnThings.commandSystem.commands.admin.checkPerms;
-import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
+import com.terransky.StuffnThings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;

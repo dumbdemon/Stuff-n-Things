@@ -3,6 +3,7 @@ package com.terransky.StuffnThings.buttonSystem;
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.buttonSystem.buttons.expiredButton;
 import com.terransky.StuffnThings.buttonSystem.buttons.getMoreDadJokes;
+import com.terransky.StuffnThings.interfaces.IButton;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -28,7 +29,7 @@ public class ButtonManager extends ListenerAdapter {
 
     @SuppressWarnings("unused")
     private void addButton(IButton iButton) {
-        boolean buttonFound = iButtonList.stream().anyMatch(it -> it.getID().equalsIgnoreCase(iButton.getID()));
+        boolean buttonFound = iButtonList.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iButton.getName()));
 
         if (buttonFound) throw new IllegalArgumentException("A button with that name already exists");
 
@@ -40,7 +41,7 @@ public class ButtonManager extends ListenerAdapter {
         String toSearch = search.toLowerCase();
 
         for (IButton butt : iButtonList) {
-            if (butt.getID().equals(toSearch)) {
+            if (butt.getName().equals(toSearch)) {
                 return butt;
             }
         }
@@ -61,7 +62,7 @@ public class ButtonManager extends ListenerAdapter {
             .build();
 
         if (butt != null) {
-            log.debug("Button " + butt.getID().toUpperCase() + " called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
+            log.debug("Button " + butt.getName().toUpperCase() + " called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
             try {
                 butt.execute(event);
             } catch (Exception e) {

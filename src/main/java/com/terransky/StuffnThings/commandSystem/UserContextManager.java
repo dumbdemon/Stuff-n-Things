@@ -1,7 +1,7 @@
 package com.terransky.StuffnThings.commandSystem;
 
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.commandSystem.interfaces.IUserContext;
+import com.terransky.StuffnThings.interfaces.IUserContext;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;

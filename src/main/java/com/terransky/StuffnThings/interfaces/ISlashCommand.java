@@ -1,4 +1,4 @@
-package com.terransky.StuffnThings.commandSystem.interfaces;
+package com.terransky.StuffnThings.interfaces;
 
 import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface ISlashCommand extends IBaseCommand {
+public interface ISlashCommand extends ICommand {
 
     ExtraDetails getExtraDetails();
 

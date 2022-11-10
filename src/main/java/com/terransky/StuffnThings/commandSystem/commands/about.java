@@ -5,7 +5,7 @@ import com.terransky.StuffnThings.commandSystem.CommandManager;
 import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
 import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
 import com.terransky.StuffnThings.commandSystem.commands.mtg.calculateRats;
-import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
+import com.terransky.StuffnThings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;

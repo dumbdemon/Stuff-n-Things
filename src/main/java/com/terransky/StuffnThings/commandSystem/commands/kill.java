@@ -4,8 +4,8 @@ import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
 import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
 import com.terransky.StuffnThings.commandSystem.commands.cmdResources.killStrings;
-import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
 import com.terransky.StuffnThings.exceptions.DiscordAPIException;
+import com.terransky.StuffnThings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -36,7 +36,7 @@ public class kill implements ISlashCommand {
     @Override
     public ExtraDetails getExtraDetails() {
         return new ExtraDetails(this.getName(), """
-            Take a chance and try to kill a random member in your server! Or just *that guy* cause they're annoying you recently.
+            Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
             """, Mastermind.USER);
     }
 
@@ -51,7 +51,6 @@ public class kill implements ISlashCommand {
             );
     }
 
-    //@SuppressWarnings("ConstantConditions")
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event) throws Exception {
         Random random = new Random();
@@ -60,14 +59,13 @@ public class kill implements ISlashCommand {
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(Commons.DEFAULT_EMBED_COLOR);
         List<Member> memberList = new ArrayList<>();
-        if (event.getGuild() != null) memberList = event.getGuild().getMembers();
+        if (event.getGuild() != null)
+            memberList = event.getGuild().getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
 
         for (Member member : memberList) {
-            if (!member.getUser().isBot() || member.getUser().equals(event.getJDA().getSelfUser())) {
-                victims.add(member.getAsMention());
-            }
+            victims.add(member.getAsMention());
         }
-        String[] targets = victims.toArray(new String[0]);
+
         if (subCommand == null) throw new DiscordAPIException("No subcommand was given.");
         String killer = "";
         if (event.getMember() != null) killer = event.getMember().getEffectiveName();
@@ -75,10 +73,10 @@ public class kill implements ISlashCommand {
         switch (subCommand) {
             case "random" -> {
                 String message = randomStrings[random.nextInt(randomStrings.length)].formatted(
-                    targets[random.nextInt(targets.length)],
-                    targets[random.nextInt(targets.length)],
-                    targets[random.nextInt(targets.length)],
-                    targets[random.nextInt(targets.length)]
+                    victims.get(random.nextInt(victims.size())),
+                    victims.get(random.nextInt(victims.size())),
+                    victims.get(random.nextInt(victims.size())),
+                    victims.get(random.nextInt(victims.size()))
                 );
 
                 eb.setColor(Commons.DEFAULT_EMBED_COLOR)
@@ -106,7 +104,7 @@ public class kill implements ISlashCommand {
             case "target" -> {
                 String target = event.getOption("target", event.getJDA().getSelfUser(), OptionMapping::getAsUser).getAsMention();
                 if (target.equals(event.getJDA().getSelfUser().getAsMention())) {
-                    target = event.getJDA().getSelfUser().getAsMention() + " (hey wait a second...)";
+                    target += " (hey wait a second...)";
                 }
                 eb.setTitle(killer)
                     .setDescription("\u2026 %s".formatted(targetStrings[random.nextInt(targetStrings.length)]).formatted(target))

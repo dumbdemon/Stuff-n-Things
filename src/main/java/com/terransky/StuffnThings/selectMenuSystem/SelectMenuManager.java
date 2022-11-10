@@ -1,6 +1,7 @@
 package com.terransky.StuffnThings.selectMenuSystem;
 
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.interfaces.ISelectMenu;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
@@ -25,7 +26,7 @@ public class SelectMenuManager extends ListenerAdapter {
 
     @SuppressWarnings("unused")
     private void addMenu(ISelectMenu iSelectMenu) {
-        boolean menuFound = iSelectMenus.stream().anyMatch(it -> it.getID().equalsIgnoreCase(iSelectMenu.getID()));
+        boolean menuFound = iSelectMenus.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iSelectMenu.getName()));
 
         if (menuFound) throw new IllegalArgumentException("A menu with this id already exists");
 
@@ -37,7 +38,7 @@ public class SelectMenuManager extends ListenerAdapter {
         String toSearch = search.toLowerCase();
 
         for (ISelectMenu iSelectMenu : iSelectMenus) {
-            if (iSelectMenu.getID().equals(toSearch)) {
+            if (iSelectMenu.getName().equals(toSearch)) {
                 return iSelectMenu;
             }
         }
@@ -57,7 +58,7 @@ public class SelectMenuManager extends ListenerAdapter {
 
         if (menu != null) {
             String origins = event.isFromGuild() ? "%s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()) : event.getUser().getAsTag() + "'s private channel";
-            log.debug("Command " + menu.getID().toUpperCase() + " called on " + origins);
+            log.debug("Command " + menu.getName().toUpperCase() + " called on " + origins);
             try {
                 menu.execute(event);
             } catch (Exception e) {

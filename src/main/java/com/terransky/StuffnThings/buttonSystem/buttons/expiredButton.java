@@ -1,14 +1,14 @@
 package com.terransky.StuffnThings.buttonSystem.buttons;
 
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.buttonSystem.IButton;
+import com.terransky.StuffnThings.interfaces.IButton;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class expiredButton implements IButton {
     @Override
-    public String getID() {
+    public String getName() {
         return "expired-button";
     }
 

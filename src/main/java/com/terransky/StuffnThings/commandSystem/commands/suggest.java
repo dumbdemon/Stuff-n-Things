@@ -7,7 +7,7 @@ import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
 import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
-import com.terransky.StuffnThings.commandSystem.interfaces.ISlashCommand;
+import com.terransky.StuffnThings.interfaces.ISlashCommand;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;

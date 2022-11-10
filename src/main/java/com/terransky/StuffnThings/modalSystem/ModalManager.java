@@ -1,6 +1,7 @@
 package com.terransky.StuffnThings.modalSystem;
 
 import com.terransky.StuffnThings.Commons;
+import com.terransky.StuffnThings.interfaces.IModal;
 import com.terransky.StuffnThings.modalSystem.modals.killSuggest;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -24,7 +25,7 @@ public class ModalManager extends ListenerAdapter {
     }
 
     private void addModal(IModal iModal) {
-        boolean modalFound = iModalList.stream().anyMatch(it -> it.getID().equalsIgnoreCase(iModal.getID()));
+        boolean modalFound = iModalList.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iModal.getName()));
 
         if (modalFound) throw new IllegalArgumentException("A modal with that name already exists");
 
@@ -37,7 +38,7 @@ public class ModalManager extends ListenerAdapter {
         String toSearch = search.toLowerCase();
 
         for (IModal iModal : iModalList) {
-            if (iModal.getID().equals(toSearch)) {
+            if (iModal.getName().equals(toSearch)) {
                 return iModal;
             }
         }
@@ -56,7 +57,7 @@ public class ModalManager extends ListenerAdapter {
             .setFooter(event.getUser().getAsTag());
 
         if (modal != null) {
-            log.debug("Modal " + modal.getID().toUpperCase() + " called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
+            log.debug("Modal " + modal.getName().toUpperCase() + " called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
             try {
                 modal.execute(event);
             } catch (Exception e) {
