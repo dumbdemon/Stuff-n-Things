@@ -35,10 +35,8 @@ public class killSuggest implements IModal {
         List<String> victims = new ArrayList<>();
         String suggestion = event.getValue("kill-suggestion").getAsString();
 
-        for (Member member : event.getGuild().getMembers()) {
-            if (!member.getUser().isBot() || member.getUser().equals(event.getJDA().getSelfUser())) {
-                victims.add(member.getAsMention());
-            }
+        for (Member member : event.getGuild().getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList()) {
+            victims.add(member.getAsMention());
         }
         String[] targets = victims.toArray(new String[0]);
 

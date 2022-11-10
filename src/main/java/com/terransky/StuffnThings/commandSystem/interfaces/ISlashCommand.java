@@ -12,7 +12,7 @@ public interface ISlashCommand extends IBaseCommand {
     ExtraDetails getExtraDetails();
 
     //Whether the command is a global command or guild command
-    default boolean isGlobalCommand() {
+    default boolean isGlobal() {
         return true;
     }
 

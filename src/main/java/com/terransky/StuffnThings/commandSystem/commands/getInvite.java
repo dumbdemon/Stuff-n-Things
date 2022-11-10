@@ -34,7 +34,7 @@ public class getInvite implements ISlashCommand {
     }
 
     @Override
-    public boolean isGlobalCommand() {
+    public boolean isGlobal() {
         return false;
     }
 

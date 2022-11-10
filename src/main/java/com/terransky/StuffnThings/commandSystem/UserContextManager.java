@@ -49,7 +49,7 @@ public class UserContextManager extends ListenerAdapter {
         final List<CommandData> commandData = new ArrayList<>();
 
         for (IUserContext iUserContext : iMessageContexts) {
-            if (iUserContext.isWorkingCommand())
+            if (iUserContext.isWorking())
                 commandData.add(iUserContext.getCommandData());
         }
 

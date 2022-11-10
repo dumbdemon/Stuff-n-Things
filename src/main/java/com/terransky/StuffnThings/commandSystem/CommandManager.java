@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -85,8 +86,8 @@ public class CommandManager extends ListenerAdapter {
 
     public List<Command.Choice> getCommandsAsChoices() {
         List<Command.Choice> choices = new ArrayList<>();
-        for (ISlashCommand iSlashCommand : iSlashCommandsList.stream().filter(it -> it.isGlobalCommand() && it.isWorkingCommand()).sorted().toList()) {
-            choices.add(new Command.Choice(iSlashCommand.getName(), iSlashCommand.getName()));
+        for (ISlashCommand iSlashCommand : iSlashCommandsList.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList()) {
+            choices.add(new Command.Choice(WordUtils.capitalize(iSlashCommand.getName().replace("-", "\s")), iSlashCommand.getName()));
         }
         return choices;
     }
@@ -112,10 +113,8 @@ public class CommandManager extends ListenerAdapter {
         final List<CommandData> messageContext = new MessageContextManager().getCommandData();
         final List<CommandData> userContext = new UserContextManager().getCommandData();
 
-        for (ISlashCommand command : iSlashCommandsList) {
-            if (command.isGlobalCommand() && command.isWorkingCommand()) {
-                commandData.add(command.getCommandData());
-            }
+        for (ISlashCommand command : iSlashCommandsList.stream().filter(it -> it.isGlobal() && it.isWorking()).toList()) {
+            commandData.add(command.getCommandData());
         }
 
         if (!messageContext.isEmpty()) {
@@ -139,12 +138,10 @@ public class CommandManager extends ListenerAdapter {
     public List<CommandData> getCommandData(long serverId) {
         final List<CommandData> commandData = new ArrayList<>();
 
-        for (ISlashCommand command : iSlashCommandsList) {
-            if (!command.isGlobalCommand() && command.isWorkingCommand()) {
-                boolean addToServer = command.getServerRestrictions().stream().anyMatch(it -> it.equals(serverId)) || command.getServerRestrictions().size() == 0;
+        for (ISlashCommand command : iSlashCommandsList.stream().filter(it -> !it.isGlobal() && it.isWorking()).toList()) {
+            boolean addToServer = command.getServerRestrictions().stream().anyMatch(it -> it.equals(serverId)) || command.getServerRestrictions().size() == 0;
 
-                if (addToServer) commandData.add(command.getCommandData());
-            }
+            if (addToServer) commandData.add(command.getCommandData());
         }
 
         return commandData;

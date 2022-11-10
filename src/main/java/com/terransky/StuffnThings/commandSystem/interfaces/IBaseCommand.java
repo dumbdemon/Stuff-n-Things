@@ -10,7 +10,7 @@ public interface IBaseCommand extends Comparable<IBaseCommand> {
     CommandData getCommandData();
 
     //Whether the command works and whether it should be pushed to the public version.
-    default boolean isWorkingCommand() {
+    default boolean isWorking() {
         return true;
     }
 
