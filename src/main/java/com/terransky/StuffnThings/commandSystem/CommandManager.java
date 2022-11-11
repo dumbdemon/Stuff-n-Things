@@ -47,6 +47,7 @@ public class CommandManager extends ListenerAdapter {
         addCommand(new kill());
         addCommand(new lmgtfy());
         addCommand(new meme());
+        addCommand(new numbersAPI());
         addCommand(new robFailChance());
         addCommand(new say());
         addCommand(new whatsInStandard());
