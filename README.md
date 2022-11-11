@@ -23,6 +23,10 @@ The source code for my Discord™ bot Stuff'n'Things. Mostly an entertainment bo
 * `/lmgtfy images <search> [victim]`
 * `/meme reddit [subreddit]`
 * `/ner <start-count> <iterations>`
+* `/number-facts number [n-number]`
+* `/number-facts math [m-number]`
+* `/number-facts date [month] [date]`
+* `/number-facts year [year]`
 * `/rob-fail-chance <your-net-worth> <their-cash>`
 * `/say <message> [channel]`
 * `/suggest-command <suggestion> <importance>`
