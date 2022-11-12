@@ -49,11 +49,11 @@ public class about implements ISlashCommand {
         String command = event.getOption("command", "none", OptionMapping::getAsString);
 
         if (!command.equals("none")) {
-            Optional<Metadata> extraDetails = new CommandManager().getMetadata(command);
-            Metadata details = extraDetails.orElse(this.getMetadata());
+            Optional<Metadata> ifMetadata = new CommandManager().getMetadata(command);
+            Metadata metadata = ifMetadata.orElse(this.getMetadata());
 
-            if (details.minPerms().length != 0) {
-                if (event.getMember() != null && !event.getMember().hasPermission(details.minPerms())) {
+            if (metadata.minPerms().length != 0) {
+                if (event.getMember() != null && !event.getMember().hasPermission(metadata.minPerms())) {
                     event.replyEmbeds(
                         new EmbedBuilder()
                             .setTitle("About Command")
@@ -68,11 +68,11 @@ public class about implements ISlashCommand {
 
             event.getHook().sendMessageEmbeds(
                 new EmbedBuilder()
-                    .setTitle("About Command - %s".formatted(WordUtils.capitalize(details.commandName().replace("-", "\s"))))
-                    .setDescription(details.longDescription())
+                    .setTitle("About Command - %s".formatted(WordUtils.capitalize(metadata.commandName().replace("-", "\s"))))
+                    .setDescription(metadata.longDescription())
                     .setColor(Commons.DEFAULT_EMBED_COLOR)
                     .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
-                    .addField("Mastermind", details.mastermind().getWho(), true)
+                    .addField("Mastermind", metadata.mastermind().getWho(), true)
                     .build()
             ).queue();
             return;
