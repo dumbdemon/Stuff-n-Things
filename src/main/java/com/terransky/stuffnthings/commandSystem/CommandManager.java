@@ -152,7 +152,11 @@ public class CommandManager extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        if (event.getUser().isBot() || event.getGuild() == null) return;
+        if (event.getUser().isBot()) return;
+        else if (event.getGuild() == null) {
+            Commons.botIsGuildOnly(event);
+            return;
+        }
 
         //Add user to database or ignore if exists
         if (Commons.ENABLE_DATABASE) {

@@ -47,7 +47,10 @@ public class ModalManager extends ListenerAdapter {
 
     @Override
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {
-        if (event.getGuild() == null) return;
+        if (event.getGuild() == null) {
+            Commons.botIsGuildOnly(event);
+            return;
+        }
 
         IModal modal = getModal(event.getModalId());
         EmbedBuilder eb = new EmbedBuilder()

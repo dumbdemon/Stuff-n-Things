@@ -48,7 +48,11 @@ public class SelectMenuManager extends ListenerAdapter {
 
     @Override
     public void onSelectMenuInteraction(@NotNull SelectMenuInteractionEvent event) {
-        if (event.getGuild() == null) return;
+        if (event.getGuild() == null) {
+            Commons.botIsGuildOnly(event);
+            return;
+        }
+
         ISelectMenu menu = getMenu(event.getId());
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle("Oops")

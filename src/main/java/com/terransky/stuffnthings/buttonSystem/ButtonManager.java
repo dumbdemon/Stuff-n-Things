@@ -51,7 +51,11 @@ public class ButtonManager extends ListenerAdapter {
 
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
-        if (event.getGuild() == null || event.getButton().getId() == null) return;
+        if (event.getButton().getId() == null) return;
+        else if (event.getGuild() == null) {
+            Commons.botIsGuildOnly(event);
+            return;
+        }
 
         IButton butt = getButton(event.getButton().getId());
         MessageEmbed buttonFailed = new EmbedBuilder()

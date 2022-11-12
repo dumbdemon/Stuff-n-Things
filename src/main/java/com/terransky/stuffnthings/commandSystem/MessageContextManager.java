@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class MessageContextManager extends ListenerAdapter {
         return null;
     }
 
-    public List<CommandData> getCommandData() {
+    public List<CommandData> getCommandData() throws ParseException {
         final List<CommandData> commandData = new ArrayList<>();
 
         for (IMessageContext iMessageContext : iMessageContexts) {
@@ -58,7 +59,10 @@ public class MessageContextManager extends ListenerAdapter {
 
     @Override
     public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event) {
-        if (event.getGuild() == null) return;
+        if (event.getGuild() == null) {
+            Commons.botIsGuildOnly(event);
+            return;
+        }
 
         IMessageContext menu = getMessageMenu(event.getName());
         MessageEmbed menuFailed = new EmbedBuilder()
