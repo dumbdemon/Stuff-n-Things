@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
 
 public class getDadJokes implements ISlashCommand {
@@ -37,7 +37,7 @@ public class getDadJokes implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             An unoriginal or unfunny joke of a type supposedly told by middle-aged or older men.
             """, Mastermind.USER,

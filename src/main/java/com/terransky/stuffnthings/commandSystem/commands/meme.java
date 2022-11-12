@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 public class meme implements ISlashCommand {
     private final Logger log = LoggerFactory.getLogger(meme.class);
@@ -34,7 +34,7 @@ public class meme implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             Get your fresh hot (or cold) memes here!
             Reddit pulls from [r/memes](https://www.reddit.com/r/memes), [r/dankmemes](https://www.reddit.com/r/dankmemes), or from [r/me_irl](https://www.reddit.com/r/me_irl).

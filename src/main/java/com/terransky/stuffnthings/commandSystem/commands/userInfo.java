@@ -13,11 +13,11 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class userInfo implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             Get info on a user or bot.
             The following info with be returned:

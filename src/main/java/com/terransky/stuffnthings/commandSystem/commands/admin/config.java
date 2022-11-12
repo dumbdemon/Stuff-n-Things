@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.*;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 public class config implements ISlashCommand {
     private final Logger log = LoggerFactory.getLogger(config.class);
@@ -34,7 +34,7 @@ public class config implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             Sets certain constant values of specific commands.
             """,

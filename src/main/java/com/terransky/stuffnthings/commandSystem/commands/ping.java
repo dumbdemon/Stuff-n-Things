@@ -9,10 +9,10 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 public class ping implements ISlashCommand {
     @Override
@@ -22,7 +22,7 @@ public class ping implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             Pong! Get the ping of the bot.
             """, Mastermind.DEFAULT,

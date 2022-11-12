@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Optional;
@@ -75,7 +75,7 @@ public class numbersAPI implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             Random facts about numbers! How nerdy/geeky can you get? Leaving any option empty will return a random fact of that category.
             Facts are provided by [NumbersAPI](http://numbersapi.com).

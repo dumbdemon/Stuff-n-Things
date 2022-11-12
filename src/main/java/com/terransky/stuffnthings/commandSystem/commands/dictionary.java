@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -25,7 +26,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class dictionary implements ISlashCommand {
@@ -57,7 +57,7 @@ public class dictionary implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             Powered by Oxford Languages, this command returns all definitions of a given word in up to %d languages as long as it is within that language's lexicon.
             WARNING: depending on the word it may return no definitions. Try a different variation of that word if it happens.

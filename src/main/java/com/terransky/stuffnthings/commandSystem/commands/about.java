@@ -13,13 +13,13 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Optional;
 
@@ -31,7 +31,7 @@ public class about implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             The about command. What else did you expect?
             """, Mastermind.DEVELOPER,

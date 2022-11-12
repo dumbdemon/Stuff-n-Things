@@ -11,11 +11,11 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class robFailChance implements ISlashCommand {
@@ -29,7 +29,7 @@ public class robFailChance implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             Returns the chance of failure of the `/rob` command of the bot UnbelievaBoat. If you don't have the bot, you can ask your admins to invite it [here](%s).
             """.formatted(uBoatInvite), Mastermind.DEVELOPER,

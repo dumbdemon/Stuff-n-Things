@@ -1,4 +1,3 @@
-
 package com.terransky.stuffnthings.dataSources.NumbersAPI;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
