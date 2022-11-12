@@ -1,8 +1,8 @@
 package com.terransky.StuffnThings.commandSystem.commands.mtg;
 
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
+import com.terransky.StuffnThings.commandSystem.Metadata.Mastermind;
+import com.terransky.StuffnThings.commandSystem.Metadata.Metadata;
 import com.terransky.StuffnThings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -64,8 +64,8 @@ public class calculateRats implements ISlashCommand {
     }
 
     @Override
-    public ExtraDetails getExtraDetails() {
-        return new ExtraDetails(this.getName(), """
+    public Metadata getMetadata() {
+        return new Metadata(this.getName(), """
             *M:tG Command*
             Returns an amount of 1/1 black Rat creature tokens after X triggers created by the interaction between [Marrow-Gnawer](%s) equipped with [Thornbite Staff](%s).
             """.formatted("https://scryfall.com/card/chk/124/marrow-gnawer", "https://scryfall.com/card/mor/145/thornbite-staff"), Mastermind.DEVELOPER);

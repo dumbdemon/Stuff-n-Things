@@ -2,8 +2,8 @@ package com.terransky.StuffnThings.commandSystem.commands.mtg;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
+import com.terransky.StuffnThings.commandSystem.Metadata.Mastermind;
+import com.terransky.StuffnThings.commandSystem.Metadata.Metadata;
 import com.terransky.StuffnThings.dataSources.whatsInStandard.Ban;
 import com.terransky.StuffnThings.dataSources.whatsInStandard.Set;
 import com.terransky.StuffnThings.dataSources.whatsInStandard.WhatsInStandardData;
@@ -66,8 +66,8 @@ public class whatsInStandard implements ISlashCommand {
     }
 
     @Override
-    public ExtraDetails getExtraDetails() {
-        return new ExtraDetails(this.getName(), """
+    public Metadata getMetadata() {
+        return new Metadata(this.getName(), """
             *M:tG Command*
             Prints out the sets and ban list information for Magic: the Gathering's standard formant created by Wizards of the Coast.
             Information the bot uses is provided by [WhatsInStandard.com](https://whatsinstandard.com).

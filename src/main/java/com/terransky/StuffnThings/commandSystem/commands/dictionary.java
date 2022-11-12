@@ -2,8 +2,8 @@ package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
+import com.terransky.StuffnThings.commandSystem.Metadata.Mastermind;
+import com.terransky.StuffnThings.commandSystem.Metadata.Metadata;
 import com.terransky.StuffnThings.dataSources.oxfordDictionary.*;
 import com.terransky.StuffnThings.exceptions.DiscordAPIException;
 import com.terransky.StuffnThings.interfaces.ISlashCommand;
@@ -54,8 +54,8 @@ public class dictionary implements ISlashCommand {
     }
 
     @Override
-    public ExtraDetails getExtraDetails() {
-        return new ExtraDetails(this.getName(), """
+    public Metadata getMetadata() {
+        return new Metadata(this.getName(), """
             Powered by Oxford Languages, this command returns all definitions of a given word in up to %d languages as long as it is within that language's lexicon.
             WARNING: depending on the word it may return no definitions. Try a different variation of that word if it happens.
             """.formatted(langCodes.size()), Mastermind.DEVELOPER);

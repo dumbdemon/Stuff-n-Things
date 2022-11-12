@@ -5,8 +5,8 @@ import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
+import com.terransky.StuffnThings.commandSystem.Metadata.Mastermind;
+import com.terransky.StuffnThings.commandSystem.Metadata.Metadata;
 import com.terransky.StuffnThings.interfaces.ISlashCommand;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -27,8 +27,8 @@ public class suggest implements ISlashCommand {
     }
 
     @Override
-    public ExtraDetails getExtraDetails() {
-        return new ExtraDetails(this.getName(), """
+    public Metadata getMetadata() {
+        return new Metadata(this.getName(), """
             Have a command that you would like the bot to have? Suggest it with this command!
             """, Mastermind.DEVELOPER);
     }

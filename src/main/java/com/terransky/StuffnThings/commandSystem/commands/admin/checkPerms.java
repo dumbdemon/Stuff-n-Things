@@ -1,8 +1,8 @@
 package com.terransky.StuffnThings.commandSystem.commands.admin;
 
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
+import com.terransky.StuffnThings.commandSystem.Metadata.Mastermind;
+import com.terransky.StuffnThings.commandSystem.Metadata.Metadata;
 import com.terransky.StuffnThings.exceptions.DiscordAPIException;
 import com.terransky.StuffnThings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -56,8 +56,8 @@ public class checkPerms implements ISlashCommand {
     }
 
     @Override
-    public ExtraDetails getExtraDetails() {
-        return new ExtraDetails(this.getName(), """
+    public Metadata getMetadata() {
+        return new Metadata(this.getName(), """
             Checks if the bot has all necessary permissions for this server or channel.
             Currently the bot requires:
             ```
@@ -76,7 +76,7 @@ public class checkPerms implements ISlashCommand {
                             .setChannelTypes(ChannelType.TEXT, ChannelType.VOICE)
                     )
             )
-            .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_ROLES));
+            .setDefaultPermissions(DefaultMemberPermissions.enabledFor(this.getMetadata().minPerms()));
     }
 
     @Override

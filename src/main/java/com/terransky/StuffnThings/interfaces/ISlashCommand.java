@@ -1,6 +1,6 @@
 package com.terransky.StuffnThings.interfaces;
 
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
+import com.terransky.StuffnThings.commandSystem.Metadata.Metadata;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ISlashCommand extends ICommand {
 
-    ExtraDetails getExtraDetails();
+    Metadata getMetadata();
 
     //Whether the command is a global command or guild command
     default boolean isGlobal() {

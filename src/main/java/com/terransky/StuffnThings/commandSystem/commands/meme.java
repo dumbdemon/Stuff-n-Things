@@ -2,8 +2,8 @@ package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
+import com.terransky.StuffnThings.commandSystem.Metadata.Mastermind;
+import com.terransky.StuffnThings.commandSystem.Metadata.Metadata;
 import com.terransky.StuffnThings.dataSources.freshMemes.FreshMemeData;
 import com.terransky.StuffnThings.exceptions.DiscordAPIException;
 import com.terransky.StuffnThings.interfaces.ISlashCommand;
@@ -31,8 +31,8 @@ public class meme implements ISlashCommand {
     }
 
     @Override
-    public ExtraDetails getExtraDetails() {
-        return new ExtraDetails(this.getName(), """
+    public Metadata getMetadata() {
+        return new Metadata(this.getName(), """
             Get your fresh hot (or cold) memes here!
             Reddit pulls from [r/memes](https://www.reddit.com/r/memes), [r/dankmemes](https://www.reddit.com/r/dankmemes), or from [r/me_irl](https://www.reddit.com/r/me_irl).
             """, Mastermind.DEVELOPER);
