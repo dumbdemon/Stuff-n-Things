@@ -11,6 +11,9 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 public class ping implements ISlashCommand {
     @Override
     public String getName() {
@@ -18,10 +21,13 @@ public class ping implements ISlashCommand {
     }
 
     @Override
-    public Metadata getMetadata() {
+    public Metadata getMetadata() throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             Pong! Get the ping of the bot.
-            """, Mastermind.DEFAULT);
+            """, Mastermind.DEFAULT,
+            formatter.parse("24-08-2022_11:10"),
+            formatter.parse("12-11-2022_12:01"));
     }
 
     @Override

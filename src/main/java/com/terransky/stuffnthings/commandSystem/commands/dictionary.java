@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class dictionary implements ISlashCommand {
@@ -54,11 +56,15 @@ public class dictionary implements ISlashCommand {
     }
 
     @Override
-    public Metadata getMetadata() {
+    public Metadata getMetadata() throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             Powered by Oxford Languages, this command returns all definitions of a given word in up to %d languages as long as it is within that language's lexicon.
             WARNING: depending on the word it may return no definitions. Try a different variation of that word if it happens.
-            """.formatted(langCodes.size()), Mastermind.DEVELOPER);
+            """.formatted(langCodes.size()),
+            Mastermind.DEVELOPER,
+            formatter.parse("27-10-2022_12:46"),
+            formatter.parse("12-11-2022_11:56"));
     }
 
     @Override

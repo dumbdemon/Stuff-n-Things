@@ -21,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class config implements ISlashCommand {
     private final Logger log = LoggerFactory.getLogger(config.class);
@@ -31,10 +33,15 @@ public class config implements ISlashCommand {
     }
 
     @Override
-    public Metadata getMetadata() {
+    public Metadata getMetadata() throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             Sets certain constant values of specific commands.
-            """, Mastermind.DEVELOPER, Permission.MANAGE_SERVER);
+            """,
+            Mastermind.DEVELOPER,
+            formatter.parse("28-08-2022_21:46"),
+            formatter.parse("12-11-2022_11:48"),
+            Permission.MANAGE_SERVER);
     }
 
     @Override
@@ -43,7 +50,7 @@ public class config implements ISlashCommand {
     }
 
     @Override
-    public CommandData getCommandData() {
+    public CommandData getCommandData() throws ParseException {
         return Commands.slash(this.getName(), "The config manager.")
             .setDefaultPermissions(DefaultMemberPermissions.enabledFor(this.getMetadata().minPerms()))
             .addSubcommandGroups(

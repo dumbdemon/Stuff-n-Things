@@ -19,6 +19,9 @@ import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 public class fibonacciSequence implements ISlashCommand {
 
     private static float[] fibonacciCache;
@@ -46,13 +49,16 @@ public class fibonacciSequence implements ISlashCommand {
     }
 
     @Override
-    public Metadata getMetadata() {
+    public Metadata getMetadata() throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             *From Oxford Languages*
             > a series of numbers in which each number (Fibonacci number) is the sum of the two preceding numbers.
                         
             This command returns the nth value in the *Fibonacci Sequence* or its whole sequence up to the nth value. Although the *Fibonacci Sequence* can go into infinity, this command has been limited to return up to the 186th value. Any higher and the command will return \u221E (infinity). This is due to the limitation of the Java data type Float. You can read more [here](https://www.w3schools.com/java/ref_keyword_float.asp).
-            """, Mastermind.DEVELOPER);
+            """, Mastermind.DEVELOPER,
+            formatter.parse("11-11-2022_20:50"),
+            formatter.parse("12-11-2022_12:07"));
     }
 
     @Override

@@ -15,6 +15,9 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 public class say implements ISlashCommand {
     @Override
     public String getName() {
@@ -22,12 +25,15 @@ public class say implements ISlashCommand {
     }
 
     @Override
-    public Metadata getMetadata() {
+    public Metadata getMetadata() throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             Make the bot say anything!
                         
             ~~Subject to your server's rules and Discord Community Guidelines.~~
-            """, Mastermind.DEVELOPER);
+            """, Mastermind.DEVELOPER,
+            formatter.parse("24-08-2022_11:10"),
+            formatter.parse("12-11-2022_12:01"));
     }
 
     @Override

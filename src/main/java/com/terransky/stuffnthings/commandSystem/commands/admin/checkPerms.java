@@ -20,6 +20,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -56,17 +58,22 @@ public class checkPerms implements ISlashCommand {
     }
 
     @Override
-    public Metadata getMetadata() {
+    public Metadata getMetadata() throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             Checks if the bot has all necessary permissions for this server or channel.
             Currently the bot requires:
             ```
             %s```
-            """.formatted(requiredPermsAsString()), Mastermind.DEVELOPER, Permission.MANAGE_ROLES);
+            """.formatted(requiredPermsAsString()),
+            Mastermind.DEVELOPER,
+            formatter.parse("30-08-2022_16:14"),
+            formatter.parse("12-11-2022_11:45"),
+            Permission.MANAGE_ROLES);
     }
 
     @Override
-    public CommandData getCommandData() {
+    public CommandData getCommandData() throws ParseException {
         return Commands.slash(this.getName(), "Check if I have all of my perms needed for all of my commands.")
             .addSubcommands(
                 new SubcommandData("server", "Check if I have all of my perms needed for all of my commands for the server."),

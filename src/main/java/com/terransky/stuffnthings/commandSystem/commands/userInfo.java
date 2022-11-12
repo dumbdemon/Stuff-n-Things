@@ -16,6 +16,8 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +28,8 @@ public class userInfo implements ISlashCommand {
     }
 
     @Override
-    public Metadata getMetadata() {
+    public Metadata getMetadata() throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             Get info on a user or bot.
             The following info with be returned:
@@ -36,7 +39,9 @@ public class userInfo implements ISlashCommand {
             \u2022 Server Joined Date
             \u2022 Discord Joined Date
             \u2022 Boosting Status (if user)
-            """, Mastermind.DEFAULT);
+            """, Mastermind.DEFAULT,
+            formatter.parse("24-08-2022_11:10"),
+            formatter.parse("12-11-2022_12:01"));
     }
 
     @Override

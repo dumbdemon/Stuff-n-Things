@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -94,7 +95,7 @@ public class CommandManager extends ListenerAdapter {
         return choices;
     }
 
-    public Optional<Metadata> getMetadata(@NotNull String search) {
+    public Optional<Metadata> getMetadata(@NotNull String search) throws ParseException {
         String toSearch = search.toLowerCase();
 
         for (ISlashCommand cmd : iSlashCommandsList) {
@@ -110,7 +111,7 @@ public class CommandManager extends ListenerAdapter {
      *
      * @return Returns a list of {@link CommandData}.
      */
-    public List<CommandData> getCommandData() {
+    public List<CommandData> getCommandData() throws ParseException {
         final List<CommandData> commandData = new ArrayList<>();
         final List<CommandData> messageContext = new MessageContextManager().getCommandData();
         final List<CommandData> userContext = new UserContextManager().getCommandData();
@@ -137,7 +138,7 @@ public class CommandManager extends ListenerAdapter {
      * @param serverId The ID of the server to check for.
      * @return Returns a list of {@link CommandData}. Could potentially return an empty list.
      */
-    public List<CommandData> getCommandData(long serverId) {
+    public List<CommandData> getCommandData(long serverId) throws ParseException {
         final List<CommandData> commandData = new ArrayList<>();
 
         for (ISlashCommand command : iSlashCommandsList.stream().filter(it -> !it.isGlobal() && it.isWorking()).sorted().toList()) {

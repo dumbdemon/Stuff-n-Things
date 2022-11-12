@@ -19,6 +19,8 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -66,12 +68,16 @@ public class whatsInStandard implements ISlashCommand {
     }
 
     @Override
-    public Metadata getMetadata() {
+    public Metadata getMetadata() throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             *M:tG Command*
             Prints out the sets and ban list information for Magic: the Gathering's standard formant created by Wizards of the Coast.
             Information the bot uses is provided by [WhatsInStandard.com](https://whatsinstandard.com).
-            """, Mastermind.DEVELOPER);
+            """,
+            Mastermind.DEVELOPER,
+            formatter.parse("27-10-2022_12:46"),
+            formatter.parse("12-11-2022_11:56"));
     }
 
     @Override

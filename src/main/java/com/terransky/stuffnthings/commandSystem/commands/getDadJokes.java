@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
 
 public class getDadJokes implements ISlashCommand {
@@ -34,10 +36,13 @@ public class getDadJokes implements ISlashCommand {
     }
 
     @Override
-    public Metadata getMetadata() {
+    public Metadata getMetadata() throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             An unoriginal or unfunny joke of a type supposedly told by middle-aged or older men.
-            """, Mastermind.USER);
+            """, Mastermind.USER,
+            formatter.parse("25-8-2022_20:53"),
+            formatter.parse("12-11-2022_12:08"));
     }
 
     @Override

@@ -12,6 +12,8 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +24,13 @@ public class getInvite implements ISlashCommand {
     }
 
     @Override
-    public Metadata getMetadata() {
+    public Metadata getMetadata() throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             Returns the invite of the bot.
-            """, Mastermind.DEFAULT);
+            """, Mastermind.DEFAULT,
+            formatter.parse("24-08-2022_11:10"),
+            formatter.parse("12-11-2022_12:01"));
     }
 
     @Override

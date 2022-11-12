@@ -21,11 +21,16 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.*;
 
+//TODO: Handle ParseException
 public class ListeningForEvents extends ListenerAdapter {
     private final Logger log = LoggerFactory.getLogger(ListeningForEvents.class);
     private final List<CommandData> globalCommandData = new CommandManager().getCommandData();
+
+    public ListeningForEvents() throws ParseException {
+    }
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
@@ -55,9 +60,15 @@ public class ListeningForEvents extends ListenerAdapter {
         if (Commons.IS_TESTING_MODE) {
             event.getGuild().updateCommands().addCommands(globalCommandData).queue();
             log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
-        } else if (new CommandManager().getCommandData(event.getGuild().getIdLong()).size() > 0) {
-            event.getGuild().updateCommands().addCommands(new CommandManager().getCommandData(event.getGuild().getIdLong())).queue();
-        } else event.getGuild().updateCommands().queue();
+        } else {
+            try {
+                if (new CommandManager().getCommandData(event.getGuild().getIdLong()).size() > 0) {
+                    event.getGuild().updateCommands().addCommands(new CommandManager().getCommandData(event.getGuild().getIdLong())).queue();
+                } else event.getGuild().updateCommands().queue();
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        }
         addGuildToDB(event.getGuild());
 
         EmbedBuilder eb = new EmbedBuilder()
@@ -120,9 +131,15 @@ public class ListeningForEvents extends ListenerAdapter {
         if (Commons.IS_TESTING_MODE) {
             event.getGuild().updateCommands().addCommands(globalCommandData).queue();
             log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
-        } else if (new CommandManager().getCommandData(event.getGuild().getIdLong()).size() > 0) {
-            event.getGuild().updateCommands().addCommands(new CommandManager().getCommandData(event.getGuild().getIdLong())).queue();
-        } else event.getGuild().updateCommands().queue();
+        } else {
+            try {
+                if (new CommandManager().getCommandData(event.getGuild().getIdLong()).size() > 0) {
+                    event.getGuild().updateCommands().addCommands(new CommandManager().getCommandData(event.getGuild().getIdLong())).queue();
+                } else event.getGuild().updateCommands().queue();
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         //If bot is already in a guild add them.
         addGuildToDB(event.getGuild());

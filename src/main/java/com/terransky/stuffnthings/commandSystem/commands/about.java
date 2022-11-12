@@ -18,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Optional;
 
@@ -28,10 +30,13 @@ public class about implements ISlashCommand {
     }
 
     @Override
-    public Metadata getMetadata() {
+    public Metadata getMetadata() throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm");
         return new Metadata(this.getName(), """
             The about command. What else did you expect?
-            """, Mastermind.DEVELOPER);
+            """, Mastermind.DEVELOPER,
+            formatter.parse("24-08-2022_11:10"),
+            formatter.parse("12-11-2022_12:44"));
     }
 
     @Override
@@ -44,7 +49,7 @@ public class about implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event) {
+    public void execute(@NotNull SlashCommandInteractionEvent event) throws ParseException {
         event.deferReply().queue();
         String command = event.getOption("command", "none", OptionMapping::getAsString);
 
@@ -66,6 +71,9 @@ public class about implements ISlashCommand {
                 }
             }
 
+            long implementedDate = metadata.getImplementedAsEpochSecond(),
+                lastEditedDate = metadata.getLastEditedAsEpochSecond();
+
             event.getHook().sendMessageEmbeds(
                 new EmbedBuilder()
                     .setTitle("About Command - %s".formatted(WordUtils.capitalize(metadata.commandName().replace("-", "\s"))))
@@ -73,6 +81,8 @@ public class about implements ISlashCommand {
                     .setColor(Commons.DEFAULT_EMBED_COLOR)
                     .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
                     .addField("Mastermind", metadata.mastermind().getWho(), true)
+                    .addField("Implementation Date", "<t:%s:f> (<t:%s:R>)".formatted(implementedDate, implementedDate), false)
+                    .addField("Last Edited", "<t:%s:f> (<t:%s:R>)".formatted(lastEditedDate, lastEditedDate), false)
                     .build()
             ).queue();
             return;

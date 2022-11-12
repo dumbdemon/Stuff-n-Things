@@ -4,9 +4,13 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Date;
+
 public record Metadata(String commandName,
                        String longDescription,
                        Mastermind mastermind,
+                       Date implementationDate,
+                       Date lastUpdated,
                        Permission... minPerms) implements Comparable<Metadata> {
 
     @Override
@@ -15,6 +19,14 @@ public record Metadata(String commandName,
             return longDescription.substring(0, MessageEmbed.DESCRIPTION_MAX_LENGTH);
         }
         return longDescription;
+    }
+
+    public long getImplementedAsEpochSecond() {
+        return implementationDate.toInstant().getEpochSecond();
+    }
+
+    public long getLastEditedAsEpochSecond() {
+        return lastUpdated.toInstant().getEpochSecond();
     }
 
     @Override

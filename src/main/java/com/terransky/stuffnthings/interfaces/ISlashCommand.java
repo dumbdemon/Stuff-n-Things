@@ -4,12 +4,13 @@ import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 public interface ISlashCommand extends ICommand {
 
-    Metadata getMetadata();
+    Metadata getMetadata() throws ParseException;
 
     //Whether the command is a global command or guild command
     default boolean isGlobal() {

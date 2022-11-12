@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Random;
 
 public class StuffNThings {
@@ -30,7 +31,7 @@ public class StuffNThings {
         config = Commons.CONFIG;
     }
 
-    public StuffNThings() throws LoginException, SQLException {
+    public StuffNThings() throws LoginException, SQLException, ParseException {
         if (Commons.ENABLE_DATABASE) SQLiteDataSource.getConnection();
 
         DefaultShardManagerBuilder shards = DefaultShardManagerBuilder.createDefault(config.get("TOKEN"))
@@ -64,7 +65,7 @@ public class StuffNThings {
         );
     }
 
-    public static void main(String @NotNull [] args) throws LoginException, SQLException {
+    public static void main(String @NotNull [] args) throws LoginException, SQLException, ParseException {
         new StuffNThings();
     }
 }
