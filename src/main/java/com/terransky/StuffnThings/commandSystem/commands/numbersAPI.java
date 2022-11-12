@@ -2,8 +2,8 @@ package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
+import com.terransky.StuffnThings.commandSystem.Metadata.Mastermind;
+import com.terransky.StuffnThings.commandSystem.Metadata.Metadata;
 import com.terransky.StuffnThings.dataSources.NumbersAPI.NumbersAPIData;
 import com.terransky.StuffnThings.exceptions.DiscordAPIException;
 import com.terransky.StuffnThings.interfaces.ISlashCommand;
@@ -72,8 +72,8 @@ public class numbersAPI implements ISlashCommand {
     }
 
     @Override
-    public ExtraDetails getExtraDetails() {
-        return new ExtraDetails(this.getName(), """
+    public Metadata getMetadata() {
+        return new Metadata(this.getName(), """
             Random facts about numbers! How nerdy/geeky can you get? Leaving any option empty will return a random fact of that category.
             Facts are provided by [NumbersAPI](http://numbersapi.com).
             """, Mastermind.DEVELOPER);

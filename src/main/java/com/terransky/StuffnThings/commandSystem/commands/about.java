@@ -2,8 +2,8 @@ package com.terransky.StuffnThings.commandSystem.commands;
 
 import com.terransky.StuffnThings.Commons;
 import com.terransky.StuffnThings.commandSystem.CommandManager;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
+import com.terransky.StuffnThings.commandSystem.Metadata.Mastermind;
+import com.terransky.StuffnThings.commandSystem.Metadata.Metadata;
 import com.terransky.StuffnThings.commandSystem.commands.mtg.calculateRats;
 import com.terransky.StuffnThings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -28,8 +28,8 @@ public class about implements ISlashCommand {
     }
 
     @Override
-    public ExtraDetails getExtraDetails() {
-        return new ExtraDetails(this.getName(), """
+    public Metadata getMetadata() {
+        return new Metadata(this.getName(), """
             The about command. What else did you expect?
             """, Mastermind.DEVELOPER);
     }
@@ -49,8 +49,8 @@ public class about implements ISlashCommand {
         String command = event.getOption("command", "none", OptionMapping::getAsString);
 
         if (!command.equals("none")) {
-            Optional<ExtraDetails> extraDetails = new CommandManager().getExtraDetails(command);
-            ExtraDetails details = extraDetails.orElse(this.getExtraDetails());
+            Optional<Metadata> extraDetails = new CommandManager().getMetadata(command);
+            Metadata details = extraDetails.orElse(this.getMetadata());
 
             if (details.minPerms().length != 0) {
                 if (event.getMember() != null && !event.getMember().hasPermission(details.minPerms())) {

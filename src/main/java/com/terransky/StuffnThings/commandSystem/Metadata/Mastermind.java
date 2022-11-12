@@ -1,4 +1,4 @@
-package com.terransky.StuffnThings.commandSystem.ExtraDetails;
+package com.terransky.StuffnThings.commandSystem.Metadata;
 
 public enum Mastermind {
     USER("User"),

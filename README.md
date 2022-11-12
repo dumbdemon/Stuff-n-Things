@@ -10,11 +10,13 @@ The source code for my Discord™ bot Stuff'n'Things. Mostly an entertainment bo
 * `/color-info hex-triplet <triplet>`
 * `/color-info rgb <red> <green> <blue>`
 * `/color-info cmyk <cyan> <magenta> <yellow> <black>`
-* `/dictionary <word> [language]` [Powered by Oxford Languages.](https://languages.oup.com/)
 * `/config kill max-kills`
 * `/config kill set-timeout`
 * `/dad-joke`
+* `/dictionary <word> [language]` [Powered by Oxford Languages.](https://languages.oup.com/)
 * `/dictionary <word>`
+* `/fibonacci whole-sequence <nth>`
+* `/fibonacci at-nth <nth>`
 * `/get-invite`
 * `/kill random`
 * `/kill target`
@@ -22,18 +24,19 @@ The source code for my Discord™ bot Stuff'n'Things. Mostly an entertainment bo
 * `/lmgtfy web <search> [victim]`
 * `/lmgtfy images <search> [victim]`
 * `/meme reddit [subreddit]`
+* `/mtg-standard all`
+* `/mtg-standard sets`
+* `/mtg-standard bans [include-reason]`
 * `/ner <start-count> <iterations>`
 * `/number-facts number [n-number]`
 * `/number-facts math [m-number]`
 * `/number-facts date [month] [date]`
 * `/number-facts year [year]`
+* `/ping`
 * `/rob-fail-chance <your-net-worth> <their-cash>`
 * `/say <message> [channel]`
 * `/suggest-command <suggestion> <importance>`
 * `/user-info [user]`
-* `/mtg-standard all`
-* `/mtg-standard sets`
-* `/mtg-standard bans [include-reason]`
 
 ## Things to Note
 

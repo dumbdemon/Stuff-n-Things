@@ -1,7 +1,7 @@
 package com.terransky.StuffnThings.commandSystem;
 
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
+import com.terransky.StuffnThings.commandSystem.Metadata.Metadata;
 import com.terransky.StuffnThings.commandSystem.commands.*;
 import com.terransky.StuffnThings.commandSystem.commands.admin.checkPerms;
 import com.terransky.StuffnThings.commandSystem.commands.admin.config;
@@ -43,6 +43,7 @@ public class CommandManager extends ListenerAdapter {
         addCommand(new calculateRats());
         addCommand(new colorInfo());
         addCommand(new dictionary());
+        addCommand(new fibonacciSequence());
         addCommand(new getDadJokes());
         addCommand(new kill());
         addCommand(new lmgtfy());
@@ -93,12 +94,12 @@ public class CommandManager extends ListenerAdapter {
         return choices;
     }
 
-    public Optional<ExtraDetails> getExtraDetails(@NotNull String search) {
+    public Optional<Metadata> getMetadata(@NotNull String search) {
         String toSearch = search.toLowerCase();
 
         for (ISlashCommand cmd : iSlashCommandsList) {
             if (cmd.getName().equals(toSearch)) {
-                return Optional.of(cmd.getExtraDetails());
+                return Optional.of(cmd.getMetadata());
             }
         }
         return Optional.empty();
@@ -114,7 +115,7 @@ public class CommandManager extends ListenerAdapter {
         final List<CommandData> messageContext = new MessageContextManager().getCommandData();
         final List<CommandData> userContext = new UserContextManager().getCommandData();
 
-        for (ISlashCommand command : iSlashCommandsList.stream().filter(it -> it.isGlobal() && it.isWorking()).toList()) {
+        for (ISlashCommand command : iSlashCommandsList.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList()) {
             commandData.add(command.getCommandData());
         }
 
@@ -139,7 +140,7 @@ public class CommandManager extends ListenerAdapter {
     public List<CommandData> getCommandData(long serverId) {
         final List<CommandData> commandData = new ArrayList<>();
 
-        for (ISlashCommand command : iSlashCommandsList.stream().filter(it -> !it.isGlobal() && it.isWorking()).toList()) {
+        for (ISlashCommand command : iSlashCommandsList.stream().filter(it -> !it.isGlobal() && it.isWorking()).sorted().toList()) {
             boolean addToServer = command.getServerRestrictions().stream().anyMatch(it -> it.equals(serverId)) || command.getServerRestrictions().size() == 0;
 
             if (addToServer) commandData.add(command.getCommandData());

@@ -1,8 +1,8 @@
 package com.terransky.StuffnThings.commandSystem.commands.admin;
 
 import com.terransky.StuffnThings.Commons;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.ExtraDetails;
-import com.terransky.StuffnThings.commandSystem.ExtraDetails.Mastermind;
+import com.terransky.StuffnThings.commandSystem.Metadata.Mastermind;
+import com.terransky.StuffnThings.commandSystem.Metadata.Metadata;
 import com.terransky.StuffnThings.database.SQLiteDataSource;
 import com.terransky.StuffnThings.exceptions.DiscordAPIException;
 import com.terransky.StuffnThings.interfaces.ISlashCommand;
@@ -31,21 +31,21 @@ public class config implements ISlashCommand {
     }
 
     @Override
-    public ExtraDetails getExtraDetails() {
-        return new ExtraDetails(this.getName(), """
+    public Metadata getMetadata() {
+        return new Metadata(this.getName(), """
             Sets certain constant values of specific commands.
             """, Mastermind.DEVELOPER, Permission.MANAGE_SERVER);
     }
 
     @Override
     public boolean isWorking() {
-        return Commons.IS_TESTING_MODE;
+        return Commons.ENABLE_DATABASE;
     }
 
     @Override
     public CommandData getCommandData() {
         return Commands.slash(this.getName(), "The config manager.")
-            .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))
+            .setDefaultPermissions(DefaultMemberPermissions.enabledFor(this.getMetadata().minPerms()))
             .addSubcommandGroups(
                 new SubcommandGroupData("kill", "Change the config settings for the kill command.")
                     .addSubcommands(
