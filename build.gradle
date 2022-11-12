@@ -4,7 +4,7 @@ plugins {
     id'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
-mainClassName = 'com.terransky.StuffnThings.Core'
+mainClassName = 'com.terransky.stuffnthings.StuffNThings'
 
 group 'com.terransky.stuffnthings'
 version '14'
