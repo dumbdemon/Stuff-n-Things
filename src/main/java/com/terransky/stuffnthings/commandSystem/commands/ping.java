@@ -22,12 +22,13 @@ public class ping implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = Commons.getFastDateFormat();
         return new Metadata(this.getName(), """
             Pong! Get the ping of the bot.
             """, Mastermind.DEFAULT,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("12-11-2022_12:01"));
+            formatter.parse("13-11-2022_10:05")
+        );
     }
 
     @Override
@@ -40,7 +41,7 @@ public class ping implements ISlashCommand {
         JDA jda = event.getJDA();
         jda.getRestPing().queue(ping -> event.replyEmbeds(
             new EmbedBuilder()
-                .setColor(Commons.DEFAULT_EMBED_COLOR)
+                .setColor(Commons.getDefaultEmbedColor())
                 .setTitle("Ping Info")
                 .setFooter("Requested by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
                 .addField("Rest Ping", ping + "ms", true)

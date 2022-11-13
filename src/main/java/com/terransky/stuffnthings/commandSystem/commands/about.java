@@ -31,12 +31,13 @@ public class about implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = Commons.getFastDateFormat();
         return new Metadata(this.getName(), """
             The about command. What else did you expect?
             """, Mastermind.DEVELOPER,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("12-11-2022_12:44"));
+            formatter.parse("13-11-2022_10:05")
+        );
     }
 
     @Override
@@ -63,7 +64,7 @@ public class about implements ISlashCommand {
                         new EmbedBuilder()
                             .setTitle("About Command")
                             .setDescription("You don't have access to this command to see its details.")
-                            .setColor(Commons.DEFAULT_EMBED_COLOR)
+                            .setColor(Commons.getDefaultEmbedColor())
                             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
                             .build()
                     ).queue();
@@ -78,7 +79,7 @@ public class about implements ISlashCommand {
                 new EmbedBuilder()
                     .setTitle("About Command - %s".formatted(WordUtils.capitalize(metadata.commandName().replace("-", "\s"))))
                     .setDescription(metadata.longDescription())
-                    .setColor(Commons.DEFAULT_EMBED_COLOR)
+                    .setColor(Commons.getDefaultEmbedColor())
                     .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
                     .addField("Mastermind", metadata.mastermind().getWho(), true)
                     .addField("Implementation Date", "<t:%s:f> (<t:%s:R>)".formatted(implementedDate, implementedDate), false)
@@ -116,16 +117,16 @@ public class about implements ISlashCommand {
 
         event.getHook().sendMessageEmbeds(
             new EmbedBuilder()
-                .setColor(Commons.DEFAULT_EMBED_COLOR)
+                .setColor(Commons.getDefaultEmbedColor())
                 .setDescription("""
                     > *Who am I?*
                     I am %s
                     > *What am I?*
                     An entertainment bot.
                     > [*I think I need help...*](%s)
-                    """.formatted(event.getJDA().getSelfUser().getAsMention(), Commons.CONFIG.get("SUPPORT_GUILD_INVITE")))
-                .setTitle(event.getJDA().getSelfUser().getName(), Commons.CONFIG.get("REPO_LINK"))
-                .setThumbnail(Commons.CONFIG.get("BOT_LOGO"))
+                    """.formatted(event.getJDA().getSelfUser().getAsMention(), Commons.getConfig().get("SUPPORT_GUILD_INVITE")))
+                .setTitle(event.getJDA().getSelfUser().getName(), Commons.getConfig().get("REPO_LINK"))
+                .setThumbnail(Commons.getConfig().get("BOT_LOGO"))
                 .addField("Servers", "%d servers".formatted(guildCount), true)
                 .addField("Users", "%s users".formatted(calculateRats.largeNumberFormat(userCount)).replace(".0\s", "\s"), true)
                 .addField("Your Shard", "[%s/%s]".formatted(event.getJDA().getShardInfo().getShardId(), event.getJDA().getShardInfo().getShardTotal()), true)

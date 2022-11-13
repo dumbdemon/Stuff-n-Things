@@ -63,12 +63,13 @@ public class colorInfo implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = Commons.getFastDateFormat();
         return new Metadata(this.getName(), """
             Given a hex triplet, RGB, or CMYK code, it will return the other values and give a link to more info.
             """, Mastermind.DEVELOPER,
             formatter.parse("20-9-2022_12:10"),
-            formatter.parse("12-11-2022_12:05"));
+            formatter.parse("13-11-2022_10:05")
+        );
     }
 
     @Override
@@ -148,7 +149,7 @@ public class colorInfo implements ISlashCommand {
                 } else {
                     eb.setTitle("Invalid Hex Triplet!")
                         .setDescription("You've given an invalid hex triplet!\nCorrect example: `#663366` or `#636`")
-                        .setColor(Commons.DEFAULT_EMBED_COLOR)
+                        .setColor(Commons.getDefaultEmbedColor())
                         .addField("Provided", hexCode, false);
                     event.replyEmbeds(eb.build()).setEphemeral(true).queue();
                 }

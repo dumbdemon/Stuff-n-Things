@@ -37,12 +37,13 @@ public class kill implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = Commons.getFastDateFormat();
         return new Metadata(this.getName(), """
             Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
             """, Mastermind.USER,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("12-11-2022_12:01"));
+            formatter.parse("13-11-2022_10:05")
+        );
     }
 
     @Override
@@ -62,7 +63,7 @@ public class kill implements ISlashCommand {
         List<String> victims = new ArrayList<>();
         String subCommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.DEFAULT_EMBED_COLOR);
+            .setColor(Commons.getDefaultEmbedColor());
         List<Member> memberList = new ArrayList<>();
         if (event.getGuild() != null)
             memberList = event.getGuild().getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
@@ -84,7 +85,7 @@ public class kill implements ISlashCommand {
                     victims.get(random.nextInt(victims.size()))
                 );
 
-                eb.setColor(Commons.DEFAULT_EMBED_COLOR)
+                eb.setColor(Commons.getDefaultEmbedColor())
                     .setTitle(killer)
                     .setDescription("\u2026 " + message)
                     .setFooter("Requested by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());

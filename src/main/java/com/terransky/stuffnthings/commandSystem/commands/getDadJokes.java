@@ -37,12 +37,13 @@ public class getDadJokes implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = Commons.getFastDateFormat();
         return new Metadata(this.getName(), """
             An unoriginal or unfunny joke of a type supposedly told by middle-aged or older men.
             """, Mastermind.USER,
             formatter.parse("25-8-2022_20:53"),
-            formatter.parse("12-11-2022_12:08"));
+            formatter.parse("13-11-2022_10:05")
+        );
     }
 
     @Override
@@ -55,7 +56,7 @@ public class getDadJokes implements ISlashCommand {
         URL iCanHazDadJoke = new URL("https://icanhazdadjoke.com/");
         String iCanHazDadJokeLogo = "https://icanhazdadjoke.com/static/smile.svg";
         HttpURLConnection dadJoke = (HttpURLConnection) iCanHazDadJoke.openConnection();
-        dadJoke.addRequestProperty("User-Agent", Commons.CONFIG.get("BOT_USER_AGENT"));  //https://icanhazdadjoke.com/api#custom-user-agent
+        dadJoke.addRequestProperty("User-Agent", Commons.getConfig().get("BOT_USER_AGENT"));  //https://icanhazdadjoke.com/api#custom-user-agent
         dadJoke.addRequestProperty("Accept", "application/json");
         ObjectMapper om = new ObjectMapper();
         IcanhazdadjokeData theJoke = om.readValue(new InputStreamReader(dadJoke.getInputStream()), IcanhazdadjokeData.class);
@@ -64,7 +65,7 @@ public class getDadJokes implements ISlashCommand {
             .setEmbeds(new EmbedBuilder()
                 .setDescription(theJoke.getJoke())
                 .setThumbnail(iCanHazDadJokeLogo)
-                .setColor(Commons.DEFAULT_EMBED_COLOR)
+                .setColor(Commons.getDefaultEmbedColor())
                 .setFooter("Requested by %s | ID #%s".formatted(event.getUser().getAsTag(), theJoke.getId()))
                 .build()
             )

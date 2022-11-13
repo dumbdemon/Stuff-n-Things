@@ -67,14 +67,15 @@ public class calculateRats implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = Commons.getFastDateFormat();
         return new Metadata(this.getName(), """
             *M:tG Command*
             Returns an amount of 1/1 black Rat creature tokens after X triggers created by the interaction between [Marrow-Gnawer](%s) equipped with [Thornbite Staff](%s).
             """.formatted("https://scryfall.com/card/chk/124/marrow-gnawer", "https://scryfall.com/card/mor/145/thornbite-staff"),
             Mastermind.DEVELOPER,
             formatter.parse("5-10-2022_11:48"),
-            formatter.parse("12-11-2022_11:50"));
+            formatter.parse("13-11-2022_10:05")
+        );
     }
 
     @Override
@@ -96,7 +97,7 @@ public class calculateRats implements ISlashCommand {
         float finalCNT = startCNT;
         DecimalFormat largeNumber = new DecimalFormat("##,###");
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.DEFAULT_EMBED_COLOR)
+            .setColor(Commons.getDefaultEmbedColor())
             .setTitle("Is there enough rats?")
             .addField("Starting total", "%s rats".formatted(largeNumber.format(startCNT)), true)
             .addField("Iterations", "%s triggers".formatted(largeNumber.format(iterations)), true)

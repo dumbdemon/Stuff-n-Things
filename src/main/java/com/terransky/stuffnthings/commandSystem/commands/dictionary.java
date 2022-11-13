@@ -57,14 +57,15 @@ public class dictionary implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = Commons.getFastDateFormat();
         return new Metadata(this.getName(), """
             Powered by Oxford Languages, this command returns all definitions of a given word in up to %d languages as long as it is within that language's lexicon.
             WARNING: depending on the word it may return no definitions. Try a different variation of that word if it happens.
             """.formatted(langCodes.size()),
             Mastermind.DEVELOPER,
             formatter.parse("27-10-2022_12:46"),
-            formatter.parse("12-11-2022_11:56"));
+            formatter.parse("13-11-2022_10:05")
+        );
     }
 
     @Override
@@ -85,11 +86,11 @@ public class dictionary implements ISlashCommand {
             .setTitle("Dictionary")
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
             .setImage("https://languages.oup.com/wp-content/uploads/ol-logo-colour-300px-sfw.jpg")
-            .setColor(Commons.DEFAULT_EMBED_COLOR);
+            .setColor(Commons.getDefaultEmbedColor());
         EmbedBuilder eb2 = new EmbedBuilder()
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
             .setImage("https://languages.oup.com/wp-content/uploads/ol-logo-colour-300px-sfw.jpg")
-            .setColor(Commons.SECONDARY_EMBED_COLOR);
+            .setColor(Commons.getSecondaryEmbedColor());
         if (userWords.length > 1) {
             event.getHook().sendMessageEmbeds(
                 eb1.setDescription("Only one word can be looked up at one time. Please try again.")
@@ -105,8 +106,8 @@ public class dictionary implements ISlashCommand {
         URL dictionary = new URL("https://od-api.oxforddictionaries.com/api/v2/entries/%s/%s?fields=definitions&strictMatch=false".formatted(e.getValue(), toLookUp));
         HttpURLConnection oxfordConnection = (HttpURLConnection) dictionary.openConnection();
         oxfordConnection.addRequestProperty("Accept", "application/json");
-        oxfordConnection.addRequestProperty("app_id", Commons.CONFIG.get("OXFORD_ID"));
-        oxfordConnection.addRequestProperty("app_key", Commons.CONFIG.get("OXFORD_KEY"));
+        oxfordConnection.addRequestProperty("app_id", Commons.getConfig().get("OXFORD_ID"));
+        oxfordConnection.addRequestProperty("app_key", Commons.getConfig().get("OXFORD_KEY"));
         int responseCode = oxfordConnection.getResponseCode();
         ObjectMapper om = new ObjectMapper();
 
@@ -188,7 +189,7 @@ public class dictionary implements ISlashCommand {
             case 400 -> {
                 event.getHook().sendMessageEmbeds(
                     eb1.setDescription("Unable to get the definition of [%s]. Make sure you have typed the word correctly, If this message continues to appear, please contact <@%s> to fix this."
-                        .formatted(toLookUp.toUpperCase(Locale.forLanguageTag(e.getValue())), Commons.CONFIG.get("OWNER_ID"))
+                        .formatted(toLookUp.toUpperCase(Locale.forLanguageTag(e.getValue())), Commons.getConfig().get("OWNER_ID"))
                     ).build()
                 ).queue();
 
@@ -212,7 +213,7 @@ public class dictionary implements ISlashCommand {
             case 500 -> {
                 event.getHook().sendMessageEmbeds(
                     eb1.setDescription("Looks like something went wrong with the API. Please let <@%s> know so he can send a message to Oxford."
-                            .formatted(Commons.CONFIG.get("OWNER_ID")))
+                            .formatted(Commons.getConfig().get("OWNER_ID")))
                         .build()
                 ).queue();
 
