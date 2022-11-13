@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
@@ -60,11 +59,12 @@ public class dictionary implements ISlashCommand {
         FastDateFormat formatter = Commons.getFastDateFormat();
         return new Metadata(this.getName(), """
             Powered by Oxford Languages, this command returns all definitions of a given word in up to %d languages as long as it is within that language's lexicon.
+                        
             WARNING: depending on the word it may return no definitions. Try a different variation of that word if it happens.
             """.formatted(langCodes.size()),
             Mastermind.DEVELOPER,
             formatter.parse("27-10-2022_12:46"),
-            formatter.parse("13-11-2022_10:05")
+            formatter.parse("13-11-2022_11:01")
         );
     }
 
@@ -113,7 +113,7 @@ public class dictionary implements ISlashCommand {
 
         switch (responseCode) {
             case 200 -> {
-                OxfordData oxfordData = om.readValue(new InputStreamReader(oxfordConnection.getInputStream()), OxfordData.class);
+                OxfordData oxfordData = om.readValue(oxfordConnection.getInputStream(), OxfordData.class);
                 int i = 0;
                 String returnedWord = "";
                 List<MessageEmbed.Field> fieldOverflow = new ArrayList<>();
@@ -193,7 +193,7 @@ public class dictionary implements ISlashCommand {
                     ).build()
                 ).queue();
 
-                String message = om.readValue(new InputStreamReader(oxfordConnection.getInputStream()), OxfordError.class).getError();
+                String message = om.readValue(oxfordConnection.getInputStream(), OxfordError.class).getError();
                 log.error("400 Bad Request: %s".formatted(message));
             }
             case 403 -> {
@@ -202,7 +202,7 @@ public class dictionary implements ISlashCommand {
                         .build()
                 ).queue();
 
-                String message = om.readValue(new InputStreamReader(oxfordConnection.getInputStream()), OxfordError.class).getError();
+                String message = om.readValue(oxfordConnection.getInputStream(), OxfordError.class).getError();
                 log.error("403 Authentication failed: %s".formatted(message));
             }
             case 404 -> event.getHook().sendMessageEmbeds(
@@ -217,7 +217,7 @@ public class dictionary implements ISlashCommand {
                         .build()
                 ).queue();
 
-                String message = om.readValue(new InputStreamReader(oxfordConnection.getInputStream()), OxfordError.class).getError();
+                String message = om.readValue(oxfordConnection.getInputStream(), OxfordError.class).getError();
                 log.error("500 Internal Server Error: %s".formatted(message));
             }
             case 414 -> event.getHook().sendMessageEmbeds(
@@ -230,7 +230,7 @@ public class dictionary implements ISlashCommand {
                         .build()
                 ).queue();
 
-                String message = om.readValue(new InputStreamReader(oxfordConnection.getInputStream()), OxfordError.class).getError();
+                String message = om.readValue(oxfordConnection.getInputStream(), OxfordError.class).getError();
                 log.error("502 Bad Gateway: %s".formatted(message));
             }
             case 503, 504 -> {
@@ -242,7 +242,7 @@ public class dictionary implements ISlashCommand {
                         .build()
                 ).queue();
 
-                String message = om.readValue(new InputStreamReader(oxfordConnection.getInputStream()), OxfordError.class).getError();
+                String message = om.readValue(oxfordConnection.getInputStream(), OxfordError.class).getError();
                 log.error("%s %s: %s".formatted(responseCode, isIt503 ? "Service Unavailable" : "Gateway timeout", message));
             }
         }

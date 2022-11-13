@@ -159,7 +159,7 @@ public class CommandManager extends ListenerAdapter {
         }
 
         //Add user to database or ignore if exists
-        if (Commons.isTestingMode()) {
+        if (Commons.isEnableDatabase()) {
             try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                 .prepareStatement("INSERT OR IGNORE INTO users_" + event.getGuild().getId() + "(user_id) VALUES(?)")) {
                 stmt.setString(1, event.getUser().getId());

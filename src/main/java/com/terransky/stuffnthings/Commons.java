@@ -28,7 +28,7 @@ public class Commons {
     }
 
     public static boolean isEnableDatabase() {
-        return getConfig().get("TESTING_MODE").equals("true");
+        return getConfig().get("ENABLE_DATABASE").equals("true");
     }
 
     public static boolean isTestingMode() {

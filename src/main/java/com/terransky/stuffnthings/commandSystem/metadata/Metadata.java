@@ -15,9 +15,12 @@ public record Metadata(String commandName,
 
     @Override
     public String longDescription() {
-        if (longDescription.length() > MessageEmbed.DESCRIPTION_MAX_LENGTH) {
-            return longDescription.substring(0, MessageEmbed.DESCRIPTION_MAX_LENGTH);
+        int descriptionMaxLength = MessageEmbed.DESCRIPTION_MAX_LENGTH;
+
+        if (longDescription.length() > descriptionMaxLength) {
+            return longDescription.substring(0, descriptionMaxLength);
         }
+
         return longDescription;
     }
 

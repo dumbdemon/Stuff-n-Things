@@ -5,7 +5,7 @@ public enum Mastermind {
     DEVELOPER("Developer"),
     DEFAULT("Bot Standard");
 
-    final String who;
+    private final String who;
 
     Mastermind(String who) {
         this.who = who;

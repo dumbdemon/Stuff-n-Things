@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
@@ -81,7 +82,7 @@ public class numbersAPI implements ISlashCommand {
             Facts are provided by [NumbersAPI](http://numbersapi.com).
             """, Mastermind.DEVELOPER,
             formatter.parse("10-11-2022_20:45"),
-            formatter.parse("13-11-2022_10:05")
+            formatter.parse("13-11-2022_10:51")
         );
     }
 
@@ -103,14 +104,16 @@ public class numbersAPI implements ISlashCommand {
                 Optional<Double> number = Optional.ofNullable(event.getOption("n-number", OptionMapping::getAsDouble));
 
                 if (number.isPresent())
-                    theUrl += (number.get() + "?json").replace(".0?", "?");
+                    theUrl += String.valueOf(number.get()).replace(".0", "");
                 else
-                    theUrl += "random?json";
+                    theUrl += "random";
 
                 log.debug("The url is %s.".formatted(theUrl));
                 URL request = new URL(theUrl);
+                HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
+                numbersAPI.addRequestProperty("Content-Type", "application/json");
 
-                NumbersAPIData numbersAPIData = om.readValue(request, NumbersAPIData.class);
+                NumbersAPIData numbersAPIData = om.readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
                 String text = numbersAPIData.getText();
                 double actNumber = numbersAPIData.getNumber();
 
@@ -125,14 +128,16 @@ public class numbersAPI implements ISlashCommand {
             case "math" -> {
                 Optional<Double> ifNumber = Optional.ofNullable(event.getOption("m-number", OptionMapping::getAsDouble));
                 if (ifNumber.isPresent())
-                    theUrl += (ifNumber.get() + "/math?json").replace(".0/", "/");
+                    theUrl += (ifNumber.get() + "/math").replace(".0/", "/");
                 else
-                    theUrl += "random/math?json";
+                    theUrl += "random/math";
 
                 log.debug("The url is %s.".formatted(theUrl));
                 URL request = new URL(theUrl);
+                HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
+                numbersAPI.addRequestProperty("Content-Type", "application/json");
 
-                NumbersAPIData numbersAPIData = om.readValue(request, NumbersAPIData.class);
+                NumbersAPIData numbersAPIData = om.readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
                 String text = numbersAPIData.getText();
                 double actNumber = numbersAPIData.getNumber();
 
@@ -165,7 +170,7 @@ public class numbersAPI implements ISlashCommand {
                 }
 
                 if (uMonth.isEmpty()) {
-                    theUrl += "random/date?json";
+                    theUrl += "random/date";
                 } else {
                     month = uMonth.get();
                     day = uDay.get();
@@ -174,10 +179,7 @@ public class numbersAPI implements ISlashCommand {
                     maxDays = dayLimit.getValue();
 
                     if (day > maxDays) {
-                        String maxDaysStr;
-                        if (month == 2) {
-                            maxDaysStr = "at most 29";
-                        } else maxDaysStr = String.valueOf(maxDays);
+                        String maxDaysStr = month == 2 ? "at most 29" : String.valueOf(maxDays);
 
                         event.getHook().sendMessageEmbeds(
                             eb.setTitle("NumbersAPI Date Fact")
@@ -187,13 +189,15 @@ public class numbersAPI implements ISlashCommand {
                         return;
                     }
 
-                    theUrl += month + "/" + day + "/date?json";
+                    theUrl += "%s/%s/date".formatted(month, day);
                 }
 
                 log.debug("The url is %s.".formatted(theUrl));
                 URL request = new URL(theUrl);
+                HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
+                numbersAPI.addRequestProperty("Content-Type", "application/json");
 
-                NumbersAPIData numbersAPIData = om.readValue(request, NumbersAPIData.class);
+                NumbersAPIData numbersAPIData = om.readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
                 String text = numbersAPIData.getText();
                 double year = numbersAPIData.getYear();
 
@@ -220,14 +224,16 @@ public class numbersAPI implements ISlashCommand {
                 Optional<Double> year = Optional.ofNullable(event.getOption("year", OptionMapping::getAsDouble));
 
                 if (year.isPresent())
-                    theUrl += (year.get() + "/year?json").replace(".0/", "/");
+                    theUrl += (year.get() + "/year").replace(".0/", "/");
                 else
-                    theUrl += "random/year?json";
+                    theUrl += "random/year";
 
                 log.debug("The url is %s.".formatted(theUrl));
                 URL request = new URL(theUrl);
+                HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
+                numbersAPI.addRequestProperty("Content-Type", "application/json");
 
-                NumbersAPIData numbersAPIData = om.readValue(request, NumbersAPIData.class);
+                NumbersAPIData numbersAPIData = om.readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
                 String text = numbersAPIData.getText();
                 String date = numbersAPIData.getDate();
                 Double actYear = year.orElse(numbersAPIData.getNumber());
