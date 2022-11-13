@@ -34,19 +34,19 @@ public class config implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = Commons.getFastDateFormat();
         return new Metadata(this.getName(), """
             Sets certain constant values of specific commands.
             """,
             Mastermind.DEVELOPER,
             formatter.parse("28-08-2022_21:46"),
-            formatter.parse("12-11-2022_11:48"),
+            formatter.parse("13-11-2022_10:05"),
             Permission.MANAGE_SERVER);
     }
 
     @Override
     public boolean isWorking() {
-        return Commons.ENABLE_DATABASE;
+        return Commons.isTestingMode();
     }
 
     @Override
@@ -74,7 +74,7 @@ public class config implements ISlashCommand {
     public void execute(@NotNull SlashCommandInteractionEvent event) throws Exception {
         String subCommandGroup = event.getSubcommandGroup();
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.DEFAULT_EMBED_COLOR);
+            .setColor(Commons.getDefaultEmbedColor());
 
         if (subCommandGroup == null) throw new Exception("Discord API Error: No subcommand group was given.");
 
@@ -89,7 +89,7 @@ public class config implements ISlashCommand {
     private void killConfig(@NotNull SlashCommandInteractionEvent event) throws Exception {
         String subCommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.DEFAULT_EMBED_COLOR)
+            .setColor(Commons.getDefaultEmbedColor())
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
 
         if (subCommand == null) throw new DiscordAPIException("No subcommand was given.");
@@ -101,45 +101,7 @@ public class config implements ISlashCommand {
                 int newMax = event.getOption("set-max", 0, OptionMapping::getAsInt),
                     oldMax;
 
-                if (newMax != 0) {
-                    try (final PreparedStatement stmt1 = SQLiteDataSource.getConnection()
-                        .prepareStatement("SELECT killcmd_max FROM guilds WHERE guild_id = ?")) {
-                        stmt1.setString(1, event.getGuild().getId());
-                        try (final ResultSet rs1 = stmt1.executeQuery()) {
-                            oldMax = rs1.getInt("killcmd_max");
-                            log.debug("Old max kills for %s is %d".formatted(event.getGuild().getId(), oldMax));
-                        }
-                    } catch (SQLException e) {
-                        event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
-                        return;
-                    }
-
-                    if (newMax == oldMax) {
-                        log.debug("No change for %s".formatted(event.getGuild().getId()));
-                        event.getHook().sendMessageEmbeds(eb.setTitle("Config not Updated")
-                            .setDescription("Currently set Max Kills is requested amount: `%d Max Kills`.".formatted(newMax))
-                            .build()
-                        ).queue();
-                        return;
-                    }
-
-                    try (final PreparedStatement stmt2 = SQLiteDataSource.getConnection()
-                        .prepareStatement("UPDATE guilds SET killcmd_max = ? WHERE guild_id = ?")) {
-                        stmt2.setInt(1, newMax);
-                        stmt2.setString(2, event.getGuild().getId());
-                        stmt2.execute();
-                        log.debug("[%s] Updated max kills from %d to %d".formatted(event.getGuild().getId(), oldMax, newMax));
-                    } catch (SQLException e) {
-                        event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
-                        return;
-                    }
-
-                    eb.setTitle("Config Updated")
-                        .addField("Old Max", String.valueOf(oldMax), true)
-                        .addField("New Max", String.valueOf(newMax), true);
-
-                    event.getHook().sendMessageEmbeds(eb.build()).queue();
-                } else {
+                if (newMax == 0) {
                     try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                         .prepareStatement("SELECT killcmd_max FROM guilds WHERE guild_id = ?")) {
                         stmt.setString(1, event.getGuild().getId());
@@ -155,7 +117,46 @@ public class config implements ISlashCommand {
                     } catch (SQLException e) {
                         event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
                     }
+                    return;
                 }
+
+                try (final PreparedStatement stmt1 = SQLiteDataSource.getConnection()
+                    .prepareStatement("SELECT killcmd_max FROM guilds WHERE guild_id = ?")) {
+                    stmt1.setString(1, event.getGuild().getId());
+                    try (final ResultSet rs1 = stmt1.executeQuery()) {
+                        oldMax = rs1.getInt("killcmd_max");
+                        log.debug("Old max kills for %s is %d".formatted(event.getGuild().getId(), oldMax));
+                    }
+                } catch (SQLException e) {
+                    event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
+                    return;
+                }
+
+                if (newMax == oldMax) {
+                    log.debug("No change for %s".formatted(event.getGuild().getId()));
+                    event.getHook().sendMessageEmbeds(eb.setTitle("Config not Updated")
+                        .setDescription("Currently set Max Kills is requested amount: `%d Max Kills`.".formatted(newMax))
+                        .build()
+                    ).queue();
+                    return;
+                }
+
+                try (final PreparedStatement stmt2 = SQLiteDataSource.getConnection()
+                    .prepareStatement("UPDATE guilds SET killcmd_max = ? WHERE guild_id = ?")) {
+                    stmt2.setInt(1, newMax);
+                    stmt2.setString(2, event.getGuild().getId());
+                    stmt2.execute();
+                    log.debug("[%s] Updated max kills from %d to %d".formatted(event.getGuild().getId(), oldMax, newMax));
+                } catch (SQLException e) {
+                    event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
+                    return;
+                }
+
+                eb.setTitle("Config Updated")
+                    .addField("Old Max", String.valueOf(oldMax), true)
+                    .addField("New Max", String.valueOf(newMax), true);
+
+                event.getHook().sendMessageEmbeds(eb.build()).queue();
             }
 
             case "timeout" -> {
@@ -164,48 +165,7 @@ public class config implements ISlashCommand {
                 int newTimeout = event.getOption("set-timeout", 0, OptionMapping::getAsInt) * toMillis,
                     oldTimeout = 0;
 
-                if (newTimeout != 0) {
-                    try (final PreparedStatement stmt1 = SQLiteDataSource.getConnection()
-                        .prepareStatement("SELECT killcmd_timeout FROM guilds WHERE guild_id = ?")) {
-                        stmt1.setString(1, event.getGuild().getId());
-                        try (final ResultSet rs = stmt1.executeQuery()) {
-                            if (rs.next()) {
-                                oldTimeout = rs.getInt("killcmd_timeout");
-                                log.debug("Old timeout for %s is %dms (%d mins)".formatted(event.getGuild().getId(), oldTimeout, oldTimeout / toMillis));
-                            }
-                        }
-                    } catch (SQLException e) {
-                        event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
-                        event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
-                        return;
-                    }
-
-                    if (newTimeout == oldTimeout) {
-                        log.debug("No change for %s".formatted(event.getGuild().getId()));
-                        event.getHook().sendMessageEmbeds(eb.setTitle("Config not Updated")
-                            .setDescription("Currently set Timeout is requested amount: `%d minutes`.".formatted(newTimeout / toMillis))
-                            .build()
-                        ).queue();
-                        return;
-                    }
-
-                    try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                        .prepareStatement("UPDATE guilds SET killcmd_timeout = ? WHERE guild_id = ?")) {
-                        stmt.setInt(1, newTimeout);
-                        stmt.setString(2, event.getGuild().getId());
-                        stmt.execute();
-                        log.debug("[%s] Updated timeout from %dms (%d mins) to %dms (%d mins)".formatted(event.getGuild().getId(), oldTimeout, oldTimeout / toMillis, newTimeout, newTimeout / toMillis));
-                    } catch (SQLException e) {
-                        event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
-                        return;
-                    }
-
-                    eb.setTitle("Config Updated")
-                        .addField("Old Timeout", String.valueOf(oldTimeout), true)
-                        .addField("New Timeout", String.valueOf(newTimeout), true);
-
-                    event.getHook().sendMessageEmbeds(eb.build()).queue();
-                } else {
+                if (newTimeout == 0) {
                     try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                         .prepareStatement("SELECT killcmd_timeout FROM guilds WHERE guild_id = ?")) {
                         stmt.setString(1, event.getGuild().getId());
@@ -221,13 +181,55 @@ public class config implements ISlashCommand {
                     } catch (SQLException e) {
                         event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
                     }
+                    return;
                 }
+
+                try (final PreparedStatement stmt1 = SQLiteDataSource.getConnection()
+                    .prepareStatement("SELECT killcmd_timeout FROM guilds WHERE guild_id = ?")) {
+                    stmt1.setString(1, event.getGuild().getId());
+                    try (final ResultSet rs = stmt1.executeQuery()) {
+                        if (rs.next()) {
+                            oldTimeout = rs.getInt("killcmd_timeout");
+                            log.debug("Old timeout for %s is %dms (%d mins)".formatted(event.getGuild().getId(), oldTimeout, oldTimeout / toMillis));
+                        }
+                    }
+                } catch (SQLException e) {
+                    event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
+                    event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
+                    return;
+                }
+
+                if (newTimeout == oldTimeout) {
+                    log.debug("No change for %s".formatted(event.getGuild().getId()));
+                    event.getHook().sendMessageEmbeds(eb.setTitle("Config not Updated")
+                        .setDescription("Currently set Timeout is requested amount: `%d minutes`.".formatted(newTimeout / toMillis))
+                        .build()
+                    ).queue();
+                    return;
+                }
+
+                try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
+                    .prepareStatement("UPDATE guilds SET killcmd_timeout = ? WHERE guild_id = ?")) {
+                    stmt.setInt(1, newTimeout);
+                    stmt.setString(2, event.getGuild().getId());
+                    stmt.execute();
+                    log.debug("[%s] Updated timeout from %dms (%d mins) to %dms (%d mins)".formatted(event.getGuild().getId(), oldTimeout, oldTimeout / toMillis, newTimeout, newTimeout / toMillis));
+                } catch (SQLException e) {
+                    event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
+                    return;
+                }
+
+                eb.setTitle("Config Updated")
+                    .addField("Old Timeout", String.valueOf(oldTimeout), true)
+                    .addField("New Timeout", String.valueOf(newTimeout), true);
+
+                event.getHook().sendMessageEmbeds(eb.build()).queue();
             }
         }
     }
 
     protected MessageEmbed anErrorOccurred(@NotNull SQLException e) {
-        EmbedBuilder eb = new EmbedBuilder().setColor(Commons.DEFAULT_EMBED_COLOR);
+        EmbedBuilder eb = new EmbedBuilder().setColor(Commons.getDefaultEmbedColor());
         log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
         e.printStackTrace();
         SQLiteDataSource.restartConnection();

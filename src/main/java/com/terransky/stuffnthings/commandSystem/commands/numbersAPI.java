@@ -75,13 +75,14 @@ public class numbersAPI implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = Commons.getFastDateFormat();
         return new Metadata(this.getName(), """
             Random facts about numbers! How nerdy/geeky can you get? Leaving any option empty will return a random fact of that category.
             Facts are provided by [NumbersAPI](http://numbersapi.com).
             """, Mastermind.DEVELOPER,
             formatter.parse("10-11-2022_20:45"),
-            formatter.parse("12-11-2022_12:10"));
+            formatter.parse("13-11-2022_10:05")
+        );
     }
 
     @Override
@@ -94,7 +95,7 @@ public class numbersAPI implements ISlashCommand {
         String theUrl = "http://numbersapi.com/";
         ObjectMapper om = new ObjectMapper();
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.DEFAULT_EMBED_COLOR)
+            .setColor(Commons.getDefaultEmbedColor())
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
 
         switch (subCommand) {

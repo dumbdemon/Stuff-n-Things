@@ -69,7 +69,7 @@ public class whatsInStandard implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = Commons.getFastDateFormat();
         return new Metadata(this.getName(), """
             *M:tG Command*
             Prints out the sets and ban list information for Magic: the Gathering's standard formant created by Wizards of the Coast.
@@ -77,7 +77,8 @@ public class whatsInStandard implements ISlashCommand {
             """,
             Mastermind.DEVELOPER,
             formatter.parse("27-10-2022_12:46"),
-            formatter.parse("12-11-2022_11:56"));
+            formatter.parse("13-11-2022_10:05")
+        );
     }
 
     @Override
@@ -96,7 +97,7 @@ public class whatsInStandard implements ISlashCommand {
         event.deferReply().queue();
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle("What's in standard?")
-            .setColor(Commons.DEFAULT_EMBED_COLOR);
+            .setColor(Commons.getDefaultEmbedColor());
         String subCommand = event.getSubcommandName();
         if (subCommand == null) throw new DiscordAPIException("No subcommand received");
         String version = "6";
@@ -106,7 +107,7 @@ public class whatsInStandard implements ISlashCommand {
         WhatsInStandardData wisData = om.readValue(wis, WhatsInStandardData.class);
         if (wisData.isDeprecated()) {
             event.getHook().sendMessageEmbeds(
-                eb.setDescription("Version %s has been deprecated. Please contact <@%s> to update it.".formatted(version, Commons.CONFIG.get("OWNER_ID")))
+                eb.setDescription("Version %s has been deprecated. Please contact <@%s> to update it.".formatted(version, Commons.getConfig().get("OWNER_ID")))
                     .build()
             ).queue();
             return;

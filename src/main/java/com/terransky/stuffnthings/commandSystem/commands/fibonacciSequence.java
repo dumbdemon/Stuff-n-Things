@@ -50,7 +50,7 @@ public class fibonacciSequence implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = Commons.getFastDateFormat();
         return new Metadata(this.getName(), """
             *From Oxford Languages*
             > a series of numbers in which each number (Fibonacci number) is the sum of the two preceding numbers.
@@ -58,7 +58,8 @@ public class fibonacciSequence implements ISlashCommand {
             This command returns the nth value in the *Fibonacci Sequence* or its whole sequence up to the nth value. Although the *Fibonacci Sequence* can go into infinity, this command has been limited to return up to the 186th value. Any higher and the command will return \u221E (infinity). This is due to the limitation of the Java data type Float. You can read more [here](https://www.w3schools.com/java/ref_keyword_float.asp).
             """, Mastermind.DEVELOPER,
             formatter.parse("11-11-2022_20:50"),
-            formatter.parse("12-11-2022_12:07"));
+            formatter.parse("13-11-2022_10:05")
+        );
     }
 
     @Override
@@ -71,7 +72,7 @@ public class fibonacciSequence implements ISlashCommand {
         int n = event.getOption("nth", 3, OptionMapping::getAsInt);
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle(WordUtils.capitalize(this.getName()))
-            .setColor(Commons.DEFAULT_EMBED_COLOR)
+            .setColor(Commons.getDefaultEmbedColor())
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
         MessageEditData messageEditData;
         float nthValue = getFibonacciAt(n);
@@ -84,7 +85,7 @@ public class fibonacciSequence implements ISlashCommand {
             new EmbedBuilder()
                 .setTitle(WordUtils.capitalize(this.getName()))
                 .setDescription("Please wait. This may take a while...")
-                .setColor(Commons.DEFAULT_EMBED_COLOR)
+                .setColor(Commons.getDefaultEmbedColor())
                 .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
                 .build()
         ).queue();

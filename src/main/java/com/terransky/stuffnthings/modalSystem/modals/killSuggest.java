@@ -38,7 +38,7 @@ public class killSuggest implements IModal {
             victims.add(member.getAsMention());
         }
 
-        WebhookClientBuilder builder = new WebhookClientBuilder(Commons.CONFIG.get("REQUEST_WEBHOOK"));
+        WebhookClientBuilder builder = new WebhookClientBuilder(Commons.getConfig().get("REQUEST_WEBHOOK"));
         builder.setThreadFactory(job -> {
             Thread thread = new Thread(job);
             thread.setName("Kill_Suggestion");
@@ -56,7 +56,7 @@ public class killSuggest implements IModal {
 
         try (WebhookClient client = builder.build()) {
             WebhookEmbed request = new WebhookEmbedBuilder()
-                .setColor(Commons.DEFAULT_EMBED_COLOR.getRGB())
+                .setColor(Commons.getSecondaryEmbedColor().getRGB())
                 .setTitle(new WebhookEmbed.EmbedTitle("Kill-string Suggestion", null))
                 .setDescription(suggestion)
                 .addField(new WebhookEmbed.EmbedField(false, "From", "@%s".formatted(event.getUser().getAsTag())))
@@ -68,13 +68,13 @@ public class killSuggest implements IModal {
         MessageCreateData message = new MessageCreateBuilder()
             .setEmbeds(
                 new EmbedBuilder()
-                    .setColor(Commons.SECONDARY_EMBED_COLOR)
+                    .setColor(Commons.getSecondaryEmbedColor())
                     .setTitle("Suggestion received!")
                     .setDescription("The next embed will show what your suggestion will look like!\n" +
                         "***Note: Will not show up automatically!***")
                     .build(),
                 new EmbedBuilder()
-                    .setColor(Commons.DEFAULT_EMBED_COLOR)
+                    .setColor(Commons.getDefaultEmbedColor())
                     .setTitle(Objects.requireNonNull(event.getMember()).getEffectiveName())
                     .setDescription("\u2026 " + testKillString)
                     .setFooter("Suggestion by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())

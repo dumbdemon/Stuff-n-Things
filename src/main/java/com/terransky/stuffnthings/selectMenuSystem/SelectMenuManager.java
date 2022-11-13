@@ -2,7 +2,6 @@ package com.terransky.stuffnthings.selectMenuSystem;
 
 import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.interfaces.ISelectMenu;
-import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -11,14 +10,11 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SelectMenuManager extends ListenerAdapter {
     private final List<ISelectMenu> iSelectMenus = new ArrayList<>();
-    private final Color embedColor = Commons.DEFAULT_EMBED_COLOR;
-    private final Dotenv config = Dotenv.configure().load();
     private final Logger log = LoggerFactory.getLogger(SelectMenuManager.class);
 
     public SelectMenuManager() {
@@ -56,8 +52,8 @@ public class SelectMenuManager extends ListenerAdapter {
         ISelectMenu menu = getMenu(event.getId());
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle("Oops")
-            .setDescription("An error occurred while loading the menu!\nPlease <@" + config.get("OWNER_ID") + "> know what command you used and when.")
-            .setColor(embedColor)
+            .setDescription("An error occurred while loading the menu!\nPlease <@" + Commons.getConfig().get("OWNER_ID") + "> know what command you used and when.")
+            .setColor(Commons.getDefaultEmbedColor())
             .setFooter(event.getUser().getAsTag());
 
         if (menu != null) {

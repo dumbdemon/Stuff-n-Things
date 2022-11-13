@@ -26,14 +26,15 @@ public class say implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = Commons.getFastDateFormat();
         return new Metadata(this.getName(), """
             Make the bot say anything!
                         
             ~~Subject to your server's rules and Discord Community Guidelines.~~
             """, Mastermind.DEVELOPER,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("12-11-2022_12:01"));
+            formatter.parse("13-11-2022_10:05")
+        );
     }
 
     @Override
@@ -49,7 +50,7 @@ public class say implements ISlashCommand {
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event) {
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.DEFAULT_EMBED_COLOR);
+            .setColor(Commons.getDefaultEmbedColor());
 
         String message = event.getOption("message", OptionMapping::getAsString);
         MessageChannel channel = (MessageChannel) event.getOption("channel", event.getChannel().asGuildMessageChannel(), OptionMapping::getAsChannel);

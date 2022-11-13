@@ -34,13 +34,14 @@ public class meme implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = Commons.getFastDateFormat();
         return new Metadata(this.getName(), """
             Get your fresh hot (or cold) memes here!
             Reddit pulls from [r/memes](https://www.reddit.com/r/memes), [r/dankmemes](https://www.reddit.com/r/dankmemes), or from [r/me_irl](https://www.reddit.com/r/me_irl).
             """, Mastermind.DEVELOPER,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("12-11-2022_12:01"));
+            formatter.parse("13-11-2022_10:05")
+        );
     }
 
     @Override
@@ -58,7 +59,7 @@ public class meme implements ISlashCommand {
         DecimalFormat largeNumber = new DecimalFormat("##,###");
         ObjectMapper om = new ObjectMapper();
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.DEFAULT_EMBED_COLOR);
+            .setColor(Commons.getDefaultEmbedColor());
         String subCommand = event.getSubcommandName();
         if (subCommand == null) throw new DiscordAPIException("No subcommand was given.");
 

@@ -56,7 +56,7 @@ public class ModalManager extends ListenerAdapter {
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle("Oops!")
             .setDescription("An error occurred while executing the prompt!\nPlease contact <@" + config.get("OWNER_ID") + "> with the command you used and when.")
-            .setColor(Commons.DEFAULT_EMBED_COLOR)
+            .setColor(Commons.getDefaultEmbedColor())
             .setFooter(event.getUser().getAsTag());
 
         if (modal != null) {

@@ -28,11 +28,11 @@ public class StuffNThings {
     private final Dotenv config;
 
     {
-        config = Commons.CONFIG;
+        config = Commons.getConfig();
     }
 
     public StuffNThings() throws LoginException, SQLException, ParseException {
-        if (Commons.ENABLE_DATABASE) SQLiteDataSource.getConnection();
+        if (Commons.isEnableDatabase()) SQLiteDataSource.getConnection();
 
         DefaultShardManagerBuilder shards = DefaultShardManagerBuilder.createDefault(config.get("TOKEN"))
             .enableIntents(
@@ -45,7 +45,7 @@ public class StuffNThings {
 
         String[] whatAmIWatching = secretsAndLies.whatAmIWatching;
 
-        if (Commons.IS_TESTING_MODE) {
+        if (Commons.isTestingMode()) {
             shards.setStatus(OnlineStatus.INVISIBLE);
         } else {
             Random random = new Random();

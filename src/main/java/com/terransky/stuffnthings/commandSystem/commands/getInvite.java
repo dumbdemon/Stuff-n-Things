@@ -25,12 +25,13 @@ public class getInvite implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = Commons.getFastDateFormat();
         return new Metadata(this.getName(), """
             Returns the invite of the bot.
             """, Mastermind.DEFAULT,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("12-11-2022_12:01"));
+            formatter.parse("13-11-2022_10:05")
+        );
     }
 
     @Override
@@ -46,7 +47,7 @@ public class getInvite implements ISlashCommand {
     @Override
     public @Nullable List<Long> getServerRestrictions() {
         final List<Long> ids = new ArrayList<>();
-        ids.add(Long.parseLong(Commons.CONFIG.get("SUPPORT_GUILD_ID")));
+        ids.add(Long.parseLong(Commons.getConfig().get("SUPPORT_GUILD_ID")));
         return ids;
     }
 
@@ -54,7 +55,7 @@ public class getInvite implements ISlashCommand {
     public void execute(@NotNull SlashCommandInteractionEvent event) {
         event.replyEmbeds(
             new EmbedBuilder()
-                .setColor(Commons.DEFAULT_EMBED_COLOR)
+                .setColor(Commons.getDefaultEmbedColor())
                 .setTitle("You can't even use this.", event.getJDA().getInviteUrl(checkPerms.requiredPerms()))
                 .build()
         ).queue();

@@ -29,7 +29,7 @@ public class userInfo implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = Commons.getFastDateFormat();
         return new Metadata(this.getName(), """
             Get info on a user or bot.
             The following info with be returned:
@@ -41,7 +41,8 @@ public class userInfo implements ISlashCommand {
             \u2022 Boosting Status (if user)
             """, Mastermind.DEFAULT,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("12-11-2022_12:01"));
+            formatter.parse("13-11-2022_10:05")
+        );
     }
 
     @Override
@@ -56,7 +57,7 @@ public class userInfo implements ISlashCommand {
         User uVictim = event.getOption("user", event.getUser(), OptionMapping::getAsUser);
         Member mVictim = event.getOption("user", event.getMember(), OptionMapping::getAsMember);
         StringBuilder permText = new StringBuilder();
-        EmbedBuilder eb = new EmbedBuilder().setColor(Commons.DEFAULT_EMBED_COLOR);
+        EmbedBuilder eb = new EmbedBuilder().setColor(Commons.getDefaultEmbedColor());
         List<Permission> modPerms = new ArrayList<>();
         modPerms.add(Permission.KICK_MEMBERS);
         modPerms.add(Permission.BAN_MEMBERS);
@@ -74,7 +75,7 @@ public class userInfo implements ISlashCommand {
             }
         } else permText.append("Member");
 
-        if (uVictim.getId().equals(Commons.CONFIG.get("OWNER_ID"))) {
+        if (uVictim.getId().equals(Commons.getConfig().get("OWNER_ID"))) {
             permText.append(", Developer");
         }
 

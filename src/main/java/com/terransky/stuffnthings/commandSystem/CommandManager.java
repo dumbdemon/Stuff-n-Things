@@ -159,7 +159,7 @@ public class CommandManager extends ListenerAdapter {
         }
 
         //Add user to database or ignore if exists
-        if (Commons.ENABLE_DATABASE) {
+        if (Commons.isTestingMode()) {
             try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                 .prepareStatement("INSERT OR IGNORE INTO users_" + event.getGuild().getId() + "(user_id) VALUES(?)")) {
                 stmt.setString(1, event.getUser().getId());
@@ -173,8 +173,8 @@ public class CommandManager extends ListenerAdapter {
         ISlashCommand cmd = new CommandManager().getCommand(event.getName());
         MessageEmbed cmdFailed = new EmbedBuilder()
             .setTitle("Oops!")
-            .setDescription("An error occurred while executing that command!\nPlease contact <@" + Commons.CONFIG.get("OWNER_ID") + "> with the command that you used and when.")
-            .setColor(Commons.DEFAULT_EMBED_COLOR)
+            .setDescription("An error occurred while executing that command!\nPlease contact <@" + Commons.getConfig().get("OWNER_ID") + "> with the command that you used and when.")
+            .setColor(Commons.getDefaultEmbedColor())
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
             .build();
 

@@ -8,7 +8,6 @@ import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
 import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
-import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -22,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.text.ParseException;
 
 public class suggest implements ISlashCommand {
-    private final Dotenv config = Commons.CONFIG;
 
     @Override
     public String getName() {
@@ -31,12 +29,13 @@ public class suggest implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = Commons.getFastDateFormat();
         return new Metadata(this.getName(), """
             Have a command that you would like the bot to have? Suggest it with this command!
             """, Mastermind.DEVELOPER,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("12-11-2022_12:01"));
+            formatter.parse("13-11-2022_10:05")
+        );
     }
 
     @Override
@@ -53,10 +52,10 @@ public class suggest implements ISlashCommand {
     public void execute(@NotNull SlashCommandInteractionEvent event) {
         String suggestion = event.getOption("suggestion", OptionMapping::getAsString);
         int importance = event.getOption("importance", 50, OptionMapping::getAsInt);
-        EmbedBuilder callReply = new EmbedBuilder().setColor(Commons.DEFAULT_EMBED_COLOR);
+        EmbedBuilder callReply = new EmbedBuilder().setColor(Commons.getDefaultEmbedColor());
         String description = "```\n" + suggestion + "\n```";
 
-        WebhookClientBuilder builder = new WebhookClientBuilder(config.get("REQUEST_WEBHOOK"));
+        WebhookClientBuilder builder = new WebhookClientBuilder(Commons.getConfig().get("REQUEST_WEBHOOK"));
         builder.setThreadFactory(job -> {
             Thread thread = new Thread(job);
             thread.setName("Suggestion");
@@ -67,7 +66,7 @@ public class suggest implements ISlashCommand {
 
         try (WebhookClient client = builder.build()) {
             WebhookEmbed request = new WebhookEmbedBuilder()
-                .setColor(Commons.DEFAULT_EMBED_COLOR.getRGB())
+                .setColor(Commons.getDefaultEmbedColor().getRGB())
                 .setTitle(new WebhookEmbed.EmbedTitle("Command Suggestion", null))
                 .setDescription(description)
                 .addField(new WebhookEmbed.EmbedField(false, "Importance Value", "[" + importance + "/100]"))

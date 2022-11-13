@@ -59,7 +59,7 @@ public class checkPerms implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+        FastDateFormat formatter = Commons.getFastDateFormat();
         return new Metadata(this.getName(), """
             Checks if the bot has all necessary permissions for this server or channel.
             Currently the bot requires:
@@ -68,7 +68,7 @@ public class checkPerms implements ISlashCommand {
             """.formatted(requiredPermsAsString()),
             Mastermind.DEVELOPER,
             formatter.parse("30-08-2022_16:14"),
-            formatter.parse("12-11-2022_11:45"),
+            formatter.parse("13-11-2022_10:05"),
             Permission.MANAGE_ROLES);
     }
 
@@ -105,7 +105,7 @@ public class checkPerms implements ISlashCommand {
         List<Permission> requiredPerms = requiredPerms(),
             dontHaveThis = new ArrayList<>();
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.DEFAULT_EMBED_COLOR)
+            .setColor(Commons.getDefaultEmbedColor())
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
             .setTitle("Permission Checker");
 

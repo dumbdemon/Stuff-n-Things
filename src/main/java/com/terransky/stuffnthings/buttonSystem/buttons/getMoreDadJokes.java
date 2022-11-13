@@ -24,7 +24,7 @@ public class getMoreDadJokes implements IButton {
     public void execute(@NotNull ButtonInteractionEvent event) throws Exception {
         URL iCanHazDadJoke = new URL("https://icanhazdadjoke.com/");
         HttpURLConnection dadJoke = (HttpURLConnection) iCanHazDadJoke.openConnection();
-        dadJoke.addRequestProperty("User-Agent", Commons.CONFIG.get("BOT_USER_AGENT")); //https://icanhazdadjoke.com/api#custom-user-agent
+        dadJoke.addRequestProperty("User-Agent", Commons.getConfig().get("BOT_USER_AGENT")); //https://icanhazdadjoke.com/api#custom-user-agent
         dadJoke.addRequestProperty("Accept", "application/json");
         ObjectMapper om = new ObjectMapper();
         IcanhazdadjokeData theJoke = om.readValue(new InputStreamReader(dadJoke.getInputStream()), IcanhazdadjokeData.class);
@@ -32,7 +32,7 @@ public class getMoreDadJokes implements IButton {
         MessageEditData message = new MessageEditBuilder()
             .setEmbeds(new EmbedBuilder()
                 .setDescription(theJoke.getJoke())
-                .setColor(Commons.DEFAULT_EMBED_COLOR)
+                .setColor(Commons.getDefaultEmbedColor())
                 .setFooter("Requested by %s | ID#%s".formatted(event.getUser().getAsTag(), theJoke.getId()))
                 .build()
             ).build();

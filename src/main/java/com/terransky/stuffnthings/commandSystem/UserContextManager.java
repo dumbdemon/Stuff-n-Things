@@ -67,8 +67,8 @@ public class UserContextManager extends ListenerAdapter {
         IUserContext menu = getUserMenu(event.getName());
         MessageEmbed menuFailed = new EmbedBuilder()
             .setTitle("Oops!")
-            .setDescription("An error occurred while executing that context menu!\nPlease contact <@" + Commons.CONFIG.get("OWNER_ID") + "> with the context menu that you used and when.")
-            .setColor(Commons.DEFAULT_EMBED_COLOR)
+            .setDescription("An error occurred while executing that context menu!\nPlease contact <@" + Commons.getConfig().get("OWNER_ID") + "> with the context menu that you used and when.")
+            .setColor(Commons.getDefaultEmbedColor())
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
             .build();
 
