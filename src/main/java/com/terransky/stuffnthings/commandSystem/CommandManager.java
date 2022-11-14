@@ -64,6 +64,11 @@ public class CommandManager extends ListenerAdapter {
         addCommand(new userInfo());
     }
 
+    /**
+     * Add a {@link ISlashCommand} object to be indexed and used.
+     *
+     * @param iSlashCommand An {@link ISlashCommand} object.
+     */
     private void addCommand(ISlashCommand iSlashCommand) {
         boolean nameFound = iSlashCommandsList.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iSlashCommand.getName()));
 
@@ -74,6 +79,12 @@ public class CommandManager extends ListenerAdapter {
         else iSlashCommandsList.add(iSlashCommand);
     }
 
+    /**
+     * Get the {@link ISlashCommand} object for execution at {@code onSlashCommandInteraction()}.
+     *
+     * @param search The name of the command.
+     * @return The {@link ISlashCommand} object or null.
+     */
     @Nullable
     private ISlashCommand getCommand(@NotNull String search) {
         String toSearch = search.toLowerCase();
@@ -87,6 +98,11 @@ public class CommandManager extends ListenerAdapter {
         return null;
     }
 
+    /**
+     * Get all command names as {@link Command.Choice}s for the {@link about} command.
+     *
+     * @return A {@link List} of {@link Command.Choice}s.
+     */
     public List<Command.Choice> getCommandsAsChoices() {
         List<Command.Choice> choices = new ArrayList<>();
         for (ISlashCommand iSlashCommand : iSlashCommandsList.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList()) {
@@ -95,6 +111,14 @@ public class CommandManager extends ListenerAdapter {
         return choices;
     }
 
+    /**
+     * Get the {@link Metadata} of an {@link ISlashCommand}.
+     *
+     * @param search The name of the command to look for.
+     * @return An {@link Optional} of {@link Metadata}.
+     * @throws ParseException If the pattern used in {@code Metadata.implementationDate()} or {@code Metadata.lastUpdated()} in a slash command class
+     *                        is given an invalid date string.
+     */
     public Optional<Metadata> getMetadata(@NotNull String search) throws ParseException {
         String toSearch = search.toLowerCase();
 
@@ -110,6 +134,8 @@ public class CommandManager extends ListenerAdapter {
      * Get the command data of all slash commands, message contexts, and user contexts.
      *
      * @return Returns a list of {@link CommandData}.
+     * @throws ParseException If the pattern used in {@code Metadata.implementationDate()} or {@code Metadata.lastUpdated()} in an {@link ISlashCommand}
+     *                        is given an invalid date string.
      */
     public List<CommandData> getCommandData() throws ParseException {
         final List<CommandData> commandData = new ArrayList<>();
@@ -135,6 +161,8 @@ public class CommandManager extends ListenerAdapter {
     /**
      * Get the command data of all slash commands specifically for a server.
      *
+     * @throws ParseException If the pattern used in {@code Metadata.implementationDate()} or {@code Metadata.lastUpdated()} in a slash command class
+     * is given an invalid date string.
      * @param serverId The ID of the server to check for.
      * @return Returns a list of {@link CommandData}. Could potentially return an empty list.
      */
@@ -150,6 +178,11 @@ public class CommandManager extends ListenerAdapter {
         return commandData;
     }
 
+    /**
+     * The main event handler for all slash commands.
+     *
+     * @param event The {@link SlashCommandInteractionEvent}
+     */
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getUser().isBot()) return;

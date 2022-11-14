@@ -24,6 +24,11 @@ public class UserContextManager extends ListenerAdapter {
     public UserContextManager() {
     }
 
+    /**
+     * Add a {@link IUserContext} object to be indexed and used.
+     *
+     * @param iUserContext An {@link IUserContext} object.
+     */
     @SuppressWarnings("unused")
     private void addContextMenu(IUserContext iUserContext) {
         boolean nameFound = iMessageContexts.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iUserContext.getName()));
@@ -35,6 +40,11 @@ public class UserContextManager extends ListenerAdapter {
         else iMessageContexts.add(iUserContext);
     }
 
+    /**
+     * Get the {@link IUserContext} object for execution at {@code onUserContextInteraction()}.
+     *
+     * @param search An {@link IUserContext} or null.
+     */
     @Nullable
     private IUserContext getUserMenu(@NotNull String search) {
         for (IUserContext menu : iMessageContexts) {
@@ -46,6 +56,13 @@ public class UserContextManager extends ListenerAdapter {
         return null;
     }
 
+    /**
+     * Get the command data of User Context Menus.
+     *
+     * @return Returns a list of {@link CommandData}.
+     * @throws ParseException If the pattern used in {@code Metadata.implementationDate()} or {@code Metadata.lastUpdated()} in an {@link IUserContext}
+     *                        is given an invalid date string.
+     */
     public List<CommandData> getCommandData() throws ParseException {
         final List<CommandData> commandData = new ArrayList<>();
 
@@ -57,6 +74,11 @@ public class UserContextManager extends ListenerAdapter {
         return commandData;
     }
 
+    /**
+     * The main event handler for all User Context Menus.
+     *
+     * @param event A {@link UserContextInteractionEvent}
+     */
     @Override
     public void onUserContextInteraction(@NotNull UserContextInteractionEvent event) {
         if (event.getGuild() == null) {

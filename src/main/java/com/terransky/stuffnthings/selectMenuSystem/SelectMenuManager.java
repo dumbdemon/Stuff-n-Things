@@ -20,6 +20,11 @@ public class SelectMenuManager extends ListenerAdapter {
     public SelectMenuManager() {
     }
 
+    /**
+     * Add an {@link ISelectMenu} to be indexed and used.
+     *
+     * @param iSelectMenu An {@link ISelectMenu} object.
+     */
     @SuppressWarnings("unused")
     private void addMenu(ISelectMenu iSelectMenu) {
         boolean menuFound = iSelectMenus.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iSelectMenu.getName()));
@@ -29,6 +34,12 @@ public class SelectMenuManager extends ListenerAdapter {
         iSelectMenus.add(iSelectMenu);
     }
 
+    /**
+     * Get an {@link ISelectMenu} object to be used at {@code onSelectMenuInteraction()}
+     *
+     * @param search The {@link ISelectMenu}'s ID.
+     * @return An {@link ISelectMenu} object or null.
+     */
     @Nullable
     private ISelectMenu getMenu(@NotNull String search) {
         String toSearch = search.toLowerCase();
@@ -42,6 +53,9 @@ public class SelectMenuManager extends ListenerAdapter {
         return null;
     }
 
+    /**
+     * @param event A {@link SelectMenuInteractionEvent}
+     */
     @Override
     public void onSelectMenuInteraction(@NotNull SelectMenuInteractionEvent event) {
         if (event.getGuild() == null) {

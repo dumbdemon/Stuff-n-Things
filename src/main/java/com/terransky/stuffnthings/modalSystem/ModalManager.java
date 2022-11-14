@@ -24,6 +24,11 @@ public class ModalManager extends ListenerAdapter {
         addModal(new killSuggest());
     }
 
+    /**
+     * Add an {@link IModal} to be indexed and used.
+     *
+     * @param iModal An {@link IModal} object.
+     */
     private void addModal(IModal iModal) {
         boolean modalFound = iModalList.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iModal.getName()));
 
@@ -32,6 +37,12 @@ public class ModalManager extends ListenerAdapter {
         iModalList.add(iModal);
     }
 
+    /**
+     * Get a modal to be used at {@code onModalInteraction()}.
+     *
+     * @param search the {@link IModal}'s ID.
+     * @return An {@link IModal} object.
+     */
     @SuppressWarnings("unused")
     @Nullable
     private IModal getModal(@NotNull String search) {
@@ -45,6 +56,11 @@ public class ModalManager extends ListenerAdapter {
         return null;
     }
 
+    /**
+     * The main event handler for all modals.
+     *
+     * @param event A {@link ModalInteractionEvent}
+     */
     @Override
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {
         if (event.getGuild() == null) {

@@ -24,6 +24,11 @@ public class MessageContextManager extends ListenerAdapter {
     public MessageContextManager() {
     }
 
+    /**
+     * Add a {@link IMessageContext} object to be indexed and used.
+     *
+     * @param iMessageContext An {@link  IMessageContext} object.
+     */
     @SuppressWarnings("unused")
     private void addContextMenu(IMessageContext iMessageContext) {
         boolean nameFound = iMessageContexts.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iMessageContext.getName()));
@@ -35,6 +40,13 @@ public class MessageContextManager extends ListenerAdapter {
         else iMessageContexts.add(iMessageContext);
     }
 
+    /**
+     * /**
+     * Get the {@link IMessageContext} object for execution at {@code onMessageContextInteraction()}.
+     *
+     * @param search The name of the Context Menu
+     * @return An {@link IMessageContext} object or null.
+     */
     @Nullable
     private IMessageContext getMessageMenu(@NotNull String search) {
         for (IMessageContext menu : iMessageContexts) {
@@ -46,6 +58,13 @@ public class MessageContextManager extends ListenerAdapter {
         return null;
     }
 
+    /**
+     * Get the command data of message contexts menus.
+     *
+     * @return Returns a list of {@link CommandData}.
+     * @throws ParseException If the pattern used in {@code Metadata.implementationDate()} or {@code Metadata.lastUpdated()} in an {@link IMessageContext}
+     *                        is given an invalid date string.
+     */
     public List<CommandData> getCommandData() throws ParseException {
         final List<CommandData> commandData = new ArrayList<>();
 
@@ -57,6 +76,11 @@ public class MessageContextManager extends ListenerAdapter {
         return commandData;
     }
 
+    /**
+     * The main event handler for all Message Context Menus.
+     *
+     * @param event A {@link MessageContextInteractionEvent}.
+     */
     @Override
     public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event) {
         if (event.getGuild() == null) {

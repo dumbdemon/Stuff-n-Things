@@ -27,6 +27,11 @@ public class ButtonManager extends ListenerAdapter {
         addButton(new getMoreDadJokes());
     }
 
+    /**
+     * Add a {@link IButton} to be indexed and used.
+     *
+     * @param iButton An {@link IButton} object.
+     */
     @SuppressWarnings("unused")
     private void addButton(IButton iButton) {
         boolean buttonFound = iButtonList.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iButton.getName()));
@@ -36,6 +41,12 @@ public class ButtonManager extends ListenerAdapter {
         iButtonList.add(iButton);
     }
 
+    /**
+     * Get an {@link IButton} object to be used at {@code onButtonInteraction()}.
+     *
+     * @param search The {@link IButton} ID.
+     * @return An {@link IButton} object.
+     */
     @Nullable
     private IButton getButton(@NotNull String search) {
         String toSearch = search.toLowerCase();
@@ -49,6 +60,11 @@ public class ButtonManager extends ListenerAdapter {
         return null;
     }
 
+    /**
+     * The main event handler for all buttons.
+     *
+     * @param event A {@link ButtonInteractionEvent}.
+     */
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         if (event.getButton().getId() == null) return;
