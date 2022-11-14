@@ -40,7 +40,7 @@ public class ListeningForEvents extends ListenerAdapter {
         } else event.getJDA().updateCommands().queue();
         log.info("Service started!");
 
-        if (Commons.isEnableDatabase()) {
+        if (!Commons.isTestingMode()) {
             new Timer().scheduleAtFixedRate(new TimerTask() {
                 @Override
                 @SuppressWarnings("ConstantConditions")
@@ -49,7 +49,7 @@ public class ListeningForEvents extends ListenerAdapter {
 
                     event.getJDA().getShardManager().setActivity(Activity.playing(watchList[(new Random()).nextInt(watchList.length)]));
                 }
-            }, 0, 600000);
+            }, 600000, 600000);
         }
     }
 
