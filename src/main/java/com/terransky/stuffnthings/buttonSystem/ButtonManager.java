@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ButtonManager extends ListenerAdapter {
@@ -88,6 +89,7 @@ public class ButtonManager extends ListenerAdapter {
             } catch (Exception e) {
                 log.debug(event.getButton().getId() + " interaction on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
                 log.error(e.getClass().getName() + ": " + e.getMessage());
+                log.error(Arrays.toString(e.getStackTrace()));
                 event.replyEmbeds(buttonFailed).setEphemeral(true).queue();
             }
         }

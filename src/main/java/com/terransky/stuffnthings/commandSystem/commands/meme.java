@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.Arrays;
 
 public class meme implements ISlashCommand {
     private final Logger log = LoggerFactory.getLogger(meme.class);
@@ -110,7 +111,8 @@ public class meme implements ISlashCommand {
                         .setFooter("Reddit", redditLogo)
                         .build()
                 ).queue();
-                log.error(String.valueOf(e));
+                log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
+                log.error(Arrays.toString(e.getStackTrace()));
             }
         }
     }

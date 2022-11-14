@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 
 //TODO: Set up MongoDB
 public class SQLiteDataSource {
@@ -34,7 +35,7 @@ public class SQLiteDataSource {
             }
         } catch (IOException e) {
             log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-            e.printStackTrace();
+            log.error(Arrays.toString(e.getStackTrace()));
         }
 
         config.setJdbcUrl("jdbc:sqlite:database.sqlite");
@@ -60,7 +61,7 @@ public class SQLiteDataSource {
                 ");");
         } catch (SQLException e) {
             log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-            e.printStackTrace();
+            log.error(Arrays.toString(e.getStackTrace()));
         }
     }
 

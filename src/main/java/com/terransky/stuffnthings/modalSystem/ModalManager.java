@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ModalManager extends ListenerAdapter {
@@ -82,6 +83,7 @@ public class ModalManager extends ListenerAdapter {
             } catch (Exception e) {
                 log.debug(event.getModalId() + " interaction on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
                 log.error(e.getClass().getName() + ": " + e.getMessage());
+                log.error(Arrays.toString(e.getStackTrace()));
                 if (event.isAcknowledged()) {
                     event.getHook().sendMessageEmbeds(eb.build()).queue();
                 } else event.replyEmbeds(eb.build()).setEphemeral(true).queue();

@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MessageContextManager extends ListenerAdapter {
@@ -103,6 +104,7 @@ public class MessageContextManager extends ListenerAdapter {
             } catch (Exception e) {
                 log.debug("%s failed to execute on guild id %s".formatted(menu.getName(), event.getGuild().getId()));
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
+                log.error(Arrays.toString(e.getStackTrace()));
                 if (event.isAcknowledged()) {
                     event.getHook().sendMessageEmbeds(menuFailed).queue();
                 } else event.replyEmbeds(menuFailed).setEphemeral(true).queue();

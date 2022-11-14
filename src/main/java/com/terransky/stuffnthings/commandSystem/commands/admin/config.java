@@ -23,6 +23,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Arrays;
 
 public class config implements ISlashCommand {
     private final Logger log = LoggerFactory.getLogger(config.class);
@@ -231,7 +232,7 @@ public class config implements ISlashCommand {
     protected MessageEmbed anErrorOccurred(@NotNull SQLException e) {
         EmbedBuilder eb = new EmbedBuilder().setColor(Commons.getDefaultEmbedColor());
         log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-        e.printStackTrace();
+        log.error(Arrays.toString(e.getStackTrace()));
         SQLiteDataSource.restartConnection();
         eb.setTitle("Uh-oh")
             .setDescription("An error occurred while executing the command!\n Try again in a moment!");

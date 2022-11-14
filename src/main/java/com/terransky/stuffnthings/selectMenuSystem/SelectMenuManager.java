@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SelectMenuManager extends ListenerAdapter {
@@ -77,7 +78,7 @@ public class SelectMenuManager extends ListenerAdapter {
                 menu.execute(event);
             } catch (Exception e) {
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getCause()));
-                e.printStackTrace();
+                log.error(Arrays.toString(e.getStackTrace()));
                 if (event.isAcknowledged()) {
                     event.getHook().sendMessageEmbeds(eb.build()).queue();
                 } else event.replyEmbeds(eb.build()).setEphemeral(true).queue();

@@ -26,6 +26,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -199,7 +200,7 @@ public class CommandManager extends ListenerAdapter {
                 stmt.execute();
             } catch (SQLException e) {
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-                e.printStackTrace();
+                log.error(Arrays.toString(e.getStackTrace()));
             }
         }
 
@@ -218,7 +219,7 @@ public class CommandManager extends ListenerAdapter {
             } catch (Exception e) {
                 log.debug("Full command path that triggered error :: [" + event.getCommandPath() + "]");
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-                e.printStackTrace();
+                log.error(Arrays.toString(e.getStackTrace()));
                 if (event.isAcknowledged()) {
                     event.getHook().sendMessageEmbeds(cmdFailed).queue();
                 } else event.replyEmbeds(cmdFailed).setEphemeral(true).queue();

@@ -101,7 +101,7 @@ public class ListeningForEvents extends ListenerAdapter {
                 }
             } catch (SQLException e) {
                 log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-                e.printStackTrace();
+                log.error(Arrays.toString(e.getStackTrace()));
             }
         }
     }
@@ -121,7 +121,7 @@ public class ListeningForEvents extends ListenerAdapter {
                 log.info("User %s left %s [%s]. Users table has been updated".formatted(userID, event.getGuild().getName(), guildID));
             } catch (SQLException e) {
                 log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-                e.printStackTrace();
+                log.error(Arrays.toString(e.getStackTrace()));
             }
         }
     }
@@ -165,7 +165,7 @@ public class ListeningForEvents extends ListenerAdapter {
             }
         } catch (SQLException e) {
             log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-            e.printStackTrace();
+            log.error(Arrays.toString(e.getStackTrace()));
         }
     }
 }
