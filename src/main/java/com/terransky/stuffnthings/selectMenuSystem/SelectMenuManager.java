@@ -78,7 +78,7 @@ public class SelectMenuManager extends ListenerAdapter {
                 menu.execute(event);
             } catch (Exception e) {
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getCause()));
-                log.error(Arrays.toString(e.getStackTrace()));
+                Commons.listPrinter(Arrays.asList(e.getStackTrace()), SelectMenuManager.class);
                 if (event.isAcknowledged()) {
                     event.getHook().sendMessageEmbeds(eb.build()).queue();
                 } else event.replyEmbeds(eb.build()).setEphemeral(true).queue();

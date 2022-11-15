@@ -102,7 +102,7 @@ public class ListeningForEvents extends ListenerAdapter {
                 }
             } catch (SQLException e) {
                 log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-                log.error(Arrays.toString(e.getStackTrace()));
+                Commons.listPrinter(Arrays.asList(e.getStackTrace()), ListeningForEvents.class);
             }
         }
     }
@@ -122,7 +122,7 @@ public class ListeningForEvents extends ListenerAdapter {
                 log.info("User %s left %s [%s]. Users table has been updated".formatted(userID, event.getGuild().getName(), guildID));
             } catch (SQLException e) {
                 log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-                log.error(Arrays.toString(e.getStackTrace()));
+                Commons.listPrinter(Arrays.asList(e.getStackTrace()), ListeningForEvents.class);
             }
         }
     }
@@ -166,7 +166,7 @@ public class ListeningForEvents extends ListenerAdapter {
             }
         } catch (SQLException e) {
             log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-            log.error(Arrays.toString(e.getStackTrace()));
+            Commons.listPrinter(Arrays.asList(e.getStackTrace()), ListeningForEvents.class);
         }
     }
 }

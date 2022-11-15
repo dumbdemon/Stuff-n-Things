@@ -205,7 +205,7 @@ public class CommandManager extends ListenerAdapter {
                 stmt.execute();
             } catch (SQLException e) {
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-                log.error(Arrays.toString(e.getStackTrace()));
+                Commons.listPrinter(Arrays.asList(e.getStackTrace()), CommandManager.class);
             }
         }
 
@@ -225,7 +225,7 @@ public class CommandManager extends ListenerAdapter {
             } catch (Exception e) {
                 log.debug("Full command path that triggered error :: [" + event.getCommandPath() + "]");
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-                log.error(Arrays.toString(e.getStackTrace()));
+                Commons.listPrinter(Arrays.asList(e.getStackTrace()), CommandManager.class);
                 if (event.isAcknowledged()) {
                     event.getHook().sendMessageEmbeds(cmdFailed).queue();
                 } else event.replyEmbeds(cmdFailed).setEphemeral(true).queue();

@@ -89,7 +89,7 @@ public class ButtonManager extends ListenerAdapter {
             } catch (Exception e) {
                 log.debug(event.getButton().getId() + " interaction on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
                 log.error(e.getClass().getName() + ": " + e.getMessage());
-                log.error(Arrays.toString(e.getStackTrace()));
+                Commons.listPrinter(Arrays.asList(e.getStackTrace()), ButtonManager.class);
                 event.replyEmbeds(buttonFailed).setEphemeral(true).queue();
             }
         }

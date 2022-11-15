@@ -232,7 +232,7 @@ public class config implements ISlashCommand {
     protected MessageEmbed anErrorOccurred(@NotNull SQLException e) {
         EmbedBuilder eb = new EmbedBuilder().setColor(Commons.getDefaultEmbedColor());
         log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-        log.error(Arrays.toString(e.getStackTrace()));
+        Commons.listPrinter(Arrays.asList(e.getStackTrace()), config.class);
         SQLiteDataSource.restartConnection();
         eb.setTitle("Uh-oh")
             .setDescription("An error occurred while executing the command!\n Try again in a moment!");

@@ -103,7 +103,7 @@ public class UserContextManager extends ListenerAdapter {
             } catch (Exception e) {
                 log.debug("%s failed to execute on guild id %s".formatted(uMenu.getName(), event.getGuild().getId()));
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-                log.error(Arrays.toString(e.getStackTrace()));
+                Commons.listPrinter(Arrays.asList(e.getStackTrace()), UserContextManager.class);
                 if (event.isAcknowledged()) {
                     event.getHook().sendMessageEmbeds(menuFailed).queue();
                 } else event.replyEmbeds(menuFailed).setEphemeral(true).queue();

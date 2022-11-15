@@ -9,8 +9,11 @@ import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEve
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.util.List;
 
 public class Commons {
 
@@ -63,5 +66,13 @@ public class Commons {
 
     public static void botIsGuildOnly(@NotNull ButtonInteractionEvent event) {
         event.replyEmbeds(BOT_IS_GUILD_ONLY_MESSAGE.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl()).build()).queue();
+    }
+
+    public static void listPrinter(@NotNull List<?> aList, Class<?> clazz) {
+        final Logger log = LoggerFactory.getLogger(clazz);
+
+        for (Object listItem : aList) {
+            log.error(listItem.toString());
+        }
     }
 }

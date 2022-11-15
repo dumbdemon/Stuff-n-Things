@@ -83,7 +83,7 @@ public class ModalManager extends ListenerAdapter {
             } catch (Exception e) {
                 log.debug(event.getModalId() + " interaction on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
                 log.error(e.getClass().getName() + ": " + e.getMessage());
-                log.error(Arrays.toString(e.getStackTrace()));
+                Commons.listPrinter(Arrays.asList(e.getStackTrace()), ModalManager.class);
                 if (event.isAcknowledged()) {
                     event.getHook().sendMessageEmbeds(eb.build()).queue();
                 } else event.replyEmbeds(eb.build()).setEphemeral(true).queue();

@@ -105,7 +105,7 @@ public class MessageContextManager extends ListenerAdapter {
             } catch (Exception e) {
                 log.debug("%s failed to execute on guild id %s".formatted(mMenu.getName(), event.getGuild().getId()));
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-                log.error(Arrays.toString(e.getStackTrace()));
+                Commons.listPrinter(Arrays.asList(e.getStackTrace()), MessageContextManager.class);
                 if (event.isAcknowledged()) {
                     event.getHook().sendMessageEmbeds(menuFailed).queue();
                 } else event.replyEmbeds(menuFailed).setEphemeral(true).queue();

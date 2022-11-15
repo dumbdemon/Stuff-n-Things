@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.database;
 
+import com.terransky.stuffnthings.Commons;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.HikariPoolMXBean;
@@ -35,7 +36,7 @@ public class SQLiteDataSource {
             }
         } catch (IOException e) {
             log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-            log.error(Arrays.toString(e.getStackTrace()));
+            Commons.listPrinter(Arrays.asList(e.getStackTrace()), SQLiteDataSource.class);
         }
 
         config.setJdbcUrl("jdbc:sqlite:database.sqlite");
@@ -61,7 +62,7 @@ public class SQLiteDataSource {
                 ");");
         } catch (SQLException e) {
             log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-            log.error(Arrays.toString(e.getStackTrace()));
+            Commons.listPrinter(Arrays.asList(e.getStackTrace()), SQLiteDataSource.class);
         }
     }
 

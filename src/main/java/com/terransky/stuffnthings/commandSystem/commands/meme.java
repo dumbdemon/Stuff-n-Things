@@ -112,7 +112,7 @@ public class meme implements ISlashCommand {
                         .build()
                 ).queue();
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-                log.error(Arrays.toString(e.getStackTrace()));
+                Commons.listPrinter(Arrays.asList(e.getStackTrace()), meme.class);
             }
         }
     }
