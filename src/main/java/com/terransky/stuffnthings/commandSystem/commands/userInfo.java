@@ -18,7 +18,7 @@ import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class userInfo implements ISlashCommand {
@@ -58,12 +58,13 @@ public class userInfo implements ISlashCommand {
         Member mVictim = event.getOption("user", event.getMember(), OptionMapping::getAsMember);
         StringBuilder permText = new StringBuilder();
         EmbedBuilder eb = new EmbedBuilder().setColor(Commons.getDefaultEmbedColor());
-        List<Permission> modPerms = new ArrayList<>();
-        modPerms.add(Permission.KICK_MEMBERS);
-        modPerms.add(Permission.BAN_MEMBERS);
-        modPerms.add(Permission.MESSAGE_SEND);
-        modPerms.add(Permission.MESSAGE_MANAGE);
-        modPerms.add(Permission.MESSAGE_HISTORY);
+        final List<Permission> modPerms = Arrays.asList(
+            Permission.BAN_MEMBERS,
+            Permission.KICK_MEMBERS,
+            Permission.MESSAGE_HISTORY,
+            Permission.MESSAGE_MANAGE,
+            Permission.MESSAGE_SEND
+        );
 
         if (mVictim.hasPermission(modPerms)) {
             permText.append("Server Moderator");

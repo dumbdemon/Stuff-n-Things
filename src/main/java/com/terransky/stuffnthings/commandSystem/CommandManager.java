@@ -18,7 +18,6 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +68,7 @@ public class CommandManager extends ListenerAdapter {
      * Add a {@link ISlashCommand} object to be indexed and used.
      *
      * @param iSlashCommand An {@link ISlashCommand} object.
+     * @throws IndexOutOfBoundsException If the {@code iSlashCommandsList} is more than the max slash commands.
      */
     private void addCommand(ISlashCommand iSlashCommand) {
         boolean nameFound = iSlashCommandsList.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iSlashCommand.getName()));
@@ -84,19 +84,18 @@ public class CommandManager extends ListenerAdapter {
      * Get the {@link ISlashCommand} object for execution at {@code onSlashCommandInteraction()}.
      *
      * @param search The name of the command.
-     * @return The {@link ISlashCommand} object or null.
+     * @return An {@link Optional} of {@link ISlashCommand}.
      */
-    @Nullable
-    private ISlashCommand getCommand(@NotNull String search) {
+    private Optional<ISlashCommand> getCommand(@NotNull String search) {
         String toSearch = search.toLowerCase();
 
         for (ISlashCommand cmd : iSlashCommandsList) {
             if (cmd.getName().equals(toSearch)) {
-                return cmd;
+                return Optional.of(cmd);
             }
         }
 
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -135,8 +134,10 @@ public class CommandManager extends ListenerAdapter {
      * Get the command data of all slash commands, message contexts, and user contexts.
      *
      * @return Returns a list of {@link CommandData}.
-     * @throws ParseException If the pattern used in {@code Metadata.implementationDate()} or {@code Metadata.lastUpdated()} in an {@link ISlashCommand}
-     *                        is given an invalid date string.
+     * @throws ParseException            If the pattern used in {@code Metadata.implementationDate()} or {@code Metadata.lastUpdated()} in an {@link ISlashCommand}
+     *                                   is given an invalid date string.
+     * @throws IllegalArgumentException  If an {@link ISlashCommand} with that name is already indexed.
+     * @throws IndexOutOfBoundsException If there are more than the combined total max slash commands, max message commands, and max user commands.
      */
     public List<CommandData> getCommandData() throws ParseException {
         final List<CommandData> commandData = new ArrayList<>();
@@ -155,6 +156,10 @@ public class CommandManager extends ListenerAdapter {
             commandData.addAll(userContext);
             log.debug("%d user contexts added".formatted(userContext.size()));
         } else log.debug("No user contexts were added.");
+
+        int commandLimit = Commands.MAX_SLASH_COMMANDS + Commands.MAX_MESSAGE_COMMANDS + Commands.MAX_USER_COMMANDS;
+        if (commandData.size() > commandLimit)
+            throw new IndexOutOfBoundsException("CommandData List can not be more than %s. You have %s in the list.".formatted(commandLimit, commandData.size()));
 
         return commandData;
     }
@@ -204,7 +209,7 @@ public class CommandManager extends ListenerAdapter {
             }
         }
 
-        ISlashCommand cmd = new CommandManager().getCommand(event.getName());
+        Optional<ISlashCommand> cmd = getCommand(event.getName());
         MessageEmbed cmdFailed = new EmbedBuilder()
             .setTitle("Oops!")
             .setDescription("An error occurred while executing that command!\nPlease contact <@" + Commons.getConfig().get("OWNER_ID") + "> with the command that you used and when.")
@@ -212,10 +217,11 @@ public class CommandManager extends ListenerAdapter {
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
             .build();
 
-        if (cmd != null) {
-            log.debug("Command " + cmd.getName().toUpperCase() + " called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
+        if (cmd.isPresent()) {
+            ISlashCommand command = cmd.get();
+            log.debug("Command " + command.getName().toUpperCase() + " called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
             try {
-                cmd.execute(event);
+                command.execute(event);
             } catch (Exception e) {
                 log.debug("Full command path that triggered error :: [" + event.getCommandPath() + "]");
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));

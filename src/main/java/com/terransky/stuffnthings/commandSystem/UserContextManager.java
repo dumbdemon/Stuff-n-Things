@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +16,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class UserContextManager extends ListenerAdapter {
     private static final List<IUserContext> iMessageContexts = new ArrayList<>();
@@ -29,6 +29,8 @@ public class UserContextManager extends ListenerAdapter {
      * Add a {@link IUserContext} object to be indexed and used.
      *
      * @param iUserContext An {@link IUserContext} object.
+     * @throws IllegalArgumentException  If an {@link IUserContext} with that name is already indexed.
+     * @throws IndexOutOfBoundsException If {@code iMessageContexts} is more than the max user contexts.
      */
     @SuppressWarnings("unused")
     private void addContextMenu(IUserContext iUserContext) {
@@ -44,17 +46,16 @@ public class UserContextManager extends ListenerAdapter {
     /**
      * Get the {@link IUserContext} object for execution at {@code onUserContextInteraction()}.
      *
-     * @param search An {@link IUserContext} or null.
+     * @param search An {@link Optional} of {@link IUserContext}.
      */
-    @Nullable
-    private IUserContext getUserMenu(@NotNull String search) {
+    private Optional<IUserContext> getUserMenu(@NotNull String search) {
         for (IUserContext menu : iMessageContexts) {
             if (menu.getName().equals(search)) {
-                return menu;
+                return Optional.of(menu);
             }
         }
 
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -67,9 +68,8 @@ public class UserContextManager extends ListenerAdapter {
     public List<CommandData> getCommandData() throws ParseException {
         final List<CommandData> commandData = new ArrayList<>();
 
-        for (IUserContext iUserContext : iMessageContexts) {
-            if (iUserContext.isWorking())
-                commandData.add(iUserContext.getCommandData());
+        for (IUserContext iUserContext : iMessageContexts.stream().filter(IUserContext::isWorking).toList()) {
+            commandData.add(iUserContext.getCommandData());
         }
 
         return commandData;
@@ -87,7 +87,7 @@ public class UserContextManager extends ListenerAdapter {
             return;
         }
 
-        IUserContext menu = getUserMenu(event.getName());
+        Optional<IUserContext> menu = getUserMenu(event.getName());
         MessageEmbed menuFailed = new EmbedBuilder()
             .setTitle("Oops!")
             .setDescription("An error occurred while executing that context menu!\nPlease contact <@" + Commons.getConfig().get("OWNER_ID") + "> with the context menu that you used and when.")
@@ -95,12 +95,13 @@ public class UserContextManager extends ListenerAdapter {
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
             .build();
 
-        if (menu != null) {
-            log.debug("Command \"" + menu.getName().toUpperCase() + "\" called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
+        if (menu.isPresent()) {
+            IUserContext uMenu = menu.get();
+            log.debug("Command \"" + uMenu.getName().toUpperCase() + "\" called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
             try {
-                menu.execute(event);
+                uMenu.execute(event);
             } catch (Exception e) {
-                log.debug("%s failed to execute on guild id %s".formatted(menu.getName(), event.getGuild().getId()));
+                log.debug("%s failed to execute on guild id %s".formatted(uMenu.getName(), event.getGuild().getId()));
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
                 log.error(Arrays.toString(e.getStackTrace()));
                 if (event.isAcknowledged()) {

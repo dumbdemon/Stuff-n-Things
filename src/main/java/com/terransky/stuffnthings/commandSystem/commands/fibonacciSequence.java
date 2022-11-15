@@ -75,11 +75,11 @@ public class fibonacciSequence implements ISlashCommand {
             .setColor(Commons.getDefaultEmbedColor())
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
         MessageEditData messageEditData;
-        float nthValue = getFibonacciAt(n);
-        String numSuffix = n % 10 == 2 ? "nd" : (n % 10 == 3 ? "rd" : "th"), returnString;
 
         fibonacciCache = new float[n + 1];
         fibonacciCache[1] = 1;
+        float nthValue = getFibonacciAt(n);
+        String numSuffix = n % 10 == 2 ? "nd" : (n % 10 == 3 ? "rd" : "th"), returnString;
 
         event.replyEmbeds(
             new EmbedBuilder()

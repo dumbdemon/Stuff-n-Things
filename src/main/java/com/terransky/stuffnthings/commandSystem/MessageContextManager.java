@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +16,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class MessageContextManager extends ListenerAdapter {
     private final List<IMessageContext> iMessageContexts = new ArrayList<>();
@@ -28,7 +28,9 @@ public class MessageContextManager extends ListenerAdapter {
     /**
      * Add a {@link IMessageContext} object to be indexed and used.
      *
-     * @param iMessageContext An {@link  IMessageContext} object.
+     * @param iMessageContext An {@link IMessageContext} object.
+     * @throws IllegalArgumentException  If an {@link IMessageContext} with that name is already indexed.
+     * @throws IndexOutOfBoundsException If {@code iMessageContexts} is more than the max message commands.
      */
     @SuppressWarnings("unused")
     private void addContextMenu(IMessageContext iMessageContext) {
@@ -46,17 +48,16 @@ public class MessageContextManager extends ListenerAdapter {
      * Get the {@link IMessageContext} object for execution at {@code onMessageContextInteraction()}.
      *
      * @param search The name of the Context Menu
-     * @return An {@link IMessageContext} object or null.
+     * @return An {@link Optional} {@link IMessageContext}.
      */
-    @Nullable
-    private IMessageContext getMessageMenu(@NotNull String search) {
+    private Optional<IMessageContext> getMessageMenu(@NotNull String search) {
         for (IMessageContext menu : iMessageContexts) {
             if (menu.getName().equals(search)) {
-                return menu;
+                return Optional.of(menu);
             }
         }
 
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -69,9 +70,8 @@ public class MessageContextManager extends ListenerAdapter {
     public List<CommandData> getCommandData() throws ParseException {
         final List<CommandData> commandData = new ArrayList<>();
 
-        for (IMessageContext iMessageContext : iMessageContexts) {
-            if (iMessageContext.isWorking())
-                commandData.add(iMessageContext.getCommandData());
+        for (IMessageContext iMessageContext : iMessageContexts.stream().filter(IMessageContext::isWorking).toList()) {
+            commandData.add(iMessageContext.getCommandData());
         }
 
         return commandData;
@@ -89,7 +89,7 @@ public class MessageContextManager extends ListenerAdapter {
             return;
         }
 
-        IMessageContext menu = getMessageMenu(event.getName());
+        Optional<IMessageContext> menu = getMessageMenu(event.getName());
         MessageEmbed menuFailed = new EmbedBuilder()
             .setTitle("Oops!")
             .setDescription("An error occurred while executing that context menu!\nPlease contact <@" + Commons.getConfig().get("OWNER_ID") + "> with the context menu that you used and when.")
@@ -97,12 +97,13 @@ public class MessageContextManager extends ListenerAdapter {
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
             .build();
 
-        if (menu != null) {
-            log.debug("Command \"" + menu.getName().toUpperCase() + "\" called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
+        if (menu.isPresent()) {
+            IMessageContext mMenu = menu.get();
+            log.debug("Command \"" + mMenu.getName().toUpperCase() + "\" called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
             try {
-                menu.execute(event);
+                mMenu.execute(event);
             } catch (Exception e) {
-                log.debug("%s failed to execute on guild id %s".formatted(menu.getName(), event.getGuild().getId()));
+                log.debug("%s failed to execute on guild id %s".formatted(mMenu.getName(), event.getGuild().getId()));
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
                 log.error(Arrays.toString(e.getStackTrace()));
                 if (event.isAcknowledged()) {

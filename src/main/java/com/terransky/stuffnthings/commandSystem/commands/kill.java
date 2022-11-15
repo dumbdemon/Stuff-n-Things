@@ -63,7 +63,8 @@ public class kill implements ISlashCommand {
         List<String> victims = new ArrayList<>();
         String subCommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.getDefaultEmbedColor());
+            .setColor(Commons.getDefaultEmbedColor())
+            .setFooter("Requested by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
         List<Member> memberList = new ArrayList<>();
         if (event.getGuild() != null)
             memberList = event.getGuild().getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
@@ -87,8 +88,7 @@ public class kill implements ISlashCommand {
 
                 eb.setColor(Commons.getDefaultEmbedColor())
                     .setTitle(killer)
-                    .setDescription("\u2026 " + message)
-                    .setFooter("Requested by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
+                    .setDescription("\u2026 " + message);
 
                 event.replyEmbeds(eb.build()).queue();
             }
@@ -113,8 +113,7 @@ public class kill implements ISlashCommand {
                     target += " (hey wait a second...)";
                 }
                 eb.setTitle(killer)
-                    .setDescription("\u2026 %s".formatted(targetStrings[random.nextInt(targetStrings.length)]).formatted(target))
-                    .setFooter("Requested by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
+                    .setDescription("\u2026 %s".formatted(targetStrings[random.nextInt(targetStrings.length)]).formatted(target));
                 event.replyEmbeds(eb.build()).queue();
             }
         }
