@@ -1,0 +1,64 @@
+name: "Error Report"
+description: "File an error report"
+title: "[ERROR]: "
+labels: [ "bug" ]
+assignees:
+  - dumbdemon
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this error report!
+  - type: dropdown
+    id: command
+    attributes:
+      label: Command
+      description: Which command were you attempting to run?
+      options:
+        - about
+        - check-perms
+        - color-info
+        - dad-jokes
+        - dictionary
+        - fibonacci
+        - get-invite
+        - kill
+        - lmgtfy
+        - meme
+        - mtg-standard
+        - ner
+        - number-facts
+        - ping
+        - suggest-command
+        - user-info
+    validations:
+      required: true
+  - type: input
+    id: date-time
+    attributes:
+      label: Date of Error
+      description: When did this error occur? Include Timezone.
+      placeholder: Ex. November 16, 2022 at 12:43 PM CST
+    validations:
+      required: true
+  - type: textarea
+    id: arguments
+    attributes:
+      label: Command Arguments
+      description: Please list any and all arguments used to produce the error message.
+      value: "None"
+    validations:
+      required: true
+  - type: dropdown
+    id: discord-server-join
+    attributes:
+      label: Need Contact on Discord
+      description: Do you want me to join your server?
+      options:
+        - Yes
+        - No
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: "Thanks for filling this out! I'll get to this issue as soon as I can."
