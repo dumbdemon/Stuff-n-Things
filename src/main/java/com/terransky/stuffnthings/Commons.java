@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +22,6 @@ public class Commons {
         .setDescription("Please execute this interaction in a server.")
         .setColor(getDefaultEmbedColor());
 
-    @Contract(pure = true)
     private Commons() {
     }
 
@@ -60,7 +59,7 @@ public class Commons {
         event.replyEmbeds(BOT_IS_GUILD_ONLY_MESSAGE.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl()).build()).queue();
     }
 
-    public static void botIsGuildOnly(@NotNull SelectMenuInteractionEvent event) {
+    public static void botIsGuildOnly(@NotNull EntitySelectInteractionEvent event) {
         event.replyEmbeds(BOT_IS_GUILD_ONLY_MESSAGE.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl()).build()).queue();
     }
 

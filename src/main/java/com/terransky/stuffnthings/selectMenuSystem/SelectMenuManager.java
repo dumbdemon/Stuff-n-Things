@@ -3,7 +3,7 @@ package com.terransky.stuffnthings.selectMenuSystem;
 import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.interfaces.ISelectMenu;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -54,10 +54,10 @@ public class SelectMenuManager extends ListenerAdapter {
     }
 
     /**
-     * @param event A {@link SelectMenuInteractionEvent}
+     * @param event A {@link EntitySelectInteractionEvent}
      */
     @Override
-    public void onSelectMenuInteraction(@NotNull SelectMenuInteractionEvent event) {
+    public void onEntitySelectInteraction(@NotNull EntitySelectInteractionEvent event) {
         if (event.getGuild() == null) {
             Commons.botIsGuildOnly(event);
             return;

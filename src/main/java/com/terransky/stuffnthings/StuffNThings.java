@@ -17,9 +17,7 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.jetbrains.annotations.NotNull;
 
-import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Random;
@@ -31,7 +29,7 @@ public class StuffNThings {
         config = Commons.getConfig();
     }
 
-    public StuffNThings() throws LoginException, SQLException, ParseException {
+    public StuffNThings() throws SQLException, ParseException {
         if (Commons.isEnableDatabase()) SQLiteDataSource.getConnection();
 
         DefaultShardManagerBuilder shards = DefaultShardManagerBuilder.createDefault(config.get("TOKEN"))
@@ -65,7 +63,7 @@ public class StuffNThings {
         );
     }
 
-    public static void main(String @NotNull [] args) throws LoginException, SQLException, ParseException {
+    public static void main(String[] args) throws SQLException, ParseException {
         new StuffNThings();
     }
 }
