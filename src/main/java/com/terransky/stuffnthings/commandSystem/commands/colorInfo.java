@@ -28,8 +28,9 @@ public class colorInfo implements ISlashCommand {
     private final String HEX_TRIPLET_PATTERN = "^#(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$";
     private final Pattern pHexTriplet = Pattern.compile(HEX_TRIPLET_PATTERN);
 
+    @NotNull
     @Contract(pure = true)
-    private static int @NotNull [] cmykToRgb(int c, int m, int y, int k) {
+    private static int[] cmykToRgb(int c, int m, int y, int k) {
         double r = 255 * (1 - (double) c / 100) * (1 - (double) k / 100);
         double g = 255 * (1 - (double) m / 100) * (1 - (double) k / 100);
         double b = 255 * (1 - (double) y / 100) * (1 - (double) k / 100);
@@ -37,8 +38,9 @@ public class colorInfo implements ISlashCommand {
         return new int[]{(int) r, (int) g, (int) b};
     }
 
+    @NotNull
     @Contract(pure = true)
-    private static int @NotNull [] rgbToCmyk(int r, int g, int b) {
+    private static int[] rgbToCmyk(int r, int g, int b) {
         double percentageR = r / 255.0 * 100;
         double percentageG = g / 255.0 * 100;
         double percentageB = b / 255.0 * 100;
