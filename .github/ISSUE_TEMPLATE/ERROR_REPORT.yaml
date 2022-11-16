@@ -13,7 +13,7 @@ body:
     id: command
     attributes:
       label: Command
-      description: Which command were you attempting to run?
+      description: Which command were you attempting to run? If it wasn't a command, choose an "NAC" option.
       options:
         - about
         - check-perms
@@ -31,6 +31,10 @@ body:
         - ping
         - suggest-command
         - user-info
+        - NAC/button
+        - NAC/modal
+        - NAC/User_Context
+        - NAC/Message_Context
     validations:
       required: true
   - type: input
@@ -45,20 +49,18 @@ body:
     id: arguments
     attributes:
       label: Command Arguments
-      description: Please list any and all arguments used to produce the error message.
+      description: Please list any and all arguments, buttons, modals, or context menus used to produce the error message.
       value: "None"
     validations:
       required: true
-  - type: dropdown
-    id: discord-server-join
+  - type: input
+    id: discord-contact
     attributes:
-      label: Need Contact on Discord
-      description: Do you want me to join your server?
-      options:
-        - "Yes"
-        - "No"
+      label: Discord Username
+      description: If you need contact, type or paste your Discord username here. Expect a friend request from "Love And War II#5340".
+      placeholder: Ex. Love And War II#5340
     validations:
-      required: true
+      required: false
   - type: markdown
     attributes:
       value: "Thanks for filling this out! I'll get to this issue as soon as I can."

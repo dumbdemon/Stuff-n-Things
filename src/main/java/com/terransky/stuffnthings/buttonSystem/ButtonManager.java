@@ -4,7 +4,6 @@ import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.buttonSystem.buttons.expiredButton;
 import com.terransky.stuffnthings.buttonSystem.buttons.getMoreDadJokes;
 import com.terransky.stuffnthings.interfaces.IButton;
-import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -19,7 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ButtonManager extends ListenerAdapter {
-    private final Dotenv config = Dotenv.configure().load();
     private final Logger log = LoggerFactory.getLogger(ButtonManager.class);
     private final List<IButton> iButtonList = new ArrayList<>();
 
@@ -77,7 +75,7 @@ public class ButtonManager extends ListenerAdapter {
         IButton butt = getButton(event.getButton().getId());
         MessageEmbed buttonFailed = new EmbedBuilder()
             .setTitle("Oops!")
-            .setDescription("An error occurred while executing the button!\nPlease contact <@" + config.get("OWNER_ID") + "> with the button you clicked/tapped on and when.")
+            .setDescription("An error occurred while executing the button!\nPlease report this event [here](%s).".formatted(Commons.getConfig().get("BOT_ERROR_REPORT")))
             .setColor(Commons.getDefaultEmbedColor())
             .setFooter(event.getUser().getAsTag())
             .build();

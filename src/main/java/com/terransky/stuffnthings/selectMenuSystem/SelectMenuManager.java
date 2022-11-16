@@ -66,7 +66,7 @@ public class SelectMenuManager extends ListenerAdapter {
         Optional<ISelectMenu> ifMenu = getMenu(event.getId());
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle("Oops")
-            .setDescription("An error occurred while loading the menu!\nPlease <@" + Commons.getConfig().get("OWNER_ID") + "> know what command you used and when.")
+            .setDescription("An error occurred while loading the menu!\nPlease report this event [here](%s).".formatted(Commons.getConfig().get("BOT_ERROR_REPORT")))
             .setColor(Commons.getDefaultEmbedColor())
             .setFooter(event.getUser().getAsTag());
 

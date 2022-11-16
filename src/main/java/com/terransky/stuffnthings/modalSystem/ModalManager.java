@@ -3,7 +3,6 @@ package com.terransky.stuffnthings.modalSystem;
 import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.interfaces.IModal;
 import com.terransky.stuffnthings.modalSystem.modals.killSuggest;
-import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -18,7 +17,6 @@ import java.util.Optional;
 
 public class ModalManager extends ListenerAdapter {
     private final List<IModal> iModalList = new ArrayList<>();
-    private final Dotenv config = Dotenv.configure().load();
     private final Logger log = LoggerFactory.getLogger(ModalManager.class);
 
     public ModalManager() {
@@ -70,7 +68,7 @@ public class ModalManager extends ListenerAdapter {
         Optional<IModal> ifModal = getModal(event.getModalId());
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle("Oops!")
-            .setDescription("An error occurred while executing the prompt!\nPlease contact <@" + config.get("OWNER_ID") + "> with the command you used and when.")
+            .setDescription("An error occurred while executing the prompt!\nPlease report this event [here](%s).".formatted(Commons.getConfig().get("BOT_ERROR_REPORT")))
             .setColor(Commons.getDefaultEmbedColor())
             .setFooter(event.getUser().getAsTag());
 

@@ -212,7 +212,7 @@ public class CommandManager extends ListenerAdapter {
         Optional<ISlashCommand> cmd = getCommand(event.getName());
         MessageEmbed cmdFailed = new EmbedBuilder()
             .setTitle("Oops!")
-            .setDescription("An error occurred while executing that command!\nPlease contact <@" + Commons.getConfig().get("OWNER_ID") + "> with the command that you used and when.")
+            .setDescription("An error occurred while executing that command!\nPlease report this event [here](%s).".formatted(Commons.getConfig().get("BOT_ERROR_REPORT")))
             .setColor(Commons.getDefaultEmbedColor())
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
             .build();
