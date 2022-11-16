@@ -5,18 +5,19 @@ import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import com.terransky.stuffnthings.Commons;
+import com.terransky.stuffnthings.commandSystem.commands.kill;
+import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.IModal;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 public class killSuggest implements IModal {
 
@@ -27,14 +28,18 @@ public class killSuggest implements IModal {
 
     @Override
     public void execute(@NotNull ModalInteractionEvent event) throws Exception {
-        Random rando = new Random();
+        Random rando = new Random(new Date().getTime());
         event.deferReply().queue();
         List<String> victims = new ArrayList<>();
-        String suggestion = Objects.requireNonNull(event.getValue("kill-suggestion")).getAsString();
+        Optional<ModalMapping> ifSuggestion = Optional.ofNullable(event.getValue(kill.MODAL_NAME));
+        String suggestion = ifSuggestion.orElseThrow(DiscordAPIException::new).getAsString();
 
-        List<Member> members = new ArrayList<>();
-        if (event.getGuild() != null) members = event.getGuild().getMembers();
-        for (Member member : members.stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList()) {
+        Optional<Guild> ifGuild = Optional.ofNullable(event.getGuild());
+        List<Member> members =
+            ifGuild.orElseThrow(DiscordAPIException::new)
+                .getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
+
+        for (Member member : members) {
             victims.add(member.getAsMention());
         }
 

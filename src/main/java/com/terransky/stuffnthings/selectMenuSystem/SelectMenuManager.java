@@ -6,13 +6,13 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class SelectMenuManager extends ListenerAdapter {
     private final List<ISelectMenu> iSelectMenus = new ArrayList<>();
@@ -39,19 +39,18 @@ public class SelectMenuManager extends ListenerAdapter {
      * Get an {@link ISelectMenu} object to be used at {@code onSelectMenuInteraction()}
      *
      * @param search The {@link ISelectMenu}'s ID.
-     * @return An {@link ISelectMenu} object or null.
+     * @return An {@link Optional} of {@link ISelectMenu}.
      */
-    @Nullable
-    private ISelectMenu getMenu(@NotNull String search) {
+    private Optional<ISelectMenu> getMenu(@NotNull String search) {
         String toSearch = search.toLowerCase();
 
         for (ISelectMenu iSelectMenu : iSelectMenus) {
             if (iSelectMenu.getName().equals(toSearch)) {
-                return iSelectMenu;
+                return Optional.of(iSelectMenu);
             }
         }
 
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -64,14 +63,15 @@ public class SelectMenuManager extends ListenerAdapter {
             return;
         }
 
-        ISelectMenu menu = getMenu(event.getId());
+        Optional<ISelectMenu> ifMenu = getMenu(event.getId());
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle("Oops")
             .setDescription("An error occurred while loading the menu!\nPlease <@" + Commons.getConfig().get("OWNER_ID") + "> know what command you used and when.")
             .setColor(Commons.getDefaultEmbedColor())
             .setFooter(event.getUser().getAsTag());
 
-        if (menu != null) {
+        if (ifMenu.isPresent()) {
+            ISelectMenu menu = ifMenu.get();
             String origins = event.isFromGuild() ? "%s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()) : event.getUser().getAsTag() + "'s private channel";
             log.debug("Command " + menu.getName().toUpperCase() + " called on " + origins);
             try {

@@ -116,7 +116,7 @@ public class CommandManager extends ListenerAdapter {
      *
      * @param search The name of the command to look for.
      * @return An {@link Optional} of {@link Metadata}.
-     * @throws ParseException If the pattern used in {@code Metadata.implementationDate()} or {@code Metadata.lastUpdated()} in a slash command class
+     * @throws ParseException If the pattern used in {@code Metadata.getImplementationDate()} or {@code Metadata.getLastUpdated()} in a slash command class
      *                        is given an invalid date string.
      */
     public Optional<Metadata> getMetadata(@NotNull String search) throws ParseException {
@@ -134,7 +134,7 @@ public class CommandManager extends ListenerAdapter {
      * Get the command data of all slash commands, message contexts, and user contexts.
      *
      * @return Returns a list of {@link CommandData}.
-     * @throws ParseException            If the pattern used in {@code Metadata.implementationDate()} or {@code Metadata.lastUpdated()} in an {@link ISlashCommand}
+     * @throws ParseException            If the pattern used in {@code Metadata.getImplementationDate()} or {@code Metadata.getLastUpdated()} in an {@link ISlashCommand}
      *                                   is given an invalid date string.
      * @throws IllegalArgumentException  If an {@link ISlashCommand} with that name is already indexed.
      * @throws IndexOutOfBoundsException If there are more than the combined total max slash commands, max message commands, and max user commands.
@@ -167,10 +167,10 @@ public class CommandManager extends ListenerAdapter {
     /**
      * Get the command data of all slash commands specifically for a server.
      *
-     * @throws ParseException If the pattern used in {@code Metadata.implementationDate()} or {@code Metadata.lastUpdated()} in a slash command class
-     * is given an invalid date string.
      * @param serverId The ID of the server to check for.
      * @return Returns a list of {@link CommandData}. Could potentially return an empty list.
+     * @throws ParseException If the pattern used in {@code Metadata.getImplementationDate()} or {@code Metadata.getLastUpdated()} in a slash command class
+     *                        is given an invalid date string.
      */
     public List<CommandData> getCommandData(long serverId) throws ParseException {
         final List<CommandData> commandData = new ArrayList<>();

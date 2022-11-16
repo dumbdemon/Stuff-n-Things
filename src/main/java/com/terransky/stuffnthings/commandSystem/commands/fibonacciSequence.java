@@ -58,7 +58,7 @@ public class fibonacciSequence implements ISlashCommand {
             This command returns the nth value in the *Fibonacci Sequence* or its whole sequence up to the nth value. Although the *Fibonacci Sequence* can go into infinity, this command has been limited to return up to the 186th value. Any higher and the command will return \u221E (infinity). This is due to the limitation of the Java data type Float. You can read more [here](https://www.w3schools.com/java/ref_keyword_float.asp).
             """, Mastermind.DEVELOPER,
             formatter.parse("11-11-2022_20:50"),
-            formatter.parse("13-11-2022_10:05")
+            formatter.parse("15-11-2022_10:16")
         );
     }
 
@@ -115,7 +115,7 @@ public class fibonacciSequence implements ISlashCommand {
             messageEditData = new MessageEditBuilder()
                 .setEmbeds(
                     eb.setDescription("The Fibonacci sequence up to the %s%s value is:\n```%s```"
-                            .formatted(n, numSuffix, returnString))
+                            .formatted(n, numSuffix, returnString.replace(".0", "")))
                         .build()
                 )
                 .build();

@@ -23,12 +23,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
 public class kill implements ISlashCommand {
     private final String[] randomStrings = killStrings.random;
     private final String[] targetStrings = killStrings.target;
+    public static final String MODAL_NAME = "kill-suggestion";
 
     @Override
     public String getName() {
@@ -42,7 +44,7 @@ public class kill implements ISlashCommand {
             Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
             """, Mastermind.USER,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("13-11-2022_10:05")
+            formatter.parse("15-11-2022_10:16")
         );
     }
 
@@ -59,7 +61,7 @@ public class kill implements ISlashCommand {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event) throws Exception {
-        Random random = new Random();
+        Random random = new Random(new Date().getTime());
         List<String> victims = new ArrayList<>();
         String subCommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
@@ -94,7 +96,7 @@ public class kill implements ISlashCommand {
             }
 
             case "suggest" -> {
-                TextInput suggestion = TextInput.create("kill-suggestion", "Suggestion", TextInputStyle.PARAGRAPH)
+                TextInput suggestion = TextInput.create(MODAL_NAME, "Suggestion", TextInputStyle.PARAGRAPH)
                     .setRequired(true)
                     .setRequiredRange(10, MessageEmbed.DESCRIPTION_MAX_LENGTH / 4)
                     .setPlaceholder("Use \"%s\" to represent up to four targets! There could be more, but I don't wanna!")

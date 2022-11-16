@@ -8,13 +8,13 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class ModalManager extends ListenerAdapter {
     private final List<IModal> iModalList = new ArrayList<>();
@@ -42,19 +42,17 @@ public class ModalManager extends ListenerAdapter {
      * Get a modal to be used at {@code onModalInteraction()}.
      *
      * @param search the {@link IModal}'s ID.
-     * @return An {@link IModal} object.
+     * @return An {@link Optional} of {@link IModal}.
      */
-    @SuppressWarnings("unused")
-    @Nullable
-    private IModal getModal(@NotNull String search) {
+    private Optional<IModal> getModal(@NotNull String search) {
         String toSearch = search.toLowerCase();
 
         for (IModal iModal : iModalList) {
             if (iModal.getName().equals(toSearch)) {
-                return iModal;
+                return Optional.of(iModal);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -69,14 +67,15 @@ public class ModalManager extends ListenerAdapter {
             return;
         }
 
-        IModal modal = getModal(event.getModalId());
+        Optional<IModal> ifModal = getModal(event.getModalId());
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle("Oops!")
             .setDescription("An error occurred while executing the prompt!\nPlease contact <@" + config.get("OWNER_ID") + "> with the command you used and when.")
             .setColor(Commons.getDefaultEmbedColor())
             .setFooter(event.getUser().getAsTag());
 
-        if (modal != null) {
+        if (ifModal.isPresent()) {
+            IModal modal = ifModal.get();
             log.debug("Modal " + modal.getName().toUpperCase() + " called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
             try {
                 modal.execute(event);

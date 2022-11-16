@@ -36,7 +36,7 @@ public class about implements ISlashCommand {
             The about command. What else did you expect?
             """, Mastermind.DEVELOPER,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("13-11-2022_10:05")
+            formatter.parse("16-11-2022_10:40")
         );
     }
 
@@ -50,7 +50,7 @@ public class about implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event) throws ParseException {
+    public void execute(@NotNull SlashCommandInteractionEvent event) throws Exception {
         event.deferReply().queue();
         String command = event.getOption("command", "none", OptionMapping::getAsString);
 
@@ -58,7 +58,7 @@ public class about implements ISlashCommand {
             Optional<Metadata> ifMetadata = new CommandManager().getMetadata(command);
             Metadata metadata = ifMetadata.orElse(this.getMetadata());
 
-            if (metadata.minPerms().length != 0) {
+            if (metadata.minPerms().size() != 0) {
                 if (event.getMember() != null && !event.getMember().hasPermission(metadata.minPerms())) {
                     event.replyEmbeds(
                         new EmbedBuilder()
@@ -77,11 +77,11 @@ public class about implements ISlashCommand {
 
             event.getHook().sendMessageEmbeds(
                 new EmbedBuilder()
-                    .setTitle("About Command - %s".formatted(WordUtils.capitalize(metadata.commandName().replace("-", "\s"))))
-                    .setDescription(metadata.longDescription())
+                    .setTitle("About Command - %s".formatted(WordUtils.capitalize(metadata.getCommandName().replace("-", "\s"))))
+                    .setDescription(metadata.getLongDescription())
                     .setColor(Commons.getDefaultEmbedColor())
                     .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
-                    .addField("Mastermind", metadata.mastermind().getWho(), true)
+                    .addField("Mastermind", metadata.getMastermind().getWho(), true)
                     .addField("Implementation Date", "<t:%s:f> (<t:%s:R>)".formatted(implementedDate, implementedDate), false)
                     .addField("Last Edited", "<t:%s:f> (<t:%s:R>)".formatted(lastEditedDate, lastEditedDate), false)
                     .build()

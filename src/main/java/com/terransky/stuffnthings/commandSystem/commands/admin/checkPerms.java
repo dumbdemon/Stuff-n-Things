@@ -68,8 +68,8 @@ public class checkPerms implements ISlashCommand {
             """.formatted(requiredPermsAsString()),
             Mastermind.DEVELOPER,
             formatter.parse("30-08-2022_16:14"),
-            formatter.parse("13-11-2022_10:05"),
-            Permission.MANAGE_ROLES);
+            formatter.parse("16-11-2022_11:04"),
+            List.of(Permission.MANAGE_ROLES));
     }
 
     @Override

@@ -62,7 +62,7 @@ public class UserContextManager extends ListenerAdapter {
      * Get the command data of User Context Menus.
      *
      * @return Returns a list of {@link CommandData}.
-     * @throws ParseException If the pattern used in {@code Metadata.implementationDate()} or {@code Metadata.lastUpdated()} in an {@link IUserContext}
+     * @throws ParseException If the pattern used in {@code Metadata.getImplementationDate()} or {@code Metadata.getLastUpdated()} in an {@link IUserContext}
      *                        is given an invalid date string.
      */
     public List<CommandData> getCommandData() throws ParseException {
@@ -87,7 +87,7 @@ public class UserContextManager extends ListenerAdapter {
             return;
         }
 
-        Optional<IUserContext> menu = getUserMenu(event.getName());
+        Optional<IUserContext> ifMenu = getUserMenu(event.getName());
         MessageEmbed menuFailed = new EmbedBuilder()
             .setTitle("Oops!")
             .setDescription("An error occurred while executing that context menu!\nPlease contact <@" + Commons.getConfig().get("OWNER_ID") + "> with the context menu that you used and when.")
@@ -95,13 +95,13 @@ public class UserContextManager extends ListenerAdapter {
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
             .build();
 
-        if (menu.isPresent()) {
-            IUserContext uMenu = menu.get();
-            log.debug("Command \"" + uMenu.getName().toUpperCase() + "\" called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
+        if (ifMenu.isPresent()) {
+            IUserContext context = ifMenu.get();
+            log.debug("Command \"" + context.getName().toUpperCase() + "\" called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
             try {
-                uMenu.execute(event);
+                context.execute(event);
             } catch (Exception e) {
-                log.debug("%s failed to execute on guild id %s".formatted(uMenu.getName(), event.getGuild().getId()));
+                log.debug("%s failed to execute on guild id %s".formatted(context.getName(), event.getGuild().getId()));
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
                 Commons.listPrinter(Arrays.asList(e.getStackTrace()), UserContextManager.class);
                 if (event.isAcknowledged()) {

@@ -24,6 +24,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.List;
 
 public class config implements ISlashCommand {
     private final Logger log = LoggerFactory.getLogger(config.class);
@@ -41,8 +42,8 @@ public class config implements ISlashCommand {
             """,
             Mastermind.DEVELOPER,
             formatter.parse("28-08-2022_21:46"),
-            formatter.parse("13-11-2022_10:05"),
-            Permission.MANAGE_SERVER);
+            formatter.parse("16-11-2022_11:04"),
+            List.of(Permission.MANAGE_SERVER));
     }
 
     @Override
