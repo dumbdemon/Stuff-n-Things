@@ -90,10 +90,13 @@ public class about implements ISlashCommand {
         }
 
         RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
+        int guildCommandCnt = 0;
 
         int commandCnt = new CommandManager().getCommandData().size();
-        if (event.getGuild() != null)
-            commandCnt += new CommandManager().getCommandData(event.getGuild().getIdLong()).size();
+        if (event.getGuild() != null) {
+            guildCommandCnt = new CommandManager().getCommandData(event.getGuild().getIdLong()).size();
+            commandCnt += guildCommandCnt;
+        }
 
         Duration duration = Duration.ofMillis(rb.getUptime());
         long days = duration.toDaysPart();
@@ -132,7 +135,12 @@ public class about implements ISlashCommand {
                 .addField("Your Shard", "[%s/%s]".formatted(event.getJDA().getShardInfo().getShardId(), event.getJDA().getShardInfo().getShardTotal()), true)
                 .addField("Start Time", "<t:%s:F>".formatted((int) Math.floor(rb.getStartTime() / 1_000f)), false)
                 .addField("Uptime", uptime.toString(), false)
-                .addField("Total Commands", "%s on %s".formatted(commandCnt, event.getGuild().getName()), false)
+                .addField("Total Commands", "%s on %s\n%s of which are guild commands"
+                    .formatted(
+                        commandCnt,
+                        event.getGuild().getName(),
+                        guildCommandCnt == 0 ? "None" : guildCommandCnt
+                    ), false)
                 .build()
         ).queue();
     }
