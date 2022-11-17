@@ -13,8 +13,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
@@ -70,26 +68,24 @@ public class whatsInStandard implements ISlashCommand {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat formatter = Commons.getFastDateFormat();
-        return new Metadata(this.getName(), """
+        var metadata = new Metadata(this.getName(), "Get Magic: the Gathering's set list for the standard format.", """
             *M:tG Command*
             Prints out the sets and ban list information for Magic: the Gathering's standard formant created by Wizards of the Coast.
             Information the bot uses is provided by [WhatsInStandard.com](https://whatsinstandard.com).
             """,
             Mastermind.DEVELOPER,
             formatter.parse("27-10-2022_12:46"),
-            formatter.parse("13-11-2022_10:05")
+            formatter.parse("17-11-2022_11:34")
         );
-    }
 
-    @Override
-    public CommandData getCommandData() {
-        return Commands.slash(this.getName(), "Get Magic: the Gathering's set list for the standard format.")
-            .addSubcommands(
-                new SubcommandData("all", "Get all info about the standard format."),
-                new SubcommandData("sets", "Get the standard sets only."),
-                new SubcommandData("bans", "Get the ban list only.")
-                    .addOption(OptionType.BOOLEAN, "include-reason", "Include reason for ban.")
-            );
+        metadata.addSubcommands(
+            new SubcommandData("all", "Get all info about the standard format."),
+            new SubcommandData("sets", "Get the standard sets only."),
+            new SubcommandData("bans", "Get the ban list only.")
+                .addOption(OptionType.BOOLEAN, "include-reason", "Include reason for ban.")
+        );
+
+        return metadata;
     }
 
     @Override

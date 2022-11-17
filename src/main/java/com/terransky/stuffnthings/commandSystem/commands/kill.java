@@ -12,8 +12,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
@@ -40,23 +38,21 @@ public class kill implements ISlashCommand {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat formatter = Commons.getFastDateFormat();
-        return new Metadata(this.getName(), """
+        var metadata = new Metadata(this.getName(), "Time to un-alive random members!", """
             Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
             """, Mastermind.USER,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("15-11-2022_10:16")
+            formatter.parse("17-11-2022_11:34")
         );
-    }
 
-    @Override
-    public CommandData getCommandData() {
-        return Commands.slash(this.getName(), "Time to un-alive random members!")
-            .addSubcommands(
-                new SubcommandData("random", "Try your hand at un-aliving someone!"),
-                new SubcommandData("target", "Target someone for a kill.")
-                    .addOption(OptionType.USER, "target", "Your target", true),
-                new SubcommandData("suggest", "Suggest a kill-string. Use \"%s\" to represent targets. Up to four can be in a kill-string.")
-            );
+        metadata.addSubcommands(
+            new SubcommandData("random", "Try your hand at un-aliving someone!"),
+            new SubcommandData("target", "Target someone for a kill.")
+                .addOption(OptionType.USER, "target", "Your target", true),
+            new SubcommandData("suggest", "Suggest a kill-string. Use \"%s\" to represent targets. Up to four can be in a kill-string.")
+        );
+
+        return metadata;
     }
 
     @Override

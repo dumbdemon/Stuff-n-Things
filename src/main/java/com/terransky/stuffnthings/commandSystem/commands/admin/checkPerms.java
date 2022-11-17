@@ -11,11 +11,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.apache.commons.lang3.time.FastDateFormat;
@@ -60,7 +57,7 @@ public class checkPerms implements ISlashCommand {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat formatter = Commons.getFastDateFormat();
-        return new Metadata(this.getName(), """
+        var metadata = new Metadata(this.getName(), "Check if I have all of my perms needed for all of my commands.", """
             Checks if the bot has all necessary permissions for this server or channel.
             Currently the bot requires:
             ```
@@ -68,22 +65,19 @@ public class checkPerms implements ISlashCommand {
             """.formatted(requiredPermsAsString()),
             Mastermind.DEVELOPER,
             formatter.parse("30-08-2022_16:14"),
-            formatter.parse("16-11-2022_11:04"),
+            formatter.parse("17-11-2022_11:14"),
             List.of(Permission.MANAGE_ROLES));
-    }
 
-    @Override
-    public CommandData getCommandData() throws ParseException {
-        return Commands.slash(this.getName(), "Check if I have all of my perms needed for all of my commands.")
-            .addSubcommands(
-                new SubcommandData("server", "Check if I have all of my perms needed for all of my commands for the server."),
-                new SubcommandData("channel", "Check if I have all of my perms needed for all of my commands in a specific channel.")
-                    .addOptions(
-                        new OptionData(OptionType.CHANNEL, "check-channel", "The channel to check.", true)
-                            .setChannelTypes(ChannelType.TEXT, ChannelType.VOICE)
-                    )
-            )
-            .setDefaultPermissions(DefaultMemberPermissions.enabledFor(this.getMetadata().minPerms()));
+        metadata.addSubcommands(
+            new SubcommandData("server", "Check if I have all of my perms needed for all of my commands for the server."),
+            new SubcommandData("channel", "Check if I have all of my perms needed for all of my commands in a specific channel.")
+                .addOptions(
+                    new OptionData(OptionType.CHANNEL, "check-channel", "The channel to check.", true)
+                        .setChannelTypes(ChannelType.TEXT, ChannelType.VOICE)
+                )
+        );
+
+        return metadata;
     }
 
     @Override

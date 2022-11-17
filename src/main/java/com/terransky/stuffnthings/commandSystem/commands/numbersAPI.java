@@ -11,8 +11,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.apache.commons.lang3.time.FastDateFormat;
@@ -55,35 +53,33 @@ public class numbersAPI implements ISlashCommand {
     }
 
     @Override
-    public CommandData getCommandData() {
-        return Commands.slash(this.getName(), "Get some fun info on a number")
-            .addSubcommands(
-                new SubcommandData("number", "A fact about a number.")
-                    .addOption(OptionType.NUMBER, "n-number", "A number"),
-                new SubcommandData("math", "A math fact about a number.")
-                    .addOption(OptionType.NUMBER, "m-number", "A number"),
-                new SubcommandData("date", "A random historical fact on a particular month and day.")
-                    .addOptions(
-                        new OptionData(OptionType.INTEGER, "month", "The month.")
-                            .setRequiredRange(1, 12),
-                        new OptionData(OptionType.INTEGER, "day", "The day.")
-                            .setRequiredRange(1, 31)
-                    ),
-                new SubcommandData("year", "A random historical fact during a particular year.")
-                    .addOption(OptionType.NUMBER, "year", "A year.")
-            );
-    }
-
-    @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat formatter = Commons.getFastDateFormat();
-        return new Metadata(this.getName(), """
+        var metadata = new Metadata(this.getName(), "Get some fun info on a number", """
             Random facts about numbers! How nerdy/geeky can you get? Leaving any option empty will return a random fact of that category.
             Facts are provided by [NumbersAPI](http://numbersapi.com).
             """, Mastermind.DEVELOPER,
             formatter.parse("10-11-2022_20:45"),
-            formatter.parse("13-11-2022_10:51")
+            formatter.parse("17-11-2022_11:36")
         );
+
+        metadata.addSubcommands(
+            new SubcommandData("number", "A fact about a number.")
+                .addOption(OptionType.NUMBER, "n-number", "A number"),
+            new SubcommandData("math", "A math fact about a number.")
+                .addOption(OptionType.NUMBER, "m-number", "A number"),
+            new SubcommandData("date", "A random historical fact on a particular month and day.")
+                .addOptions(
+                    new OptionData(OptionType.INTEGER, "month", "The month.")
+                        .setRequiredRange(1, 12),
+                    new OptionData(OptionType.INTEGER, "day", "The day.")
+                        .setRequiredRange(1, 31)
+                ),
+            new SubcommandData("year", "A random historical fact during a particular year.")
+                .addOption(OptionType.NUMBER, "year", "A year.")
+        );
+
+        return metadata;
     }
 
     @Override

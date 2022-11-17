@@ -8,8 +8,6 @@ import com.terransky.stuffnthings.dataSources.icanhazdadjoke.IcanhazdadjokeData;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -37,17 +35,12 @@ public class getDadJokes implements ISlashCommand {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat formatter = Commons.getFastDateFormat();
-        return new Metadata(this.getName(), """
+        return new Metadata(this.getName(), "Why was 6 afraid of 7? Because 7 was a registered 6 offender.", """
             An unoriginal or unfunny joke of a type supposedly told by middle-aged or older men.
             """, Mastermind.USER,
             formatter.parse("25-8-2022_20:53"),
-            formatter.parse("13-11-2022_10:51")
+            formatter.parse("17-11-2022_11:34")
         );
-    }
-
-    @Override
-    public CommandData getCommandData() {
-        return Commands.slash(this.getName(), "Why was 6 afraid of 7? Because 7 was a registered 6 offender.");
     }
 
     @Override

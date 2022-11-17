@@ -7,7 +7,7 @@ import java.text.ParseException;
 public interface ICommand extends IBaseBotElement {
 
     /**
-     * Get the commands {@link CommandData} of this command.
+     * Get this commands {@link CommandData}.
      *
      * @return A {@link CommandData} object.
      * @throws ParseException If the pattern used in {@code Metadata.getImplementationDate()} or {@code Metadata.getLastUpdated()} in a slash command class

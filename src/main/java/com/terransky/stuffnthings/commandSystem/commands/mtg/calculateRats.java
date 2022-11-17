@@ -8,8 +8,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
@@ -68,25 +66,23 @@ public class calculateRats implements ISlashCommand {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat formatter = Commons.getFastDateFormat();
-        return new Metadata(this.getName(), """
+        var metadata = new Metadata(this.getName(), "How many rats you have?", """
             *M:tG Command*
             Returns an amount of 1/1 black Rat creature tokens after X triggers created by the interaction between [Marrow-Gnawer](%s) equipped with [Thornbite Staff](%s).
             """.formatted("https://scryfall.com/card/chk/124/marrow-gnawer", "https://scryfall.com/card/mor/145/thornbite-staff"),
             Mastermind.DEVELOPER,
             formatter.parse("5-10-2022_11:48"),
-            formatter.parse("13-11-2022_10:05")
+            formatter.parse("17-11-2022_11:34")
         );
-    }
 
-    @Override
-    public CommandData getCommandData() {
-        return Commands.slash(this.getName(), "How many rats you have?")
-            .addOptions(
-                new OptionData(OptionType.INTEGER, "start-count", "How many do you have right now?", true)
-                    .setMinValue(3),
-                new OptionData(OptionType.INTEGER, "iterations", "How many iterations?", true)
-                    .setMinValue(1)
-            );
+        metadata.addOptions(
+            new OptionData(OptionType.INTEGER, "start-count", "How many do you have right now?", true)
+                .setMinValue(3),
+            new OptionData(OptionType.INTEGER, "iterations", "How many iterations?", true)
+                .setMinValue(1)
+        );
+
+        return metadata;
     }
 
     @Override

@@ -11,8 +11,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +29,7 @@ public class userInfo implements ISlashCommand {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat formatter = Commons.getFastDateFormat();
-        return new Metadata(this.getName(), """
+        var metadata = new Metadata(this.getName(), "Get info on a specific user on the server! Defaults to you.", """
             Get info on a user or bot.
             The following info with be returned:
             \u2022 User ID
@@ -43,12 +42,12 @@ public class userInfo implements ISlashCommand {
             formatter.parse("24-08-2022_11:10"),
             formatter.parse("13-11-2022_10:05")
         );
-    }
 
-    @Override
-    public CommandData getCommandData() {
-        return Commands.slash(this.getName(), "Get info on a specific user on the server! Defaults to you.")
-            .addOption(OptionType.USER, "user", "Who you want to know about.");
+        metadata.addOptions(
+            new OptionData(OptionType.USER, "user", "Who you want to know about.")
+        );
+
+        return metadata;
     }
 
     @Override

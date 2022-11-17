@@ -10,8 +10,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
@@ -32,34 +30,32 @@ public class fibonacciSequence implements ISlashCommand {
     }
 
     @Override
-    public CommandData getCommandData() {
-        return Commands.slash(this.getName(), "Get the nth number in the Fibonacci sequence.")
-            .addSubcommands(
-                new SubcommandData("at-nth", "Get a specific value.")
-                    .addOptions(
-                        new OptionData(OptionType.INTEGER, "nth", "Which value to return.", true)
-                            .setRequiredRange(1, 186)
-                    ),
-                new SubcommandData("whole-sequence", "Get the whole sequence until the nth value")
-                    .addOptions(
-                        new OptionData(OptionType.INTEGER, "nth", "Which value to return up to.", true)
-                            .setRequiredRange(1, 186)
-                    )
-            );
-    }
-
-    @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat formatter = Commons.getFastDateFormat();
-        return new Metadata(this.getName(), """
+        var metadata = new Metadata(this.getName(), "Get the nth number in the Fibonacci sequence.", """
             *From Oxford Languages*
             > a series of numbers in which each number (Fibonacci number) is the sum of the two preceding numbers.
                         
             This command returns the nth value in the *Fibonacci Sequence* or its whole sequence up to the nth value. Although the *Fibonacci Sequence* can go into infinity, this command has been limited to return up to the 186th value. Any higher and the command will return \u221E (infinity). This is due to the limitation of the Java data type Float. You can read more [here](https://www.w3schools.com/java/ref_keyword_float.asp).
             """, Mastermind.DEVELOPER,
             formatter.parse("11-11-2022_20:50"),
-            formatter.parse("15-11-2022_10:16")
+            formatter.parse("17-11-2022_11:34")
         );
+
+        metadata.addSubcommands(
+            new SubcommandData("at-nth", "Get a specific value.")
+                .addOptions(
+                    new OptionData(OptionType.INTEGER, "nth", "Which value to return.", true)
+                        .setRequiredRange(1, 186)
+                ),
+            new SubcommandData("whole-sequence", "Get the whole sequence until the nth value")
+                .addOptions(
+                    new OptionData(OptionType.INTEGER, "nth", "Which value to return up to.", true)
+                        .setRequiredRange(1, 186)
+                )
+        );
+
+        return metadata;
     }
 
     @Override

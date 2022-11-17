@@ -8,8 +8,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
@@ -30,21 +28,19 @@ public class robFailChance implements ISlashCommand {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat formatter = Commons.getFastDateFormat();
-        return new Metadata(this.getName(), """
+        var metadata = new Metadata(this.getName(), "Calculate the fail chance to rob a member for the UnbelievaBoat bot!", """
             Returns the chance of failure of the `/rob` command of the bot UnbelievaBoat. If you don't have the bot, you can ask your admins to invite it [here](%s).
             """.formatted(uBoatInvite), Mastermind.DEVELOPER,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("13-11-2022_10:05")
+            formatter.parse("17-11-2022_11:37")
         );
-    }
 
-    @Override
-    public CommandData getCommandData() {
-        return Commands.slash(this.getName(), "Calculate the fail chance to rob a member for the UnbelievaBoat bot!")
-            .addOptions(
-                new OptionData(OptionType.INTEGER, "your-net-worth", "Your net-worth.", true),
-                new OptionData(OptionType.INTEGER, "their-cash", "The amount of cash for the person you are trying to rob", true)
-            );
+        metadata.addOptions(
+            new OptionData(OptionType.INTEGER, "your-net-worth", "Your net-worth.", true),
+            new OptionData(OptionType.INTEGER, "their-cash", "The amount of cash for the person you are trying to rob", true)
+        );
+
+        return metadata;
     }
 
     @Override

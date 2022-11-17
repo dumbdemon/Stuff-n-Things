@@ -12,8 +12,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
@@ -30,22 +28,20 @@ public class suggest implements ISlashCommand {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat formatter = Commons.getFastDateFormat();
-        return new Metadata(this.getName(), """
+        var metadata = new Metadata(this.getName(), "Have something you want the bot to do? Suggest here!", """
             Have a command that you would like the bot to have? Suggest it with this command!
             """, Mastermind.DEVELOPER,
             formatter.parse("24-08-2022_11:10"),
             formatter.parse("13-11-2022_10:05")
         );
-    }
 
-    @Override
-    public CommandData getCommandData() {
-        return Commands.slash(this.getName(), "Have something you want the bot to do? Suggest here!")
-            .addOptions(
-                new OptionData(OptionType.STRING, "suggestion", "What do you want the bot to do?", true),
-                new OptionData(OptionType.INTEGER, "importance", "How important on a scale. Where 1 is low, 50 is semi, 100 is high, and everything in-between.", true)
-                    .setRequiredRange(1, 100)
-            );
+        metadata.addOptions(
+            new OptionData(OptionType.STRING, "suggestion", "What do you want the bot to do?", true),
+            new OptionData(OptionType.INTEGER, "importance", "How important on a scale. Where 1 is low, 50 is semi, 100 is high, and everything in-between.", true)
+                .setRequiredRange(1, 100)
+        );
+
+        return metadata;
     }
 
     @Override

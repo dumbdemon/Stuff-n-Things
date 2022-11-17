@@ -11,8 +11,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
@@ -36,22 +34,20 @@ public class meme implements ISlashCommand {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat formatter = Commons.getFastDateFormat();
-        return new Metadata(this.getName(), """
+        var metadata = new Metadata(this.getName(), "Get a random meme.", """
             Get your fresh hot (or cold) memes here!
             Reddit pulls from [r/memes](https://www.reddit.com/r/memes), [r/dankmemes](https://www.reddit.com/r/dankmemes), or from [r/me_irl](https://www.reddit.com/r/me_irl).
             """, Mastermind.DEVELOPER,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("13-11-2022_10:05")
+            formatter.parse("17-11-2022_11:34")
         );
-    }
 
-    @Override
-    public CommandData getCommandData() {
-        return Commands.slash(this.getName(), "Get a random meme.")
-            .addSubcommands(
-                new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, or from r/me_irl.")
-                    .addOption(OptionType.STRING, "subreddit", "You can specify a subreddit outside of the default.")
-            );
+        metadata.addSubcommands(
+            new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, or from r/me_irl.")
+                .addOption(OptionType.STRING, "subreddit", "You can specify a subreddit outside of the default.")
+        );
+
+        return metadata;
     }
 
     @Override

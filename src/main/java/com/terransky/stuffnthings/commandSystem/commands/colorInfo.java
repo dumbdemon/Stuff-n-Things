@@ -9,8 +9,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.apache.commons.lang3.time.FastDateFormat;
@@ -66,43 +64,41 @@ public class colorInfo implements ISlashCommand {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat formatter = Commons.getFastDateFormat();
-        return new Metadata(this.getName(), """
+        var metadata = new Metadata(this.getName(), "Get more info on a color.", """
             Given a hex triplet, RGB, or CMYK code, it will return the other values and give a link to more info.
             """, Mastermind.DEVELOPER,
             formatter.parse("20-9-2022_12:10"),
-            formatter.parse("13-11-2022_10:05")
+            formatter.parse("17-11-2022_11:34")
         );
-    }
 
-    @Override
-    public CommandData getCommandData() {
-        return Commands.slash(this.getName(), "Get more info on a color.")
-            .addSubcommands(
-                new SubcommandData("hex-triplet", "Get more info on a hex triplet. EX: #663366")
-                    .addOptions(
-                        new OptionData(OptionType.STRING, "triplet", "Enter the Hex Triplet including the \"#\".", true)
-                    ),
-                new SubcommandData("rgb", "Get more info on an RGB code. EX: R 102, G 51, B 102")
-                    .addOptions(
-                        new OptionData(OptionType.INTEGER, "red", "The red value.", true)
-                            .setRequiredRange(0, 255),
-                        new OptionData(OptionType.INTEGER, "blue", "The blue value.", true)
-                            .setRequiredRange(0, 255),
-                        new OptionData(OptionType.INTEGER, "green", "The green value", true)
-                            .setRequiredRange(0, 255)
-                    ),
-                new SubcommandData("cmyk", "Get more info on a CMYK code. EX: C 0, M 50, Y 0, K 60")
-                    .addOptions(
-                        new OptionData(OptionType.INTEGER, "cyan", "The cyan percentage.", true)
-                            .setRequiredRange(0, 100),
-                        new OptionData(OptionType.INTEGER, "magenta", "The magenta percentage", true)
-                            .setRequiredRange(0, 100),
-                        new OptionData(OptionType.INTEGER, "yellow", "The yellow percentage", true)
-                            .setRequiredRange(0, 100),
-                        new OptionData(OptionType.INTEGER, "black", "The black percentage", true)
-                            .setRequiredRange(0, 100)
-                    )
-            );
+        metadata.addSubcommands(
+            new SubcommandData("hex-triplet", "Get more info on a hex triplet. EX: #663366")
+                .addOptions(
+                    new OptionData(OptionType.STRING, "triplet", "Enter the Hex Triplet including the \"#\".", true)
+                ),
+            new SubcommandData("rgb", "Get more info on an RGB code. EX: R 102, G 51, B 102")
+                .addOptions(
+                    new OptionData(OptionType.INTEGER, "red", "The red value.", true)
+                        .setRequiredRange(0, 255),
+                    new OptionData(OptionType.INTEGER, "blue", "The blue value.", true)
+                        .setRequiredRange(0, 255),
+                    new OptionData(OptionType.INTEGER, "green", "The green value", true)
+                        .setRequiredRange(0, 255)
+                ),
+            new SubcommandData("cmyk", "Get more info on a CMYK code. EX: C 0, M 50, Y 0, K 60")
+                .addOptions(
+                    new OptionData(OptionType.INTEGER, "cyan", "The cyan percentage.", true)
+                        .setRequiredRange(0, 100),
+                    new OptionData(OptionType.INTEGER, "magenta", "The magenta percentage", true)
+                        .setRequiredRange(0, 100),
+                    new OptionData(OptionType.INTEGER, "yellow", "The yellow percentage", true)
+                        .setRequiredRange(0, 100),
+                    new OptionData(OptionType.INTEGER, "black", "The black percentage", true)
+                        .setRequiredRange(0, 100)
+                )
+        );
+
+        return metadata;
     }
 
     @Override

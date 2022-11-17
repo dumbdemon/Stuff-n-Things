@@ -10,10 +10,11 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.*;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -37,39 +38,36 @@ public class config implements ISlashCommand {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat formatter = Commons.getFastDateFormat();
-        return new Metadata(this.getName(), """
+        var metadata = new Metadata(this.getName(), "The config manager.", """
             Sets certain constant values of specific commands.
             """,
             Mastermind.DEVELOPER,
             formatter.parse("28-08-2022_21:46"),
-            formatter.parse("16-11-2022_11:04"),
+            formatter.parse("17-11-2022_11:18"),
             List.of(Permission.MANAGE_SERVER));
+
+        metadata.addSubcommandGroups(
+            new SubcommandGroupData("kill", "Change the config settings for the kill command.")
+                .addSubcommands(
+                    new SubcommandData("max-kills", "Get the max kills for the `/kill target` command.")
+                        .addOptions(
+                            new OptionData(OptionType.INTEGER, "set-max", "Set the max kills for the server.")
+                                .setRequiredRange(1, 99)
+                        ),
+                    new SubcommandData("timeout", "\"X\" amount of kills within \"Y\" amount of time\u2026 what's \"Y\"?")
+                        .addOptions(
+                            new OptionData(OptionType.INTEGER, "set-timeout", "Set the timeout of the kill command in whole minutes up to an hour.")
+                                .setRequiredRange(1, 60)
+                        )
+                )
+        );
+
+        return metadata;
     }
 
     @Override
     public boolean isWorking() {
         return Commons.isTestingMode();
-    }
-
-    @Override
-    public CommandData getCommandData() throws ParseException {
-        return Commands.slash(this.getName(), "The config manager.")
-            .setDefaultPermissions(DefaultMemberPermissions.enabledFor(this.getMetadata().minPerms()))
-            .addSubcommandGroups(
-                new SubcommandGroupData("kill", "Change the config settings for the kill command.")
-                    .addSubcommands(
-                        new SubcommandData("max-kills", "Get the max kills for the `/kill target` command.")
-                            .addOptions(
-                                new OptionData(OptionType.INTEGER, "set-max", "Set the max kills for the server.")
-                                    .setRequiredRange(1, 99)
-                            ),
-                        new SubcommandData("timeout", "\"X\" amount of kills within \"Y\" amount of time\u2026 what's \"Y\"?")
-                            .addOptions(
-                                new OptionData(OptionType.INTEGER, "set-timeout", "Set the timeout of the kill command in whole minutes up to an hour.")
-                                    .setRequiredRange(1, 60)
-                            )
-                    )
-            );
     }
 
     @Override

@@ -7,8 +7,6 @@ import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,17 +21,12 @@ public class ping implements ISlashCommand {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat formatter = Commons.getFastDateFormat();
-        return new Metadata(this.getName(), """
+        return new Metadata(this.getName(), "Get the ping of the bot.", """
             Pong! Get the ping of the bot.
             """, Mastermind.DEFAULT,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("13-11-2022_10:05")
+            formatter.parse("17-11-2022_11:37")
         );
-    }
-
-    @Override
-    public CommandData getCommandData() {
-        return Commands.slash(this.getName(), "Get the ping of the bot.");
     }
 
     @Override
