@@ -8,6 +8,7 @@ import com.terransky.stuffnthings.dataSources.NumbersAPI.NumbersAPIData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -60,7 +61,7 @@ public class numbersAPI implements ISlashCommand {
             Facts are provided by [NumbersAPI](http://numbersapi.com).
             """, Mastermind.DEVELOPER,
             formatter.parse("10-11-2022_20:45"),
-            formatter.parse("17-11-2022_11:36")
+            formatter.parse("19-11-2022_11:39")
         );
 
         metadata.addSubcommands(
@@ -83,7 +84,7 @@ public class numbersAPI implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
         event.deferReply().queue();
         String subCommand = event.getSubcommandName();
         if (subCommand == null) {

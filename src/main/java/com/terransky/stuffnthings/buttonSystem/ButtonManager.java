@@ -5,6 +5,7 @@ import com.terransky.stuffnthings.buttonSystem.buttons.expiredButton;
 import com.terransky.stuffnthings.buttonSystem.buttons.getMoreDadJokes;
 import com.terransky.stuffnthings.interfaces.IButton;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -71,6 +72,7 @@ public class ButtonManager extends ListenerAdapter {
             Commons.botIsGuildOnly(event);
             return;
         }
+        Guild guild = event.getGuild();
 
         IButton butt = getButton(event.getButton().getId());
         MessageEmbed buttonFailed = new EmbedBuilder()
@@ -81,11 +83,11 @@ public class ButtonManager extends ListenerAdapter {
             .build();
 
         if (butt != null) {
-            log.debug("Button " + butt.getName().toUpperCase() + " called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
+            log.debug("Button " + butt.getName().toUpperCase() + " called on %s [%d]".formatted(guild.getName(), guild.getIdLong()));
             try {
-                butt.execute(event);
+                butt.execute(event, guild);
             } catch (Exception e) {
-                log.debug(event.getButton().getId() + " interaction on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
+                log.debug(event.getButton().getId() + " interaction on %s [%d]".formatted(guild.getName(), guild.getIdLong()));
                 log.error(e.getClass().getName() + ": " + e.getMessage());
                 Commons.listPrinter(Arrays.asList(e.getStackTrace()), ButtonManager.class);
                 event.replyEmbeds(buttonFailed).setEphemeral(true).queue();

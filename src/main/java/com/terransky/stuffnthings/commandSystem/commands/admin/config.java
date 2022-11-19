@@ -8,6 +8,7 @@ import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -25,7 +26,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.List;
 
 public class config implements ISlashCommand {
     private final Logger log = LoggerFactory.getLogger(config.class);
@@ -43,9 +43,10 @@ public class config implements ISlashCommand {
             """,
             Mastermind.DEVELOPER,
             formatter.parse("28-08-2022_21:46"),
-            formatter.parse("17-11-2022_11:18"),
-            List.of(Permission.MANAGE_SERVER));
+            formatter.parse("19-11-2022_12:21")
+        );
 
+        metadata.addMinPerms(Permission.MANAGE_SERVER);
         metadata.addSubcommandGroups(
             new SubcommandGroupData("kill", "Change the config settings for the kill command.")
                 .addSubcommands(
@@ -71,29 +72,22 @@ public class config implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
         String subCommandGroup = event.getSubcommandGroup();
-        EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.getDefaultEmbedColor());
-
-        if (subCommandGroup == null) throw new Exception("Discord API Error: No subcommand group was given.");
+        if (subCommandGroup == null) throw new DiscordAPIException("No subcommand group was given.");
 
         if ("kill".equals(subCommandGroup)) {
-            //this.killConfig(event);
-            eb.setTitle("Config setting not yet available.");
-            event.replyEmbeds(eb.build()).queue();
+            killConfig(event, guild);
         }
     }
 
-    @SuppressWarnings("unused")
-    private void killConfig(@NotNull SlashCommandInteractionEvent event) throws Exception {
+    private void killConfig(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
         String subCommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(Commons.getDefaultEmbedColor())
             .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
 
         if (subCommand == null) throw new DiscordAPIException("No subcommand was given.");
-        if (event.getGuild() == null) return;
 
         switch (subCommand) {
             case "max-kills" -> {
@@ -104,10 +98,10 @@ public class config implements ISlashCommand {
                 if (newMax == 0) {
                     try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                         .prepareStatement("SELECT killcmd_max FROM guilds WHERE guild_id = ?")) {
-                        stmt.setString(1, event.getGuild().getId());
+                        stmt.setString(1, guild.getId());
                         try (final ResultSet rs = stmt.executeQuery()) {
                             if (rs.next()) {
-                                log.debug("Retrieved max kills for %s".formatted(event.getGuild().getId()));
+                                log.debug("Retrieved max kills for %s".formatted(guild.getId()));
                                 event.getHook().sendMessageEmbeds(eb.setTitle("Kill Config")
                                     .addField("Max Kills", String.valueOf(rs.getInt("killcmd_max")), false)
                                     .build()
@@ -122,10 +116,10 @@ public class config implements ISlashCommand {
 
                 try (final PreparedStatement stmt1 = SQLiteDataSource.getConnection()
                     .prepareStatement("SELECT killcmd_max FROM guilds WHERE guild_id = ?")) {
-                    stmt1.setString(1, event.getGuild().getId());
+                    stmt1.setString(1, guild.getId());
                     try (final ResultSet rs1 = stmt1.executeQuery()) {
                         oldMax = rs1.getInt("killcmd_max");
-                        log.debug("Old max kills for %s is %d".formatted(event.getGuild().getId(), oldMax));
+                        log.debug("Old max kills for %s is %d".formatted(guild.getId(), oldMax));
                     }
                 } catch (SQLException e) {
                     event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
@@ -133,7 +127,7 @@ public class config implements ISlashCommand {
                 }
 
                 if (newMax == oldMax) {
-                    log.debug("No change for %s".formatted(event.getGuild().getId()));
+                    log.debug("No change for %s".formatted(guild.getId()));
                     event.getHook().sendMessageEmbeds(eb.setTitle("Config not Updated")
                         .setDescription("Currently set Max Kills is requested amount: `%d Max Kills`.".formatted(newMax))
                         .build()
@@ -144,9 +138,9 @@ public class config implements ISlashCommand {
                 try (final PreparedStatement stmt2 = SQLiteDataSource.getConnection()
                     .prepareStatement("UPDATE guilds SET killcmd_max = ? WHERE guild_id = ?")) {
                     stmt2.setInt(1, newMax);
-                    stmt2.setString(2, event.getGuild().getId());
+                    stmt2.setString(2, guild.getId());
                     stmt2.execute();
-                    log.debug("[%s] Updated max kills from %d to %d".formatted(event.getGuild().getId(), oldMax, newMax));
+                    log.debug("[%s] Updated max kills from %d to %d".formatted(guild.getId(), oldMax, newMax));
                 } catch (SQLException e) {
                     event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
                     return;
@@ -168,10 +162,10 @@ public class config implements ISlashCommand {
                 if (newTimeout == 0) {
                     try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                         .prepareStatement("SELECT killcmd_timeout FROM guilds WHERE guild_id = ?")) {
-                        stmt.setString(1, event.getGuild().getId());
+                        stmt.setString(1, guild.getId());
                         try (final ResultSet rs = stmt.executeQuery()) {
                             if (rs.next()) {
-                                log.debug("Retrieved timeout for %s".formatted(event.getGuild().getId()));
+                                log.debug("Retrieved timeout for %s".formatted(guild.getId()));
                                 event.getHook().sendMessageEmbeds(eb.setTitle("Kill Config")
                                     .addField("Timeout", "%d minutes".formatted(rs.getInt("killcmd_timeout") / toMillis), false)
                                     .build()
@@ -186,11 +180,11 @@ public class config implements ISlashCommand {
 
                 try (final PreparedStatement stmt1 = SQLiteDataSource.getConnection()
                     .prepareStatement("SELECT killcmd_timeout FROM guilds WHERE guild_id = ?")) {
-                    stmt1.setString(1, event.getGuild().getId());
+                    stmt1.setString(1, guild.getId());
                     try (final ResultSet rs = stmt1.executeQuery()) {
                         if (rs.next()) {
                             oldTimeout = rs.getInt("killcmd_timeout");
-                            log.debug("Old timeout for %s is %dms (%d mins)".formatted(event.getGuild().getId(), oldTimeout, oldTimeout / toMillis));
+                            log.debug("Old timeout for %s is %dms (%d mins)".formatted(guild.getId(), oldTimeout, oldTimeout / toMillis));
                         }
                     }
                 } catch (SQLException e) {
@@ -200,7 +194,7 @@ public class config implements ISlashCommand {
                 }
 
                 if (newTimeout == oldTimeout) {
-                    log.debug("No change for %s".formatted(event.getGuild().getId()));
+                    log.debug("No change for %s".formatted(guild.getId()));
                     event.getHook().sendMessageEmbeds(eb.setTitle("Config not Updated")
                         .setDescription("Currently set Timeout is requested amount: `%d minutes`.".formatted(newTimeout / toMillis))
                         .build()
@@ -211,9 +205,9 @@ public class config implements ISlashCommand {
                 try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                     .prepareStatement("UPDATE guilds SET killcmd_timeout = ? WHERE guild_id = ?")) {
                     stmt.setInt(1, newTimeout);
-                    stmt.setString(2, event.getGuild().getId());
+                    stmt.setString(2, guild.getId());
                     stmt.execute();
-                    log.debug("[%s] Updated timeout from %dms (%d mins) to %dms (%d mins)".formatted(event.getGuild().getId(), oldTimeout, oldTimeout / toMillis, newTimeout, newTimeout / toMillis));
+                    log.debug("[%s] Updated timeout from %dms (%d mins) to %dms (%d mins)".formatted(guild.getId(), oldTimeout, oldTimeout / toMillis, newTimeout, newTimeout / toMillis));
                 } catch (SQLException e) {
                     event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
                     return;

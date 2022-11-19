@@ -6,6 +6,7 @@ import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
@@ -25,12 +26,12 @@ public class ping implements ISlashCommand {
             Pong! Get the ping of the bot.
             """, Mastermind.DEFAULT,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("17-11-2022_11:37")
+            formatter.parse("19-11-2022_11:39")
         );
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event) {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) {
         JDA jda = event.getJDA();
         jda.getRestPing().queue(ping -> event.replyEmbeds(
             new EmbedBuilder()

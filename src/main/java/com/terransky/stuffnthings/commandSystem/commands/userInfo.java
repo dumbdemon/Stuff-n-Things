@@ -6,6 +6,7 @@ import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -40,7 +41,7 @@ public class userInfo implements ISlashCommand {
             \u2022 Boosting Status (if user)
             """, Mastermind.DEFAULT,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("13-11-2022_10:05")
+            formatter.parse("19-11-2022_11:40")
         );
 
         metadata.addOptions(
@@ -51,8 +52,7 @@ public class userInfo implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event) {
-        if (event.getGuild() == null) return;
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) {
         User uVictim = event.getOption("user", event.getUser(), OptionMapping::getAsUser);
         Member mVictim = event.getOption("user", event.getMember(), OptionMapping::getAsMember);
         StringBuilder permText = new StringBuilder();
@@ -90,7 +90,7 @@ public class userInfo implements ISlashCommand {
         } else finalUserPerms = "None";
 
         if (!mVictim.hasTimeJoined()) {
-            mVictim = event.getGuild().retrieveMemberById(mVictim.getId()).complete();
+            mVictim = guild.retrieveMemberById(mVictim.getId()).complete();
         }
 
         eb.setAuthor(WordUtils.capitalize(mVictim.getEffectiveName()) + "'s Info")

@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interfaces;
 
 import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -94,7 +95,8 @@ public interface ISlashCommand extends ICommand {
      * The main slash command handler.
      *
      * @param event A {@link SlashCommandInteractionEvent}.
+     * @param guild The Guild the event was called on.
      * @throws Exception Any exception could get thrown across all ISlashCommands.
      */
-    void execute(@NotNull SlashCommandInteractionEvent event) throws Exception;
+    void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception;
 }

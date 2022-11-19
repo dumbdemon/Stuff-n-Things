@@ -3,6 +3,7 @@ package com.terransky.stuffnthings.commandSystem;
 import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.interfaces.IUserContext;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -86,6 +87,7 @@ public class UserContextManager extends ListenerAdapter {
             Commons.botIsGuildOnly(event);
             return;
         }
+        Guild guild = event.getGuild();
 
         Optional<IUserContext> ifMenu = getUserMenu(event.getName());
         MessageEmbed menuFailed = new EmbedBuilder()
@@ -97,11 +99,11 @@ public class UserContextManager extends ListenerAdapter {
 
         if (ifMenu.isPresent()) {
             IUserContext context = ifMenu.get();
-            log.debug("Command \"" + context.getName().toUpperCase() + "\" called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
+            log.debug("Command \"" + context.getName().toUpperCase() + "\" called on %s [%d]".formatted(guild.getName(), guild.getIdLong()));
             try {
-                context.execute(event);
+                context.execute(event, guild);
             } catch (Exception e) {
-                log.debug("%s failed to execute on guild id %s".formatted(context.getName(), event.getGuild().getId()));
+                log.debug("%s failed to execute on guild id %s".formatted(context.getName(), guild.getId()));
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
                 Commons.listPrinter(Arrays.asList(e.getStackTrace()), UserContextManager.class);
                 if (event.isAcknowledged()) {

@@ -8,6 +8,7 @@ import com.terransky.stuffnthings.dataSources.oxfordDictionary.*;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -62,7 +63,7 @@ public class dictionary implements ISlashCommand {
             """.formatted(langCodes.size()),
             Mastermind.DEVELOPER,
             formatter.parse("27-10-2022_12:46"),
-            formatter.parse("17-11-2022_11:34")
+            formatter.parse("19-11-2022_11:37")
         );
 
         metadata.addOptions(
@@ -75,7 +76,7 @@ public class dictionary implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
         event.deferReply().queue();
         String[] userWords = event.getOption("word", "", OptionMapping::getAsString).split("\s");
         EmbedBuilder eb1 = new EmbedBuilder()

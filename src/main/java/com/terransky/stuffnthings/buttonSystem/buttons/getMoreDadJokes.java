@@ -5,6 +5,7 @@ import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.dataSources.icanhazdadjoke.IcanhazdadjokeData;
 import com.terransky.stuffnthings.interfaces.IButton;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
@@ -21,7 +22,7 @@ public class getMoreDadJokes implements IButton {
     }
 
     @Override
-    public void execute(@NotNull ButtonInteractionEvent event) throws Exception {
+    public void execute(@NotNull ButtonInteractionEvent event, @NotNull Guild guild) throws Exception {
         URL iCanHazDadJoke = new URL("https://icanhazdadjoke.com/");
         HttpURLConnection dadJoke = (HttpURLConnection) iCanHazDadJoke.openConnection();
         dadJoke.addRequestProperty("User-Agent", Commons.getConfig().get("BOT_USER_AGENT")); //https://icanhazdadjoke.com/api#custom-user-agent

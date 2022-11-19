@@ -3,6 +3,7 @@ package com.terransky.stuffnthings.selectMenuSystem;
 import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.interfaces.ISelectMenu;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -62,6 +63,7 @@ public class SelectMenuManager extends ListenerAdapter {
             Commons.botIsGuildOnly(event);
             return;
         }
+        Guild guild = event.getGuild();
 
         Optional<ISelectMenu> ifMenu = getMenu(event.getId());
         EmbedBuilder eb = new EmbedBuilder()
@@ -72,10 +74,10 @@ public class SelectMenuManager extends ListenerAdapter {
 
         if (ifMenu.isPresent()) {
             ISelectMenu menu = ifMenu.get();
-            String origins = event.isFromGuild() ? "%s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()) : event.getUser().getAsTag() + "'s private channel";
+            String origins = event.isFromGuild() ? "%s [%d]".formatted(guild.getName(), guild.getIdLong()) : event.getUser().getAsTag() + "'s private channel";
             log.debug("Command " + menu.getName().toUpperCase() + " called on " + origins);
             try {
-                menu.execute(event);
+                menu.execute(event, guild);
             } catch (Exception e) {
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getCause()));
                 Commons.listPrinter(Arrays.asList(e.getStackTrace()), SelectMenuManager.class);

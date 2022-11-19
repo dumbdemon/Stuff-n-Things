@@ -6,6 +6,7 @@ import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -102,7 +103,7 @@ public class colorInfo implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
         DecimalFormat hsb = new DecimalFormat("##.##%");
         String subCommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()

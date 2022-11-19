@@ -5,6 +5,7 @@ import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
 import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -72,7 +73,7 @@ public class calculateRats implements ISlashCommand {
             """.formatted("https://scryfall.com/card/chk/124/marrow-gnawer", "https://scryfall.com/card/mor/145/thornbite-staff"),
             Mastermind.DEVELOPER,
             formatter.parse("5-10-2022_11:48"),
-            formatter.parse("17-11-2022_11:34")
+            formatter.parse("19-11-2022_11:35")
         );
 
         metadata.addOptions(
@@ -86,7 +87,7 @@ public class calculateRats implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
         event.deferReply().queue();
         float startCNT = event.getOption("start-count", 3, OptionMapping::getAsInt);
         float iterations = event.getOption("iterations", 100, OptionMapping::getAsInt);

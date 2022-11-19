@@ -7,6 +7,7 @@ import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -42,7 +43,7 @@ public class kill implements ISlashCommand {
             Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
             """, Mastermind.USER,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("17-11-2022_11:34")
+            formatter.parse("19-11-2022_11:38")
         );
 
         metadata.addSubcommands(
@@ -56,16 +57,14 @@ public class kill implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
         Random random = new Random(new Date().getTime());
         List<String> victims = new ArrayList<>();
         String subCommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(Commons.getDefaultEmbedColor())
             .setFooter("Requested by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
-        List<Member> memberList = new ArrayList<>();
-        if (event.getGuild() != null)
-            memberList = event.getGuild().getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
+        List<Member> memberList = guild.getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
 
         for (Member member : memberList) {
             victims.add(member.getAsMention());

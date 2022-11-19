@@ -4,6 +4,7 @@ import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.interfaces.IModal;
 import com.terransky.stuffnthings.modalSystem.modals.killSuggest;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -64,6 +65,7 @@ public class ModalManager extends ListenerAdapter {
             Commons.botIsGuildOnly(event);
             return;
         }
+        Guild guild = event.getGuild();
 
         Optional<IModal> ifModal = getModal(event.getModalId());
         EmbedBuilder eb = new EmbedBuilder()
@@ -74,11 +76,11 @@ public class ModalManager extends ListenerAdapter {
 
         if (ifModal.isPresent()) {
             IModal modal = ifModal.get();
-            log.debug("Modal " + modal.getName().toUpperCase() + " called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
+            log.debug("Modal " + modal.getName().toUpperCase() + " called on %s [%d]".formatted(guild.getName(), guild.getIdLong()));
             try {
-                modal.execute(event);
+                modal.execute(event, guild);
             } catch (Exception e) {
-                log.debug(event.getModalId() + " interaction on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
+                log.debug(event.getModalId() + " interaction on %s [%d]".formatted(guild.getName(), guild.getIdLong()));
                 log.error(e.getClass().getName() + ": " + e.getMessage());
                 Commons.listPrinter(Arrays.asList(e.getStackTrace()), ModalManager.class);
                 if (event.isAcknowledged()) {

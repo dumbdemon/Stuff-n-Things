@@ -5,6 +5,7 @@ import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
 import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -32,7 +33,7 @@ public class robFailChance implements ISlashCommand {
             Returns the chance of failure of the `/rob` command of the bot UnbelievaBoat. If you don't have the bot, you can ask your admins to invite it [here](%s).
             """.formatted(uBoatInvite), Mastermind.DEVELOPER,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("17-11-2022_11:37")
+            formatter.parse("19-11-2022_11:39")
         );
 
         metadata.addOptions(
@@ -44,11 +45,10 @@ public class robFailChance implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event) {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) {
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(Commons.getDefaultEmbedColor());
         DecimalFormat largeNumber = new DecimalFormat("##,###");
-        if (event.getGuild() == null) return;
 
         double yourNetWorth = event.getOption("your-net-worth", 0d, OptionMapping::getAsDouble),
             theirCash = event.getOption("their-cash", 0d, OptionMapping::getAsDouble);
@@ -59,7 +59,7 @@ public class robFailChance implements ISlashCommand {
             .addField("Their Cash", largeNumber.format(theirCash), true)
             .addField("Failure Chance", failChance, true);
 
-        if (event.getGuild().getRoleByBot(356950275044671499L) != null || event.getGuild().getRoleByBot(292953664492929025L) != null) {
+        if (guild.getRoleByBot(356950275044671499L) != null || guild.getRoleByBot(292953664492929025L) != null) {
             event.replyEmbeds(eb.build()).queue();
         } else {
             eb.setDescription("**UnbelievaBoat is not on this sever!**\s" +

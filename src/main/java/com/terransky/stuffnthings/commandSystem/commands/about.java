@@ -7,6 +7,7 @@ import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
 import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -34,7 +35,7 @@ public class about implements ISlashCommand {
             The about command. What else did you expect?
             """, Mastermind.DEVELOPER,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("17-11-2022_11:34")
+            formatter.parse("19-11-2022_11:35")
         );
 
         metadata.addOptions(
@@ -46,12 +47,12 @@ public class about implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
         event.deferReply().queue();
-        String command = event.getOption("command", "none", OptionMapping::getAsString);
+        Optional<String> ifCommand = Optional.ofNullable(event.getOption("command", OptionMapping::getAsString));
 
-        if (!command.equals("none")) {
-            Optional<Metadata> ifMetadata = new CommandManager().getMetadata(command);
+        if (ifCommand.isPresent()) {
+            Optional<Metadata> ifMetadata = new CommandManager().getMetadata(ifCommand.get());
             Metadata metadata = ifMetadata.orElse(this.getMetadata());
 
             if (metadata.getMinPerms().size() != 0) {
@@ -86,13 +87,10 @@ public class about implements ISlashCommand {
         }
 
         RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
-        int guildCommandCnt = 0;
 
         int commandCnt = new CommandManager().getCommandData().size();
-        if (event.getGuild() != null) {
-            guildCommandCnt = new CommandManager().getCommandData(event.getGuild().getIdLong()).size();
-            commandCnt += guildCommandCnt;
-        }
+        int guildCommandCnt = new CommandManager().getCommandData(guild.getIdLong()).size();
+        commandCnt += guildCommandCnt;
 
         Duration duration = Duration.ofMillis(rb.getUptime());
         long days = duration.toDaysPart();
@@ -134,7 +132,7 @@ public class about implements ISlashCommand {
                 .addField("Total Commands", "%s on %s\n%s of which are guild commands"
                     .formatted(
                         commandCnt,
-                        event.getGuild().getName(),
+                        guild.getName(),
                         guildCommandCnt == 0 ? "None" : guildCommandCnt
                     ), false)
                 .build()

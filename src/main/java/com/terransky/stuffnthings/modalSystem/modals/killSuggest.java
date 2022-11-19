@@ -27,17 +27,15 @@ public class killSuggest implements IModal {
     }
 
     @Override
-    public void execute(@NotNull ModalInteractionEvent event) throws Exception {
+    public void execute(@NotNull ModalInteractionEvent event, @NotNull Guild guild) throws Exception {
         Random rando = new Random(new Date().getTime());
         event.deferReply().queue();
         List<String> victims = new ArrayList<>();
         Optional<ModalMapping> ifSuggestion = Optional.ofNullable(event.getValue(kill.MODAL_NAME));
         String suggestion = ifSuggestion.orElseThrow(DiscordAPIException::new).getAsString();
 
-        Optional<Guild> ifGuild = Optional.ofNullable(event.getGuild());
         List<Member> members =
-            ifGuild.orElseThrow(DiscordAPIException::new)
-                .getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
+            guild.getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
 
         for (Member member : members) {
             victims.add(member.getAsMention());

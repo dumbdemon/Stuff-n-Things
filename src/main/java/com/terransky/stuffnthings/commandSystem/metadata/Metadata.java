@@ -19,10 +19,10 @@ public class Metadata implements Comparable<Metadata> {
     private Mastermind mastermind;
     private Date implementationDate;
     private Date lastUpdated;
-    private List<Permission> minPerms = new ArrayList<>();
-    private List<SubcommandGroupData> subcommandGroups = new ArrayList<>();
-    private List<SubcommandData> subcommands = new ArrayList<>();
-    private List<OptionData> options = new ArrayList<>();
+    private final List<Permission> minPerms = new ArrayList<>();
+    private final List<SubcommandGroupData> subcommandGroups = new ArrayList<>();
+    private final List<SubcommandData> subcommands = new ArrayList<>();
+    private final List<OptionData> options = new ArrayList<>();
 
     /**
      * Extended details for an {@link ISlashCommand}.
@@ -48,31 +48,12 @@ public class Metadata implements Comparable<Metadata> {
         this.lastUpdated = lastUpdated;
     }
 
-    /**
-     * Extended details for an {@link ISlashCommand}.
-     * <p>
-     * It is recommended that when constructing a Metadata Object for {@link CommandData}, that you use the top level type used in the {@code ISlashCommand.getCommandData()}.
-     * Hierarchy (from highest to lowest) goes as follows: none, {@link SubcommandGroupData}, {@link SubcommandData}, {@link OptionData}.
-     */
-    public Metadata(String commandName, String shortDescription, String longDescription, Mastermind mastermind, Date implementationDate, Date lastUpdated, List<Permission> minPerms) {
-        this(commandName, shortDescription, longDescription, mastermind, implementationDate, lastUpdated);
-        this.minPerms = minPerms;
-    }
-
     public String getShortDescription() {
         return shortDescription;
     }
 
-    public void setShortDescription(String shortDescription) {
-        this.shortDescription = shortDescription;
-    }
-
     public List<SubcommandGroupData> getSubcommandGroups() {
         return subcommandGroups;
-    }
-
-    public void setSubcommandGroups(List<SubcommandGroupData> subcommandGroups) {
-        this.subcommandGroups = subcommandGroups;
     }
 
     public void addSubcommandGroups(List<SubcommandGroupData> subcommandGroups) {
@@ -90,10 +71,6 @@ public class Metadata implements Comparable<Metadata> {
         return subcommands;
     }
 
-    public void setSubcommands(List<SubcommandData> subcommands) {
-        this.subcommands = subcommands;
-    }
-
     public void addSubcommands(List<SubcommandData> subcommands) {
         this.subcommands.addAll(subcommands);
     }
@@ -108,10 +85,6 @@ public class Metadata implements Comparable<Metadata> {
         return options;
     }
 
-    public void setOptions(List<OptionData> options) {
-        this.options = options;
-    }
-
     public void addOptions(List<OptionData> options) {
         this.options.addAll(options);
     }
@@ -122,8 +95,8 @@ public class Metadata implements Comparable<Metadata> {
             this.options.addAll(List.of(options));
     }
 
-    public void setMinPerms(List<Permission> minPerms) {
-        this.minPerms = minPerms;
+    public List<Permission> getMinPerms() {
+        return minPerms;
     }
 
     public void addMinPerms(List<Permission> minPerms) {
@@ -140,10 +113,6 @@ public class Metadata implements Comparable<Metadata> {
         return commandName;
     }
 
-    public void setCommandName(String commandName) {
-        this.commandName = commandName;
-    }
-
     public Mastermind getMastermind() {
         return mastermind;
     }
@@ -156,10 +125,6 @@ public class Metadata implements Comparable<Metadata> {
         return implementationDate;
     }
 
-    public void setImplementationDate(Date implementationDate) {
-        this.implementationDate = implementationDate;
-    }
-
     public long getImplementedAsEpochSecond() {
         return this.getImplementationDate().toInstant().getEpochSecond();
     }
@@ -168,16 +133,8 @@ public class Metadata implements Comparable<Metadata> {
         return lastUpdated;
     }
 
-    public void setLastUpdated(Date lastUpdated) {
-        this.lastUpdated = lastUpdated;
-    }
-
     public long getLastEditedAsEpochSecond() {
         return this.getLastUpdated().toInstant().getEpochSecond();
-    }
-
-    public List<Permission> getMinPerms() {
-        return minPerms;
     }
 
     public String getLongDescription() {
@@ -188,10 +145,6 @@ public class Metadata implements Comparable<Metadata> {
         }
 
         return longDescription;
-    }
-
-    public void setLongDescription(String longDescription) {
-        this.longDescription = longDescription;
     }
 
     @Override

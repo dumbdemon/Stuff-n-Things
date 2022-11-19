@@ -5,6 +5,7 @@ import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
 import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -31,7 +32,7 @@ public class say implements ISlashCommand {
             ~~Subject to your server's rules and Discord Community Guidelines.~~
             """, Mastermind.DEVELOPER,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("13-11-2022_10:05")
+            formatter.parse("19-11-2022_11:39")
         );
 
         metadata.addOptions(
@@ -44,7 +45,7 @@ public class say implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event) {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) {
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(Commons.getDefaultEmbedColor());
 

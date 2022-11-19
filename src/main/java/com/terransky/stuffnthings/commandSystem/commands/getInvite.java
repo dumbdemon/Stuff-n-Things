@@ -6,6 +6,7 @@ import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
 import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,7 @@ public class getInvite implements ISlashCommand {
             Returns the invite of the bot.
             """, Mastermind.DEFAULT,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("17-11-2022_11:34")
+            formatter.parse("19-11-2022_11:37")
         );
     }
 
@@ -45,11 +46,11 @@ public class getInvite implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event) {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) {
         event.replyEmbeds(
             new EmbedBuilder()
                 .setColor(Commons.getDefaultEmbedColor())
-                .setTitle("You can't even use this.", event.getJDA().getInviteUrl(checkPerms.requiredPerms()))
+                .setTitle("You can't even use this.", event.getJDA().getInviteUrl(checkPerms.getRequiredPerms()))
                 .build()
         ).queue();
     }

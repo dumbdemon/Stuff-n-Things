@@ -10,6 +10,7 @@ import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -105,8 +106,8 @@ public class CommandManager extends ListenerAdapter {
      */
     public List<Command.Choice> getCommandsAsChoices() {
         List<Command.Choice> choices = new ArrayList<>();
-        for (ISlashCommand iSlashCommand : iSlashCommandsList.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList()) {
-            choices.add(new Command.Choice(WordUtils.capitalize(iSlashCommand.getName().replace("-", "\s")), iSlashCommand.getName()));
+        for (ISlashCommand command : iSlashCommandsList.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList()) {
+            choices.add(new Command.Choice(WordUtils.capitalize(command.getName().replace("-", "\s")), command.getName()));
         }
         return choices;
     }
@@ -176,7 +177,7 @@ public class CommandManager extends ListenerAdapter {
         final List<CommandData> commandData = new ArrayList<>();
 
         for (ISlashCommand command : iSlashCommandsList.stream().filter(it -> !it.isGlobal() && it.isWorking()).sorted().toList()) {
-            boolean addToServer = command.getServerRestrictions().stream().anyMatch(it -> it.equals(serverId)) || command.getServerRestrictions().size() == 0;
+            boolean addToServer = command.getServerRestrictions().stream().anyMatch(it -> it.equals(serverId)) || command.getServerRestrictions().isEmpty();
 
             if (addToServer) commandData.add(command.getCommandData());
         }
@@ -196,11 +197,12 @@ public class CommandManager extends ListenerAdapter {
             Commons.botIsGuildOnly(event);
             return;
         }
+        Guild guild = event.getGuild();
 
         //Add user to database or ignore if exists
         if (Commons.isEnableDatabase()) {
             try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                .prepareStatement("INSERT OR IGNORE INTO users_" + event.getGuild().getId() + "(user_id) VALUES(?)")) {
+                .prepareStatement("INSERT OR IGNORE INTO users_" + guild.getId() + "(user_id) VALUES(?)")) {
                 stmt.setString(1, event.getUser().getId());
                 stmt.execute();
             } catch (SQLException e) {
@@ -219,9 +221,9 @@ public class CommandManager extends ListenerAdapter {
 
         if (cmd.isPresent()) {
             ISlashCommand command = cmd.get();
-            log.debug("Command " + command.getName().toUpperCase() + " called on %s [%d]".formatted(event.getGuild().getName(), event.getGuild().getIdLong()));
+            log.debug("Command " + command.getName().toUpperCase() + " called on %s [%d]".formatted(guild.getName(), guild.getIdLong()));
             try {
-                command.execute(event);
+                command.execute(event, guild);
             } catch (Exception e) {
                 log.debug("Full command path that triggered error :: [" + event.getCommandPath() + "]");
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));

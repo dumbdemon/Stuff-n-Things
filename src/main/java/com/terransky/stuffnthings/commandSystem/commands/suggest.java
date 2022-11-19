@@ -9,6 +9,7 @@ import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
 import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -32,7 +33,7 @@ public class suggest implements ISlashCommand {
             Have a command that you would like the bot to have? Suggest it with this command!
             """, Mastermind.DEVELOPER,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("13-11-2022_10:05")
+            formatter.parse("19-11-2022_11:40")
         );
 
         metadata.addOptions(
@@ -45,7 +46,7 @@ public class suggest implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event) {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) {
         String suggestion = event.getOption("suggestion", OptionMapping::getAsString);
         int importance = event.getOption("importance", 50, OptionMapping::getAsInt);
         EmbedBuilder callReply = new EmbedBuilder().setColor(Commons.getDefaultEmbedColor());
