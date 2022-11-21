@@ -95,7 +95,8 @@ public interface ISlashCommand extends ICommand {
      * The main slash command handler.
      *
      * @param event A {@link SlashCommandInteractionEvent}.
-     * @param blob  An {@link EventBlob} containing checked non-null {@link net.dv8tion.jda.api.entities.Guild Guild} object and {@link net.dv8tion.jda.api.entities.Member Member} object.
+     * @param blob  An {@link EventBlob} containing checked non-null {@link net.dv8tion.jda.api.entities.Guild Guild} object
+     *              and {@link net.dv8tion.jda.api.entities.Member Member} object.
      * @throws Exception Any exception could get thrown across all ISlashCommands.
      */
     void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception;
