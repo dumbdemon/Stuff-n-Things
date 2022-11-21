@@ -2,12 +2,12 @@ package com.terransky.stuffnthings.commandSystem.commands.fun;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.stuffnthings.Commons;
-import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
-import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
+import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
+import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.dataSources.icanhazdadjoke.IcanhazdadjokeData;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -35,17 +35,17 @@ public class getDadJokes implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = Commons.getFastDateFormat();
+        FastDateFormat format = Commons.getFastDateFormat();
         return new Metadata(this.getName(), "Why was 6 afraid of 7? Because 7 was a registered 6 offender.", """
             An unoriginal or unfunny joke of a type supposedly told by middle-aged or older men.
             """, Mastermind.USER,
-            formatter.parse("25-8-2022_20:53"),
-            formatter.parse("19-11-2022_11:37")
+            format.parse("25-8-2022_20:53"),
+            format.parse("21-11-2022_12:02")
         );
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         URL iCanHazDadJoke = new URL("https://icanhazdadjoke.com/");
         String iCanHazDadJokeLogo = "https://icanhazdadjoke.com/static/smile.svg";
         HttpURLConnection dadJoke = (HttpURLConnection) iCanHazDadJoke.openConnection();

@@ -15,11 +15,11 @@ import com.terransky.stuffnthings.commandSystem.commands.maths.numbersAPI;
 import com.terransky.stuffnthings.commandSystem.commands.maths.solveQuadratic;
 import com.terransky.stuffnthings.commandSystem.commands.mtg.calculateRats;
 import com.terransky.stuffnthings.commandSystem.commands.mtg.whatsInStandard;
-import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
+import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -114,9 +114,9 @@ public class CommandManager extends ListenerAdapter {
     }
 
     /**
-     * Get all command names as {@link Command.Choice}s for the {@link about} command.
+     * Get all command names as {@link Command.Choice Choises} for the {@link about} command.
      *
-     * @return A {@link List} of {@link Command.Choice}s.
+     * @return A {@link List} of {@link Command.Choice Choises}.
      */
     public List<Command.Choice> getCommandsAsChoices() {
         List<Command.Choice> choices = new ArrayList<>();
@@ -211,12 +211,12 @@ public class CommandManager extends ListenerAdapter {
             Commons.botIsGuildOnly(event);
             return;
         }
-        Guild guild = event.getGuild();
+        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
         //Add user to database or ignore if exists
         if (Commons.isEnableDatabase()) {
             try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                .prepareStatement("INSERT OR IGNORE INTO users_" + guild.getId() + "(user_id) VALUES(?)")) {
+                .prepareStatement("INSERT OR IGNORE INTO users_" + blob.getGuildId() + "(user_id) VALUES(?)")) {
                 stmt.setString(1, event.getUser().getId());
                 stmt.execute();
             } catch (SQLException e) {
@@ -230,14 +230,14 @@ public class CommandManager extends ListenerAdapter {
             .setTitle("Oops!")
             .setDescription("An error occurred while executing that command!\nPlease report this event [here](%s).".formatted(Commons.getConfig().get("BOT_ERROR_REPORT")))
             .setColor(Commons.getDefaultEmbedColor())
-            .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();
 
         if (cmd.isPresent()) {
             ISlashCommand command = cmd.get();
-            log.debug("Command " + command.getName().toUpperCase() + " called on %s [%d]".formatted(guild.getName(), guild.getIdLong()));
+            log.debug("Command " + command.getName().toUpperCase() + " called on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
             try {
-                command.execute(event, guild);
+                command.execute(event, blob);
             } catch (Exception e) {
                 log.debug("Full command path that triggered error :: [" + event.getCommandPath() + "]");
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));

@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.commandSystem.metadata;
+package com.terransky.stuffnthings.commandSystem.utilities;
 
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.Permission;

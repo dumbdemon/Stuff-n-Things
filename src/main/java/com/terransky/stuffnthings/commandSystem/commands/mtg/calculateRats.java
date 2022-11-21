@@ -1,11 +1,11 @@
 package com.terransky.stuffnthings.commandSystem.commands.mtg;
 
 import com.terransky.stuffnthings.Commons;
-import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
-import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
+import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
+import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -66,14 +66,14 @@ public class calculateRats implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = Commons.getFastDateFormat();
+        FastDateFormat format = Commons.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "How many rats you have?", """
             *M:tG Command*
             Returns an amount of 1/1 black Rat creature tokens after X triggers created by the interaction between [Marrow-Gnawer](%s) equipped with [Thornbite Staff](%s).
             """.formatted("https://scryfall.com/card/chk/124/marrow-gnawer", "https://scryfall.com/card/mor/145/thornbite-staff"),
             Mastermind.DEVELOPER,
-            formatter.parse("5-10-2022_11:48"),
-            formatter.parse("19-11-2022_11:35")
+            format.parse("5-10-2022_11:48"),
+            format.parse("21-11-2022_12:02")
         );
 
         metadata.addOptions(
@@ -87,7 +87,7 @@ public class calculateRats implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         event.deferReply().queue();
         float startCNT = event.getOption("start-count", 3, OptionMapping::getAsInt);
         float iterations = event.getOption("iterations", 100, OptionMapping::getAsInt);
@@ -98,7 +98,7 @@ public class calculateRats implements ISlashCommand {
             .setTitle("Is there enough rats?")
             .addField("Starting total", "%s rats".formatted(largeNumber.format(startCNT)), true)
             .addField("Iterations", "%s triggers".formatted(largeNumber.format(iterations)), true)
-            .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
+            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
 
         for (float i = 0; i < iterations; i++) {
             finalCNT = (finalCNT - 1f) * 2f;

@@ -1,9 +1,9 @@
 package com.terransky.stuffnthings.commandSystem;
 
 import com.terransky.stuffnthings.Commons;
+import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.interfaces.IUserContext;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -87,23 +87,23 @@ public class UserContextManager extends ListenerAdapter {
             Commons.botIsGuildOnly(event);
             return;
         }
-        Guild guild = event.getGuild();
+        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
         Optional<IUserContext> ifMenu = getUserMenu(event.getName());
         MessageEmbed menuFailed = new EmbedBuilder()
             .setTitle("Oops!")
             .setDescription("An error occurred while executing that context menu!\nPlease report this event [here](%s).".formatted(Commons.getConfig().get("BOT_ERROR_REPORT")))
             .setColor(Commons.getDefaultEmbedColor())
-            .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();
 
         if (ifMenu.isPresent()) {
             IUserContext context = ifMenu.get();
-            log.debug("Command \"" + context.getName().toUpperCase() + "\" called on %s [%d]".formatted(guild.getName(), guild.getIdLong()));
+            log.debug("Command \"" + context.getName().toUpperCase() + "\" called on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
             try {
-                context.execute(event, guild);
+                context.execute(event, blob);
             } catch (Exception e) {
-                log.debug("%s failed to execute on guild id %s".formatted(context.getName(), guild.getId()));
+                log.debug("%s failed to execute on guild id %s".formatted(context.getName(), blob.getGuildId()));
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
                 Commons.listPrinter(Arrays.asList(e.getStackTrace()), UserContextManager.class);
                 if (event.isAcknowledged()) {

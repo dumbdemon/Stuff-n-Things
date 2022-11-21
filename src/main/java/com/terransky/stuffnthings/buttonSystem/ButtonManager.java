@@ -3,9 +3,9 @@ package com.terransky.stuffnthings.buttonSystem;
 import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.buttonSystem.buttons.expiredButton;
 import com.terransky.stuffnthings.buttonSystem.buttons.getMoreDadJokes;
+import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.interfaces.IButton;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -44,7 +44,7 @@ public class ButtonManager extends ListenerAdapter {
     /**
      * Get an {@link IButton} object to be used at {@code onButtonInteraction()}.
      *
-     * @param search The {@link IButton} ID.
+     * @param search The {@link IButton IButton's} ID.
      * @return An {@link IButton} object.
      */
     @Nullable
@@ -72,22 +72,22 @@ public class ButtonManager extends ListenerAdapter {
             Commons.botIsGuildOnly(event);
             return;
         }
-        Guild guild = event.getGuild();
+        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
         IButton butt = getButton(event.getButton().getId());
         MessageEmbed buttonFailed = new EmbedBuilder()
             .setTitle("Oops!")
             .setDescription("An error occurred while executing the button!\nPlease report this event [here](%s).".formatted(Commons.getConfig().get("BOT_ERROR_REPORT")))
             .setColor(Commons.getDefaultEmbedColor())
-            .setFooter(event.getUser().getAsTag())
+            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();
 
         if (butt != null) {
-            log.debug("Button " + butt.getName().toUpperCase() + " called on %s [%d]".formatted(guild.getName(), guild.getIdLong()));
+            log.debug("Button " + butt.getName().toUpperCase() + " called on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
             try {
-                butt.execute(event, guild);
+                butt.execute(event, blob);
             } catch (Exception e) {
-                log.debug(event.getButton().getId() + " interaction on %s [%d]".formatted(guild.getName(), guild.getIdLong()));
+                log.debug(event.getButton().getId() + " interaction failed on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
                 log.error(e.getClass().getName() + ": " + e.getMessage());
                 Commons.listPrinter(Arrays.asList(e.getStackTrace()), ButtonManager.class);
                 event.replyEmbeds(buttonFailed).setEphemeral(true).queue();

@@ -1,11 +1,11 @@
 package com.terransky.stuffnthings.commandSystem.commands.fun;
 
 import com.terransky.stuffnthings.Commons;
-import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
-import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
+import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
+import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -28,12 +28,12 @@ public class robFailChance implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = Commons.getFastDateFormat();
+        FastDateFormat format = Commons.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Calculate the fail chance to rob a member for the UnbelievaBoat bot!", """
             Returns the chance of failure of the `/rob` command of the bot UnbelievaBoat. If you don't have the bot, you can ask your admins to invite it [here](%s).
             """.formatted(uBoatInvite), Mastermind.DEVELOPER,
-            formatter.parse("24-08-2022_11:10"),
-            formatter.parse("19-11-2022_11:39")
+            format.parse("24-08-2022_11:10"),
+            format.parse("21-11-2022_12:02")
         );
 
         metadata.addOptions(
@@ -45,7 +45,7 @@ public class robFailChance implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(Commons.getDefaultEmbedColor());
         DecimalFormat largeNumber = new DecimalFormat("##,###");
@@ -59,7 +59,7 @@ public class robFailChance implements ISlashCommand {
             .addField("Their Cash", largeNumber.format(theirCash), true)
             .addField("Failure Chance", failChance, true);
 
-        if (guild.getRoleByBot(356950275044671499L) != null || guild.getRoleByBot(292953664492929025L) != null) {
+        if (blob.getGuild().getRoleByBot(356950275044671499L) != null || blob.getGuild().getRoleByBot(292953664492929025L) != null) {
             event.replyEmbeds(eb.build()).queue();
         } else {
             eb.setDescription("**UnbelievaBoat is not on this sever!**\s" +

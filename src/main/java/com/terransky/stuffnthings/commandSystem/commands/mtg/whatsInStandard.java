@@ -2,15 +2,15 @@ package com.terransky.stuffnthings.commandSystem.commands.mtg;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.stuffnthings.Commons;
-import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
-import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
+import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
+import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.Ban;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.Set;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.WhatsInStandardData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -68,15 +68,15 @@ public class whatsInStandard implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = Commons.getFastDateFormat();
+        FastDateFormat format = Commons.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Get Magic: the Gathering's set list for the standard format.", """
             *M:tG Command*
             Prints out the sets and ban list information for Magic: the Gathering's standard formant created by Wizards of the Coast.
             Information the bot uses is provided by [WhatsInStandard.com](https://whatsinstandard.com).
             """,
             Mastermind.DEVELOPER,
-            formatter.parse("27-10-2022_12:46"),
-            formatter.parse("19-11-2022_11:35")
+            format.parse("27-10-2022_12:46"),
+            format.parse("21-11-2022_12:02")
         );
 
         metadata.addSubcommands(
@@ -90,7 +90,7 @@ public class whatsInStandard implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         event.deferReply().queue();
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle("What's in standard?")

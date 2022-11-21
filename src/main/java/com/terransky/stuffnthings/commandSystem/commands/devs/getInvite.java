@@ -2,11 +2,11 @@ package com.terransky.stuffnthings.commandSystem.commands.devs;
 
 import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.commands.admin.checkPerms;
-import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
-import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
+import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
+import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
@@ -24,12 +24,12 @@ public class getInvite implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = Commons.getFastDateFormat();
+        FastDateFormat format = Commons.getFastDateFormat();
         return new Metadata(this.getName(), "Get an invite for the bot.", """
             Returns the invite of the bot.
             """, Mastermind.DEFAULT,
-            formatter.parse("24-08-2022_11:10"),
-            formatter.parse("19-11-2022_11:37")
+            format.parse("24-08-2022_11:10"),
+            format.parse("21-11-2022_12:02")
         );
     }
 
@@ -46,7 +46,7 @@ public class getInvite implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
         event.replyEmbeds(
             new EmbedBuilder()
                 .setColor(Commons.getDefaultEmbedColor())

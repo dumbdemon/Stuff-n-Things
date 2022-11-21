@@ -2,12 +2,12 @@ package com.terransky.stuffnthings.commandSystem.commands.fun;
 
 import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.commands.cmdResources.killStrings;
-import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
-import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
+import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
+import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -38,12 +38,12 @@ public class kill implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = Commons.getFastDateFormat();
+        FastDateFormat format = Commons.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Time to un-alive random members!", """
             Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
             """, Mastermind.USER,
-            formatter.parse("24-08-2022_11:10"),
-            formatter.parse("19-11-2022_11:38")
+            format.parse("24-08-2022_11:10"),
+            format.parse("21-11-2022_12:02")
         );
 
         metadata.addSubcommands(
@@ -57,14 +57,14 @@ public class kill implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         Random random = new Random(new Date().getTime());
         List<String> victims = new ArrayList<>();
         String subCommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(Commons.getDefaultEmbedColor())
-            .setFooter("Requested by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
-        List<Member> memberList = guild.getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
+            .setFooter("Requested by " + event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
+        List<Member> memberList = blob.getGuild().getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
 
         for (Member member : memberList) {
             victims.add(member.getAsMention());

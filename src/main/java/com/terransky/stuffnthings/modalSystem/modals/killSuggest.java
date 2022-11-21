@@ -6,10 +6,10 @@ import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.commands.fun.kill;
+import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.IModal;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
@@ -27,7 +27,7 @@ public class killSuggest implements IModal {
     }
 
     @Override
-    public void execute(@NotNull ModalInteractionEvent event, @NotNull Guild guild) throws Exception {
+    public void execute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         Random rando = new Random(new Date().getTime());
         event.deferReply().queue();
         List<String> victims = new ArrayList<>();
@@ -35,7 +35,7 @@ public class killSuggest implements IModal {
         String suggestion = ifSuggestion.orElseThrow(DiscordAPIException::new).getAsString();
 
         List<Member> members =
-            guild.getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
+            blob.getGuild().getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
 
         for (Member member : members) {
             victims.add(member.getAsMention());
@@ -80,7 +80,7 @@ public class killSuggest implements IModal {
                     .setColor(Commons.getDefaultEmbedColor())
                     .setTitle(Objects.requireNonNull(event.getMember()).getEffectiveName())
                     .setDescription("\u2026 " + testKillString)
-                    .setFooter("Suggestion by " + event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+                    .setFooter("Suggestion by " + event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
                     .build()
             )
             .build();

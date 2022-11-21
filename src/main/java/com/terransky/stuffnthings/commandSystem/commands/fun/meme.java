@@ -2,13 +2,13 @@ package com.terransky.stuffnthings.commandSystem.commands.fun;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.stuffnthings.Commons;
-import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
-import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
+import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
+import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.dataSources.freshMemes.FreshMemeData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -34,13 +34,13 @@ public class meme implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = Commons.getFastDateFormat();
+        FastDateFormat format = Commons.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Get a random meme.", """
             Get your fresh hot (or cold) memes here!
             Reddit pulls from [r/memes](https://www.reddit.com/r/memes), [r/dankmemes](https://www.reddit.com/r/dankmemes), or from [r/me_irl](https://www.reddit.com/r/me_irl).
             """, Mastermind.DEVELOPER,
-            formatter.parse("24-08-2022_11:10"),
-            formatter.parse("19-11-2022_11:39")
+            format.parse("24-08-2022_11:10"),
+            format.parse("21-11-2022_12:02")
         );
 
         metadata.addSubcommands(
@@ -52,7 +52,7 @@ public class meme implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         event.deferReply().queue();
         DecimalFormat largeNumber = new DecimalFormat("##,###");
         ObjectMapper om = new ObjectMapper();

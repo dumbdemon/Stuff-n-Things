@@ -3,11 +3,11 @@ package com.terransky.stuffnthings.commandSystem.commands.general;
 import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.CommandManager;
 import com.terransky.stuffnthings.commandSystem.commands.mtg.calculateRats;
-import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
-import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
+import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
+import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -30,12 +30,12 @@ public class about implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = Commons.getFastDateFormat();
+        FastDateFormat format = Commons.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "What am I? Who am I?", """
             The about command. What else did you expect?
             """, Mastermind.DEVELOPER,
-            formatter.parse("24-08-2022_11:10"),
-            formatter.parse("21-11-2022_10:45")
+            format.parse("24-08-2022_11:10"),
+            format.parse("21-11-2022_12:02")
         );
 
         metadata.addOptions(
@@ -47,7 +47,7 @@ public class about implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         event.deferReply().queue();
         Optional<String> ifCommand = Optional.ofNullable(event.getOption("command", OptionMapping::getAsString));
 
@@ -62,7 +62,7 @@ public class about implements ISlashCommand {
                             .setTitle("About Command")
                             .setDescription("You don't have access to this command to see its details.")
                             .setColor(Commons.getDefaultEmbedColor())
-                            .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+                            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
                             .build()
                     ).queue();
                     return;
@@ -77,7 +77,7 @@ public class about implements ISlashCommand {
                     .setTitle("About Command - %s".formatted(WordUtils.capitalize(metadata.getCommandName().replace("-", "\s"))))
                     .setDescription(metadata.getLongDescription())
                     .setColor(Commons.getDefaultEmbedColor())
-                    .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+                    .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
                     .addField("Mastermind", metadata.getMastermind().getWho(), true)
                     .addField("Implementation Date", "<t:%s:f> (<t:%s:R>)".formatted(implementedDate, implementedDate), false)
                     .addField("Last Edited", "<t:%s:f> (<t:%s:R>)".formatted(lastEditedDate, lastEditedDate), false)
@@ -89,7 +89,7 @@ public class about implements ISlashCommand {
         RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
 
         int commandCnt = new CommandManager().getCommandData().size();
-        int guildCommandCnt = new CommandManager().getCommandData(guild.getIdLong()).size();
+        int guildCommandCnt = new CommandManager().getCommandData(blob.getGuildIdLong()).size();
         commandCnt += guildCommandCnt;
 
         Duration duration = Duration.ofMillis(rb.getUptime());
@@ -132,7 +132,7 @@ public class about implements ISlashCommand {
                 .addField("Total Commands", "%s on %s\n%s of which are guild commands"
                     .formatted(
                         commandCnt,
-                        guild.getName(),
+                        blob.getGuild().getName(),
                         guildCommandCnt == 0 ? "None" : guildCommandCnt
                     ), false)
                 .build()

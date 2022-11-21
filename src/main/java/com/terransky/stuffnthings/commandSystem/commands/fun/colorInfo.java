@@ -1,12 +1,12 @@
 package com.terransky.stuffnthings.commandSystem.commands.fun;
 
 import com.terransky.stuffnthings.Commons;
-import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
-import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
+import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
+import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -64,18 +64,19 @@ public class colorInfo implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = Commons.getFastDateFormat();
+        FastDateFormat format = Commons.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Get more info on a color.", """
             Given a hex triplet, RGB, or CMYK code, it will return the other values and give a link to more info.
             """, Mastermind.DEVELOPER,
-            formatter.parse("20-9-2022_12:10"),
-            formatter.parse("17-11-2022_11:34")
+            format.parse("20-9-2022_12:10"),
+            format.parse("21-11-2022_12:02")
         );
 
         metadata.addSubcommands(
             new SubcommandData("hex-triplet", "Get more info on a hex triplet. EX: #663366")
                 .addOptions(
                     new OptionData(OptionType.STRING, "triplet", "Enter the Hex Triplet including the \"#\".", true)
+                        .setRequiredLength(4, 7)
                 ),
             new SubcommandData("rgb", "Get more info on an RGB code. EX: R 102, G 51, B 102")
                 .addOptions(
@@ -103,12 +104,12 @@ public class colorInfo implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         DecimalFormat hsb = new DecimalFormat("##.##%");
         String subCommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle(WordUtils.capitalize(this.getName().replace("-", "\s")))
-            .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
+            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
         if (subCommand == null) throw new DiscordAPIException("No subcommand was given.");
 
         switch (subCommand) {

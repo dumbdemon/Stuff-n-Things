@@ -1,13 +1,13 @@
 package com.terransky.stuffnthings.commandSystem.commands.admin;
 
 import com.terransky.stuffnthings.Commons;
-import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
-import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
+import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
+import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -48,7 +48,7 @@ public class checkPerms implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = Commons.getFastDateFormat();
+        FastDateFormat format = Commons.getFastDateFormat();
         var permString = new StringBuilder();
 
         for (Permission requiredPerm : getRequiredPerms()) {
@@ -62,8 +62,8 @@ public class checkPerms implements ISlashCommand {
             %s```
             """.formatted(permString.substring(0, permString.length() - 2)),
             Mastermind.DEVELOPER,
-            formatter.parse("30-08-2022_16:14"),
-            formatter.parse("19-11-2022_12:19")
+            format.parse("30-08-2022_16:14"),
+            format.parse("21-11-2022_12:02")
         );
 
         metadata.addMinPerms(Permission.MANAGE_ROLES);
@@ -80,23 +80,23 @@ public class checkPerms implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         EnumSet<Permission> myPerms;
         GuildChannel toCheck = null;
         if (event.getSubcommandName() == null) throw new DiscordAPIException("No subcommand was given.");
 
         if (event.getSubcommandName().equals("server")) {
-            myPerms = guild.getSelfMember().getPermissions();
+            myPerms = blob.getGuild().getSelfMember().getPermissions();
         } else {
             Optional<GuildChannel> ifToCheck = Optional.ofNullable(event.getOption("check-channel", OptionMapping::getAsChannel));
             toCheck = ifToCheck.orElseThrow(DiscordAPIException::new);
-            myPerms = guild.getSelfMember().getPermissions(toCheck);
+            myPerms = blob.getGuild().getSelfMember().getPermissions(toCheck);
         }
 
         List<Permission> doNotHaveThis = new ArrayList<>();
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(Commons.getDefaultEmbedColor())
-            .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .setTitle("Permission Checker");
 
         for (Permission requiredPerm : getRequiredPerms()) {

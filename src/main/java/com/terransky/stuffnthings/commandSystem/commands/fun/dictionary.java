@@ -2,13 +2,13 @@ package com.terransky.stuffnthings.commandSystem.commands.fun;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.stuffnthings.Commons;
-import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
-import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
+import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
+import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.dataSources.oxfordDictionary.*;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -55,15 +55,15 @@ public class dictionary implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = Commons.getFastDateFormat();
+        FastDateFormat format = Commons.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Look up a word in the dictionary in up to 9 different languages.", """
             Powered by Oxford Languages, this command returns all definitions of a given word in up to %d languages as long as it is within that language's lexicon.
                         
             WARNING: depending on the word it may return no definitions. Try a different variation of that word if it happens.
             """.formatted(langCodes.size()),
             Mastermind.DEVELOPER,
-            formatter.parse("27-10-2022_12:46"),
-            formatter.parse("21-11-2022_10:45")
+            format.parse("27-10-2022_12:46"),
+            format.parse("21-11-2022_12:02")
         );
 
         metadata.addOptions(
@@ -76,16 +76,16 @@ public class dictionary implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         event.deferReply().queue();
         String[] userWords = event.getOption("word", "", OptionMapping::getAsString).split("\s");
         EmbedBuilder eb1 = new EmbedBuilder()
             .setTitle("Dictionary")
-            .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .setImage("https://languages.oup.com/wp-content/uploads/ol-logo-colour-300px-sfw.jpg")
             .setColor(Commons.getDefaultEmbedColor());
         EmbedBuilder eb2 = new EmbedBuilder()
-            .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .setImage("https://languages.oup.com/wp-content/uploads/ol-logo-colour-300px-sfw.jpg")
             .setColor(Commons.getSecondaryEmbedColor());
         if (userWords.length > 1) {

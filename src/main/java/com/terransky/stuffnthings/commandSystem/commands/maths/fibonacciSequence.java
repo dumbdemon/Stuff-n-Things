@@ -2,12 +2,12 @@ package com.terransky.stuffnthings.commandSystem.commands.maths;
 
 import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.commands.mtg.calculateRats;
-import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
-import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
+import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
+import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -32,15 +32,15 @@ public class fibonacciSequence implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = Commons.getFastDateFormat();
+        FastDateFormat format = Commons.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Get the nth number in the Fibonacci sequence.", """
             *From Oxford Languages*
             > a series of numbers in which each number (Fibonacci number) is the sum of the two preceding numbers.
                         
             This command returns the nth value in the *Fibonacci Sequence* or its whole sequence up to the nth value. Although the *Fibonacci Sequence* can go into infinity, this command has been limited to return up to the 186th value. Any higher and the command will return \u221E (infinity). This is due to the limitation of the Java data type Float. You can read more [here](https://www.w3schools.com/java/ref_keyword_float.asp).
             """, Mastermind.DEVELOPER,
-            formatter.parse("11-11-2022_20:50"),
-            formatter.parse("19-11-2022_11:37")
+            format.parse("11-11-2022_20:50"),
+            format.parse("21-11-2022_12:02")
         );
 
         metadata.addSubcommands(
@@ -60,7 +60,7 @@ public class fibonacciSequence implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         String subCommand = event.getSubcommandName();
         if (subCommand == null) {
             throw new DiscordAPIException("No subcommand was given.");
@@ -70,7 +70,7 @@ public class fibonacciSequence implements ISlashCommand {
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle(WordUtils.capitalize(this.getName()))
             .setColor(Commons.getDefaultEmbedColor())
-            .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
+            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
         MessageEditData messageEditData;
 
         fibonacciCache = new float[n + 1];
@@ -83,7 +83,7 @@ public class fibonacciSequence implements ISlashCommand {
                 .setTitle(WordUtils.capitalize(this.getName()))
                 .setDescription("Please wait. This may take a while...")
                 .setColor(Commons.getDefaultEmbedColor())
-                .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+                .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
                 .build()
         ).queue();
 

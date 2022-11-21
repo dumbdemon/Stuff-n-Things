@@ -1,12 +1,12 @@
 package com.terransky.stuffnthings.commandSystem.commands.devs;
 
 import com.terransky.stuffnthings.Commons;
-import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
-import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
+import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
+import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -29,7 +29,7 @@ public class userInfo implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = Commons.getFastDateFormat();
+        FastDateFormat format = Commons.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Get info on a specific user on the server! Defaults to you.", """
             Get info on a user or bot.
             The following info with be returned:
@@ -40,8 +40,8 @@ public class userInfo implements ISlashCommand {
             \u2022 Discord Joined Date
             \u2022 Boosting Status (if user)
             """, Mastermind.DEFAULT,
-            formatter.parse("24-08-2022_11:10"),
-            formatter.parse("21-11-2022_10:45")
+            format.parse("24-08-2022_11:10"),
+            format.parse("21-11-2022_12:02")
         );
 
         metadata.addOptions(
@@ -52,7 +52,7 @@ public class userInfo implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
         User uVictim = event.getOption("user", event.getUser(), OptionMapping::getAsUser);
         Member mVictim = event.getOption("user", event.getMember(), OptionMapping::getAsMember);
         StringBuilder permText = new StringBuilder();
@@ -90,7 +90,7 @@ public class userInfo implements ISlashCommand {
         } else finalUserPerms = "None";
 
         if (!mVictim.hasTimeJoined()) {
-            mVictim = guild.retrieveMemberById(mVictim.getId()).complete();
+            mVictim = blob.getGuild().retrieveMemberById(mVictim.getId()).complete();
         }
 
         eb.setAuthor(WordUtils.capitalize(mVictim.getEffectiveName()) + "'s Info")
@@ -100,7 +100,7 @@ public class userInfo implements ISlashCommand {
             .addField("Server Permissions", "```%s```".formatted(finalUserPerms), false)
             .addField("Joined Server on", "<t:%s:F>".formatted(mVictim.getTimeJoined().toEpochSecond()), true)
             .addField("Joined Discord on", "<t:%s:F>".formatted(uVictim.getTimeCreated().toEpochSecond()), true)
-            .setFooter("Requested by " + event.getUser().getAsTag() + " | " + event.getUser().getId(), event.getUser().getEffectiveAvatarUrl());
+            .setFooter("Requested by " + event.getUser().getAsTag() + " | " + event.getUser().getId(), blob.getMemberEffectiveAvatarUrl());
 
         if (!uVictim.isBot()) {
             String boostedText =

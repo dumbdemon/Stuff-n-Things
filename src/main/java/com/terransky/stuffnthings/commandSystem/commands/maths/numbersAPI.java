@@ -2,13 +2,13 @@ package com.terransky.stuffnthings.commandSystem.commands.maths;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.stuffnthings.Commons;
-import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
-import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
+import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
+import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.dataSources.NumbersAPI.NumbersAPIData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -55,13 +55,13 @@ public class numbersAPI implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat formatter = Commons.getFastDateFormat();
+        FastDateFormat format = Commons.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Get some fun info on a number", """
             Random facts about numbers! How nerdy/geeky can you get? Leaving any option empty will return a random fact of that category.
             Facts are provided by [NumbersAPI](http://numbersapi.com).
             """, Mastermind.DEVELOPER,
-            formatter.parse("10-11-2022_20:45"),
-            formatter.parse("19-11-2022_11:39")
+            format.parse("10-11-2022_20:45"),
+            format.parse("21-11-2022_12:02")
         );
 
         metadata.addSubcommands(
@@ -84,7 +84,7 @@ public class numbersAPI implements ISlashCommand {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         event.deferReply().queue();
         String subCommand = event.getSubcommandName();
         if (subCommand == null) {
@@ -94,7 +94,7 @@ public class numbersAPI implements ISlashCommand {
         ObjectMapper om = new ObjectMapper();
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(Commons.getDefaultEmbedColor())
-            .setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl());
+            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
 
         switch (subCommand) {
             case "number" -> {
