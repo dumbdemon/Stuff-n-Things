@@ -4,6 +4,7 @@ import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
@@ -42,8 +43,9 @@ public class config implements ISlashCommand {
             Sets certain constant values of specific commands.
             """,
             Mastermind.DEVELOPER,
+            SlashModule.ADMIN,
             format.parse("28-08-2022_21:46"),
-            format.parse("21-11-2022_12:02")
+            format.parse("21-11-2022_14:32")
         );
 
         metadata.addMinPerms(Permission.MANAGE_SERVER);

@@ -5,6 +5,7 @@ import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.Ban;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.Set;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.WhatsInStandardData;
@@ -75,8 +76,9 @@ public class whatsInStandard implements ISlashCommand {
             Information the bot uses is provided by [WhatsInStandard.com](https://whatsinstandard.com).
             """,
             Mastermind.DEVELOPER,
+            SlashModule.MTG,
             format.parse("27-10-2022_12:46"),
-            format.parse("21-11-2022_12:02")
+            format.parse("21-11-2022_14:32")
         );
 
         metadata.addSubcommands(

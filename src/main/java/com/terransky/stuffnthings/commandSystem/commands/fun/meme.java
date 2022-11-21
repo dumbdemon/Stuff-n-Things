@@ -5,6 +5,7 @@ import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.dataSources.freshMemes.FreshMemeData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
@@ -39,8 +40,9 @@ public class meme implements ISlashCommand {
             Get your fresh hot (or cold) memes here!
             Reddit pulls from [r/memes](https://www.reddit.com/r/memes), [r/dankmemes](https://www.reddit.com/r/dankmemes), or from [r/me_irl](https://www.reddit.com/r/me_irl).
             """, Mastermind.DEVELOPER,
+            SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("21-11-2022_12:02")
+            format.parse("21-11-2022_14:32")
         );
 
         metadata.addSubcommands(

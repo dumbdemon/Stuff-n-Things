@@ -4,6 +4,7 @@ import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -28,8 +29,9 @@ public class lmgtfy implements ISlashCommand {
         var metadata = new Metadata(this.getName(), "Let me Google that for you!", """
             When a person is too lazy to search it up themselves, call this on 'em.
             """, Mastermind.DEVELOPER,
+            SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("21-11-2022_12:02")
+            format.parse("21-11-2022_14:32")
         );
 
         metadata.addSubcommands(

@@ -5,6 +5,7 @@ import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.dataSources.icanhazdadjoke.IcanhazdadjokeData;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -39,8 +40,9 @@ public class getDadJokes implements ISlashCommand {
         return new Metadata(this.getName(), "Why was 6 afraid of 7? Because 7 was a registered 6 offender.", """
             An unoriginal or unfunny joke of a type supposedly told by middle-aged or older men.
             """, Mastermind.USER,
+            SlashModule.FUN,
             format.parse("25-8-2022_20:53"),
-            format.parse("21-11-2022_12:02")
+            format.parse("21-11-2022_14:32")
         );
     }
 

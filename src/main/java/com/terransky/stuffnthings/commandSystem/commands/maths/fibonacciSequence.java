@@ -5,6 +5,7 @@ import com.terransky.stuffnthings.commandSystem.commands.mtg.calculateRats;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -39,8 +40,9 @@ public class fibonacciSequence implements ISlashCommand {
                         
             This command returns the nth value in the *Fibonacci Sequence* or its whole sequence up to the nth value. Although the *Fibonacci Sequence* can go into infinity, this command has been limited to return up to the 186th value. Any higher and the command will return \u221E (infinity). This is due to the limitation of the Java data type Float. You can read more [here](https://www.w3schools.com/java/ref_keyword_float.asp).
             """, Mastermind.DEVELOPER,
+            SlashModule.MATHS,
             format.parse("11-11-2022_20:50"),
-            format.parse("21-11-2022_12:02")
+            format.parse("21-11-2022_14:32")
         );
 
         metadata.addSubcommands(

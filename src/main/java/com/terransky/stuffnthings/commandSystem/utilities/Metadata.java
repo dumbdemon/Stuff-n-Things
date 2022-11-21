@@ -17,6 +17,7 @@ public class Metadata implements Comparable<Metadata> {
     private String shortDescription;
     private String longDescription;
     private Mastermind mastermind;
+    private SlashModule module;
     private Date implementationDate;
     private Date lastUpdated;
     private final List<Permission> minPerms = new ArrayList<>();
@@ -39,13 +40,22 @@ public class Metadata implements Comparable<Metadata> {
      * It is recommended that when constructing a Metadata Object for {@link CommandData}, that you use the top level type used in the {@code ISlashCommand.getCommandData()}.
      * Hierarchy (from highest to lowest) goes as follows: none, {@link SubcommandGroupData}, {@link SubcommandData}, {@link OptionData}.
      */
-    public Metadata(String commandName, String shortDescription, String longDescription, Mastermind mastermind, Date implementationDate, Date lastUpdated) {
+    public Metadata(String commandName, String shortDescription, String longDescription, Mastermind mastermind, SlashModule module, Date implementationDate, Date lastUpdated) {
         this.commandName = commandName;
         this.shortDescription = shortDescription;
         this.longDescription = longDescription;
         this.mastermind = mastermind;
+        this.module = module;
         this.implementationDate = implementationDate;
         this.lastUpdated = lastUpdated;
+    }
+
+    public SlashModule getModule() {
+        return module;
+    }
+
+    public void setModule(SlashModule module) {
+        this.module = module;
     }
 
     public String getShortDescription() {

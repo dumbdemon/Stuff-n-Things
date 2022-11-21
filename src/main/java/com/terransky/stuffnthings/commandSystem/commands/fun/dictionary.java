@@ -5,6 +5,7 @@ import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.dataSources.oxfordDictionary.*;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
@@ -62,8 +63,9 @@ public class dictionary implements ISlashCommand {
             WARNING: depending on the word it may return no definitions. Try a different variation of that word if it happens.
             """.formatted(langCodes.size()),
             Mastermind.DEVELOPER,
+            SlashModule.FUN,
             format.parse("27-10-2022_12:46"),
-            format.parse("21-11-2022_12:02")
+            format.parse("21-11-2022_14:32")
         );
 
         metadata.addOptions(

@@ -4,6 +4,7 @@ import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -62,8 +63,9 @@ public class checkPerms implements ISlashCommand {
             %s```
             """.formatted(permString.substring(0, permString.length() - 2)),
             Mastermind.DEVELOPER,
+            SlashModule.ADMIN,
             format.parse("30-08-2022_16:14"),
-            format.parse("21-11-2022_12:02")
+            format.parse("21-11-2022_14:32")
         );
 
         metadata.addMinPerms(Permission.MANAGE_ROLES);

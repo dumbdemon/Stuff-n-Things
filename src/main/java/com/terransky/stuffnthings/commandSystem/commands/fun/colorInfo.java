@@ -4,6 +4,7 @@ import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -68,8 +69,9 @@ public class colorInfo implements ISlashCommand {
         var metadata = new Metadata(this.getName(), "Get more info on a color.", """
             Given a hex triplet, RGB, or CMYK code, it will return the other values and give a link to more info.
             """, Mastermind.DEVELOPER,
+            SlashModule.FUN,
             format.parse("20-9-2022_12:10"),
-            format.parse("21-11-2022_12:02")
+            format.parse("21-11-2022_14:32")
         );
 
         metadata.addSubcommands(

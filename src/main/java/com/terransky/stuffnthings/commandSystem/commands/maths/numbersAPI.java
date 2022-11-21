@@ -5,6 +5,7 @@ import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.dataSources.NumbersAPI.NumbersAPIData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
@@ -60,8 +61,9 @@ public class numbersAPI implements ISlashCommand {
             Random facts about numbers! How nerdy/geeky can you get? Leaving any option empty will return a random fact of that category.
             Facts are provided by [NumbersAPI](http://numbersapi.com).
             """, Mastermind.DEVELOPER,
+            SlashModule.MATHS,
             format.parse("10-11-2022_20:45"),
-            format.parse("21-11-2022_12:02")
+            format.parse("21-11-2022_14:32")
         );
 
         metadata.addSubcommands(

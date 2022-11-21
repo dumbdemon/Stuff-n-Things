@@ -4,6 +4,7 @@ import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -29,8 +30,9 @@ public class solveQuadratic implements ISlashCommand {
         var metadata = new Metadata(this.getName(), "Solve a Quadratic Equation.", """
             Given a, b, and c, solve for when the parabola intersects the x-axis.
             """, Mastermind.DEVELOPER,
+            SlashModule.MATHS,
             format.parse("19-11-2022_13:09"),
-            format.parse("21-11-2022_12:02")
+            format.parse("21-11-2022_14:32")
         );
 
         metadata.addOptions(

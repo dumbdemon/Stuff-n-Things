@@ -6,6 +6,7 @@ import com.terransky.stuffnthings.commandSystem.commands.mtg.calculateRats;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
+import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -34,8 +35,9 @@ public class about implements ISlashCommand {
         var metadata = new Metadata(this.getName(), "What am I? Who am I?", """
             The about command. What else did you expect?
             """, Mastermind.DEVELOPER,
+            SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("21-11-2022_12:02")
+            format.parse("21-11-2022_14:42")
         );
 
         metadata.addOptions(
@@ -79,6 +81,7 @@ public class about implements ISlashCommand {
                     .setColor(Commons.getDefaultEmbedColor())
                     .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
                     .addField("Mastermind", metadata.getMastermind().getWho(), true)
+                    .addField("Module", metadata.getModule().getName(), true)
                     .addField("Implementation Date", "<t:%s:f> (<t:%s:R>)".formatted(implementedDate, implementedDate), false)
                     .addField("Last Edited", "<t:%s:f> (<t:%s:R>)".formatted(lastEditedDate, lastEditedDate), false)
                     .build()
