@@ -5,5 +5,5 @@ build/
 gradle/
 /src/main/java/com/terransky/stuffnthings/secretsAndLies.java
 /database.sqlite
-/src/main/java/com/terransky/StuffnThings/commandSystem/commands/test.java
+/src/main/java/com/terransky/StuffnThings/commandSystem/commands/devs/test.java
 /logs/

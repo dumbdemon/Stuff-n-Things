@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.commandSystem.commands;
+package com.terransky.stuffnthings.commandSystem.commands.general;
 
 import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.CommandManager;
@@ -35,7 +35,7 @@ public class about implements ISlashCommand {
             The about command. What else did you expect?
             """, Mastermind.DEVELOPER,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("19-11-2022_11:35")
+            formatter.parse("21-11-2022_10:45")
         );
 
         metadata.addOptions(
@@ -55,7 +55,7 @@ public class about implements ISlashCommand {
             Optional<Metadata> ifMetadata = new CommandManager().getMetadata(ifCommand.get());
             Metadata metadata = ifMetadata.orElse(this.getMetadata());
 
-            if (metadata.getMinPerms().size() != 0) {
+            if (!metadata.getMinPerms().isEmpty()) {
                 if (event.getMember() != null && !event.getMember().hasPermission(metadata.getMinPerms())) {
                     event.replyEmbeds(
                         new EmbedBuilder()

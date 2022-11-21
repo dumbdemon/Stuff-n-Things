@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.commandSystem.commands;
+package com.terransky.stuffnthings.commandSystem.commands.fun;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.stuffnthings.Commons;
@@ -63,7 +63,7 @@ public class dictionary implements ISlashCommand {
             """.formatted(langCodes.size()),
             Mastermind.DEVELOPER,
             formatter.parse("27-10-2022_12:46"),
-            formatter.parse("19-11-2022_11:37")
+            formatter.parse("21-11-2022_10:45")
         );
 
         metadata.addOptions(
@@ -131,7 +131,7 @@ public class dictionary implements ISlashCommand {
                                         }
                                         i++;
                                     }
-                                    if (sens.getSubsenses().size() != 0) {
+                                    if (!sens.getSubsenses().isEmpty()) {
                                         for (Subsense subsets : sens.getSubsenses()) {
                                             for (String subsetsDefinition : subsets.getDefinitions()) {
                                                 fieldTitle = "\u02EA %s \u2014 *%s*."

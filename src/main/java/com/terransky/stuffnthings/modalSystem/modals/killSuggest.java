@@ -5,7 +5,7 @@ import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import com.terransky.stuffnthings.Commons;
-import com.terransky.stuffnthings.commandSystem.commands.kill;
+import com.terransky.stuffnthings.commandSystem.commands.fun.kill;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.IModal;
 import net.dv8tion.jda.api.EmbedBuilder;

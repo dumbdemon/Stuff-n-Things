@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.commandSystem.commands;
+package com.terransky.stuffnthings.commandSystem.commands.general;
 
 import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.WebhookClientBuilder;

@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.commandSystem.commands;
+package com.terransky.stuffnthings.commandSystem.commands.devs;
 
 import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.metadata.Mastermind;
@@ -41,7 +41,7 @@ public class userInfo implements ISlashCommand {
             \u2022 Boosting Status (if user)
             """, Mastermind.DEFAULT,
             formatter.parse("24-08-2022_11:10"),
-            formatter.parse("19-11-2022_11:40")
+            formatter.parse("21-11-2022_10:45")
         );
 
         metadata.addOptions(
@@ -82,7 +82,7 @@ public class userInfo implements ISlashCommand {
         StringBuilder userPerms = new StringBuilder();
         String finalUserPerms;
 
-        if (mVictim.getPermissions().size() != 0) {
+        if (!mVictim.getPermissions().isEmpty()) {
             for (Permission perm : mVictim.getPermissions()) {
                 userPerms.append(perm.getName()).append(", ");
             }

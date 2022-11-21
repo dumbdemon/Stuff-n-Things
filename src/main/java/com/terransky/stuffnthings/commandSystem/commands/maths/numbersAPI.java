@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.commandSystem.commands;
+package com.terransky.stuffnthings.commandSystem.commands.maths;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.stuffnthings.Commons;

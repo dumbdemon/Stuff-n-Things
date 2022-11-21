@@ -1,9 +1,18 @@
 package com.terransky.stuffnthings.commandSystem;
 
 import com.terransky.stuffnthings.Commons;
-import com.terransky.stuffnthings.commandSystem.commands.*;
 import com.terransky.stuffnthings.commandSystem.commands.admin.checkPerms;
 import com.terransky.stuffnthings.commandSystem.commands.admin.config;
+import com.terransky.stuffnthings.commandSystem.commands.devs.getInvite;
+import com.terransky.stuffnthings.commandSystem.commands.devs.test;
+import com.terransky.stuffnthings.commandSystem.commands.devs.userInfo;
+import com.terransky.stuffnthings.commandSystem.commands.fun.*;
+import com.terransky.stuffnthings.commandSystem.commands.general.about;
+import com.terransky.stuffnthings.commandSystem.commands.general.ping;
+import com.terransky.stuffnthings.commandSystem.commands.general.suggest;
+import com.terransky.stuffnthings.commandSystem.commands.maths.fibonacciSequence;
+import com.terransky.stuffnthings.commandSystem.commands.maths.numbersAPI;
+import com.terransky.stuffnthings.commandSystem.commands.maths.solveQuadratic;
 import com.terransky.stuffnthings.commandSystem.commands.mtg.calculateRats;
 import com.terransky.stuffnthings.commandSystem.commands.mtg.whatsInStandard;
 import com.terransky.stuffnthings.commandSystem.metadata.Metadata;
@@ -40,22 +49,27 @@ public class CommandManager extends ListenerAdapter {
         addCommand(new checkPerms());
         addCommand(new config());
 
-        //Fun Commands
-        addCommand(new about());
+        //Math Commands
+        addCommand(new fibonacciSequence());
+        addCommand(new numbersAPI());
+        addCommand(new solveQuadratic());
+
+        //M:tG Commands
         addCommand(new calculateRats());
+        addCommand(new whatsInStandard());
+
+        //Fun Commands
         addCommand(new colorInfo());
         addCommand(new dictionary());
-        addCommand(new fibonacciSequence());
         addCommand(new getDadJokes());
         addCommand(new kill());
         addCommand(new lmgtfy());
         addCommand(new meme());
-        addCommand(new numbersAPI());
         addCommand(new robFailChance());
         addCommand(new say());
-        addCommand(new whatsInStandard());
 
         //General Commands
+        addCommand(new about());
         addCommand(new ping());
         addCommand(new suggest());
 
