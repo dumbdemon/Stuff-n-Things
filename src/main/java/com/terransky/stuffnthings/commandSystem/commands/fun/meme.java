@@ -42,7 +42,7 @@ public class meme implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("21-11-2022_14:32")
+            format.parse("22-11-2022_16:10")
         );
 
         metadata.addSubcommands(
@@ -63,56 +63,58 @@ public class meme implements ISlashCommand {
         String subCommand = event.getSubcommandName();
         if (subCommand == null) throw new DiscordAPIException("No subcommand was given.");
 
-        if (subCommand.equals("reddit")) {
-            String subreddit = event.getOption("subreddit", "", OptionMapping::getAsString);
-            String redditLogo = "https://cdn.discordapp.com/attachments/1004795281734377564/1005203741026299954/Reddit_Mark_OnDark.png";
-            try {
-                URL memeURL = new URL("https://meme-api.herokuapp.com/gimme/" + subreddit);
-                FreshMemeData memeData = om.readValue(memeURL, FreshMemeData.class);
-                eb.setFooter("Reddit | u/%s | r/%s".formatted(memeData.getAuthor(), memeData.getSubreddit()), redditLogo);
+        if (subCommand.equals("reddit")) goForReddit(event, largeNumber, om, eb);
+    }
 
-                if (memeData.isExplicit() && !event.getChannel().asTextChannel().isNSFW()) {
-                    event.getHook().sendMessageEmbeds(
-                        eb.setTitle("Whoops!")
-                            .setDescription("The meme presented was marked NSFW and this channel is not an NSFW channel.\nPlease check with your server's admins if this channel's settings are correct.")
-                            .build()
-                    ).queue();
-                    return;
-                }
+    private void goForReddit(@NotNull SlashCommandInteractionEvent event, DecimalFormat largeNumber, @NotNull ObjectMapper om, @NotNull EmbedBuilder eb) {
+        String subreddit = event.getOption("subreddit", "", OptionMapping::getAsString);
+        String redditLogo = "https://cdn.discordapp.com/attachments/1004795281734377564/1005203741026299954/Reddit_Mark_OnDark.png";
+        try {
+            URL memeURL = new URL("https://meme-api.herokuapp.com/gimme/" + subreddit);
+            FreshMemeData memeData = om.readValue(memeURL, FreshMemeData.class);
+            eb.setFooter("Reddit | u/%s | r/%s".formatted(memeData.getAuthor(), memeData.getSubreddit()), redditLogo);
 
-                if (memeData.isSpoiler()) {
-                    event.getHook().sendMessageEmbeds(
-                        eb.setTitle("Spoilers!")
-                            .setDescription("The fresh meme I got was marked as a spoiler! [Go look if you dare!](" + memeData.getPostLink() + ")")
-                            .setImage("https://media1.giphy.com/media/sYs8CsuIRBYfp2H9Ie/giphy.gif?cid=ecf05e4773n58x026pqkk7lzacutjm13jxvkkfv4z5j0gsc9&rid=giphy.gif&ct=g")
-                            .build()
-                    ).queue();
-                    return;
-                }
-
-                eb.setAuthor(memeData.getTitle() + (memeData.isExplicit() ? " [NSFW]" : ""), memeData.getPostLink())
-                    .setImage(memeData.getUrl())
-                    .addField("Author", "[" + memeData.getAuthor() + "](https://www.reddit.com/user/" + memeData.getAuthor() + ")", true)
-                    .addField("Subreddit", "[" + memeData.getSubreddit() + "](https://www.reddit.com/r/" + memeData.getSubreddit() + ")", true)
-                    .addField("Upvotes", largeNumber.format(memeData.getUps()), true);
-
-                event.getHook().sendMessageEmbeds(eb.build()).queue();
-            } catch (IOException e) {
+            if (memeData.isExplicit() && !event.getChannel().asTextChannel().isNSFW()) {
                 event.getHook().sendMessageEmbeds(
                     eb.setTitle("Whoops!")
-                        .setDescription(("""
-                            I wasn't able to grab a meme!
-
-                            This could be either:
-                            A) The subreddit does not exist or no longer exists,
-                            B) The subreddit is set to private and therefore I am unable to access it ([**click here to check**](https://www.reddit.com/r/%s)), or
-                            C) You have been rate limited and you must wait for a few moments and try again.""").formatted(subreddit))
-                        .setFooter("Reddit", redditLogo)
+                        .setDescription("The meme presented was marked NSFW and this channel is not an NSFW channel.\nPlease check with your server's admins if this channel's settings are correct.")
                         .build()
                 ).queue();
-                log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-                Commons.listPrinter(Arrays.asList(e.getStackTrace()), meme.class);
+                return;
             }
+
+            if (memeData.isSpoiler()) {
+                event.getHook().sendMessageEmbeds(
+                    eb.setTitle("Spoilers!")
+                        .setDescription("The fresh meme I got was marked as a spoiler! [Go look if you dare!](" + memeData.getPostLink() + ")")
+                        .setImage("https://media1.giphy.com/media/sYs8CsuIRBYfp2H9Ie/giphy.gif?cid=ecf05e4773n58x026pqkk7lzacutjm13jxvkkfv4z5j0gsc9&rid=giphy.gif&ct=g")
+                        .build()
+                ).queue();
+                return;
+            }
+
+            eb.setAuthor(memeData.getTitle() + (memeData.isExplicit() ? " [NSFW]" : ""), memeData.getPostLink())
+                .setImage(memeData.getUrl())
+                .addField("Author", "[" + memeData.getAuthor() + "](https://www.reddit.com/user/" + memeData.getAuthor() + ")", true)
+                .addField("Subreddit", "[" + memeData.getSubreddit() + "](https://www.reddit.com/r/" + memeData.getSubreddit() + ")", true)
+                .addField("Upvotes", largeNumber.format(memeData.getUps()), true);
+
+            event.getHook().sendMessageEmbeds(eb.build()).queue();
+        } catch (IOException e) {
+            event.getHook().sendMessageEmbeds(
+                eb.setTitle("Whoops!")
+                    .setDescription(("""
+                        I wasn't able to grab a meme!
+
+                        This could be either:
+                        A) The subreddit does not exist or no longer exists,
+                        B) The subreddit is set to private and therefore I am unable to access it ([**click here to check**](https://www.reddit.com/r/%s)), or
+                        C) You have been rate limited and you must wait for a few moments and try again.""").formatted(subreddit))
+                    .setFooter("Reddit", redditLogo)
+                    .build()
+            ).queue();
+            log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
+            Commons.listPrinter(Arrays.asList(e.getStackTrace()), meme.class);
         }
     }
 }

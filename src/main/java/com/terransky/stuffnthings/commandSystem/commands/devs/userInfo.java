@@ -28,6 +28,45 @@ public class userInfo implements ISlashCommand {
         return "user-info";
     }
 
+    private static String setUserPerms(@NotNull Member member) {
+        StringBuilder userPerms = new StringBuilder();
+        String finalUserPerms;
+        if (!member.getPermissions().isEmpty()) {
+            for (Permission perm : member.getPermissions()) {
+                userPerms.append(perm.getName()).append(", ");
+            }
+            finalUserPerms = userPerms.substring(0, userPerms.toString().length() - 2);
+        } else finalUserPerms = "None";
+        return finalUserPerms;
+    }
+
+    @NotNull
+    private static String setPermissionStatus(User user, @NotNull Member victim) {
+        final List<Permission> modPerms = Arrays.asList(
+            Permission.BAN_MEMBERS,
+            Permission.KICK_MEMBERS,
+            Permission.MESSAGE_HISTORY,
+            Permission.MESSAGE_MANAGE,
+            Permission.MESSAGE_SEND
+        );
+
+        StringBuilder permText = new StringBuilder();
+        if (victim.hasPermission(modPerms)) {
+            permText.append("Server Moderator");
+            if (victim.hasPermission(Permission.ADMINISTRATOR)) {
+                permText.append(", Server Administrator");
+                if (victim.isOwner()) {
+                    permText.append(", Server Owner");
+                }
+            }
+        } else permText.append("Member");
+
+        if (user.getId().equals(Commons.getConfig().get("OWNER_ID"))) {
+            permText.append(", Developer");
+        }
+        return permText.toString();
+    }
+
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Commons.getFastDateFormat();
@@ -43,7 +82,7 @@ public class userInfo implements ISlashCommand {
             """, Mastermind.DEFAULT,
             SlashModule.DEVS,
             format.parse("24-08-2022_11:10"),
-            format.parse("21-11-2022_14:32")
+            format.parse("22-11-2022_16:20")
         );
 
         metadata.addOptions(
@@ -57,49 +96,20 @@ public class userInfo implements ISlashCommand {
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
         User uVictim = event.getOption("user", event.getUser(), OptionMapping::getAsUser);
         Member mVictim = event.getOption("user", event.getMember(), OptionMapping::getAsMember);
-        StringBuilder permText = new StringBuilder();
         EmbedBuilder eb = new EmbedBuilder().setColor(Commons.getDefaultEmbedColor());
-        final List<Permission> modPerms = Arrays.asList(
-            Permission.BAN_MEMBERS,
-            Permission.KICK_MEMBERS,
-            Permission.MESSAGE_HISTORY,
-            Permission.MESSAGE_MANAGE,
-            Permission.MESSAGE_SEND
-        );
-
-        if (mVictim.hasPermission(modPerms)) {
-            permText.append("Server Moderator");
-            if (mVictim.hasPermission(Permission.ADMINISTRATOR)) {
-                permText.append(", Server Administrator");
-                if (mVictim.isOwner()) {
-                    permText.append(", Server Owner");
-                }
-            }
-        } else permText.append("Member");
-
-        if (uVictim.getId().equals(Commons.getConfig().get("OWNER_ID"))) {
-            permText.append(", Developer");
-        }
-
-        StringBuilder userPerms = new StringBuilder();
-        String finalUserPerms;
-
-        if (!mVictim.getPermissions().isEmpty()) {
-            for (Permission perm : mVictim.getPermissions()) {
-                userPerms.append(perm.getName()).append(", ");
-            }
-            finalUserPerms = userPerms.substring(0, userPerms.toString().length() - 2);
-        } else finalUserPerms = "None";
 
         if (!mVictim.hasTimeJoined()) {
             mVictim = blob.getGuild().retrieveMemberById(mVictim.getId()).complete();
         }
 
+        String permissionStatus = setPermissionStatus(uVictim, mVictim);
+        String userPerms = setUserPerms(mVictim);
+
         eb.setAuthor(WordUtils.capitalize(mVictim.getEffectiveName()) + "'s Info")
             .setThumbnail(mVictim.getEffectiveAvatarUrl())
             .addField("User ID", uVictim.getId(), true)
-            .addField("User Status", permText.toString(), true)
-            .addField("Server Permissions", "```%s```".formatted(finalUserPerms), false)
+            .addField("User Status", permissionStatus, true)
+            .addField("Server Permissions", "```%s```".formatted(userPerms), false)
             .addField("Joined Server on", "<t:%s:F>".formatted(mVictim.getTimeJoined().toEpochSecond()), true)
             .addField("Joined Discord on", "<t:%s:F>".formatted(uVictim.getTimeCreated().toEpochSecond()), true)
             .setFooter("Requested by " + event.getUser().getAsTag() + " | " + event.getUser().getId(), blob.getMemberEffectiveAvatarUrl());

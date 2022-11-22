@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
@@ -54,6 +55,82 @@ public class dictionary implements ISlashCommand {
         return "dictionary";
     }
 
+    private static void run200(@NotNull SlashCommandInteractionEvent event, EmbedBuilder eb1, EmbedBuilder eb2, Map.Entry<String, String> language,
+                               String toLookUp, @NotNull HttpURLConnection oxfordConnection, @NotNull ObjectMapper om) throws IOException {
+        OxfordData oxfordData = om.readValue(oxfordConnection.getInputStream(), OxfordData.class);
+        int i = 0;
+        String returnedWord = "";
+        List<MessageEmbed.Field> fieldOverflow = new ArrayList<>();
+
+        for (Result result : oxfordData.getResults()) {
+            returnedWord = result.getWord();
+            if (returnedWord.equalsIgnoreCase(toLookUp)) {
+                for (LexicalEntry lexicalEntry : result.getLexicalEntries()) {
+                    for (Entry entry : lexicalEntry.getEntries()) {
+                        for (Sense sens : entry.getSenses()) {
+                            String fieldTitle;
+                            for (String definition : sens.getDefinitions()) {
+                                fieldTitle = "%s \u2014 *%s*.".formatted(WordUtils.capitalize(returnedWord), lexicalEntry.getLexicalCategory().getText());
+                                if (i < 25) {
+                                    eb1.addField(fieldTitle, "```%s```".formatted(definition), false);
+                                } else {
+                                    fieldOverflow.add(new MessageEmbed.Field(fieldTitle, "```%s```".formatted(definition), false));
+                                }
+                                i++;
+                            }
+                            if (!sens.getSubsenses().isEmpty()) {
+                                for (Subsense subsets : sens.getSubsenses()) {
+                                    for (String subsetsDefinition : subsets.getDefinitions()) {
+                                        fieldTitle = "\u02EA %s \u2014 *%s*."
+                                            .formatted(WordUtils.capitalize(returnedWord), lexicalEntry.getLexicalCategory().getText());
+                                        if (i < 25) {
+                                            eb1.addField(fieldTitle, "```%s```".formatted(subsetsDefinition), false);
+                                        } else {
+                                            fieldOverflow.add(new MessageEmbed.Field(fieldTitle, "```%s```".formatted(subsetsDefinition), false));
+                                        }
+                                        i++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (i == 0) {
+            event.getHook().sendMessageEmbeds(
+                eb1.setTitle("Definition - %s".formatted(returnedWord.toUpperCase(Locale.forLanguageTag(language.getValue()))))
+                    .setDescription("%s is in the dictionary; however, there appears to be no definitions. Try using a different variation of the word."
+                        .formatted(WordUtils.capitalize(returnedWord))
+                    ).build()
+            ).queue();
+            return;
+        }
+
+        boolean moreThanOne = i > 1;
+
+        eb1.setTitle("Definition - %s".formatted(returnedWord.toUpperCase(Locale.forLanguageTag(language.getValue()))))
+            .setDescription("There %s %d *%s* definition%s for *%s*.%s"
+                .formatted(
+                    moreThanOne ? "are" : "is",
+                    i,
+                    language.getKey(),
+                    moreThanOne ? "s" : "",
+                    returnedWord,
+                    language.getKey().endsWith("English") ? "" : "\n\n**Warning**: You are searching in a language other than English. Certain characters may not show if your browser/device does not support it."
+                )
+            );
+
+        if (fieldOverflow.size() > 0) {
+            eb2.setTitle("Definition - %s cont.".formatted(returnedWord.toUpperCase(Locale.forLanguageTag(language.getValue()))));
+            for (MessageEmbed.Field field : fieldOverflow) {
+                eb2.addField(field);
+            }
+            event.getHook().sendMessageEmbeds(eb1.build(), eb2.build()).queue();
+        } else event.getHook().sendMessageEmbeds(eb1.build()).queue();
+    }
+
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Commons.getFastDateFormat();
@@ -65,7 +142,7 @@ public class dictionary implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("27-10-2022_12:46"),
-            format.parse("21-11-2022_14:32")
+            format.parse("22-11-2022_16:08")
         );
 
         metadata.addOptions(
@@ -99,10 +176,10 @@ public class dictionary implements ISlashCommand {
         }
         if (userWords[0].equals(""))
             throw new DiscordAPIException("Required option [%s] was not given".formatted("word"));
-        Map.Entry<String, String> e = langCodes.floorEntry(event.getOption("language", "US English", OptionMapping::getAsString));
-        String toLookUp = userWords[0].toLowerCase(Locale.forLanguageTag(e.getValue()));
+        Map.Entry<String, String> language = langCodes.floorEntry(event.getOption("language", "US English", OptionMapping::getAsString));
+        String toLookUp = userWords[0].toLowerCase(Locale.forLanguageTag(language.getValue()));
 
-        URL dictionary = new URL("https://od-api.oxforddictionaries.com/api/v2/entries/%s/%s?fields=definitions&strictMatch=false".formatted(e.getValue(), toLookUp));
+        URL dictionary = new URL("https://od-api.oxforddictionaries.com/api/v2/entries/%s/%s?fields=definitions&strictMatch=false".formatted(language.getValue(), toLookUp));
         HttpURLConnection oxfordConnection = (HttpURLConnection) dictionary.openConnection();
         oxfordConnection.addRequestProperty("Accept", "application/json");
         oxfordConnection.addRequestProperty("app_id", Commons.getConfig().get("OXFORD_ID"));
@@ -111,84 +188,11 @@ public class dictionary implements ISlashCommand {
         ObjectMapper om = new ObjectMapper();
 
         switch (responseCode) {
-            case 200 -> {
-                OxfordData oxfordData = om.readValue(oxfordConnection.getInputStream(), OxfordData.class);
-                int i = 0;
-                String returnedWord = "";
-                List<MessageEmbed.Field> fieldOverflow = new ArrayList<>();
-
-                for (Result result : oxfordData.getResults()) {
-                    returnedWord = result.getWord();
-                    if (returnedWord.equalsIgnoreCase(toLookUp)) {
-                        for (LexicalEntry lexicalEntry : result.getLexicalEntries()) {
-                            for (Entry entry : lexicalEntry.getEntries()) {
-                                for (Sense sens : entry.getSenses()) {
-                                    String fieldTitle;
-                                    for (String definition : sens.getDefinitions()) {
-                                        fieldTitle = "%s \u2014 *%s*.".formatted(WordUtils.capitalize(returnedWord), lexicalEntry.getLexicalCategory().getText());
-                                        if (i < 25) {
-                                            eb1.addField(fieldTitle, "```%s```".formatted(definition), false);
-                                        } else {
-                                            fieldOverflow.add(new MessageEmbed.Field(fieldTitle, "```%s```".formatted(definition), false));
-                                        }
-                                        i++;
-                                    }
-                                    if (!sens.getSubsenses().isEmpty()) {
-                                        for (Subsense subsets : sens.getSubsenses()) {
-                                            for (String subsetsDefinition : subsets.getDefinitions()) {
-                                                fieldTitle = "\u02EA %s \u2014 *%s*."
-                                                    .formatted(WordUtils.capitalize(returnedWord), lexicalEntry.getLexicalCategory().getText());
-                                                if (i < 25) {
-                                                    eb1.addField(fieldTitle, "```%s```".formatted(subsetsDefinition), false);
-                                                } else {
-                                                    fieldOverflow.add(new MessageEmbed.Field(fieldTitle, "```%s```".formatted(subsetsDefinition), false));
-                                                }
-                                                i++;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (i == 0) {
-                    event.getHook().sendMessageEmbeds(
-                        eb1.setTitle("Definition - %s".formatted(returnedWord.toUpperCase(Locale.forLanguageTag(e.getValue()))))
-                            .setDescription("%s is in the dictionary; however, there appears to be no definitions. Try using a different variation of the word."
-                                .formatted(WordUtils.capitalize(returnedWord))
-                            ).build()
-                    ).queue();
-                    return;
-                }
-
-                boolean moreThanOne = i > 1;
-
-                eb1.setTitle("Definition - %s".formatted(returnedWord.toUpperCase(Locale.forLanguageTag(e.getValue()))))
-                    .setDescription("There %s %d *%s* definition%s for *%s*.%s"
-                        .formatted(
-                            moreThanOne ? "are" : "is",
-                            i,
-                            e.getKey(),
-                            moreThanOne ? "s" : "",
-                            returnedWord,
-                            e.getKey().endsWith("English") ? "" : "\n\n**Warning**: You are searching in a language other than English. Certain characters may not show if your browser/device does not support it."
-                        )
-                    );
-
-                if (fieldOverflow.size() > 0) {
-                    eb2.setTitle("Definition - %s cont.".formatted(returnedWord.toUpperCase(Locale.forLanguageTag(e.getValue()))));
-                    for (MessageEmbed.Field field : fieldOverflow) {
-                        eb2.addField(field);
-                    }
-                    event.getHook().sendMessageEmbeds(eb1.build(), eb2.build()).queue();
-                } else event.getHook().sendMessageEmbeds(eb1.build()).queue();
-            }
+            case 200 -> run200(event, eb1, eb2, language, toLookUp, oxfordConnection, om);
             case 400 -> {
                 event.getHook().sendMessageEmbeds(
                     eb1.setDescription("Unable to get the definition of [%s]. Make sure you have typed the word correctly, If this message continues to appear, please contact <@%s> to fix this."
-                        .formatted(toLookUp.toUpperCase(Locale.forLanguageTag(e.getValue())), Commons.getConfig().get("OWNER_ID"))
+                        .formatted(toLookUp.toUpperCase(Locale.forLanguageTag(language.getValue())), Commons.getConfig().get("OWNER_ID"))
                     ).build()
                 ).queue();
 
@@ -205,8 +209,8 @@ public class dictionary implements ISlashCommand {
                 log.error("403 Authentication failed: %s".formatted(message));
             }
             case 404 -> event.getHook().sendMessageEmbeds(
-                eb1.setTitle("Definition - %s".formatted(toLookUp.toUpperCase(Locale.forLanguageTag(e.getValue()))))
-                    .setDescription("There are no *%s* definitions for [%s].\n\nEither the word does not exist or you have mistyped.".formatted(e.getKey(), toLookUp.toUpperCase(Locale.forLanguageTag(e.getValue()))))
+                eb1.setTitle("Definition - %s".formatted(toLookUp.toUpperCase(Locale.forLanguageTag(language.getValue()))))
+                    .setDescription("There are no *%s* definitions for [%s].\n\nEither the word does not exist or you have mistyped.".formatted(language.getKey(), toLookUp.toUpperCase(Locale.forLanguageTag(language.getValue()))))
                     .build()
             ).queue();
             case 500 -> {

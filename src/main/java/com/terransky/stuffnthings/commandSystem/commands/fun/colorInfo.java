@@ -63,6 +63,54 @@ public class colorInfo implements ISlashCommand {
         return "color-info";
     }
 
+    private static void runCMYK(@NotNull SlashCommandInteractionEvent event, @NotNull DecimalFormat hsb, @NotNull EmbedBuilder eb) {
+        int c = event.getOption("cyan", 0, OptionMapping::getAsInt),
+            m = event.getOption("magenta", 50, OptionMapping::getAsInt),
+            y = event.getOption("yellow", 0, OptionMapping::getAsInt),
+            k = event.getOption("black", 60, OptionMapping::getAsInt);
+        int[] rgb = cmykToRgb(c, m, y, k);
+        int r = rgb[0],
+            g = rgb[1],
+            b = rgb[2];
+        float[] hsv = Color.RGBtoHSB(r, g, b, null);
+        String h = hsb.format(hsv[0]).replace("%", "\u00B0"),
+            s = hsb.format(hsv[1]),
+            v = hsb.format(hsv[2]);
+        String hexTriplet = "#%02X%02X%02X".formatted(r, g, b);
+
+        eb.addField("Hex Triplet", hexTriplet, true)
+            .addField("RGB", "rgb(**%d**, **%d**, **%d**)".formatted(r, g, b), true)
+            .addField("CMYK", "**%d**, **%d**, **%d**, **%d**".formatted(c, m, y, k), true)
+            .addField("HSB/HSV", "Hue **%s**\nSaturation **%s**\nBrightness **%s**".formatted(h, s, v), false)
+            .addField("More Info", "[link](https://www.colorhexa.com/%s)".formatted(hexTriplet), false)
+            .setColor(new Color(r, g, b));
+        event.replyEmbeds(eb.build()).queue();
+    }
+
+    private static void runRGB(@NotNull SlashCommandInteractionEvent event, @NotNull DecimalFormat hsb, @NotNull EmbedBuilder eb) {
+        int r = event.getOption("red", 102, OptionMapping::getAsInt),
+            g = event.getOption("blue", 51, OptionMapping::getAsInt),
+            b = event.getOption("green", 102, OptionMapping::getAsInt);
+        int[] cmyk = rgbToCmyk(r, g, b);
+        int c = cmyk[0],
+            m = cmyk[1],
+            y = cmyk[2],
+            k = cmyk[3];
+        float[] hsv = Color.RGBtoHSB(r, g, b, null);
+        String h = hsb.format(hsv[0]).replace("%", "\u00B0"),
+            s = hsb.format(hsv[1]),
+            v = hsb.format(hsv[2]);
+        String hexTriplet = "#%02X%02X%02X".formatted(r, g, b);
+
+        eb.addField("Hex Triplet", hexTriplet, true)
+            .addField("RGB", "rgb(**%d**, **%d**, **%d**)".formatted(r, g, b), true)
+            .addField("CMYK", "**%d**, **%d**, **%d**, **%d**".formatted(c, m, y, k), true)
+            .addField("HSB/HSV", "Hue **%s**\nSaturation **%s**\nBrightness **%s**".formatted(h, s, v), false)
+            .addField("More Info", "[link](https://www.colorhexa.com/%s)".formatted(hexTriplet), false)
+            .setColor(new Color(r, g, b));
+        event.replyEmbeds(eb.build()).queue();
+    }
+
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Commons.getFastDateFormat();
@@ -71,7 +119,7 @@ public class colorInfo implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("20-9-2022_12:10"),
-            format.parse("21-11-2022_14:32")
+            format.parse("22-11-2022_16:02")
         );
 
         metadata.addSubcommands(
@@ -115,95 +163,51 @@ public class colorInfo implements ISlashCommand {
         if (subCommand == null) throw new DiscordAPIException("No subcommand was given.");
 
         switch (subCommand) {
-            case "hex-triplet" -> {
-                String hexCode = event.getOption("triplet", "#636", OptionMapping::getAsString);
-                Matcher matcher = pHexTriplet.matcher(hexCode);
+            case "hex-triplet" -> runHexTriplet(event, hsb, eb);
+            case "rgb" -> runRGB(event, hsb, eb);
+            case "cmyk" -> runCMYK(event, hsb, eb);
+        }
+    }
 
-                if (matcher.matches()) {
-                    if (hexCode.length() == 4) {
-                        String R = String.valueOf(hexCode.charAt(1));
-                        String G = String.valueOf(hexCode.charAt(2));
-                        String B = String.valueOf(hexCode.charAt(3));
-                        hexCode = "#" + R + R + G + G + B + B;
-                    }
+    private void runHexTriplet(@NotNull SlashCommandInteractionEvent event, DecimalFormat hsb, EmbedBuilder eb) {
+        String hexCode = event.getOption("triplet", "#636", OptionMapping::getAsString);
+        Matcher matcher = pHexTriplet.matcher(hexCode);
 
-                    Color color = Color.decode(hexCode);
-                    int r = color.getRed(),
-                        g = color.getGreen(),
-                        b = color.getBlue();
-                    int[] cmyk = rgbToCmyk(r, g, b);
-                    int c = cmyk[0],
-                        m = cmyk[1],
-                        y = cmyk[2],
-                        k = cmyk[3];
-                    float[] hsv = Color.RGBtoHSB(r, g, b, null);
-                    String h = hsb.format(hsv[0]).replace("%", "\u00B0"),
-                        s = hsb.format(hsv[1]),
-                        v = hsb.format(hsv[2]);
-
-                    eb.addField("Hex Triplet", hexCode, true)
-                        .addField("RGB", "rgb(**%d**, **%d**, **%d**)".formatted(r, g, b), true)
-                        .addField("CMYK", "**%d**, **%d**, **%d**, **%d**".formatted(c, m, y, k), true)
-                        .addField("HSB/HSV", "Hue **%s**\nSaturation **%s**\nBrightness **%s**".formatted(h, s, v), false)
-                        .addField("More Info", "[link](https://www.colorhexa.com/%s)".formatted(hexCode.substring(1)), false)
-                        .setColor(color);
-                    event.replyEmbeds(eb.build()).queue();
-                } else {
-                    eb.setTitle("Invalid Hex Triplet!")
-                        .setDescription("You've given an invalid hex triplet!\nCorrect example: `#663366` or `#636`")
-                        .setColor(Commons.getDefaultEmbedColor())
-                        .addField("Provided", hexCode, false);
-                    event.replyEmbeds(eb.build()).setEphemeral(true).queue();
-                }
+        if (matcher.matches()) {
+            if (hexCode.length() == 4) {
+                String R = String.valueOf(hexCode.charAt(1));
+                String G = String.valueOf(hexCode.charAt(2));
+                String B = String.valueOf(hexCode.charAt(3));
+                hexCode = "#" + R + R + G + G + B + B;
             }
 
-            case "rgb" -> {
-                int r = event.getOption("red", 102, OptionMapping::getAsInt),
-                    g = event.getOption("blue", 51, OptionMapping::getAsInt),
-                    b = event.getOption("green", 102, OptionMapping::getAsInt);
-                int[] cmyk = rgbToCmyk(r, g, b);
-                int c = cmyk[0],
-                    m = cmyk[1],
-                    y = cmyk[2],
-                    k = cmyk[3];
-                float[] hsv = Color.RGBtoHSB(r, g, b, null);
-                String h = hsb.format(hsv[0]).replace("%", "\u00B0"),
-                    s = hsb.format(hsv[1]),
-                    v = hsb.format(hsv[2]);
-                String hexTriplet = "#%02X%02X%02X".formatted(r, g, b);
+            Color color = Color.decode(hexCode);
+            int r = color.getRed(),
+                g = color.getGreen(),
+                b = color.getBlue();
+            int[] cmyk = rgbToCmyk(r, g, b);
+            int c = cmyk[0],
+                m = cmyk[1],
+                y = cmyk[2],
+                k = cmyk[3];
+            float[] hsv = Color.RGBtoHSB(r, g, b, null);
+            String h = hsb.format(hsv[0]).replace("%", "\u00B0"),
+                s = hsb.format(hsv[1]),
+                v = hsb.format(hsv[2]);
 
-                eb.addField("Hex Triplet", hexTriplet, true)
-                    .addField("RGB", "rgb(**%d**, **%d**, **%d**)".formatted(r, g, b), true)
-                    .addField("CMYK", "**%d**, **%d**, **%d**, **%d**".formatted(c, m, y, k), true)
-                    .addField("HSB/HSV", "Hue **%s**\nSaturation **%s**\nBrightness **%s**".formatted(h, s, v), false)
-                    .addField("More Info", "[link](https://www.colorhexa.com/%s)".formatted(hexTriplet), false)
-                    .setColor(new Color(r, g, b));
-                event.replyEmbeds(eb.build()).queue();
-            }
-
-            case "cmyk" -> {
-                int c = event.getOption("cyan", 0, OptionMapping::getAsInt),
-                    m = event.getOption("magenta", 50, OptionMapping::getAsInt),
-                    y = event.getOption("yellow", 0, OptionMapping::getAsInt),
-                    k = event.getOption("black", 60, OptionMapping::getAsInt);
-                int[] rgb = cmykToRgb(c, m, y, k);
-                int r = rgb[0],
-                    g = rgb[1],
-                    b = rgb[2];
-                float[] hsv = Color.RGBtoHSB(r, g, b, null);
-                String h = hsb.format(hsv[0]).replace("%", "\u00B0"),
-                    s = hsb.format(hsv[1]),
-                    v = hsb.format(hsv[2]);
-                String hexTriplet = "#%02X%02X%02X".formatted(r, g, b);
-
-                eb.addField("Hex Triplet", hexTriplet, true)
-                    .addField("RGB", "rgb(**%d**, **%d**, **%d**)".formatted(r, g, b), true)
-                    .addField("CMYK", "**%d**, **%d**, **%d**, **%d**".formatted(c, m, y, k), true)
-                    .addField("HSB/HSV", "Hue **%s**\nSaturation **%s**\nBrightness **%s**".formatted(h, s, v), false)
-                    .addField("More Info", "[link](https://www.colorhexa.com/%s)".formatted(hexTriplet), false)
-                    .setColor(new Color(r, g, b));
-                event.replyEmbeds(eb.build()).queue();
-            }
+            eb.addField("Hex Triplet", hexCode, true)
+                .addField("RGB", "rgb(**%d**, **%d**, **%d**)".formatted(r, g, b), true)
+                .addField("CMYK", "**%d**, **%d**, **%d**, **%d**".formatted(c, m, y, k), true)
+                .addField("HSB/HSV", "Hue **%s**\nSaturation **%s**\nBrightness **%s**".formatted(h, s, v), false)
+                .addField("More Info", "[link](https://www.colorhexa.com/%s)".formatted(hexCode.substring(1)), false)
+                .setColor(color);
+            event.replyEmbeds(eb.build()).queue();
+        } else {
+            eb.setTitle("Invalid Hex Triplet!")
+                .setDescription("You've given an invalid hex triplet!\nCorrect example: `#663366` or `#636`")
+                .setColor(Commons.getDefaultEmbedColor())
+                .addField("Provided", hexCode, false);
+            event.replyEmbeds(eb.build()).setEphemeral(true).queue();
         }
     }
 }

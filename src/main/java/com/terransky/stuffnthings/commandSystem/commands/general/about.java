@@ -29,6 +29,26 @@ public class about implements ISlashCommand {
         return "about";
     }
 
+    @NotNull
+    private static StringBuilder getStringBuilder(@NotNull RuntimeMXBean rb) {
+        Duration duration = Duration.ofMillis(rb.getUptime());
+        long days = duration.toDaysPart();
+        int hours = duration.toHoursPart();
+        int minutes = duration.toMinutesPart();
+        int seconds = duration.toSecondsPart();
+        int millis = duration.toMillisPart();
+
+        StringBuilder uptime = new StringBuilder();
+        if (days != 0)
+            uptime.append("%s day%s ".formatted(days, days > 1 ? "s" : ""));
+        if (hours != 0)
+            uptime.append("%s hour%s ".formatted(hours, hours > 1 ? "s" : ""));
+        if (minutes != 0)
+            uptime.append("%s minute%s ".formatted(minutes, minutes > 1 ? "s" : ""));
+        uptime.append("%s.%s secs".formatted(seconds, millis));
+        return uptime;
+    }
+
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Commons.getFastDateFormat();
@@ -37,7 +57,7 @@ public class about implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("21-11-2022_14:42")
+            format.parse("22-11-2022_15:53")
         );
 
         metadata.addOptions(
@@ -54,62 +74,16 @@ public class about implements ISlashCommand {
         Optional<String> ifCommand = Optional.ofNullable(event.getOption("command", OptionMapping::getAsString));
 
         if (ifCommand.isPresent()) {
-            Optional<Metadata> ifMetadata = new CommandManager().getMetadata(ifCommand.get());
-            Metadata metadata = ifMetadata.orElse(this.getMetadata());
-
-            if (!metadata.getMinPerms().isEmpty()) {
-                if (event.getMember() != null && !event.getMember().hasPermission(metadata.getMinPerms())) {
-                    event.replyEmbeds(
-                        new EmbedBuilder()
-                            .setTitle("About Command")
-                            .setDescription("You don't have access to this command to see its details.")
-                            .setColor(Commons.getDefaultEmbedColor())
-                            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
-                            .build()
-                    ).queue();
-                    return;
-                }
-            }
-
-            long implementedDate = metadata.getImplementedAsEpochSecond(),
-                lastEditedDate = metadata.getLastEditedAsEpochSecond();
-
-            event.getHook().sendMessageEmbeds(
-                new EmbedBuilder()
-                    .setTitle("About Command - %s".formatted(WordUtils.capitalize(metadata.getCommandName().replace("-", "\s"))))
-                    .setDescription(metadata.getLongDescription())
-                    .setColor(Commons.getDefaultEmbedColor())
-                    .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
-                    .addField("Mastermind", metadata.getMastermind().getWho(), true)
-                    .addField("Module", metadata.getModule().getName(), true)
-                    .addField("Implementation Date", "<t:%s:f> (<t:%s:R>)".formatted(implementedDate, implementedDate), false)
-                    .addField("Last Edited", "<t:%s:f> (<t:%s:R>)".formatted(lastEditedDate, lastEditedDate), false)
-                    .build()
-            ).queue();
+            getCommandInfo(event, blob, ifCommand.get());
             return;
         }
 
         RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
+        StringBuilder uptime = getStringBuilder(rb);
 
         int commandCnt = new CommandManager().getCommandData().size();
         int guildCommandCnt = new CommandManager().getCommandData(blob.getGuildIdLong()).size();
         commandCnt += guildCommandCnt;
-
-        Duration duration = Duration.ofMillis(rb.getUptime());
-        long days = duration.toDaysPart();
-        int hours = duration.toHoursPart();
-        int minutes = duration.toMinutesPart();
-        int seconds = duration.toSecondsPart();
-        int millis = duration.toMillisPart();
-
-        StringBuilder uptime = new StringBuilder();
-        if (days != 0)
-            uptime.append("%s day%s ".formatted(days, days > 1 ? "s" : ""));
-        if (hours != 0)
-            uptime.append("%s hour%s ".formatted(hours, hours > 1 ? "s" : ""));
-        if (minutes != 0)
-            uptime.append("%s minute%s ".formatted(minutes, minutes > 1 ? "s" : ""));
-        uptime.append("%s.%s secs".formatted(seconds, millis));
 
         //TODO: Replace with database calls when fully implemented.
         long guildCount = event.getJDA().getGuildCache().stream().distinct().count();
@@ -130,7 +104,7 @@ public class about implements ISlashCommand {
                 .addField("Servers", "%d servers".formatted(guildCount), true)
                 .addField("Users", "%s users".formatted(calculateRats.largeNumberFormat(userCount)).replace(".0\s", "\s"), true)
                 .addField("Your Shard", "[%s/%s]".formatted(event.getJDA().getShardInfo().getShardId(), event.getJDA().getShardInfo().getShardTotal()), true)
-                .addField("Start Time", "<t:%s:F>".formatted((int) Math.floor(rb.getStartTime() / 1_000f)), false)
+                .addField("Start Time", "<t:%s:F>".formatted((int) (rb.getStartTime() / 1_000f)), false)
                 .addField("Uptime", uptime.toString(), false)
                 .addField("Total Commands", "%s on %s\n%s of which are guild commands"
                     .formatted(
@@ -138,6 +112,41 @@ public class about implements ISlashCommand {
                         blob.getGuild().getName(),
                         guildCommandCnt == 0 ? "None" : guildCommandCnt
                     ), false)
+                .build()
+        ).queue();
+    }
+
+    private void getCommandInfo(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, String command) throws ParseException {
+        Optional<Metadata> ifMetadata = new CommandManager().getMetadata(command);
+        Metadata metadata = ifMetadata.orElse(this.getMetadata());
+
+        if (!metadata.getMinPerms().isEmpty()) {
+            if (event.getMember() != null && !event.getMember().hasPermission(metadata.getMinPerms())) {
+                event.replyEmbeds(
+                    new EmbedBuilder()
+                        .setTitle("About Command")
+                        .setDescription("You don't have access to this command to see its details.")
+                        .setColor(Commons.getDefaultEmbedColor())
+                        .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
+                        .build()
+                ).queue();
+                return;
+            }
+        }
+
+        long implementedDate = metadata.getImplementedAsEpochSecond(),
+            lastEditedDate = metadata.getLastEditedAsEpochSecond();
+
+        event.getHook().sendMessageEmbeds(
+            new EmbedBuilder()
+                .setTitle("About Command - %s".formatted(WordUtils.capitalize(metadata.getCommandName().replace("-", "\s"))))
+                .setDescription(metadata.getLongDescription())
+                .setColor(Commons.getDefaultEmbedColor())
+                .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
+                .addField("Mastermind", metadata.getMastermind().getWho(), true)
+                .addField("Module", metadata.getModule().getName(), true)
+                .addField("Implementation Date", "<t:%s:f> (<t:%s:R>)".formatted(implementedDate, implementedDate), false)
+                .addField("Last Edited", "<t:%s:f> (<t:%s:R>)".formatted(lastEditedDate, lastEditedDate), false)
                 .build()
         ).queue();
     }

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormatSymbols;
@@ -63,7 +64,7 @@ public class numbersAPI implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.MATHS,
             format.parse("10-11-2022_20:45"),
-            format.parse("21-11-2022_14:32")
+            format.parse("22-11-2022_16:13")
         );
 
         metadata.addSubcommands(
@@ -99,162 +100,170 @@ public class numbersAPI implements ISlashCommand {
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
 
         switch (subCommand) {
-            case "number" -> {
-                Optional<Double> number = Optional.ofNullable(event.getOption("n-number", OptionMapping::getAsDouble));
+            case "number" -> apiNumber(event, theUrl, om, eb);
 
-                if (number.isPresent())
-                    theUrl += String.valueOf(number.get()).replace(".0", "");
-                else
-                    theUrl += "random";
+            case "math" -> apiMath(event, theUrl, om, eb);
 
-                log.debug("The url is %s.".formatted(theUrl));
-                URL request = new URL(theUrl);
-                HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
-                numbersAPI.addRequestProperty("Content-Type", "application/json");
+            case "date" -> apiDate(event, theUrl, om, eb);
 
-                NumbersAPIData numbersAPIData = om.readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
-                String text = numbersAPIData.getText();
-                double actNumber = numbersAPIData.getNumber();
+            case "year" -> apiYear(event, theUrl, om, eb);
+        }
+    }
 
-                event.getHook().sendMessageEmbeds(
-                    eb.setTitle("NumbersAPI Number Fact")
-                        .setDescription(text)
-                        .addField("Number", String.valueOf(actNumber).replace(".0", ""), false)
-                        .build()
-                ).queue();
-            }
+    private void apiYear(@NotNull SlashCommandInteractionEvent event, String theUrl, ObjectMapper om, EmbedBuilder eb) throws IOException {
+        Optional<Double> year = Optional.ofNullable(event.getOption("year", OptionMapping::getAsDouble));
 
-            case "math" -> {
-                Optional<Double> ifNumber = Optional.ofNullable(event.getOption("m-number", OptionMapping::getAsDouble));
-                if (ifNumber.isPresent())
-                    theUrl += (ifNumber.get() + "/math").replace(".0/", "/");
-                else
-                    theUrl += "random/math";
+        if (year.isPresent())
+            theUrl += (year.get() + "/year").replace(".0/", "/");
+        else
+            theUrl += "random/year";
 
-                log.debug("The url is %s.".formatted(theUrl));
-                URL request = new URL(theUrl);
-                HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
-                numbersAPI.addRequestProperty("Content-Type", "application/json");
+        log.debug("The url is %s.".formatted(theUrl));
+        URL request = new URL(theUrl);
+        HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
+        numbersAPI.addRequestProperty("Content-Type", "application/json");
 
-                NumbersAPIData numbersAPIData = om.readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
-                String text = numbersAPIData.getText();
-                double actNumber = numbersAPIData.getNumber();
+        NumbersAPIData numbersAPIData = om.readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
+        String text = numbersAPIData.getText();
+        String date = numbersAPIData.getDate();
+        Double actYear = year.orElse(numbersAPIData.getNumber());
 
-                event.getHook().sendMessageEmbeds(
-                    eb.setTitle("NumbersAPI Math Fact")
-                        .setDescription(text)
-                        .addField("Number", String.valueOf(actNumber).replace(".0", ""), false)
-                        .build()
-                ).queue();
-            }
+        if (date == null) {
+            date = "Year of";
+        } else if (date.split("\s").length > 1) {
+            date += ",";
+        }
 
-            case "date" -> {
-                Optional<Integer> uMonth = Optional.ofNullable(event.getOption("month", OptionMapping::getAsInt));
-                Optional<Integer> uDay = Optional.ofNullable(event.getOption("day", OptionMapping::getAsInt));
-                String monthString = "";
-                int month;
-                int day = 0;
-                int maxDays;
-                Map.Entry<Integer, Integer> dayLimit;
+        String yearStr;
+        if (actYear < 0d) {
+            yearStr = Math.abs(actYear) + " BC";
+        } else yearStr = String.valueOf(actYear);
 
-                if ((uMonth.isEmpty() && uDay.isPresent()) || (uMonth.isPresent() && uDay.isEmpty())) {
-                    event.getHook().sendMessageEmbeds(
-                        eb.setTitle("NumbersAPI Date Fact")
-                            .setDescription("Missing value. Both values must be entered.")
-                            .addField("Option Given", uMonth.isPresent() ? "Month" : "Day", true)
-                            .addField("Option Value", uMonth.isPresent() ? String.valueOf(uMonth.get()) : String.valueOf(uDay.get()), true)
-                            .build()
-                    ).queue();
-                    return;
-                }
+        event.getHook().sendMessageEmbeds(
+            eb.setTitle("Random Year Fact")
+                .setDescription(text)
+                .addField("Date", "%s %s".formatted(date, yearStr).replace(".0", ""), false)
+                .build()
+        ).queue();
+    }
 
-                if (uMonth.isEmpty()) {
-                    theUrl += "random/date";
-                } else {
-                    month = uMonth.get();
-                    day = uDay.get();
-                    monthString = new DateFormatSymbols().getMonths()[month - 1];
-                    dayLimit = dayLimits.floorEntry(month);
-                    maxDays = dayLimit.getValue();
+    private void apiDate(@NotNull SlashCommandInteractionEvent event, String theUrl, ObjectMapper om, EmbedBuilder eb) throws IOException {
+        Optional<Integer> uMonth = Optional.ofNullable(event.getOption("month", OptionMapping::getAsInt));
+        Optional<Integer> uDay = Optional.ofNullable(event.getOption("day", OptionMapping::getAsInt));
+        String monthString = "";
+        int month;
+        int day = 0;
+        int maxDays;
+        Map.Entry<Integer, Integer> dayLimit;
 
-                    if (day > maxDays) {
-                        String maxDaysStr = month == 2 ? "at most 29" : String.valueOf(maxDays);
+        if ((uMonth.isEmpty() && uDay.isPresent()) || (uMonth.isPresent() && uDay.isEmpty())) {
+            event.getHook().sendMessageEmbeds(
+                eb.setTitle("NumbersAPI Date Fact")
+                    .setDescription("Missing value. Both values must be entered.")
+                    .addField("Option Given", uMonth.isPresent() ? "Month" : "Day", true)
+                    .addField("Option Value", uMonth.isPresent() ? String.valueOf(uMonth.get()) : String.valueOf(uDay.get()), true)
+                    .build()
+            ).queue();
+            return;
+        }
 
-                        event.getHook().sendMessageEmbeds(
-                            eb.setTitle("NumbersAPI Date Fact")
-                                .setDescription("You have entered an invalid day for %s. Remember there are only %s days in %s.".formatted(monthString, maxDaysStr, monthString))
-                                .build()
-                        ).queue();
-                        return;
-                    }
+        if (uMonth.isEmpty()) {
+            theUrl += "random/date";
+        } else {
+            month = uMonth.get();
+            day = uDay.get();
+            monthString = new DateFormatSymbols().getMonths()[month - 1];
+            dayLimit = dayLimits.floorEntry(month);
+            maxDays = dayLimit.getValue();
 
-                    theUrl += "%s/%s/date".formatted(month, day);
-                }
-
-                log.debug("The url is %s.".formatted(theUrl));
-                URL request = new URL(theUrl);
-                HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
-                numbersAPI.addRequestProperty("Content-Type", "application/json");
-
-                NumbersAPIData numbersAPIData = om.readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
-                String text = numbersAPIData.getText();
-                double year = numbersAPIData.getYear();
-
-                if (uMonth.isEmpty()) {
-                    String[] tempStr = text.split("\s");
-                    monthString = tempStr[0];
-                    day = Integer.parseInt(tempStr[1]
-                        .replace("st", "")
-                        .replace("nd", "")
-                        .replace("rd", "")
-                        .replace("th", "")
-                    );
-                }
+            if (day > maxDays) {
+                String maxDaysStr = month == 2 ? "at most 29" : String.valueOf(maxDays);
 
                 event.getHook().sendMessageEmbeds(
                     eb.setTitle("NumbersAPI Date Fact")
-                        .setDescription(text)
-                        .addField("Date", "%s %s, %s".formatted(monthString, day, year).replace(".0", ""), false)
+                        .setDescription("You have entered an invalid day for %s. Remember there are only %s days in %s.".formatted(monthString, maxDaysStr, monthString))
                         .build()
                 ).queue();
+                return;
             }
 
-            case "year" -> {
-                Optional<Double> year = Optional.ofNullable(event.getOption("year", OptionMapping::getAsDouble));
-
-                if (year.isPresent())
-                    theUrl += (year.get() + "/year").replace(".0/", "/");
-                else
-                    theUrl += "random/year";
-
-                log.debug("The url is %s.".formatted(theUrl));
-                URL request = new URL(theUrl);
-                HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
-                numbersAPI.addRequestProperty("Content-Type", "application/json");
-
-                NumbersAPIData numbersAPIData = om.readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
-                String text = numbersAPIData.getText();
-                String date = numbersAPIData.getDate();
-                Double actYear = year.orElse(numbersAPIData.getNumber());
-
-                if (date == null) {
-                    date = "Year of";
-                } else if (date.split("\s").length > 1) {
-                    date += ",";
-                }
-
-                String yearStr;
-                if (actYear < 0d) {
-                    yearStr = Math.abs(actYear) + " BC";
-                } else yearStr = String.valueOf(actYear);
-
-                event.getHook().sendMessageEmbeds(
-                    eb.setTitle("Random Year Fact")
-                        .setDescription(text)
-                        .addField("Date", "%s %s".formatted(date, yearStr).replace(".0", ""), false)
-                        .build()
-                ).queue();
-            }
+            theUrl += "%s/%s/date".formatted(month, day);
         }
+
+        log.debug("The url is %s.".formatted(theUrl));
+        URL request = new URL(theUrl);
+        HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
+        numbersAPI.addRequestProperty("Content-Type", "application/json");
+
+        NumbersAPIData numbersAPIData = om.readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
+        String text = numbersAPIData.getText();
+        double year = numbersAPIData.getYear();
+
+        if (uMonth.isEmpty()) {
+            String[] tempStr = text.split("\s");
+            monthString = tempStr[0];
+            day = Integer.parseInt(tempStr[1]
+                .replace("st", "")
+                .replace("nd", "")
+                .replace("rd", "")
+                .replace("th", "")
+            );
+        }
+
+        event.getHook().sendMessageEmbeds(
+            eb.setTitle("NumbersAPI Date Fact")
+                .setDescription(text)
+                .addField("Date", "%s %s, %s".formatted(monthString, day, year).replace(".0", ""), false)
+                .build()
+        ).queue();
+    }
+
+    private void apiMath(@NotNull SlashCommandInteractionEvent event, String theUrl, ObjectMapper om, EmbedBuilder eb) throws IOException {
+        Optional<Double> ifNumber = Optional.ofNullable(event.getOption("m-number", OptionMapping::getAsDouble));
+        if (ifNumber.isPresent())
+            theUrl += (ifNumber.get() + "/math").replace(".0/", "/");
+        else
+            theUrl += "random/math";
+
+        log.debug("The url is %s.".formatted(theUrl));
+        URL request = new URL(theUrl);
+        HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
+        numbersAPI.addRequestProperty("Content-Type", "application/json");
+
+        NumbersAPIData numbersAPIData = om.readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
+        String text = numbersAPIData.getText();
+        double actNumber = numbersAPIData.getNumber();
+
+        event.getHook().sendMessageEmbeds(
+            eb.setTitle("NumbersAPI Math Fact")
+                .setDescription(text)
+                .addField("Number", String.valueOf(actNumber).replace(".0", ""), false)
+                .build()
+        ).queue();
+    }
+
+    private void apiNumber(@NotNull SlashCommandInteractionEvent event, String theUrl, ObjectMapper om, EmbedBuilder eb) throws IOException {
+        Optional<Double> number = Optional.ofNullable(event.getOption("n-number", OptionMapping::getAsDouble));
+
+        if (number.isPresent())
+            theUrl += String.valueOf(number.get()).replace(".0", "");
+        else
+            theUrl += "random";
+
+        log.debug("The url is %s.".formatted(theUrl));
+        URL request = new URL(theUrl);
+        HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
+        numbersAPI.addRequestProperty("Content-Type", "application/json");
+
+        NumbersAPIData numbersAPIData = om.readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
+        String text = numbersAPIData.getText();
+        double actNumber = numbersAPIData.getNumber();
+
+        event.getHook().sendMessageEmbeds(
+            eb.setTitle("NumbersAPI Number Fact")
+                .setDescription(text)
+                .addField("Number", String.valueOf(actNumber).replace(".0", ""), false)
+                .build()
+        ).queue();
     }
 }
