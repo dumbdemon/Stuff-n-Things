@@ -9,9 +9,12 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "SpellCheckingInspection"})
 public class Metadata implements Comparable<Metadata> {
     private String commandName;
     private String shortDescription;
@@ -39,8 +42,19 @@ public class Metadata implements Comparable<Metadata> {
      * <p>
      * It is recommended that when constructing a Metadata Object for {@link CommandData}, that you use the top level type used in the {@code ISlashCommand.getCommandData()}.
      * Hierarchy (from highest to lowest) goes as follows: none, {@link SubcommandGroupData}, {@link SubcommandData}, {@link OptionData}.
+     *
+     * @param commandName        The name of the command. Cannot be no than MAX_NAME_LENGTH in {@link CommandData}.
+     * @param shortDescription   The description of the command. Cannot be no longer than MAX_DESCRIPTION_LENGTH in {@link CommandData}.
+     * @param longDescription    The description of the command used in {@link com.terransky.stuffnthings.commandSystem.commands.general.about /about [command]}.
+     *                           It will be truncated if it has more characters than DESCRIPTION_MAX_LENGTH stated in {@link MessageEmbed}.
+     * @param mastermind         The {@link Mastermind}.
+     * @param module             The {@link SlashModule}.
+     * @param implementationDate The {@link Date} when the command was first created.
+     * @param lastUpdated        The {@link Date} when the last time the command was edited.
      */
-    public Metadata(String commandName, String shortDescription, String longDescription, Mastermind mastermind, SlashModule module, Date implementationDate, Date lastUpdated) {
+    public Metadata(String commandName, String shortDescription, String longDescription,
+                    Mastermind mastermind, SlashModule module, Date implementationDate,
+                    Date lastUpdated) {
         this.commandName = commandName;
         this.shortDescription = shortDescription;
         this.longDescription = longDescription;
@@ -70,11 +84,8 @@ public class Metadata implements Comparable<Metadata> {
         this.subcommandGroups.addAll(subcommandGroups);
     }
 
-    public void addSubcommandGroups(SubcommandGroupData subcommandGroup, SubcommandGroupData... subcommandGroups) {
-        this.subcommandGroups.add(subcommandGroup);
-        if (subcommandGroups != null) {
-            this.subcommandGroups.addAll(List.of(subcommandGroups));
-        }
+    public void addSubcommandGroups(SubcommandGroupData... subcommandGroups) {
+        addSubcommandGroups(List.of(subcommandGroups));
     }
 
     public List<SubcommandData> getSubcommands() {
@@ -85,10 +96,8 @@ public class Metadata implements Comparable<Metadata> {
         this.subcommands.addAll(subcommands);
     }
 
-    public void addSubcommands(SubcommandData subcommand, SubcommandData... subcommands) {
-        this.subcommands.add(subcommand);
-        if (subcommands != null)
-            this.subcommands.addAll(List.of(subcommands));
+    public void addSubcommands(SubcommandData... subcommands) {
+        addSubcommands(List.of(subcommands));
     }
 
     public List<OptionData> getOptions() {
@@ -99,10 +108,8 @@ public class Metadata implements Comparable<Metadata> {
         this.options.addAll(options);
     }
 
-    public void addOptions(OptionData option, OptionData... options) {
-        this.options.add(option);
-        if (options != null)
-            this.options.addAll(List.of(options));
+    public void addOptions(OptionData... options) {
+        addOptions(List.of(options));
     }
 
     public List<Permission> getMinPerms() {
@@ -113,10 +120,8 @@ public class Metadata implements Comparable<Metadata> {
         this.minPerms.addAll(minPerms);
     }
 
-    public void addMinPerms(Permission permission, Permission... permissions) {
-        minPerms.add(permission);
-        if (permissions != null)
-            minPerms.addAll(Arrays.asList(permissions));
+    public void addMinPerms(Permission... permissions) {
+        addMinPerms(List.of(permissions));
     }
 
     public String getCommandName() {
@@ -147,6 +152,11 @@ public class Metadata implements Comparable<Metadata> {
         return this.getLastUpdated().toInstant().getEpochSecond();
     }
 
+    /**
+     * Gets the long descriptions of a {@link Metadata} object.
+     *
+     * @return The long description or it's truncated variant if it has more characters than DESCRIPTION_MAX_LENGTH stated in {@link MessageEmbed}.
+     */
     public String getLongDescription() {
         int descriptionMaxLength = MessageEmbed.DESCRIPTION_MAX_LENGTH;
 
@@ -176,7 +186,16 @@ public class Metadata implements Comparable<Metadata> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCommandName(), getShortDescription(), getLongDescription(), getMastermind(), getImplementationDate(), getLastUpdated(), getMinPerms(), getSubcommandGroups(), getSubcommands(), getOptions());
+        return Objects.hash(getCommandName(),
+            getShortDescription(),
+            getLongDescription(),
+            getMastermind(),
+            getImplementationDate(),
+            getLastUpdated(),
+            getMinPerms(),
+            getSubcommandGroups(),
+            getSubcommands(),
+            getOptions());
     }
 
     @Override
