@@ -30,11 +30,11 @@ public class say implements ISlashCommand {
         var metadata = new Metadata(this.getName(), "Make the bot say anything!", """
             Make the bot say anything!
                         
-            ~~Subject to your server's rules and Discord Community Guidelines.~~
+            ~~Subject to your server's rules and [Discord Community Guidelines](https://discord.com/guidelines).~~
             """, Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("21-11-2022_14:32")
+            format.parse("22-11-2022_15:22")
         );
 
         metadata.addOptions(
