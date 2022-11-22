@@ -1,7 +1,6 @@
 package com.terransky.stuffnthings.commandSystem.commands.fun;
 
 import com.terransky.stuffnthings.Commons;
-import com.terransky.stuffnthings.commandSystem.commands.cmdResources.killStrings;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
@@ -28,8 +27,33 @@ import java.util.List;
 import java.util.Random;
 
 public class kill implements ISlashCommand {
-    private final String[] randomStrings = killStrings.random;
-    private final String[] targetStrings = killStrings.target;
+
+    private final String[] randomStrings = {
+        "was in their chem lab with %s trying to kill them with a 20 gauge shotgun!",
+        "proctored the duel between Red [%s] and Blue [%s]. Blue won by a landslide!",
+        "shot an arrow at %s, but it bounced off and hit %s instead!",
+        "convinced %s to give them explosives to kill %s, they blew themselves up instead!",
+        "threw a knife at %s but missed and hit %s!",
+        "drove over %s whilst they were talking a selfie!",
+        "just killed %s.",
+        ", %s, %s, and %s saw %s failed their Perception DC check of 5 and fell into a 10m wide, 1km deep zombie infested hole!",
+        "saw %s, %s, and %s die by their own grenade\u2026 how?",
+        "got chopped in half by a helicopter blade!",
+        "shot their gun trying to hit %s, but they hit %s instead!",
+        "killed %s with %s's body. Literally swung them at them!",
+        "knew a person named %s who died choking on a hot dog.",
+        "proctored the duel between Red [%s] and Blue [%s]. Red won by a landslide!",
+        "chokes on a candy cane! %s was watching and didn't do anything about it.",
+        "tried a grenade for the first time in military training! They accidentally killed their C.O. %s, but at least they tried it!",
+        "convinced %s to give them explosives to kill %s, it was a major success!",
+        "got killed by their own rocket\u2026 they weren't even pointing at anybody\u2026",
+        "tried to assassinate Pope %s, but ended up getting %s's spouse dead instead! What a blunder!",
+        ", %s, %s, and %s were last sean at %s's house. Don't know what happened to them though.",
+        "killed %s\u2026 **WITH THIS THUMB!**"
+    };
+    private final String[] targetStrings = {
+        "tried to kill %s but they couldn't because that's bad manners!"
+    };
     public static final String MODAL_NAME = "kill-suggestion";
 
     @Override
@@ -45,7 +69,7 @@ public class kill implements ISlashCommand {
             """, Mastermind.USER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("21-11-2022_14:32")
+            format.parse("22-11-2022_14:26")
         );
 
         metadata.addSubcommands(
@@ -66,7 +90,8 @@ public class kill implements ISlashCommand {
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(Commons.getDefaultEmbedColor())
             .setFooter("Requested by " + event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
-        List<Member> memberList = blob.getGuild().getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
+        List<Member> memberList =
+            blob.getGuild().getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
 
         for (Member member : memberList) {
             victims.add(member.getAsMention());
@@ -74,7 +99,7 @@ public class kill implements ISlashCommand {
 
         if (subCommand == null) throw new DiscordAPIException("No subcommand was given.");
         String killer = "";
-        if (event.getMember() != null) killer = event.getMember().getEffectiveName();
+        if (event.getMember() != null) killer = blob.getMember().getEffectiveName();
 
         switch (subCommand) {
             case "random" -> {
@@ -84,6 +109,9 @@ public class kill implements ISlashCommand {
                     victims.get(random.nextInt(victims.size())),
                     victims.get(random.nextInt(victims.size()))
                 );
+
+                if (message.contains(blob.getGuild().getSelfMember().getAsMention()))
+                    message += " :O";
 
                 eb.setColor(Commons.getDefaultEmbedColor())
                     .setTitle(killer)
