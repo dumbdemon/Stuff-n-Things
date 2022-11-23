@@ -42,7 +42,7 @@ public class fibonacciSequence implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.MATHS,
             format.parse("11-11-2022_20:50"),
-            format.parse("21-11-2022_14:32")
+            format.parse("23-11-2022_15:00")
         );
 
         metadata.addSubcommands(
@@ -63,10 +63,8 @@ public class fibonacciSequence implements ISlashCommand {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
-        String subCommand = event.getSubcommandName();
-        if (subCommand == null) {
-            throw new DiscordAPIException("No subcommand was given.");
-        }
+        String subcommand = event.getSubcommandName();
+        if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 
         int n = event.getOption("nth", 3, OptionMapping::getAsInt);
         EmbedBuilder eb = new EmbedBuilder()
@@ -89,7 +87,7 @@ public class fibonacciSequence implements ISlashCommand {
                 .build()
         ).queue();
 
-        if (subCommand.equals("at-nth")) {
+        if (subcommand.equals("at-nth")) {
             if (nthValue < 1e3) {
                 returnString = calculateRats.largeNumberFormat(getFibonacciAt(n)).replace(".0", "");
             } else returnString = calculateRats.largeNumberFormat(getFibonacciAt(n)).replace(".0\s", "\s");

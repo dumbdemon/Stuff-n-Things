@@ -78,7 +78,7 @@ public class whatsInStandard implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.MTG,
             format.parse("27-10-2022_12:46"),
-            format.parse("21-11-2022_14:32")
+            format.parse("23-11-2022_15:00")
         );
 
         metadata.addSubcommands(
@@ -97,8 +97,8 @@ public class whatsInStandard implements ISlashCommand {
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle("What's in standard?")
             .setColor(Commons.getDefaultEmbedColor());
-        String subCommand = event.getSubcommandName();
-        if (subCommand == null) throw new DiscordAPIException("No subcommand received");
+        String subcommand = event.getSubcommandName();
+        if (subcommand == null) throw new DiscordAPIException("No subcommand received");
         String version = "6";
         ObjectMapper om = new ObjectMapper();
 
@@ -112,7 +112,7 @@ public class whatsInStandard implements ISlashCommand {
             return;
         }
 
-        switch (subCommand) {
+        switch (subcommand) {
             case "all" ->
                 eb.setDescription("**Sets**:\n%s\n**Current Bans**:\n%s".formatted(this.getSets(wisData.getSets()), this.getBans(wisData.getBans(), false)));
             case "sets" -> eb.setDescription("**Sets**:\n%s".formatted(this.getSets(wisData.getSets())));

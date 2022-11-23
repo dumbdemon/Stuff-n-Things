@@ -119,7 +119,7 @@ public class colorInfo implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("20-9-2022_12:10"),
-            format.parse("22-11-2022_16:02")
+            format.parse("23-11-2022_15:00")
         );
 
         metadata.addSubcommands(
@@ -156,13 +156,13 @@ public class colorInfo implements ISlashCommand {
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         DecimalFormat hsb = new DecimalFormat("##.##%");
-        String subCommand = event.getSubcommandName();
+        String subcommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle(WordUtils.capitalize(this.getName().replace("-", "\s")))
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
-        if (subCommand == null) throw new DiscordAPIException("No subcommand was given.");
+        if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 
-        switch (subCommand) {
+        switch (subcommand) {
             case "hex-triplet" -> runHexTriplet(event, hsb, eb);
             case "rgb" -> runRGB(event, hsb, eb);
             case "cmyk" -> runCMYK(event, hsb, eb);

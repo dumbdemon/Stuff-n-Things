@@ -45,7 +45,7 @@ public class config implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.ADMIN,
             format.parse("28-08-2022_21:46"),
-            format.parse("21-11-2022_14:32")
+            format.parse("23-11-2022_15:00")
         );
 
         metadata.addMinPerms(Permission.MANAGE_SERVER);
@@ -84,14 +84,14 @@ public class config implements ISlashCommand {
     }
 
     private void killConfig(@NotNull SlashCommandInteractionEvent event, EventBlob blob) throws Exception {
-        String subCommand = event.getSubcommandName();
+        String subcommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(Commons.getDefaultEmbedColor())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
 
-        if (subCommand == null) throw new DiscordAPIException("No subcommand was given.");
+        if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 
-        switch (subCommand) {
+        switch (subcommand) {
             case "max-kills" -> {
                 event.deferReply(true).queue();
                 int newMax = event.getOption("set-max", 0, OptionMapping::getAsInt),

@@ -9,7 +9,7 @@ import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -41,7 +41,7 @@ public class userInfo implements ISlashCommand {
     }
 
     @NotNull
-    private static String setPermissionStatus(User user, @NotNull Member victim) {
+    private static String setPermissionStatus(@NotNull Member member) {
         final List<Permission> modPerms = Arrays.asList(
             Permission.BAN_MEMBERS,
             Permission.KICK_MEMBERS,
@@ -51,17 +51,17 @@ public class userInfo implements ISlashCommand {
         );
 
         StringBuilder permText = new StringBuilder();
-        if (victim.hasPermission(modPerms)) {
+        if (member.hasPermission(modPerms)) {
             permText.append("Server Moderator");
-            if (victim.hasPermission(Permission.ADMINISTRATOR)) {
+            if (member.hasPermission(Permission.ADMINISTRATOR)) {
                 permText.append(", Server Administrator");
-                if (victim.isOwner()) {
+                if (member.isOwner()) {
                     permText.append(", Server Owner");
                 }
             }
         } else permText.append("Member");
 
-        if (user.getId().equals(Commons.getConfig().get("OWNER_ID"))) {
+        if (member.getId().equals(Commons.getConfig().get("OWNER_ID"))) {
             permText.append(", Developer");
         }
         return permText.toString();
@@ -82,7 +82,7 @@ public class userInfo implements ISlashCommand {
             """, Mastermind.DEFAULT,
             SlashModule.DEVS,
             format.parse("24-08-2022_11:10"),
-            format.parse("22-11-2022_16:20")
+            format.parse("23-11-2022_14:38")
         );
 
         metadata.addOptions(
@@ -94,29 +94,31 @@ public class userInfo implements ISlashCommand {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
-        User uVictim = event.getOption("user", event.getUser(), OptionMapping::getAsUser);
-        Member mVictim = event.getOption("user", event.getMember(), OptionMapping::getAsMember);
-        EmbedBuilder eb = new EmbedBuilder().setColor(Commons.getDefaultEmbedColor());
+        String memberId = event.getOption("user", event.getMember(), OptionMapping::getAsMember).getId();
+        Member member = blob.getGuild().retrieveMemberById(memberId).complete();
+        List<Role> roles = member.getRoles().stream().sorted().toList();
+        int roleCount = roles.size() + 1;
+        Role topRole = roles.isEmpty() ? blob.getGuild().getPublicRole() : roles.get(roles.size() - 1);
 
-        if (!mVictim.hasTimeJoined()) {
-            mVictim = blob.getGuild().retrieveMemberById(mVictim.getId()).complete();
-        }
+        String permissionStatus = setPermissionStatus(member);
+        String userPerms = setUserPerms(member);
 
-        String permissionStatus = setPermissionStatus(uVictim, mVictim);
-        String userPerms = setUserPerms(mVictim);
-
-        eb.setAuthor(WordUtils.capitalize(mVictim.getEffectiveName()) + "'s Info")
-            .setThumbnail(mVictim.getEffectiveAvatarUrl())
-            .addField("User ID", uVictim.getId(), true)
-            .addField("User Status", permissionStatus, true)
+        EmbedBuilder eb = new EmbedBuilder()
+            .setColor(Commons.getDefaultEmbedColor())
+            .setAuthor(WordUtils.capitalize(member.getEffectiveName()) + "'s Info")
+            .setThumbnail(member.getEffectiveAvatarUrl())
+            .addField("User ID", memberId, false)
+            .addField("User Status", permissionStatus, false)
+            .addField("Total Roles", "%d Role%s".formatted(roleCount, roleCount > 1 ? "s" : ""), true)
+            .addField("Top Role", topRole.getAsMention(), true)
             .addField("Server Permissions", "```%s```".formatted(userPerms), false)
-            .addField("Joined Server on", "<t:%s:F>".formatted(mVictim.getTimeJoined().toEpochSecond()), true)
-            .addField("Joined Discord on", "<t:%s:F>".formatted(uVictim.getTimeCreated().toEpochSecond()), true)
+            .addField("Joined Server on", "<t:%s:F>".formatted(member.getTimeJoined().toEpochSecond()), true)
+            .addField("Joined Discord on", "<t:%s:F>".formatted(member.getUser().getTimeCreated().toEpochSecond()), true)
             .setFooter("Requested by " + event.getUser().getAsTag() + " | " + event.getUser().getId(), blob.getMemberEffectiveAvatarUrl());
 
-        if (!uVictim.isBot()) {
+        if (!member.getUser().isBot()) {
             String boostedText =
-                (mVictim.getTimeBoosted() != null) ? ":gem: <t:%d:F> (<t:%d:R>)".formatted(mVictim.getTimeBoosted().toEpochSecond(), mVictim.getTimeBoosted().toEpochSecond()) :
+                (member.getTimeBoosted() != null) ? ":gem: <t:%d:F> (<t:%d:R>)".formatted(member.getTimeBoosted().toEpochSecond(), member.getTimeBoosted().toEpochSecond()) :
                     ":x: Not Boosting.";
             eb.addField("Boosting Since", boostedText, false);
         }

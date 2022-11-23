@@ -64,7 +64,7 @@ public class numbersAPI implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.MATHS,
             format.parse("10-11-2022_20:45"),
-            format.parse("22-11-2022_16:13")
+            format.parse("23-11-2022_15:00")
         );
 
         metadata.addSubcommands(
@@ -89,28 +89,22 @@ public class numbersAPI implements ISlashCommand {
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         event.deferReply().queue();
-        String subCommand = event.getSubcommandName();
-        if (subCommand == null) {
-            throw new DiscordAPIException("No subcommand was given");
-        }
+        String subcommand = event.getSubcommandName();
+        if (subcommand == null) throw new DiscordAPIException("No subcommand was given");
         String theUrl = "http://numbersapi.com/";
-        ObjectMapper om = new ObjectMapper();
-        EmbedBuilder eb = new EmbedBuilder()
+        EmbedBuilder response = new EmbedBuilder()
             .setColor(Commons.getDefaultEmbedColor())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
 
-        switch (subCommand) {
-            case "number" -> apiNumber(event, theUrl, om, eb);
-
-            case "math" -> apiMath(event, theUrl, om, eb);
-
-            case "date" -> apiDate(event, theUrl, om, eb);
-
-            case "year" -> apiYear(event, theUrl, om, eb);
+        switch (subcommand) {
+            case "number" -> apiNumber(event, theUrl, response);
+            case "math" -> apiMath(event, theUrl, response);
+            case "date" -> apiDate(event, theUrl, response);
+            case "year" -> apiYear(event, theUrl, response);
         }
     }
 
-    private void apiYear(@NotNull SlashCommandInteractionEvent event, String theUrl, ObjectMapper om, EmbedBuilder eb) throws IOException {
+    private void apiYear(@NotNull SlashCommandInteractionEvent event, String theUrl, EmbedBuilder eb) throws IOException {
         Optional<Double> year = Optional.ofNullable(event.getOption("year", OptionMapping::getAsDouble));
 
         if (year.isPresent())
@@ -123,7 +117,7 @@ public class numbersAPI implements ISlashCommand {
         HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
         numbersAPI.addRequestProperty("Content-Type", "application/json");
 
-        NumbersAPIData numbersAPIData = om.readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
+        NumbersAPIData numbersAPIData = new ObjectMapper().readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
         String text = numbersAPIData.getText();
         String date = numbersAPIData.getDate();
         Double actYear = year.orElse(numbersAPIData.getNumber());
@@ -147,7 +141,7 @@ public class numbersAPI implements ISlashCommand {
         ).queue();
     }
 
-    private void apiDate(@NotNull SlashCommandInteractionEvent event, String theUrl, ObjectMapper om, EmbedBuilder eb) throws IOException {
+    private void apiDate(@NotNull SlashCommandInteractionEvent event, String theUrl, EmbedBuilder eb) throws IOException {
         Optional<Integer> uMonth = Optional.ofNullable(event.getOption("month", OptionMapping::getAsInt));
         Optional<Integer> uDay = Optional.ofNullable(event.getOption("day", OptionMapping::getAsInt));
         String monthString = "";
@@ -195,7 +189,7 @@ public class numbersAPI implements ISlashCommand {
         HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
         numbersAPI.addRequestProperty("Content-Type", "application/json");
 
-        NumbersAPIData numbersAPIData = om.readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
+        NumbersAPIData numbersAPIData = new ObjectMapper().readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
         String text = numbersAPIData.getText();
         double year = numbersAPIData.getYear();
 
@@ -218,7 +212,7 @@ public class numbersAPI implements ISlashCommand {
         ).queue();
     }
 
-    private void apiMath(@NotNull SlashCommandInteractionEvent event, String theUrl, ObjectMapper om, EmbedBuilder eb) throws IOException {
+    private void apiMath(@NotNull SlashCommandInteractionEvent event, String theUrl, EmbedBuilder eb) throws IOException {
         Optional<Double> ifNumber = Optional.ofNullable(event.getOption("m-number", OptionMapping::getAsDouble));
         if (ifNumber.isPresent())
             theUrl += (ifNumber.get() + "/math").replace(".0/", "/");
@@ -230,7 +224,7 @@ public class numbersAPI implements ISlashCommand {
         HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
         numbersAPI.addRequestProperty("Content-Type", "application/json");
 
-        NumbersAPIData numbersAPIData = om.readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
+        NumbersAPIData numbersAPIData = new ObjectMapper().readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
         String text = numbersAPIData.getText();
         double actNumber = numbersAPIData.getNumber();
 
@@ -242,7 +236,7 @@ public class numbersAPI implements ISlashCommand {
         ).queue();
     }
 
-    private void apiNumber(@NotNull SlashCommandInteractionEvent event, String theUrl, ObjectMapper om, EmbedBuilder eb) throws IOException {
+    private void apiNumber(@NotNull SlashCommandInteractionEvent event, String theUrl, EmbedBuilder eb) throws IOException {
         Optional<Double> number = Optional.ofNullable(event.getOption("n-number", OptionMapping::getAsDouble));
 
         if (number.isPresent())
@@ -255,7 +249,7 @@ public class numbersAPI implements ISlashCommand {
         HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
         numbersAPI.addRequestProperty("Content-Type", "application/json");
 
-        NumbersAPIData numbersAPIData = om.readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
+        NumbersAPIData numbersAPIData = new ObjectMapper().readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
         String text = numbersAPIData.getText();
         double actNumber = numbersAPIData.getNumber();
 

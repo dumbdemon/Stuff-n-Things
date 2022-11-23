@@ -69,7 +69,7 @@ public class kill implements ISlashCommand {
             """, Mastermind.USER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("22-11-2022_14:26")
+            format.parse("23-11-2022_15:00")
         );
 
         metadata.addSubcommands(
@@ -86,7 +86,7 @@ public class kill implements ISlashCommand {
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         Random random = new Random(new Date().getTime());
         List<String> victims = new ArrayList<>();
-        String subCommand = event.getSubcommandName();
+        String subcommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(Commons.getDefaultEmbedColor())
             .setFooter("Requested by " + event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
@@ -97,11 +97,11 @@ public class kill implements ISlashCommand {
             victims.add(member.getAsMention());
         }
 
-        if (subCommand == null) throw new DiscordAPIException("No subcommand was given.");
+        if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
         String killer = "";
         if (event.getMember() != null) killer = blob.getMember().getEffectiveName();
 
-        switch (subCommand) {
+        switch (subcommand) {
             case "random" -> {
                 String message = randomStrings[random.nextInt(randomStrings.length)].formatted(
                     victims.get(random.nextInt(victims.size())),

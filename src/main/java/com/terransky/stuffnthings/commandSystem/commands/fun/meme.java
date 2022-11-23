@@ -42,7 +42,7 @@ public class meme implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("22-11-2022_16:10")
+            format.parse("23-11-2022_15:00")
         );
 
         metadata.addSubcommands(
@@ -60,10 +60,10 @@ public class meme implements ISlashCommand {
         ObjectMapper om = new ObjectMapper();
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(Commons.getDefaultEmbedColor());
-        String subCommand = event.getSubcommandName();
-        if (subCommand == null) throw new DiscordAPIException("No subcommand was given.");
+        String subcommand = event.getSubcommandName();
+        if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 
-        if (subCommand.equals("reddit")) goForReddit(event, largeNumber, om, eb);
+        if (subcommand.equals("reddit")) goForReddit(event, largeNumber, om, eb);
     }
 
     private void goForReddit(@NotNull SlashCommandInteractionEvent event, DecimalFormat largeNumber, @NotNull ObjectMapper om, @NotNull EmbedBuilder eb) {
