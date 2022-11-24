@@ -82,7 +82,7 @@ public class SelectMenuManager extends ListenerAdapter {
             } catch (Exception e) {
                 log.debug(event.getId() + " interaction failed on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getCause()));
-                Commons.listPrinter(Arrays.asList(e.getStackTrace()), SelectMenuManager.class);
+                Commons.loggerPrinterOfError(Arrays.asList(e.getStackTrace()), SelectMenuManager.class);
                 if (event.isAcknowledged()) {
                     event.getHook().sendMessageEmbeds(menuFailed).queue();
                 } else event.replyEmbeds(menuFailed).setEphemeral(true).queue();

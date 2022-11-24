@@ -45,7 +45,7 @@ public class config implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.ADMIN,
             format.parse("28-08-2022_21:46"),
-            format.parse("23-11-2022_15:00")
+            format.parse("24-11-2022_10:18")
         );
 
         metadata.addMinPerms(Permission.MANAGE_SERVER);
@@ -227,7 +227,7 @@ public class config implements ISlashCommand {
     protected MessageEmbed anErrorOccurred(@NotNull SQLException e) {
         EmbedBuilder eb = new EmbedBuilder().setColor(Commons.getDefaultEmbedColor());
         log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-        Commons.listPrinter(Arrays.asList(e.getStackTrace()), config.class);
+        Commons.loggerPrinterOfError(Arrays.asList(e.getStackTrace()), config.class);
         SQLiteDataSource.restartConnection();
         eb.setTitle("Uh-oh")
             .setDescription("An error occurred while executing the command!\n Try again in a moment!");

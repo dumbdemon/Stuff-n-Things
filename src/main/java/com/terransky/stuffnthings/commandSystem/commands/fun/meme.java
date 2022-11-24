@@ -42,7 +42,7 @@ public class meme implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("23-11-2022_15:00")
+            format.parse("24-11-2022_10:18")
         );
 
         metadata.addSubcommands(
@@ -114,7 +114,7 @@ public class meme implements ISlashCommand {
                     .build()
             ).queue();
             log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-            Commons.listPrinter(Arrays.asList(e.getStackTrace()), meme.class);
+            Commons.loggerPrinterOfError(Arrays.asList(e.getStackTrace()), meme.class);
         }
     }
 }

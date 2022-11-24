@@ -36,7 +36,7 @@ public class SQLiteDataSource {
             }
         } catch (IOException e) {
             log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-            Commons.listPrinter(Arrays.asList(e.getStackTrace()), SQLiteDataSource.class);
+            Commons.loggerPrinterOfError(Arrays.asList(e.getStackTrace()), SQLiteDataSource.class);
         }
 
         config.setJdbcUrl("jdbc:sqlite:database.sqlite");
@@ -62,7 +62,7 @@ public class SQLiteDataSource {
                 ");");
         } catch (SQLException e) {
             log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-            Commons.listPrinter(Arrays.asList(e.getStackTrace()), SQLiteDataSource.class);
+            Commons.loggerPrinterOfError(Arrays.asList(e.getStackTrace()), SQLiteDataSource.class);
         }
     }
 
