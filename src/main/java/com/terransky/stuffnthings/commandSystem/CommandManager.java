@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.commandSystem;
 
 import com.terransky.stuffnthings.Commons;
-import com.terransky.stuffnthings.commandSystem.commands.admin.channelControl;
+import com.terransky.stuffnthings.commandSystem.commands.admin.channelUnLock;
 import com.terransky.stuffnthings.commandSystem.commands.admin.checkPerms;
 import com.terransky.stuffnthings.commandSystem.commands.admin.config;
 import com.terransky.stuffnthings.commandSystem.commands.devs.getInvite;
@@ -47,7 +47,7 @@ public class CommandManager extends ListenerAdapter {
 
     public CommandManager() {
         //Admin Commands
-        addCommand(new channelControl());
+        addCommand(new channelUnLock());
         addCommand(new checkPerms());
         addCommand(new config());
 
