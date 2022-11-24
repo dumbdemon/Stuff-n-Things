@@ -55,7 +55,7 @@ public class channelUnLock implements ISlashCommand {
         String description = "Lock or unlock a channel for everyone or from a specific role to see.";
         var metadata = new Metadata(this.getName(), description, description, Mastermind.DEVELOPER, SlashModule.ADMIN,
             format.parse("23-11-2022_18:34"),
-            format.parse("23-11-2022_19:30")
+            format.parse("24-11-2022_13:37")
         );
 
         metadata.addMinPerms(Permission.MANAGE_CHANNEL);
