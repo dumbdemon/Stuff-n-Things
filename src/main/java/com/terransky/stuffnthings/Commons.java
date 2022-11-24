@@ -67,11 +67,27 @@ public class Commons {
         event.replyEmbeds(BOT_IS_GUILD_ONLY_MESSAGE.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl()).build()).queue();
     }
 
-    public static void listPrinter(@NotNull List<?> aList, Class<?> clazz) {
-        final Logger log = LoggerFactory.getLogger(clazz);
-
+    public static void loggerPrinterOfError(@NotNull List<?> aList, Logger log) {
         for (Object listItem : aList) {
             log.error(listItem.toString());
         }
+    }
+
+    public static void loggerPrinterOfError(@NotNull List<?> aList, Class<?> clazz) {
+        final Logger log = LoggerFactory.getLogger(clazz);
+
+        loggerPrinterOfError(aList, log);
+    }
+
+    public static void loggerPrinterOfDebug(@NotNull List<?> aList, Logger log) {
+        for (Object listItem : aList) {
+            log.debug(listItem.toString());
+        }
+    }
+
+    public static void loggerPrinterOfDebug(@NotNull List<?> aList, Class<?> clazz) {
+        final Logger log = LoggerFactory.getLogger(clazz);
+
+        loggerPrinterOfDebug(aList, log);
     }
 }
