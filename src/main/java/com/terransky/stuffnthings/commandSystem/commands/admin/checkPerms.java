@@ -38,6 +38,7 @@ public class checkPerms implements ISlashCommand {
         permissionList.add(Permission.VIEW_CHANNEL);
 
         //Moderation
+        permissionList.add(Permission.MANAGE_CHANNEL);
 
         return permissionList;
     }
@@ -65,7 +66,7 @@ public class checkPerms implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.ADMIN,
             format.parse("30-08-2022_16:14"),
-            format.parse("21-11-2022_14:32")
+            format.parse("23-11-2022_19:31")
         );
 
         metadata.addMinPerms(Permission.MANAGE_ROLES);
