@@ -7,3 +7,4 @@ gradle/
 /database.sqlite
 /src/main/java/com/terransky/StuffnThings/commandSystem/commands/devs/test.java
 /logs/
+/Command Wiki
