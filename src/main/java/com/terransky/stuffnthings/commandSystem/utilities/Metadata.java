@@ -23,6 +23,7 @@ public class Metadata implements Comparable<Metadata> {
     private SlashModule module;
     private Date implementationDate;
     private Date lastUpdated;
+    private boolean isNsfw = false;
     private final List<Permission> minPerms = new ArrayList<>();
     private final List<SubcommandGroupData> subcommandGroups = new ArrayList<>();
     private final List<SubcommandData> subcommands = new ArrayList<>();
@@ -52,9 +53,8 @@ public class Metadata implements Comparable<Metadata> {
      * @param implementationDate The {@link Date} when the command was first created.
      * @param lastUpdated        The {@link Date} when the last time the command was edited.
      */
-    public Metadata(String commandName, String shortDescription, String longDescription,
-                    Mastermind mastermind, SlashModule module, Date implementationDate,
-                    Date lastUpdated) {
+    public Metadata(String commandName, String shortDescription, String longDescription, Mastermind mastermind,
+                    SlashModule module, Date implementationDate, Date lastUpdated) {
         this.commandName = commandName;
         this.shortDescription = shortDescription;
         this.longDescription = longDescription;
@@ -74,6 +74,14 @@ public class Metadata implements Comparable<Metadata> {
 
     public String getShortDescription() {
         return shortDescription;
+    }
+
+    public boolean isNsfw() {
+        return isNsfw;
+    }
+
+    public void setNsfw(boolean nsfw) {
+        isNsfw = nsfw;
     }
 
     public List<SubcommandGroupData> getSubcommandGroups() {

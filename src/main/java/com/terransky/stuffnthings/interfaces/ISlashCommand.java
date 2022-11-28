@@ -2,10 +2,12 @@ package com.terransky.stuffnthings.interfaces;
 
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
@@ -24,42 +26,29 @@ public interface ISlashCommand extends ICommand {
     @Override
     default CommandData getCommandData() throws ParseException {
         Metadata metadata = this.getMetadata();
-        CommandData commandData;
+        SlashCommandData commandData = Commands.slash(this.getName(), metadata.getShortDescription())
+            .setNSFW(metadata.isNsfw());
+        List<Permission> permissions = metadata.getMinPerms();
 
         if (!metadata.getOptions().isEmpty()) {
-            commandData = Commands.slash(this.getName(), metadata.getShortDescription())
-                .addOptions(metadata.getOptions());
-
-            if (!metadata.getMinPerms().isEmpty())
-                commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(metadata.getMinPerms()));
-
+            commandData.addOptions(metadata.getOptions());
             return commandData;
         }
 
         if (!metadata.getSubcommands().isEmpty()) {
-            commandData = Commands.slash(this.getName(), metadata.getShortDescription())
-                .addSubcommands(metadata.getSubcommands());
-
-            if (!metadata.getMinPerms().isEmpty())
-                commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(metadata.getMinPerms()));
-
+            commandData.addSubcommands(metadata.getSubcommands());
             return commandData;
         }
 
         if (!metadata.getSubcommandGroups().isEmpty()) {
-            commandData = Commands.slash(this.getName(), metadata.getShortDescription())
-                .addSubcommandGroups(metadata.getSubcommandGroups());
-
-            if (!metadata.getMinPerms().isEmpty())
-                commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(metadata.getMinPerms()));
-
+            commandData.addSubcommandGroups(metadata.getSubcommandGroups());
             return commandData;
         }
 
-        commandData = Commands.slash(this.getName(), metadata.getShortDescription());
-
-        if (!metadata.getMinPerms().isEmpty())
-            commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(metadata.getMinPerms()));
+        if (!permissions.isEmpty()) {
+            commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(permissions));
+            return commandData;
+        }
 
         return commandData;
     }
