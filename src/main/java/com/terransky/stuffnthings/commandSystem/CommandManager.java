@@ -241,7 +241,7 @@ public class CommandManager extends ListenerAdapter {
             try {
                 command.execute(event, blob);
             } catch (Exception e) {
-                log.debug("Full command path that triggered error :: [" + event.getCommandPath() + "]");
+                log.debug("Full command path that triggered error :: [" + event.getFullCommandName() + "]");
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
                 Commons.loggerPrinterOfError(Arrays.asList(e.getStackTrace()), CommandManager.class);
                 if (event.isAcknowledged()) {
