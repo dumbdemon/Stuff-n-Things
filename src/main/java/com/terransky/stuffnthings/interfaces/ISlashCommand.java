@@ -30,25 +30,17 @@ public interface ISlashCommand extends ICommand {
             .setNSFW(metadata.isNsfw());
         List<Permission> permissions = metadata.getMinPerms();
 
-        if (!metadata.getOptions().isEmpty()) {
-            commandData.addOptions(metadata.getOptions());
-            return commandData;
-        }
+        if (!metadata.getOptions().isEmpty())
+            return commandData.addOptions(metadata.getOptions());
 
-        if (!metadata.getSubcommands().isEmpty()) {
-            commandData.addSubcommands(metadata.getSubcommands());
-            return commandData;
-        }
+        if (!metadata.getSubcommands().isEmpty())
+            return commandData.addSubcommands(metadata.getSubcommands());
 
-        if (!metadata.getSubcommandGroups().isEmpty()) {
-            commandData.addSubcommandGroups(metadata.getSubcommandGroups());
-            return commandData;
-        }
+        if (!metadata.getSubcommandGroups().isEmpty())
+            return commandData.addSubcommandGroups(metadata.getSubcommandGroups());
 
-        if (!permissions.isEmpty()) {
-            commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(permissions));
-            return commandData;
-        }
+        if (!permissions.isEmpty())
+            return commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(permissions));
 
         return commandData;
     }
