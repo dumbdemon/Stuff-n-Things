@@ -2,7 +2,6 @@ package com.terransky.stuffnthings.interfaces;
 
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -28,7 +27,9 @@ public interface ISlashCommand extends ICommand {
         Metadata metadata = this.getMetadata();
         SlashCommandData commandData = Commands.slash(this.getName(), metadata.getShortDescription())
             .setNSFW(metadata.isNsfw());
-        List<Permission> permissions = metadata.getMinPerms();
+
+        if (!metadata.getMinPerms().isEmpty())
+            commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(metadata.getMinPerms()));
 
         if (!metadata.getOptions().isEmpty())
             return commandData.addOptions(metadata.getOptions());
@@ -38,9 +39,6 @@ public interface ISlashCommand extends ICommand {
 
         if (!metadata.getSubcommandGroups().isEmpty())
             return commandData.addSubcommandGroups(metadata.getSubcommandGroups());
-
-        if (!permissions.isEmpty())
-            return commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(permissions));
 
         return commandData;
     }

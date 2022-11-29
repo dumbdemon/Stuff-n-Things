@@ -16,6 +16,10 @@ import java.util.Objects;
 
 @SuppressWarnings({"unused", "SpellCheckingInspection"})
 public class Metadata implements Comparable<Metadata> {
+    private final List<Permission> minPerms = new ArrayList<>();
+    private final List<SubcommandGroupData> subcommandGroups = new ArrayList<>();
+    private final List<SubcommandData> subcommands = new ArrayList<>();
+    private final List<OptionData> options = new ArrayList<>();
     private String commandName;
     private String shortDescription;
     private String longDescription;
@@ -24,10 +28,6 @@ public class Metadata implements Comparable<Metadata> {
     private Date implementationDate;
     private Date lastUpdated;
     private boolean isNsfw = false;
-    private final List<Permission> minPerms = new ArrayList<>();
-    private final List<SubcommandGroupData> subcommandGroups = new ArrayList<>();
-    private final List<SubcommandData> subcommands = new ArrayList<>();
-    private final List<OptionData> options = new ArrayList<>();
 
     /**
      * Extended details for an {@link ISlashCommand}.

@@ -74,9 +74,7 @@ public class Commons {
     }
 
     public static void loggerPrinterOfError(@NotNull List<?> aList, Class<?> clazz) {
-        final Logger log = LoggerFactory.getLogger(clazz);
-
-        loggerPrinterOfError(aList, log);
+        loggerPrinterOfError(aList, LoggerFactory.getLogger(clazz));
     }
 
     public static void loggerPrinterOfDebug(@NotNull List<?> aList, Logger log) {
@@ -86,8 +84,6 @@ public class Commons {
     }
 
     public static void loggerPrinterOfDebug(@NotNull List<?> aList, Class<?> clazz) {
-        final Logger log = LoggerFactory.getLogger(clazz);
-
-        loggerPrinterOfDebug(aList, log);
+        loggerPrinterOfDebug(aList, LoggerFactory.getLogger(clazz));
     }
 }
