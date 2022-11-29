@@ -28,8 +28,8 @@ public interface ISlashCommand extends ICommand {
         SlashCommandData commandData = Commands.slash(this.getName(), metadata.getShortDescription())
             .setNSFW(metadata.isNsfw());
 
-        if (!metadata.getMinPerms().isEmpty())
-            commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(metadata.getMinPerms()));
+        if (!metadata.getDefaultPerms().isEmpty())
+            commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(metadata.getDefaultPerms()));
 
         if (!metadata.getOptions().isEmpty())
             return commandData.addOptions(metadata.getOptions());

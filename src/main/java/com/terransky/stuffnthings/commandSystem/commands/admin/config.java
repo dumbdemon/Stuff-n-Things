@@ -45,10 +45,10 @@ public class config implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.ADMIN,
             format.parse("28-08-2022_21:46"),
-            format.parse("24-11-2022_10:18")
+            format.parse("28-11-2022_21:34")
         );
 
-        metadata.addMinPerms(Permission.MANAGE_SERVER);
+        metadata.addDefaultPerms(Permission.MANAGE_SERVER);
         metadata.addSubcommandGroups(
             new SubcommandGroupData("kill", "Change the config settings for the kill command.")
                 .addSubcommands(

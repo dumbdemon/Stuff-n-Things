@@ -16,7 +16,7 @@ import java.util.Objects;
 
 @SuppressWarnings({"unused", "SpellCheckingInspection"})
 public class Metadata implements Comparable<Metadata> {
-    private final List<Permission> minPerms = new ArrayList<>();
+    private final List<Permission> defaultPerms = new ArrayList<>();
     private final List<SubcommandGroupData> subcommandGroups = new ArrayList<>();
     private final List<SubcommandData> subcommands = new ArrayList<>();
     private final List<OptionData> options = new ArrayList<>();
@@ -120,16 +120,16 @@ public class Metadata implements Comparable<Metadata> {
         addOptions(List.of(options));
     }
 
-    public List<Permission> getMinPerms() {
-        return minPerms;
+    public List<Permission> getDefaultPerms() {
+        return defaultPerms;
     }
 
-    public void addMinPerms(List<Permission> minPerms) {
-        this.minPerms.addAll(minPerms);
+    public void addDefaultPerms(List<Permission> defaultPerms) {
+        this.defaultPerms.addAll(defaultPerms);
     }
 
-    public void addMinPerms(Permission... permissions) {
-        addMinPerms(List.of(permissions));
+    public void addDefaultPerms(Permission... permissions) {
+        addDefaultPerms(List.of(permissions));
     }
 
     public String getCommandName() {
@@ -186,7 +186,7 @@ public class Metadata implements Comparable<Metadata> {
             getMastermind() == metadata.getMastermind() &&
             getImplementationDate().equals(metadata.getImplementationDate()) &&
             getLastUpdated().equals(metadata.getLastUpdated()) &&
-            getMinPerms().equals(metadata.getMinPerms()) &&
+            getDefaultPerms().equals(metadata.getDefaultPerms()) &&
             getSubcommandGroups().equals(metadata.getSubcommandGroups()) &&
             getSubcommands().equals(metadata.getSubcommands()) &&
             getOptions().equals(metadata.getOptions());
@@ -200,7 +200,7 @@ public class Metadata implements Comparable<Metadata> {
             getMastermind(),
             getImplementationDate(),
             getLastUpdated(),
-            getMinPerms(),
+            getDefaultPerms(),
             getSubcommandGroups(),
             getSubcommands(),
             getOptions());
@@ -215,7 +215,7 @@ public class Metadata implements Comparable<Metadata> {
             ", mastermind=" + mastermind +
             ", implementationDate=" + implementationDate +
             ", lastUpdated=" + lastUpdated +
-            ", minPerms=" + minPerms +
+            ", minPerms=" + defaultPerms +
             ", subcommandGroups=" + subcommandGroups +
             ", subcommands=" + subcommands +
             ", options=" + options +

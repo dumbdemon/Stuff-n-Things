@@ -57,7 +57,7 @@ public class about implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("22-11-2022_15:53")
+            format.parse("28-11-2022_21:32")
         );
 
         metadata.addOptions(
@@ -120,18 +120,16 @@ public class about implements ISlashCommand {
         Optional<Metadata> ifMetadata = new CommandManager().getMetadata(command);
         Metadata metadata = ifMetadata.orElse(this.getMetadata());
 
-        if (!metadata.getMinPerms().isEmpty()) {
-            if (event.getMember() != null && !event.getMember().hasPermission(metadata.getMinPerms())) {
-                event.replyEmbeds(
-                    new EmbedBuilder()
-                        .setTitle("About Command")
-                        .setDescription("You don't have access to this command to see its details.")
-                        .setColor(Commons.getDefaultEmbedColor())
-                        .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
-                        .build()
-                ).queue();
-                return;
-            }
+        if (!metadata.getDefaultPerms().isEmpty() && event.getMember() != null && !event.getMember().hasPermission(metadata.getDefaultPerms())) {
+            event.replyEmbeds(
+                new EmbedBuilder()
+                    .setTitle("About Command")
+                    .setDescription("You don't have access to this command to see its details.")
+                    .setColor(Commons.getDefaultEmbedColor())
+                    .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
+                    .build()
+            ).queue();
+            return;
         }
 
         long implementedDate = metadata.getImplementedAsEpochSecond(),

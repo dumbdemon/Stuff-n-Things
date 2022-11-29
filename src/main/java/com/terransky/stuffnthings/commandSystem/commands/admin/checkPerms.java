@@ -67,10 +67,10 @@ public class checkPerms implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.ADMIN,
             format.parse("30-08-2022_16:14"),
-            format.parse("24-11-2022_13:40")
+            format.parse("28-11-2022_21:33")
         );
 
-        metadata.addMinPerms(Permission.MANAGE_ROLES);
+        metadata.addDefaultPerms(Permission.MANAGE_ROLES);
         metadata.addSubcommands(
             new SubcommandData("server", "Check if I have all of my perms needed for all of my commands for the server."),
             new SubcommandData("channel", "Check if I have all of my perms needed for all of my commands in a specific channel.")
