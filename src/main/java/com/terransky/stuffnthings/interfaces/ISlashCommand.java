@@ -26,10 +26,8 @@ public interface ISlashCommand extends ICommand {
     default CommandData getCommandData() throws ParseException {
         Metadata metadata = this.getMetadata();
         SlashCommandData commandData = Commands.slash(this.getName(), metadata.getShortDescription())
-            .setNSFW(metadata.isNsfw());
-
-        if (!metadata.getDefaultPerms().isEmpty())
-            commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(metadata.getDefaultPerms()));
+            .setNSFW(metadata.isNsfw())
+            .setDefaultPermissions(DefaultMemberPermissions.enabledFor(metadata.getDefaultPerms()));
 
         if (!metadata.getOptions().isEmpty())
             return commandData.addOptions(metadata.getOptions());
