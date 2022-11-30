@@ -32,7 +32,7 @@ public class solveQuadratic implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.MATHS,
             format.parse("19-11-2022_13:09"),
-            format.parse("21-11-2022_14:32")
+            format.parse("30-11-2022_13:43")
         );
 
         metadata.addOptions(
@@ -47,7 +47,7 @@ public class solveQuadratic implements ISlashCommand {
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         EmbedBuilder eb = new EmbedBuilder()
-            .setTitle(WordUtils.capitalize(getName().replace("-", "\s")))
+            .setTitle(WordUtils.capitalize(getName().replace("-", " ")))
             .setColor(Commons.getDefaultEmbedColor());
         DecimalFormat prettyNum = new DecimalFormat("#.##");
 

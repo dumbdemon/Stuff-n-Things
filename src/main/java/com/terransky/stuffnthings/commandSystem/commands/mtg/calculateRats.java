@@ -24,18 +24,18 @@ public class calculateRats implements ISlashCommand {
     private static final NavigableMap<Float, String> suffixes = new TreeMap<>();
 
     static {
-        suffixes.put(1e3f, "\sThousand");
-        suffixes.put(1e6f, "\sMillion");
-        suffixes.put(1e9f, "\sBillion");
-        suffixes.put(1e12f, "\sTrillion");
-        suffixes.put(1e15f, "\sQuadrillion");
-        suffixes.put(1e18f, "\sQuintillion");
-        suffixes.put(1e21f, "\sSextillion");
-        suffixes.put(1e24f, "\sSeptillion");
-        suffixes.put(1e27f, "\sOctillion");
-        suffixes.put(1e30f, "\sNonillion");
-        suffixes.put(1e33f, "\sDecillion");
-        suffixes.put(1e36f, "\sUndecillion");
+        suffixes.put(1e3f, " Thousand");
+        suffixes.put(1e6f, " Million");
+        suffixes.put(1e9f, " Billion");
+        suffixes.put(1e12f, " Trillion");
+        suffixes.put(1e15f, " Quadrillion");
+        suffixes.put(1e18f, " Quintillion");
+        suffixes.put(1e21f, " Sextillion");
+        suffixes.put(1e24f, " Septillion");
+        suffixes.put(1e27f, " Octillion");
+        suffixes.put(1e30f, " Nonillion");
+        suffixes.put(1e33f, " Decillion");
+        suffixes.put(1e36f, " Undecillion");
     }
 
     /**
@@ -65,6 +65,7 @@ public class calculateRats implements ISlashCommand {
         return "ner";
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Commons.getFastDateFormat();
@@ -75,7 +76,7 @@ public class calculateRats implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.MTG,
             format.parse("5-10-2022_11:48"),
-            format.parse("21-11-2022_14:32")
+            format.parse("30-11-2022_13:43")
         );
 
         metadata.addOptions(
@@ -110,7 +111,7 @@ public class calculateRats implements ISlashCommand {
             eb.setDescription("Yes.")
                 .addField("Final Count", "INFINITE", false);
         } else eb.setDescription("No.")
-            .addField("Final Count (Short-Hand)", ("%s rats".formatted(largeNumberFormat(finalCNT)).replace(".0\s", "\s")), false)
+            .addField("Final Count (Short-Hand)", ("%s rats".formatted(largeNumberFormat(finalCNT)).replace(".0 ", " ")), false)
             .addField("Final Count (Full Number)", "%s rats".formatted(largeNumber.format(finalCNT)), false);
 
         event.getHook().sendMessageEmbeds(eb.build()).queue();

@@ -35,7 +35,7 @@ public class robFailChance implements ISlashCommand {
             """.formatted(uBoatInvite), Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("21-11-2022_14:32")
+            format.parse("30-11-2022_13:41")
         );
 
         metadata.addOptions(
@@ -64,7 +64,7 @@ public class robFailChance implements ISlashCommand {
         if (blob.getGuild().getRoleByBot(356950275044671499L) != null || blob.getGuild().getRoleByBot(292953664492929025L) != null) {
             event.replyEmbeds(eb.build()).queue();
         } else {
-            eb.setDescription("**UnbelievaBoat is not on this sever!**\s" +
+            eb.setDescription("**UnbelievaBoat is not on this sever!** " +
                 "To get the **maximum** value out of this command, ask your admins to invite the bot [here](%s).".formatted(uBoatInvite));
             event.replyEmbeds(eb.build()).queue();
         }

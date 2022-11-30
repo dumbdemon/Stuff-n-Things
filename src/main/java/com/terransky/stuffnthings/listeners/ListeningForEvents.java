@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
@@ -58,18 +59,7 @@ public class ListeningForEvents extends ListenerAdapter {
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
         User theBot = event.getJDA().getSelfUser();
 
-        if (Commons.isTestingMode()) {
-            event.getGuild().updateCommands().addCommands(globalCommandData).queue();
-            log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
-        } else {
-            try {
-                if (new CommandManager().getCommandData(event.getGuild().getIdLong()).size() > 0) {
-                    event.getGuild().updateCommands().addCommands(new CommandManager().getCommandData(event.getGuild().getIdLong())).queue();
-                } else event.getGuild().updateCommands().queue();
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        upsertGuildCommands(event);
         addGuildToDB(event.getGuild());
 
         EmbedBuilder eb = new EmbedBuilder()
@@ -129,6 +119,11 @@ public class ListeningForEvents extends ListenerAdapter {
 
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
+        upsertGuildCommands(event);
+        addGuildToDB(event.getGuild());
+    }
+
+    private void upsertGuildCommands(@NotNull GenericGuildEvent event) {
         if (Commons.isTestingMode()) {
             event.getGuild().updateCommands().addCommands(globalCommandData).queue();
             log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
@@ -141,9 +136,6 @@ public class ListeningForEvents extends ListenerAdapter {
                 throw new RuntimeException(e);
             }
         }
-
-        //If bot is already in a guild add them.
-        addGuildToDB(event.getGuild());
     }
 
     private void addGuildToDB(@NotNull Guild guild) {

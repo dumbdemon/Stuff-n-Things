@@ -67,7 +67,7 @@ public class checkPerms implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.ADMIN,
             format.parse("30-08-2022_16:14"),
-            format.parse("28-11-2022_21:33")
+            format.parse("30-11-2022_13:38")
         );
 
         metadata.addDefaultPerms(Permission.MANAGE_ROLES);
@@ -114,7 +114,7 @@ public class checkPerms implements ISlashCommand {
             StringBuilder sb = new StringBuilder();
             eb.setDescription("I'm missing the following permissions for %s:\n```json\n[\n".formatted(ifToCheck ? toCheck.getAsMention() : "this server"));
             for (Permission permission : doNotHaveThis) {
-                String oneWord = permission.getName().replace("(s)", "s").replace("\s", "_");
+                String oneWord = permission.getName().replace("(s)", "s").replace(" ", "_");
                 sb.append("\s\s").append(oneWord).append(" : false,\n");
             }
             eb.appendDescription(sb.substring(0, sb.length() - 2) + "\n]```");

@@ -57,7 +57,7 @@ public class about implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("28-11-2022_21:32")
+            format.parse("30-11-2022_13:41")
         );
 
         metadata.addOptions(
@@ -102,7 +102,7 @@ public class about implements ISlashCommand {
                 .setTitle(event.getJDA().getSelfUser().getName(), Commons.getConfig().get("REPO_LINK"))
                 .setThumbnail(Commons.getConfig().get("BOT_LOGO"))
                 .addField("Servers", "%d servers".formatted(guildCount), true)
-                .addField("Users", "%s users".formatted(calculateRats.largeNumberFormat(userCount)).replace(".0\s", "\s"), true)
+                .addField("Users", "%s users".formatted(calculateRats.largeNumberFormat(userCount)).replace(".0 ", " "), true)
                 .addField("Your Shard", "[%s/%s]".formatted(event.getJDA().getShardInfo().getShardId(), event.getJDA().getShardInfo().getShardTotal()), true)
                 .addField("Start Time", "<t:%s:F>".formatted((int) (rb.getStartTime() / 1_000f)), false)
                 .addField("Uptime", uptime.toString(), false)
@@ -137,7 +137,7 @@ public class about implements ISlashCommand {
 
         event.getHook().sendMessageEmbeds(
             new EmbedBuilder()
-                .setTitle("About Command - %s".formatted(WordUtils.capitalize(metadata.getCommandName().replace("-", "\s"))))
+                .setTitle("About Command - %s".formatted(WordUtils.capitalize(metadata.getCommandName().replace("-", " "))))
                 .setDescription(metadata.getLongDescription())
                 .setColor(Commons.getDefaultEmbedColor())
                 .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())

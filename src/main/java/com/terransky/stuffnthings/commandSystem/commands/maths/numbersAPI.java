@@ -64,7 +64,7 @@ public class numbersAPI implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.MATHS,
             format.parse("10-11-2022_20:45"),
-            format.parse("23-11-2022_15:00")
+            format.parse("30-11-2022_13:43")
         );
 
         metadata.addSubcommands(
@@ -124,7 +124,7 @@ public class numbersAPI implements ISlashCommand {
 
         if (date == null) {
             date = "Year of";
-        } else if (date.split("\s").length > 1) {
+        } else if (date.split(" ").length > 1) {
             date += ",";
         }
 
@@ -194,7 +194,7 @@ public class numbersAPI implements ISlashCommand {
         double year = numbersAPIData.getYear();
 
         if (uMonth.isEmpty()) {
-            String[] tempStr = text.split("\s");
+            String[] tempStr = text.split(" ");
             monthString = tempStr[0];
             day = Integer.parseInt(tempStr[1]
                 .replace("st", "")

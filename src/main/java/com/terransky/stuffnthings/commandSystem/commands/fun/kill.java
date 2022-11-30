@@ -37,7 +37,7 @@ public class kill implements ISlashCommand {
         "drove over %s whilst they were talking a selfie!",
         "just killed %s.",
         ", %s, %s, and %s saw %s failed their Perception DC check of 5 and fell into a 10m wide, 1km deep zombie infested hole!",
-        "saw %s, %s, and %s die by their own grenade\u2026 how?",
+        "saw %s, %s, and %s die by their own grenade… how?",
         "got chopped in half by a helicopter blade!",
         "shot their gun trying to hit %s, but they hit %s instead!",
         "killed %s with %s's body. Literally swung them at them!",
@@ -46,10 +46,10 @@ public class kill implements ISlashCommand {
         "chokes on a candy cane! %s was watching and didn't do anything about it.",
         "tried a grenade for the first time in military training! They accidentally killed their C.O. %s, but at least they tried it!",
         "convinced %s to give them explosives to kill %s, it was a major success!",
-        "got killed by their own rocket\u2026 they weren't even pointing at anybody\u2026",
+        "got killed by their own rocket… they weren't even pointing at anybody…",
         "tried to assassinate Pope %s, but ended up getting %s's spouse dead instead! What a blunder!",
         ", %s, %s, and %s were last sean at %s's house. Don't know what happened to them though.",
-        "killed %s\u2026 **WITH THIS THUMB!**"
+        "killed %s… **WITH THIS THUMB!**"
     };
     private final String[] targetStrings = {
         "tried to kill %s but they couldn't because that's bad manners!"
@@ -69,7 +69,7 @@ public class kill implements ISlashCommand {
             """, Mastermind.USER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("23-11-2022_15:00")
+            format.parse("30-11-2022_13:40")
         );
 
         metadata.addSubcommands(
@@ -115,7 +115,7 @@ public class kill implements ISlashCommand {
 
                 eb.setColor(Commons.getDefaultEmbedColor())
                     .setTitle(killer)
-                    .setDescription("\u2026 " + message);
+                    .setDescription("… " + message);
 
                 event.replyEmbeds(eb.build()).queue();
             }
@@ -140,7 +140,7 @@ public class kill implements ISlashCommand {
                     target += " (hey wait a second...)";
                 }
                 eb.setTitle(killer)
-                    .setDescription("\u2026 %s".formatted(targetStrings[random.nextInt(targetStrings.length)]).formatted(target));
+                    .setDescription("… %s".formatted(targetStrings[random.nextInt(targetStrings.length)]).formatted(target));
                 event.replyEmbeds(eb.build()).queue();
             }
         }

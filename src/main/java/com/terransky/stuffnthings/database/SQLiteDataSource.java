@@ -15,8 +15,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 
-//TODO: Set up MongoDB
-public class SQLiteDataSource {
+public class SQLiteDataSource { //TODO: Set up MongoDB
     private static final Logger log = LoggerFactory.getLogger(SQLiteDataSource.class);
     private static final Dotenv bConfig = Dotenv.configure().load();
     private static final HikariConfig config = new HikariConfig();

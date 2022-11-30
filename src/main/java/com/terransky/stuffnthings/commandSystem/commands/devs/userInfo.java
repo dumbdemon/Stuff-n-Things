@@ -73,16 +73,16 @@ public class userInfo implements ISlashCommand {
         var metadata = new Metadata(this.getName(), "Get info on a specific user on the server! Defaults to you.", """
             Get info on a user or bot.
             The following info with be returned:
-            \u2022 User ID
-            \u2022 User Status
-            \u2022 Server Permissions
-            \u2022 Server Joined Date
-            \u2022 Discord Joined Date
-            \u2022 Boosting Status (if user)
+            • User ID
+            • User Status
+            • Server Permissions
+            • Server Joined Date
+            • Discord Joined Date
+            • Boosting Status (if user)
             """, Mastermind.DEFAULT,
             SlashModule.DEVS,
             format.parse("24-08-2022_11:10"),
-            format.parse("23-11-2022_14:38")
+            format.parse("30-11-2022_13:39")
         );
 
         metadata.addOptions(

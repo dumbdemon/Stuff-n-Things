@@ -31,7 +31,7 @@ public class lmgtfy implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("21-11-2022_14:32")
+            format.parse("30-11-2022_13:40")
         );
 
         metadata.addSubcommands(
@@ -52,7 +52,7 @@ public class lmgtfy implements ISlashCommand {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
-        String search = "https://lmgtfy.app/?q=" + event.getOption("search", "", OptionMapping::getAsString).replace("\s", "+") + ("images".equals(event.getSubcommandName()) ? "&t=i" : "");
+        String search = "https://lmgtfy.app/?q=" + event.getOption("search", "", OptionMapping::getAsString).replace(" ", "+") + ("images".equals(event.getSubcommandName()) ? "&t=i" : "");
         User victim = event.getOption("victim", OptionMapping::getAsUser);
 
         event.reply((victim != null ? victim.getAsMention() + ", this is for you: " : "") + search).queue();

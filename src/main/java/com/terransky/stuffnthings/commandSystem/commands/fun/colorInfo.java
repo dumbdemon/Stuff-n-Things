@@ -8,6 +8,7 @@ import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -72,19 +73,28 @@ public class colorInfo implements ISlashCommand {
         int r = rgb[0],
             g = rgb[1],
             b = rgb[2];
+        event.replyEmbeds(
+            runResponse(hsb, eb, c, m, y, k, r, g, b)
+        ).queue();
+    }
+
+    @NotNull
+    private static MessageEmbed runResponse(@NotNull DecimalFormat hsb, @NotNull EmbedBuilder eb,
+                                            int c, int m, int y, int k,
+                                            int r, int g, int b) {
         float[] hsv = Color.RGBtoHSB(r, g, b, null);
-        String h = hsb.format(hsv[0]).replace("%", "\u00B0"),
+        String h = hsb.format(hsv[0]).replace("%", "°"),
             s = hsb.format(hsv[1]),
             v = hsb.format(hsv[2]);
         String hexTriplet = "#%02X%02X%02X".formatted(r, g, b);
 
-        eb.addField("Hex Triplet", hexTriplet, true)
+        return eb.addField("Hex Triplet", hexTriplet, true)
             .addField("RGB", "rgb(**%d**, **%d**, **%d**)".formatted(r, g, b), true)
             .addField("CMYK", "**%d**, **%d**, **%d**, **%d**".formatted(c, m, y, k), true)
             .addField("HSB/HSV", "Hue **%s**\nSaturation **%s**\nBrightness **%s**".formatted(h, s, v), false)
             .addField("More Info", "[link](https://www.colorhexa.com/%s)".formatted(hexTriplet), false)
-            .setColor(new Color(r, g, b));
-        event.replyEmbeds(eb.build()).queue();
+            .setColor(new Color(r, g, b))
+            .build();
     }
 
     private static void runRGB(@NotNull SlashCommandInteractionEvent event, @NotNull DecimalFormat hsb, @NotNull EmbedBuilder eb) {
@@ -96,19 +106,9 @@ public class colorInfo implements ISlashCommand {
             m = cmyk[1],
             y = cmyk[2],
             k = cmyk[3];
-        float[] hsv = Color.RGBtoHSB(r, g, b, null);
-        String h = hsb.format(hsv[0]).replace("%", "\u00B0"),
-            s = hsb.format(hsv[1]),
-            v = hsb.format(hsv[2]);
-        String hexTriplet = "#%02X%02X%02X".formatted(r, g, b);
-
-        eb.addField("Hex Triplet", hexTriplet, true)
-            .addField("RGB", "rgb(**%d**, **%d**, **%d**)".formatted(r, g, b), true)
-            .addField("CMYK", "**%d**, **%d**, **%d**, **%d**".formatted(c, m, y, k), true)
-            .addField("HSB/HSV", "Hue **%s**\nSaturation **%s**\nBrightness **%s**".formatted(h, s, v), false)
-            .addField("More Info", "[link](https://www.colorhexa.com/%s)".formatted(hexTriplet), false)
-            .setColor(new Color(r, g, b));
-        event.replyEmbeds(eb.build()).queue();
+        event.replyEmbeds(
+            runResponse(hsb, eb, c, m, y, k, r, g, b)
+        ).queue();
     }
 
     @Override
@@ -119,7 +119,7 @@ public class colorInfo implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("20-9-2022_12:10"),
-            format.parse("23-11-2022_15:00")
+            format.parse("30-11-2022_12:35")
         );
 
         metadata.addSubcommands(
@@ -158,7 +158,7 @@ public class colorInfo implements ISlashCommand {
         DecimalFormat hsb = new DecimalFormat("##.##%");
         String subcommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
-            .setTitle(WordUtils.capitalize(this.getName().replace("-", "\s")))
+            .setTitle(WordUtils.capitalize(this.getName().replace("-", " ")))
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 
@@ -191,7 +191,7 @@ public class colorInfo implements ISlashCommand {
                 y = cmyk[2],
                 k = cmyk[3];
             float[] hsv = Color.RGBtoHSB(r, g, b, null);
-            String h = hsb.format(hsv[0]).replace("%", "\u00B0"),
+            String h = hsb.format(hsv[0]).replace("%", "°"),
                 s = hsb.format(hsv[1]),
                 v = hsb.format(hsv[2]);
 

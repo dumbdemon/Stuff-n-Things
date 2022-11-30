@@ -79,7 +79,7 @@ public class killSuggest implements IModal {
                 new EmbedBuilder()
                     .setColor(Commons.getDefaultEmbedColor())
                     .setTitle(Objects.requireNonNull(event.getMember()).getEffectiveName())
-                    .setDescription("\u2026 " + testKillString)
+                    .setDescription("… " + testKillString)
                     .setFooter("Suggestion by " + event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
                     .build()
             )

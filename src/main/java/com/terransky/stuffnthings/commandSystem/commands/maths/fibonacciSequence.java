@@ -38,11 +38,11 @@ public class fibonacciSequence implements ISlashCommand {
             *From Oxford Languages*
             > a series of numbers in which each number (Fibonacci number) is the sum of the two preceding numbers.
                         
-            This command returns the nth value in the *Fibonacci Sequence* or its whole sequence up to the nth value. Although the *Fibonacci Sequence* can go into infinity, this command has been limited to return up to the 186th value. Any higher and the command will return \u221E (infinity). This is due to the limitation of the Java data type Float. You can read more [here](https://www.w3schools.com/java/ref_keyword_float.asp).
+            This command returns the nth value in the *Fibonacci Sequence* or its whole sequence up to the nth value. Although the *Fibonacci Sequence* can go into infinity, this command has been limited to return up to the 186th value. Any higher and the command will return ∞ (infinity). This is due to the limitation of the Java data type Float. You can read more [here](https://www.w3schools.com/java/ref_keyword_float.asp).
             """, Mastermind.DEVELOPER,
             SlashModule.MATHS,
             format.parse("11-11-2022_20:50"),
-            format.parse("23-11-2022_15:00")
+            format.parse("30-11-2022_13:42")
         );
 
         metadata.addSubcommands(
@@ -90,7 +90,7 @@ public class fibonacciSequence implements ISlashCommand {
         if (subcommand.equals("at-nth")) {
             if (nthValue < 1e3) {
                 returnString = calculateRats.largeNumberFormat(getFibonacciAt(n)).replace(".0", "");
-            } else returnString = calculateRats.largeNumberFormat(getFibonacciAt(n)).replace(".0\s", "\s");
+            } else returnString = calculateRats.largeNumberFormat(getFibonacciAt(n)).replace(".0 ", " ");
 
             messageEditData = new MessageEditBuilder()
                 .setEmbeds(
@@ -103,10 +103,10 @@ public class fibonacciSequence implements ISlashCommand {
             StringBuilder fibonacciString = new StringBuilder();
 
             for (float v : fibonacciCache) {
-                fibonacciString.append(calculateRats.largeNumberFormat(v)).append(",\s");
+                fibonacciString.append(calculateRats.largeNumberFormat(v)).append(", ");
             }
             returnString = fibonacciString.substring(0, fibonacciString.length() - 2)
-                .replaceAll(".0\s", "\s")
+                .replaceAll(".0 ", " ")
                 .replaceAll(".0,", ",");
 
             messageEditData = new MessageEditBuilder()

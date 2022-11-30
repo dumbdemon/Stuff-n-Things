@@ -55,52 +55,21 @@ public class dictionary implements ISlashCommand {
         return "dictionary";
     }
 
-    private static void run200(@NotNull SlashCommandInteractionEvent event, EmbedBuilder eb1, EmbedBuilder eb2, Map.Entry<String, String> language,
+    private static void run200(@NotNull SlashCommandInteractionEvent event, EmbedBuilder eb, EmbedBuilder ebOverflow, Map.Entry<String, String> language,
                                String toLookUp, @NotNull HttpURLConnection oxfordConnection, @NotNull ObjectMapper om) throws IOException {
         OxfordData oxfordData = om.readValue(oxfordConnection.getInputStream(), OxfordData.class);
-        int i = 0;
+        int wordCount = 0;
         String returnedWord = "";
         List<MessageEmbed.Field> fieldOverflow = new ArrayList<>();
 
-        for (Result result : oxfordData.getResults()) {
+        for (Result result : oxfordData.getResults().stream().filter(it -> it.getWord().equalsIgnoreCase(toLookUp)).toList()) {
             returnedWord = result.getWord();
-            if (returnedWord.equalsIgnoreCase(toLookUp)) {
-                for (LexicalEntry lexicalEntry : result.getLexicalEntries()) {
-                    for (Entry entry : lexicalEntry.getEntries()) {
-                        for (Sense sens : entry.getSenses()) {
-                            String fieldTitle;
-                            for (String definition : sens.getDefinitions()) {
-                                fieldTitle = "%s \u2014 *%s*.".formatted(WordUtils.capitalize(returnedWord), lexicalEntry.getLexicalCategory().getText());
-                                if (i < 25) {
-                                    eb1.addField(fieldTitle, "```%s```".formatted(definition), false);
-                                } else {
-                                    fieldOverflow.add(new MessageEmbed.Field(fieldTitle, "```%s```".formatted(definition), false));
-                                }
-                                i++;
-                            }
-                            if (!sens.getSubsenses().isEmpty()) {
-                                for (Subsense subsets : sens.getSubsenses()) {
-                                    for (String subsetsDefinition : subsets.getDefinitions()) {
-                                        fieldTitle = "\u02EA %s \u2014 *%s*."
-                                            .formatted(WordUtils.capitalize(returnedWord), lexicalEntry.getLexicalCategory().getText());
-                                        if (i < 25) {
-                                            eb1.addField(fieldTitle, "```%s```".formatted(subsetsDefinition), false);
-                                        } else {
-                                            fieldOverflow.add(new MessageEmbed.Field(fieldTitle, "```%s```".formatted(subsetsDefinition), false));
-                                        }
-                                        i++;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            wordCount = getWordCount(eb, wordCount, returnedWord, fieldOverflow, result);
         }
 
-        if (i == 0) {
+        if (wordCount == 0) {
             event.getHook().sendMessageEmbeds(
-                eb1.setTitle("Definition - %s".formatted(returnedWord.toUpperCase(Locale.forLanguageTag(language.getValue()))))
+                eb.setTitle("Definition - %s".formatted(returnedWord.toUpperCase(Locale.forLanguageTag(language.getValue()))))
                     .setDescription("%s is in the dictionary; however, there appears to be no definitions. Try using a different variation of the word."
                         .formatted(WordUtils.capitalize(returnedWord))
                     ).build()
@@ -108,13 +77,13 @@ public class dictionary implements ISlashCommand {
             return;
         }
 
-        boolean moreThanOne = i > 1;
+        boolean moreThanOne = wordCount > 1;
 
-        eb1.setTitle("Definition - %s".formatted(returnedWord.toUpperCase(Locale.forLanguageTag(language.getValue()))))
+        eb.setTitle("Definition - %s".formatted(returnedWord.toUpperCase(Locale.forLanguageTag(language.getValue()))))
             .setDescription("There %s %d *%s* definition%s for *%s*.%s"
                 .formatted(
                     moreThanOne ? "are" : "is",
-                    i,
+                    wordCount,
                     language.getKey(),
                     moreThanOne ? "s" : "",
                     returnedWord,
@@ -123,12 +92,46 @@ public class dictionary implements ISlashCommand {
             );
 
         if (fieldOverflow.size() > 0) {
-            eb2.setTitle("Definition - %s cont.".formatted(returnedWord.toUpperCase(Locale.forLanguageTag(language.getValue()))));
+            ebOverflow.setTitle("Definition - %s cont.".formatted(returnedWord.toUpperCase(Locale.forLanguageTag(language.getValue()))));
             for (MessageEmbed.Field field : fieldOverflow) {
-                eb2.addField(field);
+                ebOverflow.addField(field);
             }
-            event.getHook().sendMessageEmbeds(eb1.build(), eb2.build()).queue();
-        } else event.getHook().sendMessageEmbeds(eb1.build()).queue();
+            event.getHook().sendMessageEmbeds(eb.build(), ebOverflow.build()).queue();
+        } else event.getHook().sendMessageEmbeds(eb.build()).queue();
+    }
+
+    private static int getWordCount(EmbedBuilder eb, int wordCount, String returnedWord, List<MessageEmbed.Field> fieldOverflow, @NotNull Result result) {
+        for (LexicalEntry lexicalEntry : result.getLexicalEntries()) {
+            for (Entry entry : lexicalEntry.getEntries()) {
+                for (Sense sens : entry.getSenses()) {
+                    String fieldTitle;
+                    for (String definition : sens.getDefinitions()) {
+                        fieldTitle = "%s — *%s*.".formatted(WordUtils.capitalize(returnedWord), lexicalEntry.getLexicalCategory().getText());
+                        if (wordCount < 25) {
+                            eb.addField(fieldTitle, "```%s```".formatted(definition), false);
+                        } else {
+                            fieldOverflow.add(new MessageEmbed.Field(fieldTitle, "```%s```".formatted(definition), false));
+                        }
+                        wordCount++;
+                    }
+                    if (!sens.getSubsenses().isEmpty()) {
+                        for (Subsense subsets : sens.getSubsenses()) {
+                            for (String subsetsDefinition : subsets.getDefinitions()) {
+                                fieldTitle = "˪ %s — *%s*."
+                                    .formatted(WordUtils.capitalize(returnedWord), lexicalEntry.getLexicalCategory().getText());
+                                if (wordCount < 25) {
+                                    eb.addField(fieldTitle, "```%s```".formatted(subsetsDefinition), false);
+                                } else {
+                                    fieldOverflow.add(new MessageEmbed.Field(fieldTitle, "```%s```".formatted(subsetsDefinition), false));
+                                }
+                                wordCount++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return wordCount;
     }
 
     @Override
@@ -142,7 +145,7 @@ public class dictionary implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("27-10-2022_12:46"),
-            format.parse("22-11-2022_16:08")
+            format.parse("30-11-2022_13:37")
         );
 
         metadata.addOptions(
@@ -157,7 +160,7 @@ public class dictionary implements ISlashCommand {
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         event.deferReply().queue();
-        String[] userWords = event.getOption("word", "", OptionMapping::getAsString).split("\s");
+        String[] userWords = event.getOption("word", "", OptionMapping::getAsString).split(" ");
         EmbedBuilder eb1 = new EmbedBuilder()
             .setTitle("Dictionary")
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
