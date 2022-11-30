@@ -31,8 +31,9 @@ public class EventBlob {
         return guild;
     }
 
-    public void setGuild(Guild guild) {
+    public EventBlob setGuild(Guild guild) {
         this.guild = guild;
+        return this;
     }
 
     public String getGuildName() {
@@ -51,8 +52,9 @@ public class EventBlob {
         return member;
     }
 
-    public void setMember(Member member) {
+    public EventBlob setMember(Member member) {
         this.member = member;
+        return this;
     }
 
     public String getMemberEffectiveAvatarUrl() {
