@@ -32,14 +32,29 @@ import java.util.Arrays;
 import java.util.List;
 
 public class channelUnLock implements ISlashCommand {
+
+    /**
+     * Gets a {@link PermissionOverride} from a {@link List}.
+     *
+     * @param iPermissionHolder A {@link Role} or {@link Member}.
+     * @param overrides         A {@link List} of {@link PermissionOverride}s.
+     * @return A {@link PermissionOverride} or null.
+     */
     @Nullable
     private static <T extends IPermissionHolder> PermissionOverride getPermissionOverride(T iPermissionHolder,
                                                                                           @NotNull List<PermissionOverride> overrides) {
-        for (PermissionOverride override : overrides) {
-            if (iPermissionHolder instanceof Role && iPermissionHolder.equals(override.getRole()))
-                return override;
-            else if (iPermissionHolder.equals(override.getMember()))
-                return override;
+        if (iPermissionHolder instanceof Role) {
+            for (PermissionOverride override : overrides.stream().filter(PermissionOverride::isRoleOverride).toList()) {
+                if (iPermissionHolder.equals(override.getRole())) {
+                    return override;
+                }
+            }
+        } else {
+            for (PermissionOverride override : overrides.stream().filter(PermissionOverride::isMemberOverride).toList()) {
+                if (iPermissionHolder.equals(override.getMember())) {
+                    return override;
+                }
+            }
         }
         return null;
     }
@@ -49,13 +64,108 @@ public class channelUnLock implements ISlashCommand {
         return "channel-lock";
     }
 
+    /**
+     * Reset all provided permissions to the inherent state.
+     * <p>
+     * It is recommended that you check if the event has been acknowledged after this function.
+     *
+     * @param event             The {@link SlashCommandInteractionEvent} the command was called on.
+     * @param response          An {@link EmbedBuilder} for response if {@code permOverride is null}.
+     * @param permOverride      A {@link Role} or {@link Member}'s {@link PermissionOverride}.
+     * @param iPermissionHolder The {@link Role} or {@link Member}
+     * @param channel           The target channel to modify permissions.
+     * @param permissions       {@link Permission}s to reset.
+     */
+    private static <T extends IPermissionHolder> void resetChannelPerms(SlashCommandInteractionEvent event, EmbedBuilder response,
+                                                                        PermissionOverride permOverride, T iPermissionHolder,
+                                                                        GuildChannel channel, Permission... permissions) {
+        if (permOverride == null) {
+            String mention = iPermissionHolder instanceof Role ? ((Role) iPermissionHolder).getAsMention() :
+                ((Member) iPermissionHolder).getAsMention();
+            event.replyEmbeds(
+                response
+                    .setDescription("%s is not in the permissions list for %s".formatted(mention, channel.getAsMention()))
+                    .build()
+            ).queue();
+            return;
+        }
+
+        PermissionOverrideAction permAction = permOverride.getManager();
+        permAction.clear(permissions).queue();
+    }
+
+    /**
+     * Grant permissions on a channel to a role or member.
+     * <p>
+     * It is recommended that you check if the event has been acknowledged after this function.
+     *
+     * @param event             The {@link SlashCommandInteractionEvent} the command was called on.
+     * @param response          An {@link EmbedBuilder} for response if the channel permission for {@code iPermissionHolder} has already been set.
+     * @param permOverride      A {@link Role} or {@link Member}'s {@link PermissionOverride}.
+     * @param iPermissionHolder The {@link Role} or {@link Member}
+     * @param channel           The target channel to modify permissions.
+     * @param permissions       {@link Permission}s to grant.
+     */
+    private static <T extends IPermissionHolder> void grantChannelPerms(SlashCommandInteractionEvent event, EmbedBuilder response,
+                                                                        PermissionOverride permOverride, @NotNull T iPermissionHolder,
+                                                                        GuildChannel channel, Permission... permissions) {
+        if (iPermissionHolder.hasPermission(channel, permissions)) {
+            String mention = iPermissionHolder instanceof Role ? ((Role) iPermissionHolder).getAsMention() :
+                ((Member) iPermissionHolder).getAsMention();
+            event.replyEmbeds(
+                response
+                    .setDescription("%s is already set to be viewable by %s.".formatted(channel.getAsMention(), mention))
+                    .build()
+            ).queue();
+            return;
+        }
+        if (permOverride == null) {
+            permOverride = channel.getPermissionContainer().upsertPermissionOverride(iPermissionHolder).complete();
+        }
+
+        PermissionOverrideAction permAction = permOverride.getManager();
+        permAction.grant(permissions).queue();
+    }
+
+    /**
+     * Deny permissions on a channel to a role or member.
+     * <p>
+     * It is recommended that you check if the event has been acknowledged after this function.
+     *
+     * @param event             The {@link SlashCommandInteractionEvent} the command was called on.
+     * @param response          An {@link EmbedBuilder} for response if the channel permission for {@code iPermissionHolder} has already been set.
+     * @param permOverride      A {@link Role} or {@link Member}'s {@link PermissionOverride}.
+     * @param iPermissionHolder The {@link Role} or {@link Member}
+     * @param channel           The target channel to modify permissions.
+     * @param permissions       {@link Permission}s to deny.
+     */
+    private static <T extends IPermissionHolder> void denyChannelPerms(SlashCommandInteractionEvent event, EmbedBuilder response,
+                                                                       PermissionOverride permOverride, @NotNull T iPermissionHolder,
+                                                                       GuildChannel channel, Permission... permissions) {
+        if (!iPermissionHolder.hasPermission(channel, permissions)) {
+            String mention = iPermissionHolder instanceof Role ? (((Role) iPermissionHolder)).getAsMention() :
+                ((Member) iPermissionHolder).getAsMention();
+            event.replyEmbeds(
+                response
+                    .setDescription("%s is already set to not be viewed by %s.".formatted(channel.getAsMention(), mention))
+                    .build()
+            ).queue();
+            return;
+        }
+        if (permOverride == null) {
+            permOverride = channel.getPermissionContainer().upsertPermissionOverride(iPermissionHolder).complete();
+        }
+        PermissionOverrideAction permAction = permOverride.getManager();
+        permAction.deny(permissions).queue();
+    }
+
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Commons.getFastDateFormat();
         String description = "Lock or unlock a channel for everyone or from a specific role to see.";
         var metadata = new Metadata(this.getName(), description, description, Mastermind.DEVELOPER, SlashModule.ADMIN,
             format.parse("23-11-2022_18:34"),
-            format.parse("28-11-2022_21:33")
+            format.parse("30-11-2022_11:11")
         );
 
         metadata.addDefaultPerms(Permission.MANAGE_CHANNEL);
@@ -97,11 +207,11 @@ public class channelUnLock implements ISlashCommand {
 
             switch (subcommand) {
                 case "lock" ->
-                    lockChannel(event, response, permOverride, targetRole, targetChannel, Permission.VIEW_CHANNEL);
+                    denyChannelPerms(event, response, permOverride, targetRole, targetChannel, Permission.VIEW_CHANNEL);
                 case "unlock" ->
-                    unlockChannel(event, response, permOverride, targetRole, targetChannel, Permission.VIEW_CHANNEL);
+                    grantChannelPerms(event, response, permOverride, targetRole, targetChannel, Permission.VIEW_CHANNEL);
                 case "reset" ->
-                    resetChannelForRole(event, response, permOverride, targetRole, targetChannel, Permission.VIEW_CHANNEL);
+                    resetChannelPerms(event, response, permOverride, targetRole, targetChannel, Permission.VIEW_CHANNEL);
             }
         } catch (Exception e) {
             LoggerFactory.getLogger(channelUnLock.class).debug("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
@@ -123,64 +233,5 @@ public class channelUnLock implements ISlashCommand {
                         targetChannel.getAsMention()))
                     .build()
             ).queue();
-    }
-
-    private <T extends IPermissionHolder> void resetChannelForRole(SlashCommandInteractionEvent event, EmbedBuilder response,
-                                                                   PermissionOverride permOverride, T iPermissionHolder,
-                                                                   GuildChannel targetChannel, Permission... permissions) {
-        if (permOverride == null) {
-            String mention = iPermissionHolder instanceof Role ? ((Role) iPermissionHolder).getAsMention() :
-                ((Member) iPermissionHolder).getAsMention();
-            event.replyEmbeds(
-                response
-                    .setDescription("%s is not in the permissions list for %s".formatted(mention, targetChannel.getAsMention()))
-                    .build()
-            ).queue();
-            return;
-        }
-
-        PermissionOverrideAction permAction = permOverride.getManager();
-        permAction.clear(permissions).queue();
-    }
-
-    private <T extends IPermissionHolder> void unlockChannel(SlashCommandInteractionEvent event, EmbedBuilder response,
-                                                             PermissionOverride permOverride, @NotNull T iPermissionHolder,
-                                                             GuildChannel channel, Permission... permissions) {
-        if (iPermissionHolder.hasPermission(channel, permissions)) {
-            String mention = iPermissionHolder instanceof Role ? ((Role) iPermissionHolder).getAsMention() :
-                ((Member) iPermissionHolder).getAsMention();
-            event.replyEmbeds(
-                response
-                    .setDescription("%s is already set to be viewable by %s.".formatted(channel.getAsMention(), mention))
-                    .build()
-            ).queue();
-            return;
-        }
-        if (permOverride == null) {
-            permOverride = channel.getPermissionContainer().upsertPermissionOverride(iPermissionHolder).complete();
-        }
-
-        PermissionOverrideAction permAction = permOverride.getManager();
-        permAction.grant(permissions).queue();
-    }
-
-    private <T extends IPermissionHolder> void lockChannel(SlashCommandInteractionEvent event, EmbedBuilder response,
-                                                           PermissionOverride permOverride, @NotNull T iPermissionHolder,
-                                                           GuildChannel channel, Permission... permissions) {
-        if (!iPermissionHolder.hasPermission(channel, permissions)) {
-            String mention = iPermissionHolder instanceof Role ? (((Role) iPermissionHolder)).getAsMention() :
-                ((Member) iPermissionHolder).getAsMention();
-            event.replyEmbeds(
-                response
-                    .setDescription("%s is already set to not be viewed by %s.".formatted(channel.getAsMention(), mention))
-                    .build()
-            ).queue();
-            return;
-        }
-        if (permOverride == null) {
-            permOverride = channel.getPermissionContainer().upsertPermissionOverride(iPermissionHolder).complete();
-        }
-        PermissionOverrideAction permAction = permOverride.getManager();
-        permAction.deny(permissions).queue();
     }
 }
