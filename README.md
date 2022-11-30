@@ -1,7 +1,11 @@
+[![CodeFactor](https://www.codefactor.io/repository/github/dumbdemon/stuff-n-things/badge)](https://www.codefactor.io/repository/github/dumbdemon/stuff-n-things)
+
 # Stuff'n'Things Source Code
+
 The source code for my Discord™ bot Stuff'n'Things. Mostly an entertainment bot.
 
 ## Commands
+
 Command info moved to [GitHub Wiki](https://github.com/dumbdemon/Stuff-n-Things/wiki).
 
 ## Things to Note
