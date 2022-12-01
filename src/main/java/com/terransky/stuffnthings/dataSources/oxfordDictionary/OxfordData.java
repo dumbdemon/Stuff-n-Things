@@ -21,7 +21,7 @@ public class OxfordData {
     @JsonProperty("id")
     private String id;
     @JsonProperty("metadata")
-    private Metadata metadata;
+    private OxfordMetadata metadata;
     @JsonProperty("results")
     private List<Result> results = new ArrayList<>();
     @JsonProperty("word")
@@ -38,12 +38,12 @@ public class OxfordData {
     }
 
     @JsonProperty("metadata")
-    public Metadata getMetadata() {
+    public OxfordMetadata getMetadata() {
         return metadata;
     }
 
     @JsonProperty("metadata")
-    public void setMetadata(Metadata metadata) {
+    public void setMetadata(OxfordMetadata metadata) {
         this.metadata = metadata;
     }
 

@@ -13,7 +13,7 @@ import javax.annotation.Generated;
     "schema"
 })
 @Generated("jsonschema2pojo")
-public class Metadata {
+public class OxfordMetadata {
 
     @JsonProperty("operation")
     private String operation;
