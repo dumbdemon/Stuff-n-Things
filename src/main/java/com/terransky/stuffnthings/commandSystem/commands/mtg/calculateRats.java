@@ -1,11 +1,11 @@
 package com.terransky.stuffnthings.commandSystem.commands.mtg;
 
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -68,7 +68,7 @@ public class calculateRats implements ISlashCommand {
     @SuppressWarnings("SpellCheckingInspection")
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Commons.getFastDateFormat();
+        FastDateFormat format = Metadata.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "How many rats you have?", """
             *M:tG Command*
             Returns an amount of 1/1 black Rat creature tokens after X triggers created by the interaction between [Marrow-Gnawer](%s) equipped with [Thornbite Staff](%s).
@@ -76,7 +76,7 @@ public class calculateRats implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.MTG,
             format.parse("5-10-2022_11:48"),
-            format.parse("30-11-2022_13:43")
+            format.parse("1-12-2022_12:37")
         );
 
         metadata.addOptions(
@@ -97,7 +97,7 @@ public class calculateRats implements ISlashCommand {
         float finalCNT = startCNT;
         DecimalFormat largeNumber = new DecimalFormat("##,###");
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.getDefaultEmbedColor())
+            .setColor(EmbedColors.getDefault())
             .setTitle("Is there enough rats?")
             .addField("Starting total", "%s rats".formatted(largeNumber.format(startCNT)), true)
             .addField("Iterations", "%s triggers".formatted(largeNumber.format(iterations)), true)

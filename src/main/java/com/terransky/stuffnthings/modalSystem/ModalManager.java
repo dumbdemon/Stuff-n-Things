@@ -1,9 +1,12 @@
 package com.terransky.stuffnthings.modalSystem;
 
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.interfaces.IModal;
 import com.terransky.stuffnthings.modalSystem.modals.killSuggest;
+import com.terransky.stuffnthings.utilities.CannedBotResponses;
+import com.terransky.stuffnthings.utilities.Config;
+import com.terransky.stuffnthings.utilities.EmbedColors;
+import com.terransky.stuffnthings.utilities.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
@@ -63,7 +66,7 @@ public class ModalManager extends ListenerAdapter {
     @Override
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {
         if (event.getGuild() == null) {
-            Commons.botIsGuildOnly(event);
+            CannedBotResponses.botIsGuildOnly(event);
             return;
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
@@ -71,8 +74,8 @@ public class ModalManager extends ListenerAdapter {
         Optional<IModal> ifModal = getModal(event.getModalId());
         MessageEmbed modalFailed = new EmbedBuilder()
             .setTitle("Oops!")
-            .setDescription("An error occurred while executing the prompt!\nPlease report this event [here](%s).".formatted(Commons.getConfig().get("BOT_ERROR_REPORT")))
-            .setColor(Commons.getDefaultEmbedColor())
+            .setDescription("An error occurred while executing the prompt!\nPlease report this event [here](%s).".formatted(Config.getConfig().get("BOT_ERROR_REPORT")))
+            .setColor(EmbedColors.getError())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();
 
@@ -84,7 +87,7 @@ public class ModalManager extends ListenerAdapter {
             } catch (Exception e) {
                 log.debug(event.getModalId() + " interaction failed on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
                 log.error(e.getClass().getName() + ": " + e.getMessage());
-                Commons.loggerPrinterOfError(Arrays.asList(e.getStackTrace()), ModalManager.class);
+                LogList.error(Arrays.asList(e.getStackTrace()), ModalManager.class);
                 if (event.isAcknowledged()) {
                     event.getHook().sendMessageEmbeds(modalFailed).queue();
                 } else event.replyEmbeds(modalFailed).setEphemeral(true).queue();

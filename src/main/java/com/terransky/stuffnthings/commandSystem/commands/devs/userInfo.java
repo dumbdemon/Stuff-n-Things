@@ -1,11 +1,12 @@
 package com.terransky.stuffnthings.commandSystem.commands.devs;
 
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.utilities.Config;
+import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -61,7 +62,7 @@ public class userInfo implements ISlashCommand {
             }
         } else permText.append("Member");
 
-        if (member.getId().equals(Commons.getConfig().get("OWNER_ID"))) {
+        if (member.getId().equals(Config.getConfig().get("OWNER_ID"))) {
             permText.append(", Developer");
         }
         return permText.toString();
@@ -69,7 +70,7 @@ public class userInfo implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Commons.getFastDateFormat();
+        FastDateFormat format = Metadata.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Get info on a specific user on the server! Defaults to you.", """
             Get info on a user or bot.
             The following info with be returned:
@@ -82,7 +83,7 @@ public class userInfo implements ISlashCommand {
             """, Mastermind.DEFAULT,
             SlashModule.DEVS,
             format.parse("24-08-2022_11:10"),
-            format.parse("30-11-2022_13:39")
+            format.parse("1-12-2022_12:37")
         );
 
         metadata.addOptions(
@@ -104,7 +105,7 @@ public class userInfo implements ISlashCommand {
         String userPerms = setUserPerms(member);
 
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.getDefaultEmbedColor())
+            .setColor(EmbedColors.getDefault())
             .setAuthor(WordUtils.capitalize(member.getEffectiveName()) + "'s Info")
             .setThumbnail(member.getEffectiveAvatarUrl())
             .addField("User ID", memberId, false)

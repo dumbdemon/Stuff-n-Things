@@ -1,10 +1,13 @@
 package com.terransky.stuffnthings.buttonSystem;
 
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.buttonSystem.buttons.expiredButton;
 import com.terransky.stuffnthings.buttonSystem.buttons.getMoreDadJokes;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.interfaces.IButton;
+import com.terransky.stuffnthings.utilities.CannedBotResponses;
+import com.terransky.stuffnthings.utilities.Config;
+import com.terransky.stuffnthings.utilities.EmbedColors;
+import com.terransky.stuffnthings.utilities.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -69,7 +72,7 @@ public class ButtonManager extends ListenerAdapter {
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         if (event.getButton().getId() == null) return;
         else if (event.getGuild() == null) {
-            Commons.botIsGuildOnly(event);
+            CannedBotResponses.botIsGuildOnly(event);
             return;
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
@@ -77,8 +80,8 @@ public class ButtonManager extends ListenerAdapter {
         IButton butt = getButton(event.getButton().getId());
         MessageEmbed buttonFailed = new EmbedBuilder()
             .setTitle("Oops!")
-            .setDescription("An error occurred while executing the button!\nPlease report this event [here](%s).".formatted(Commons.getConfig().get("BOT_ERROR_REPORT")))
-            .setColor(Commons.getDefaultEmbedColor())
+            .setDescription("An error occurred while executing the button!\nPlease report this event [here](%s).".formatted(Config.getConfig().get("BOT_ERROR_REPORT")))
+            .setColor(EmbedColors.getDefault())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();
 
@@ -89,7 +92,7 @@ public class ButtonManager extends ListenerAdapter {
             } catch (Exception e) {
                 log.debug(event.getButton().getId() + " interaction failed on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
                 log.error(e.getClass().getName() + ": " + e.getMessage());
-                Commons.loggerPrinterOfError(Arrays.asList(e.getStackTrace()), ButtonManager.class);
+                LogList.error(Arrays.asList(e.getStackTrace()), ButtonManager.class);
                 event.replyEmbeds(buttonFailed).setEphemeral(true).queue();
             }
         }

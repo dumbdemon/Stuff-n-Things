@@ -4,7 +4,7 @@ import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
-public interface ISelectMenu extends IBaseBotElement {
+public interface ISelectMenu extends IInteractionElement {
 
     /**
      * The main handler for select menus.

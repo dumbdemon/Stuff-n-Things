@@ -1,6 +1,5 @@
 package com.terransky.stuffnthings.commandSystem.commands.maths;
 
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.commands.mtg.calculateRats;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
@@ -8,6 +7,7 @@ import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -33,7 +33,7 @@ public class fibonacciSequence implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Commons.getFastDateFormat();
+        FastDateFormat format = Metadata.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Get the nth number in the Fibonacci sequence.", """
             *From Oxford Languages*
             > a series of numbers in which each number (Fibonacci number) is the sum of the two preceding numbers.
@@ -42,7 +42,7 @@ public class fibonacciSequence implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.MATHS,
             format.parse("11-11-2022_20:50"),
-            format.parse("30-11-2022_13:42")
+            format.parse("1-12-2022_12:37")
         );
 
         metadata.addSubcommands(
@@ -69,7 +69,7 @@ public class fibonacciSequence implements ISlashCommand {
         int n = event.getOption("nth", 3, OptionMapping::getAsInt);
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle(WordUtils.capitalize(this.getName()))
-            .setColor(Commons.getDefaultEmbedColor())
+            .setColor(EmbedColors.getDefault())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
         MessageEditData messageEditData;
 
@@ -79,11 +79,7 @@ public class fibonacciSequence implements ISlashCommand {
         String numSuffix = n % 10 == 2 ? "nd" : (n % 10 == 3 ? "rd" : "th"), returnString;
 
         event.replyEmbeds(
-            new EmbedBuilder()
-                .setTitle(WordUtils.capitalize(this.getName()))
-                .setDescription("Please wait. This may take a while...")
-                .setColor(Commons.getDefaultEmbedColor())
-                .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
+            eb.setDescription("Please wait. This may take a while...")
                 .build()
         ).queue();
 

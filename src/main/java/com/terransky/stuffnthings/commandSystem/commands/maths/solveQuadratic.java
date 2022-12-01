@@ -1,11 +1,11 @@
 package com.terransky.stuffnthings.commandSystem.commands.maths;
 
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -26,13 +26,13 @@ public class solveQuadratic implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Commons.getFastDateFormat();
+        FastDateFormat format = Metadata.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Solve a Quadratic Equation.", """
             Given a, b, and c, solve for when the parabola intersects the x-axis.
             """, Mastermind.DEVELOPER,
             SlashModule.MATHS,
             format.parse("19-11-2022_13:09"),
-            format.parse("30-11-2022_13:43")
+            format.parse("1-12-2022_12:37")
         );
 
         metadata.addOptions(
@@ -48,7 +48,7 @@ public class solveQuadratic implements ISlashCommand {
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle(WordUtils.capitalize(getName().replace("-", " ")))
-            .setColor(Commons.getDefaultEmbedColor());
+            .setColor(EmbedColors.getDefault());
         DecimalFormat prettyNum = new DecimalFormat("#.##");
 
         double a = event.getOption("value-a", 1d, OptionMapping::getAsDouble);

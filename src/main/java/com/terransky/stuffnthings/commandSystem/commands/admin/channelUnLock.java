@@ -1,12 +1,14 @@
 package com.terransky.stuffnthings.commandSystem.commands.admin;
 
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.utilities.Config;
+import com.terransky.stuffnthings.utilities.EmbedColors;
+import com.terransky.stuffnthings.utilities.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.IPermissionHolder;
@@ -85,6 +87,7 @@ public class channelUnLock implements ISlashCommand {
             event.replyEmbeds(
                 response
                     .setDescription("%s is not in the permissions list for %s".formatted(mention, channel.getAsMention()))
+                    .setColor(EmbedColors.getError())
                     .build()
             ).queue();
             return;
@@ -115,6 +118,7 @@ public class channelUnLock implements ISlashCommand {
             event.replyEmbeds(
                 response
                     .setDescription("%s is already set to be viewable by %s.".formatted(channel.getAsMention(), mention))
+                    .setColor(EmbedColors.getError())
                     .build()
             ).queue();
             return;
@@ -148,6 +152,7 @@ public class channelUnLock implements ISlashCommand {
             event.replyEmbeds(
                 response
                     .setDescription("%s is already set to not be viewed by %s.".formatted(channel.getAsMention(), mention))
+                    .setColor(EmbedColors.getError())
                     .build()
             ).queue();
             return;
@@ -161,11 +166,11 @@ public class channelUnLock implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Commons.getFastDateFormat();
+        FastDateFormat format = Metadata.getFastDateFormat();
         String description = "Lock or unlock a channel for everyone or from a specific role to see.";
         var metadata = new Metadata(this.getName(), description, description, Mastermind.DEVELOPER, SlashModule.ADMIN,
             format.parse("23-11-2022_18:34"),
-            format.parse("30-11-2022_11:11")
+            format.parse("1-12-2022_12:37")
         );
 
         metadata.addDefaultPerms(Permission.MANAGE_CHANNEL);
@@ -198,7 +203,7 @@ public class channelUnLock implements ISlashCommand {
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
         EmbedBuilder response = new EmbedBuilder()
             .setTitle("Channel Control - " + WordUtils.capitalize(subcommand))
-            .setColor(Commons.getDefaultEmbedColor())
+            .setColor(EmbedColors.getDefault())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
 
         try {
@@ -215,12 +220,13 @@ public class channelUnLock implements ISlashCommand {
             }
         } catch (Exception e) {
             LoggerFactory.getLogger(channelUnLock.class).debug("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-            Commons.loggerPrinterOfError(Arrays.asList(e.getStackTrace()), channelUnLock.class);
+            LogList.error(Arrays.asList(e.getStackTrace()), channelUnLock.class);
             event.replyEmbeds(
                 response
                     .setDescription(("Either I do not have access to modify the permissions for %s, or something else has happened and it should be reported." +
                         " Head [here](%s) to report.")
-                        .formatted(targetChannel.getAsMention(), Commons.getConfig().get("BOT_ERROR_REPORT")))
+                        .formatted(targetChannel.getAsMention(), Config.getConfig().get("BOT_ERROR_REPORT")))
+                    .setColor(EmbedColors.getError())
                     .build()
             ).queue();
             return;

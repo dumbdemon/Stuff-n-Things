@@ -4,7 +4,7 @@ import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
-public interface IModal extends IBaseBotElement {
+public interface IModal extends IInteractionElement {
 
     /**
      * The main handler for modals.

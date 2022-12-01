@@ -27,9 +27,9 @@ public class MtGSet {
     @JsonProperty("symbol")
     private Symbol symbol;
     @JsonProperty("enterDate")
-    private E2Date enterDate;
+    private SetDate enterDate;
     @JsonProperty("exitDate")
-    private E2Date exitDate;
+    private SetDate exitDate;
 
     @JsonProperty("name")
     public String getName() {
@@ -72,22 +72,22 @@ public class MtGSet {
     }
 
     @JsonProperty("enterDate")
-    public E2Date getEnterDate() {
+    public SetDate getEnterDate() {
         return enterDate;
     }
 
     @JsonProperty("enterDate")
-    public void setEnterDate(E2Date enterDate) {
+    public void setEnterDate(SetDate enterDate) {
         this.enterDate = enterDate;
     }
 
     @JsonProperty("exitDate")
-    public E2Date getExitDate() {
+    public SetDate getExitDate() {
         return exitDate;
     }
 
     @JsonProperty("exitDate")
-    public void setExitDate(E2Date exitDate) {
+    public void setExitDate(SetDate exitDate) {
         this.exitDate = exitDate;
     }
 

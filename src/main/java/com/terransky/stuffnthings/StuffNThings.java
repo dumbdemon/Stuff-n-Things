@@ -8,6 +8,7 @@ import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.listeners.ListeningForEvents;
 import com.terransky.stuffnthings.modalSystem.ModalManager;
 import com.terransky.stuffnthings.selectMenuSystem.SelectMenuManager;
+import com.terransky.stuffnthings.utilities.Config;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -20,17 +21,18 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.Random;
 
 public class StuffNThings {
     private final Dotenv config;
 
     {
-        config = Commons.getConfig();
+        config = Config.getConfig();
     }
 
     public StuffNThings() throws SQLException, ParseException {
-        if (Commons.isEnableDatabase()) SQLiteDataSource.getConnection();
+        if (Config.isEnableDatabase()) SQLiteDataSource.getConnection();
 
         DefaultShardManagerBuilder shards = DefaultShardManagerBuilder.createDefault(config.get("TOKEN"))
             .enableIntents(
@@ -43,10 +45,10 @@ public class StuffNThings {
 
         String[] whatAmIWatching = secretsAndLies.whatAmIWatching;
 
-        if (Commons.isTestingMode()) {
+        if (Config.isTestingMode()) {
             shards.setStatus(OnlineStatus.INVISIBLE);
         } else {
-            Random random = new Random();
+            Random random = new Random(new Date().getTime());
             shards.setStatus(OnlineStatus.DO_NOT_DISTURB)
                 .setActivity(Activity.watching(whatAmIWatching[random.nextInt(whatAmIWatching.length)]));
         }

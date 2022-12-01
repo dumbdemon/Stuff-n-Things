@@ -1,12 +1,12 @@
 package com.terransky.stuffnthings.commandSystem.commands.fun;
 
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -63,13 +63,13 @@ public class kill implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Commons.getFastDateFormat();
+        FastDateFormat format = Metadata.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Time to un-alive random members!", """
             Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
             """, Mastermind.USER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("30-11-2022_13:40")
+            format.parse("1-12-2022_12:37")
         );
 
         metadata.addSubcommands(
@@ -88,7 +88,7 @@ public class kill implements ISlashCommand {
         List<String> victims = new ArrayList<>();
         String subcommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.getDefaultEmbedColor())
+            .setColor(EmbedColors.getDefault())
             .setFooter("Requested by " + event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
         List<Member> memberList =
             blob.getGuild().getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
@@ -113,7 +113,7 @@ public class kill implements ISlashCommand {
                 if (message.contains(blob.getGuild().getSelfMember().getAsMention()))
                     message += " :O";
 
-                eb.setColor(Commons.getDefaultEmbedColor())
+                eb.setColor(EmbedColors.getDefault())
                     .setTitle(killer)
                     .setDescription("… " + message);
 

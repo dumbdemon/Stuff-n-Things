@@ -1,6 +1,5 @@
 package com.terransky.stuffnthings.commandSystem.commands.admin;
 
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
@@ -8,6 +7,9 @@ import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.utilities.Config;
+import com.terransky.stuffnthings.utilities.EmbedColors;
+import com.terransky.stuffnthings.utilities.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -38,14 +40,14 @@ public class config implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Commons.getFastDateFormat();
+        FastDateFormat format = Metadata.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "The config manager.", """
             Sets certain constant values of specific commands.
             """,
             Mastermind.DEVELOPER,
             SlashModule.ADMIN,
             format.parse("28-08-2022_21:46"),
-            format.parse("30-11-2022_12:54")
+            format.parse("1-12-2022_12:37")
         );
 
         metadata.addDefaultPerms(Permission.MANAGE_SERVER);
@@ -70,7 +72,7 @@ public class config implements ISlashCommand {
 
     @Override
     public boolean isWorking() {
-        return Commons.isTestingMode();
+        return Config.isTestingMode();
     }
 
     @Override
@@ -86,7 +88,7 @@ public class config implements ISlashCommand {
     private void killConfig(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         String subcommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.getDefaultEmbedColor())
+            .setColor(EmbedColors.getDefault())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
 
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
@@ -229,9 +231,9 @@ public class config implements ISlashCommand {
     }
 
     protected MessageEmbed anErrorOccurred(@NotNull SQLException e) {
-        EmbedBuilder eb = new EmbedBuilder().setColor(Commons.getDefaultEmbedColor());
+        EmbedBuilder eb = new EmbedBuilder().setColor(EmbedColors.getError());
         log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-        Commons.loggerPrinterOfError(Arrays.asList(e.getStackTrace()), config.class);
+        LogList.error(Arrays.asList(e.getStackTrace()), config.class);
         SQLiteDataSource.restartConnection();
         eb.setTitle("Uh-oh")
             .setDescription("An error occurred while executing the command!\n Try again in a moment!");

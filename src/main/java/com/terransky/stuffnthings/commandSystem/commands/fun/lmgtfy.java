@@ -1,6 +1,5 @@
 package com.terransky.stuffnthings.commandSystem.commands.fun;
 
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
@@ -25,13 +24,13 @@ public class lmgtfy implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Commons.getFastDateFormat();
+        FastDateFormat format = Metadata.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Let me Google that for you!", """
             When a person is too lazy to search it up themselves, call this on 'em.
             """, Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("30-11-2022_13:40")
+            format.parse("1-12-2022_12:37")
         );
 
         metadata.addSubcommands(

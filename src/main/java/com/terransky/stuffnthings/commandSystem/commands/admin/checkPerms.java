@@ -1,12 +1,12 @@
 package com.terransky.stuffnthings.commandSystem.commands.admin;
 
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
@@ -51,7 +51,7 @@ public class checkPerms implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Commons.getFastDateFormat();
+        FastDateFormat format = Metadata.getFastDateFormat();
         var permString = new StringBuilder();
 
         for (Permission requiredPerm : getRequiredPerms()) {
@@ -67,7 +67,7 @@ public class checkPerms implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.ADMIN,
             format.parse("30-08-2022_16:14"),
-            format.parse("30-11-2022_13:38")
+            format.parse("1-12-2022_12:37")
         );
 
         metadata.addDefaultPerms(Permission.MANAGE_ROLES);
@@ -99,7 +99,7 @@ public class checkPerms implements ISlashCommand {
 
         List<Permission> doNotHaveThis = new ArrayList<>();
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.getDefaultEmbedColor())
+            .setColor(EmbedColors.getDefault())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .setTitle("Permission Checker");
 
@@ -117,7 +117,8 @@ public class checkPerms implements ISlashCommand {
                 String oneWord = permission.getName().replace("(s)", "s").replace(" ", "_");
                 sb.append("\s\s").append(oneWord).append(" : false,\n");
             }
-            eb.appendDescription(sb.substring(0, sb.length() - 2) + "\n]```");
+            eb.appendDescription(sb.substring(0, sb.length() - 2) + "\n]```")
+                .setColor(EmbedColors.getError());
             event.replyEmbeds(eb.build()).queue();
         }
     }

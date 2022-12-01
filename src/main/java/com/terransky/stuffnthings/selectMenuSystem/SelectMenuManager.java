@@ -1,8 +1,11 @@
 package com.terransky.stuffnthings.selectMenuSystem;
 
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.interfaces.ISelectMenu;
+import com.terransky.stuffnthings.utilities.CannedBotResponses;
+import com.terransky.stuffnthings.utilities.Config;
+import com.terransky.stuffnthings.utilities.EmbedColors;
+import com.terransky.stuffnthings.utilities.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
@@ -61,7 +64,7 @@ public class SelectMenuManager extends ListenerAdapter {
     @Override
     public void onEntitySelectInteraction(@NotNull EntitySelectInteractionEvent event) {
         if (event.getGuild() == null) {
-            Commons.botIsGuildOnly(event);
+            CannedBotResponses.botIsGuildOnly(event);
             return;
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
@@ -69,8 +72,8 @@ public class SelectMenuManager extends ListenerAdapter {
         Optional<ISelectMenu> ifMenu = getMenu(event.getId());
         MessageEmbed menuFailed = new EmbedBuilder()
             .setTitle("Oops")
-            .setDescription("An error occurred while loading the menu!\nPlease report this event [here](%s).".formatted(Commons.getConfig().get("BOT_ERROR_REPORT")))
-            .setColor(Commons.getDefaultEmbedColor())
+            .setDescription("An error occurred while loading the menu!\nPlease report this event [here](%s).".formatted(Config.getConfig().get("BOT_ERROR_REPORT")))
+            .setColor(EmbedColors.getError())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();
 
@@ -82,7 +85,7 @@ public class SelectMenuManager extends ListenerAdapter {
             } catch (Exception e) {
                 log.debug(event.getId() + " interaction failed on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getCause()));
-                Commons.loggerPrinterOfError(Arrays.asList(e.getStackTrace()), SelectMenuManager.class);
+                LogList.error(Arrays.asList(e.getStackTrace()), SelectMenuManager.class);
                 if (event.isAcknowledged()) {
                     event.getHook().sendMessageEmbeds(menuFailed).queue();
                 } else event.replyEmbeds(menuFailed).setEphemeral(true).queue();

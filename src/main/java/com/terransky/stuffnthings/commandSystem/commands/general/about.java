@@ -1,6 +1,5 @@
 package com.terransky.stuffnthings.commandSystem.commands.general;
 
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.CommandManager;
 import com.terransky.stuffnthings.commandSystem.commands.mtg.calculateRats;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
@@ -8,6 +7,8 @@ import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.utilities.Config;
+import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -51,13 +52,13 @@ public class about implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Commons.getFastDateFormat();
+        FastDateFormat format = Metadata.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "What am I? Who am I?", """
             The about command. What else did you expect?
             """, Mastermind.DEVELOPER,
             SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("30-11-2022_21:19")
+            format.parse("1-12-2022_12:37")
         );
 
         metadata.addOptions(
@@ -91,16 +92,16 @@ public class about implements ISlashCommand {
 
         event.getHook().sendMessageEmbeds(
             new EmbedBuilder()
-                .setColor(Commons.getDefaultEmbedColor())
+                .setColor(EmbedColors.getDefault())
                 .setDescription("""
                     > *Who am I?*
                     I am %s
                     > *What am I?*
                     An entertainment bot.
                     > [*I think I need help...*](%s)
-                    """.formatted(event.getJDA().getSelfUser().getAsMention(), Commons.getConfig().get("SUPPORT_GUILD_INVITE")))
-                .setTitle(event.getJDA().getSelfUser().getName(), Commons.getConfig().get("REPO_LINK"))
-                .setThumbnail(Commons.getConfig().get("BOT_LOGO"))
+                    """.formatted(event.getJDA().getSelfUser().getAsMention(), Config.getConfig().get("SUPPORT_GUILD_INVITE")))
+                .setTitle(event.getJDA().getSelfUser().getName(), Config.getConfig().get("REPO_LINK"))
+                .setThumbnail(Config.getConfig().get("BOT_LOGO"))
                 .addField("Servers", "%d servers".formatted(guildCount), true)
                 .addField("Users", "%s users".formatted(calculateRats.largeNumberFormat(userCount)).replace(".0 ", " "), true)
                 .addField("Your Shard", "[%s/%s]".formatted(event.getJDA().getShardInfo().getShardId(), event.getJDA().getShardInfo().getShardTotal()), true)
@@ -125,7 +126,7 @@ public class about implements ISlashCommand {
                 new EmbedBuilder()
                     .setTitle("About Command")
                     .setDescription("You don't have access to this command to see its details.")
-                    .setColor(Commons.getDefaultEmbedColor())
+                    .setColor(EmbedColors.getDefault())
                     .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
                     .build()
             ).queue();
@@ -139,7 +140,7 @@ public class about implements ISlashCommand {
             new EmbedBuilder()
                 .setTitle("About Command - %s".formatted(WordUtils.capitalize(metadata.getCommandName().replace("-", " "))))
                 .setDescription(metadata.getLongDescription())
-                .setColor(Commons.getDefaultEmbedColor())
+                .setColor(EmbedColors.getDefault())
                 .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
                 .addField("Mastermind", metadata.getMastermind().getWho(), true)
                 .addField("Module", metadata.getModule().getName(), true)

@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -173,6 +174,10 @@ public class Metadata implements Comparable<Metadata> {
         }
 
         return longDescription;
+    }
+
+    public static FastDateFormat getFastDateFormat() {
+        return FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
     }
 
     @Override

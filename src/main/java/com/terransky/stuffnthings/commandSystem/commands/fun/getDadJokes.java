@@ -1,13 +1,14 @@
 package com.terransky.stuffnthings.commandSystem.commands.fun;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.dataSources.icanhazdadjoke.IcanhazdadjokeData;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.utilities.Config;
+import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -36,13 +37,13 @@ public class getDadJokes implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Commons.getFastDateFormat();
+        FastDateFormat format = Metadata.getFastDateFormat();
         return new Metadata(this.getName(), "Why was 6 afraid of 7? Because 7 was a registered 6 offender.", """
             An unoriginal or unfunny joke of a type supposedly told by middle-aged or older men.
             """, Mastermind.USER,
             SlashModule.FUN,
             format.parse("25-8-2022_20:53"),
-            format.parse("21-11-2022_14:32")
+            format.parse("1-12-2022_12:37")
         );
     }
 
@@ -51,7 +52,7 @@ public class getDadJokes implements ISlashCommand {
         URL iCanHazDadJoke = new URL("https://icanhazdadjoke.com/");
         String iCanHazDadJokeLogo = "https://icanhazdadjoke.com/static/smile.svg";
         HttpURLConnection dadJoke = (HttpURLConnection) iCanHazDadJoke.openConnection();
-        dadJoke.addRequestProperty("User-Agent", Commons.getConfig().get("BOT_USER_AGENT"));  //https://icanhazdadjoke.com/api#custom-user-agent
+        dadJoke.addRequestProperty("User-Agent", Config.getConfig().get("BOT_USER_AGENT"));  //https://icanhazdadjoke.com/api#custom-user-agent
         dadJoke.addRequestProperty("Accept", "application/json");
         ObjectMapper om = new ObjectMapper();
         IcanhazdadjokeData theJoke = om.readValue(dadJoke.getInputStream(), IcanhazdadjokeData.class);
@@ -60,7 +61,7 @@ public class getDadJokes implements ISlashCommand {
             .setEmbeds(new EmbedBuilder()
                 .setDescription(theJoke.getJoke())
                 .setThumbnail(iCanHazDadJokeLogo)
-                .setColor(Commons.getDefaultEmbedColor())
+                .setColor(EmbedColors.getDefault())
                 .setFooter("Requested by %s | ID #%s".formatted(event.getUser().getAsTag(), theJoke.getId()))
                 .build()
             )

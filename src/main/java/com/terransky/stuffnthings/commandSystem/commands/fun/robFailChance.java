@@ -1,11 +1,11 @@
 package com.terransky.stuffnthings.commandSystem.commands.fun;
 
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -29,13 +29,13 @@ public class robFailChance implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Commons.getFastDateFormat();
+        FastDateFormat format = Metadata.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Calculate the fail chance to rob a member for the UnbelievaBoat bot!", """
             Returns the chance of failure of the `/rob` command of the bot UnbelievaBoat. If you don't have the bot, you can ask your admins to invite it [here](%s).
             """.formatted(uBoatInvite), Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("30-11-2022_13:41")
+            format.parse("1-12-2022_12:37")
         );
 
         metadata.addOptions(
@@ -49,7 +49,7 @@ public class robFailChance implements ISlashCommand {
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.getDefaultEmbedColor());
+            .setColor(EmbedColors.getDefault());
         DecimalFormat largeNumber = new DecimalFormat("##,###");
 
         double yourNetWorth = event.getOption("your-net-worth", 0d, OptionMapping::getAsDouble),

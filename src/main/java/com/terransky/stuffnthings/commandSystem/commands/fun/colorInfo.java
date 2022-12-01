@@ -1,12 +1,12 @@
 package com.terransky.stuffnthings.commandSystem.commands.fun;
 
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -113,13 +113,13 @@ public class colorInfo implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Commons.getFastDateFormat();
+        FastDateFormat format = Metadata.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Get more info on a color.", """
             Given a hex triplet, RGB, or CMYK code, it will return the other values and give a link to more info.
             """, Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("20-9-2022_12:10"),
-            format.parse("30-11-2022_12:35")
+            format.parse("1-12-2022_12:37")
         );
 
         metadata.addSubcommands(
@@ -205,7 +205,7 @@ public class colorInfo implements ISlashCommand {
         } else {
             eb.setTitle("Invalid Hex Triplet!")
                 .setDescription("You've given an invalid hex triplet!\nCorrect example: `#663366` or `#636`")
-                .setColor(Commons.getDefaultEmbedColor())
+                .setColor(EmbedColors.getError())
                 .addField("Provided", hexCode, false);
             event.replyEmbeds(eb.build()).setEphemeral(true).queue();
         }

@@ -1,7 +1,6 @@
 package com.terransky.stuffnthings.commandSystem.commands.mtg;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
@@ -11,6 +10,8 @@ import com.terransky.stuffnthings.dataSources.whatsInStandard.MtGSet;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.WhatsInStandardData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.utilities.Config;
+import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -69,7 +70,7 @@ public class whatsInStandard implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Commons.getFastDateFormat();
+        FastDateFormat format = Metadata.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Get Magic: the Gathering's set list for the standard format.", """
             *M:tG Command*
             Prints out the sets and ban list information for Magic: the Gathering's standard formant created by Wizards of the Coast.
@@ -78,7 +79,7 @@ public class whatsInStandard implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.MTG,
             format.parse("27-10-2022_12:46"),
-            format.parse("30-11-2022_21:41")
+            format.parse("1-12-2022_12:37")
         );
 
         metadata.addSubcommands(
@@ -96,7 +97,7 @@ public class whatsInStandard implements ISlashCommand {
         event.deferReply().queue();
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle("What's in standard?")
-            .setColor(Commons.getDefaultEmbedColor());
+            .setColor(EmbedColors.getDefault());
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand received");
         String version = "6";
@@ -106,7 +107,8 @@ public class whatsInStandard implements ISlashCommand {
         WhatsInStandardData wisData = om.readValue(wis, WhatsInStandardData.class);
         if (wisData.isDeprecated()) {
             event.getHook().sendMessageEmbeds(
-                eb.setDescription("Version %s has been deprecated. Please contact <@%s> to update it.".formatted(version, Commons.getConfig().get("OWNER_ID")))
+                eb.setDescription("Version %s has been deprecated. Please create an issue [here](%s).".formatted(version, Config.getConfig().get("BOT_ERROR_REPORT")))
+                    .setColor(EmbedColors.getError())
                     .build()
             ).queue();
             return;

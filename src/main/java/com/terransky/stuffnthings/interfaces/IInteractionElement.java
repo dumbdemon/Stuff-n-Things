@@ -2,7 +2,7 @@ package com.terransky.stuffnthings.interfaces;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface IBaseBotElement extends Comparable<IBaseBotElement> {
+public interface IInteractionElement extends Comparable<IInteractionElement> {
 
     /**
      * The name or ID reference of this bot element.
@@ -12,7 +12,7 @@ public interface IBaseBotElement extends Comparable<IBaseBotElement> {
     String getName();
 
     @Override
-    default int compareTo(@NotNull IBaseBotElement iBaseBotElement) {
-        return String.CASE_INSENSITIVE_ORDER.compare(this.getName(), iBaseBotElement.getName());
+    default int compareTo(@NotNull IInteractionElement iInteractionElement) {
+        return String.CASE_INSENSITIVE_ORDER.compare(this.getName(), iInteractionElement.getName());
     }
 }

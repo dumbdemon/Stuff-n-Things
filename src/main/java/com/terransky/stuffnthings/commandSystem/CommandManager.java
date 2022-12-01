@@ -1,6 +1,5 @@
 package com.terransky.stuffnthings.commandSystem;
 
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.commands.admin.channelUnLock;
 import com.terransky.stuffnthings.commandSystem.commands.admin.checkPerms;
 import com.terransky.stuffnthings.commandSystem.commands.admin.config;
@@ -20,6 +19,10 @@ import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.utilities.CannedBotResponses;
+import com.terransky.stuffnthings.utilities.Config;
+import com.terransky.stuffnthings.utilities.EmbedColors;
+import com.terransky.stuffnthings.utilities.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -210,28 +213,28 @@ public class CommandManager extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getUser().isBot()) return;
         else if (event.getGuild() == null) {
-            Commons.botIsGuildOnly(event);
+            CannedBotResponses.botIsGuildOnly(event);
             return;
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
         //Add user to database or ignore if exists
-        if (Commons.isEnableDatabase()) {
+        if (Config.isEnableDatabase()) {
             try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                 .prepareStatement("INSERT OR IGNORE INTO users_" + blob.getGuildId() + "(user_id) VALUES(?)")) {
                 stmt.setString(1, event.getUser().getId());
                 stmt.execute();
             } catch (SQLException e) {
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-                Commons.loggerPrinterOfError(Arrays.asList(e.getStackTrace()), CommandManager.class);
+                LogList.error(Arrays.asList(e.getStackTrace()), CommandManager.class);
             }
         }
 
         Optional<ISlashCommand> cmd = getCommand(event.getName());
         MessageEmbed cmdFailed = new EmbedBuilder()
             .setTitle("Oops!")
-            .setDescription("An error occurred while executing that command!\nPlease report this event [here](%s).".formatted(Commons.getConfig().get("BOT_ERROR_REPORT")))
-            .setColor(Commons.getDefaultEmbedColor())
+            .setDescription("An error occurred while executing that command!\nPlease report this event [here](%s).".formatted(Config.getConfig().get("BOT_ERROR_REPORT")))
+            .setColor(EmbedColors.getError())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();
 
@@ -243,7 +246,7 @@ public class CommandManager extends ListenerAdapter {
             } catch (Exception e) {
                 log.debug("Full command path that triggered error :: [" + event.getFullCommandName() + "]");
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-                Commons.loggerPrinterOfError(Arrays.asList(e.getStackTrace()), CommandManager.class);
+                LogList.error(Arrays.asList(e.getStackTrace()), CommandManager.class);
                 if (event.isAcknowledged()) {
                     event.getHook().sendMessageEmbeds(cmdFailed).queue();
                 } else event.replyEmbeds(cmdFailed).setEphemeral(true).queue();

@@ -1,8 +1,11 @@
 package com.terransky.stuffnthings.commandSystem;
 
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.interfaces.IUserContext;
+import com.terransky.stuffnthings.utilities.CannedBotResponses;
+import com.terransky.stuffnthings.utilities.Config;
+import com.terransky.stuffnthings.utilities.EmbedColors;
+import com.terransky.stuffnthings.utilities.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
@@ -84,7 +87,7 @@ public class UserContextManager extends ListenerAdapter {
     @Override
     public void onUserContextInteraction(@NotNull UserContextInteractionEvent event) {
         if (event.getGuild() == null) {
-            Commons.botIsGuildOnly(event);
+            CannedBotResponses.botIsGuildOnly(event);
             return;
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
@@ -92,8 +95,8 @@ public class UserContextManager extends ListenerAdapter {
         Optional<IUserContext> ifMenu = getUserMenu(event.getName());
         MessageEmbed menuFailed = new EmbedBuilder()
             .setTitle("Oops!")
-            .setDescription("An error occurred while executing that context menu!\nPlease report this event [here](%s).".formatted(Commons.getConfig().get("BOT_ERROR_REPORT")))
-            .setColor(Commons.getDefaultEmbedColor())
+            .setDescription("An error occurred while executing that context menu!\nPlease report this event [here](%s).".formatted(Config.getConfig().get("BOT_ERROR_REPORT")))
+            .setColor(EmbedColors.getError())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();
 
@@ -105,7 +108,7 @@ public class UserContextManager extends ListenerAdapter {
             } catch (Exception e) {
                 log.debug("%s failed to execute on guild id %s".formatted(context.getName(), blob.getGuildId()));
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-                Commons.loggerPrinterOfError(Arrays.asList(e.getStackTrace()), UserContextManager.class);
+                LogList.error(Arrays.asList(e.getStackTrace()), UserContextManager.class);
                 if (event.isAcknowledged()) {
                     event.getHook().sendMessageEmbeds(menuFailed).queue();
                 } else event.replyEmbeds(menuFailed).setEphemeral(true).queue();

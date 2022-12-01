@@ -1,7 +1,6 @@
 package com.terransky.stuffnthings.commandSystem.commands.fun;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
@@ -9,6 +8,8 @@ import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.dataSources.freshMemes.FreshMemeData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.utilities.EmbedColors;
+import com.terransky.stuffnthings.utilities.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -35,14 +36,14 @@ public class meme implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Commons.getFastDateFormat();
+        FastDateFormat format = Metadata.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Get a random meme.", """
             Get your fresh hot (or cold) memes here!
             Reddit pulls from [r/memes](https://www.reddit.com/r/memes), [r/dankmemes](https://www.reddit.com/r/dankmemes), or from [r/me_irl](https://www.reddit.com/r/me_irl).
             """, Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("24-11-2022_10:18")
+            format.parse("1-12-2022_12:37")
         );
 
         metadata.addSubcommands(
@@ -59,7 +60,7 @@ public class meme implements ISlashCommand {
         DecimalFormat largeNumber = new DecimalFormat("##,###");
         ObjectMapper om = new ObjectMapper();
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.getDefaultEmbedColor());
+            .setColor(EmbedColors.getDefault());
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 
@@ -111,10 +112,11 @@ public class meme implements ISlashCommand {
                         B) The subreddit is set to private and therefore I am unable to access it ([**click here to check**](https://www.reddit.com/r/%s)), or
                         C) You have been rate limited and you must wait for a few moments and try again.""").formatted(subreddit))
                     .setFooter("Reddit", redditLogo)
+                    .setColor(EmbedColors.getError())
                     .build()
             ).queue();
             log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-            Commons.loggerPrinterOfError(Arrays.asList(e.getStackTrace()), meme.class);
+            LogList.error(Arrays.asList(e.getStackTrace()), meme.class);
         }
     }
 }

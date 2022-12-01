@@ -1,9 +1,11 @@
 package com.terransky.stuffnthings.listeners;
 
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.CommandManager;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.secretsAndLies;
+import com.terransky.stuffnthings.utilities.Config;
+import com.terransky.stuffnthings.utilities.EmbedColors;
+import com.terransky.stuffnthings.utilities.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
@@ -36,13 +38,13 @@ public class ListeningForEvents extends ListenerAdapter {
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         long timerInMS = 600000;
-        if (!Commons.isTestingMode()) {
+        if (!Config.isTestingMode()) {
             log.info(globalCommandData.size() + " global commands loaded!");
             event.getJDA().updateCommands().addCommands(globalCommandData).queue();
         } else event.getJDA().updateCommands().queue();
         log.info("Service started!");
 
-        if (!Commons.isTestingMode()) {
+        if (!Config.isTestingMode()) {
             new Timer().scheduleAtFixedRate(new TimerTask() {
                 @Override
                 @SuppressWarnings("ConstantConditions")
@@ -63,7 +65,7 @@ public class ListeningForEvents extends ListenerAdapter {
         addGuildToDB(event.getGuild());
 
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(Commons.getDefaultEmbedColor())
+            .setColor(EmbedColors.getDefault())
             .setAuthor(theBot.getName(), null, theBot.getAvatarUrl())
             .setDescription("> *What am I doing here?*\n> *Why am I here?*\n> *Am I supposed to be here?*");
         Objects.requireNonNull(event.getGuild().getDefaultChannel()).asTextChannel().sendMessageEmbeds(eb.build()).queue();
@@ -76,7 +78,7 @@ public class ListeningForEvents extends ListenerAdapter {
 
         log.info("I have left %s [%s]!".formatted(serverName, serverID));
 
-        if (Commons.isEnableDatabase()) {
+        if (Config.isEnableDatabase()) {
             try {
                 try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                     .prepareStatement("DELETE FROM guilds WHERE guild_id = ?")) {
@@ -92,7 +94,7 @@ public class ListeningForEvents extends ListenerAdapter {
                 }
             } catch (SQLException e) {
                 log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-                Commons.loggerPrinterOfError(Arrays.asList(e.getStackTrace()), ListeningForEvents.class);
+                LogList.error(Arrays.asList(e.getStackTrace()), ListeningForEvents.class);
             }
         }
     }
@@ -101,7 +103,7 @@ public class ListeningForEvents extends ListenerAdapter {
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
         if (event.getUser().isBot()) return;
 
-        if (Commons.isEnableDatabase()) {
+        if (Config.isEnableDatabase()) {
             String userID = event.getUser().getId(),
                 guildID = event.getGuild().getId();
 
@@ -112,7 +114,7 @@ public class ListeningForEvents extends ListenerAdapter {
                 log.info("User %s left %s [%s]. Users table has been updated".formatted(userID, event.getGuild().getName(), guildID));
             } catch (SQLException e) {
                 log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-                Commons.loggerPrinterOfError(Arrays.asList(e.getStackTrace()), ListeningForEvents.class);
+                LogList.error(Arrays.asList(e.getStackTrace()), ListeningForEvents.class);
             }
         }
     }
@@ -124,7 +126,7 @@ public class ListeningForEvents extends ListenerAdapter {
     }
 
     private void upsertGuildCommands(@NotNull GenericGuildEvent event) {
-        if (Commons.isTestingMode()) {
+        if (Config.isTestingMode()) {
             event.getGuild().updateCommands().addCommands(globalCommandData).queue();
             log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
         } else {
@@ -139,7 +141,7 @@ public class ListeningForEvents extends ListenerAdapter {
     }
 
     private void addGuildToDB(@NotNull Guild guild) {
-        if (!Commons.isEnableDatabase()) return;
+        if (!Config.isEnableDatabase()) return;
         String guildName = guild.getName(), guildId = guild.getId();
         try (final PreparedStatement sStmt = SQLiteDataSource.getConnection()
             .prepareStatement("INSERT OR IGNORE INTO guilds(guild_id) VALUES(?)")) {
@@ -158,7 +160,7 @@ public class ListeningForEvents extends ListenerAdapter {
             }
         } catch (SQLException e) {
             log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-            Commons.loggerPrinterOfError(Arrays.asList(e.getStackTrace()), ListeningForEvents.class);
+            LogList.error(Arrays.asList(e.getStackTrace()), ListeningForEvents.class);
         }
     }
 }

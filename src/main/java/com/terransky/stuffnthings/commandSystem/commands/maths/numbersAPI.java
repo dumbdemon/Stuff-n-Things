@@ -1,7 +1,6 @@
 package com.terransky.stuffnthings.commandSystem.commands.maths;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
@@ -9,6 +8,7 @@ import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.dataSources.NumbersAPI.NumbersAPIData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -57,14 +57,14 @@ public class numbersAPI implements ISlashCommand {
 
     @Override
     public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Commons.getFastDateFormat();
+        FastDateFormat format = Metadata.getFastDateFormat();
         var metadata = new Metadata(this.getName(), "Get some fun info on a number", """
             Random facts about numbers! How nerdy/geeky can you get? Leaving any option empty will return a random fact of that category.
             Facts are provided by [NumbersAPI](http://numbersapi.com).
             """, Mastermind.DEVELOPER,
             SlashModule.MATHS,
             format.parse("10-11-2022_20:45"),
-            format.parse("30-11-2022_13:43")
+            format.parse("1-12-2022_12:37")
         );
 
         metadata.addSubcommands(
@@ -93,7 +93,7 @@ public class numbersAPI implements ISlashCommand {
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given");
         String theUrl = "http://numbersapi.com/";
         EmbedBuilder response = new EmbedBuilder()
-            .setColor(Commons.getDefaultEmbedColor())
+            .setColor(EmbedColors.getDefault())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
 
         switch (subcommand) {

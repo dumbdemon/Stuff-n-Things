@@ -4,11 +4,12 @@ import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
-import com.terransky.stuffnthings.Commons;
 import com.terransky.stuffnthings.commandSystem.commands.fun.kill;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.IModal;
+import com.terransky.stuffnthings.utilities.Config;
+import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
@@ -41,7 +42,7 @@ public class killSuggest implements IModal {
             victims.add(member.getAsMention());
         }
 
-        WebhookClientBuilder builder = new WebhookClientBuilder(Commons.getConfig().get("REQUEST_WEBHOOK"));
+        WebhookClientBuilder builder = new WebhookClientBuilder(Config.getConfig().get("REQUEST_WEBHOOK"));
         builder.setThreadFactory(job -> {
             Thread thread = new Thread(job);
             thread.setName("Kill_Suggestion");
@@ -59,7 +60,7 @@ public class killSuggest implements IModal {
 
         try (WebhookClient client = builder.build()) {
             WebhookEmbed request = new WebhookEmbedBuilder()
-                .setColor(Commons.getSecondaryEmbedColor().getRGB())
+                .setColor(EmbedColors.getSecondary().getRGB())
                 .setTitle(new WebhookEmbed.EmbedTitle("Kill-string Suggestion", null))
                 .setDescription(suggestion)
                 .addField(new WebhookEmbed.EmbedField(false, "From", "@%s".formatted(event.getUser().getAsTag())))
@@ -71,13 +72,13 @@ public class killSuggest implements IModal {
         MessageCreateData message = new MessageCreateBuilder()
             .setEmbeds(
                 new EmbedBuilder()
-                    .setColor(Commons.getSecondaryEmbedColor())
+                    .setColor(EmbedColors.getSecondary())
                     .setTitle("Suggestion received!")
                     .setDescription("The next embed will show what your suggestion will look like!\n" +
                         "***Note: Will not show up automatically!***")
                     .build(),
                 new EmbedBuilder()
-                    .setColor(Commons.getDefaultEmbedColor())
+                    .setColor(EmbedColors.getDefault())
                     .setTitle(Objects.requireNonNull(event.getMember()).getEffectiveName())
                     .setDescription("… " + testKillString)
                     .setFooter("Suggestion by " + event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
