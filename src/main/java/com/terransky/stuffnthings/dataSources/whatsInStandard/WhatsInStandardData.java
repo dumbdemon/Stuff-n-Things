@@ -23,7 +23,7 @@ public class WhatsInStandardData {
     @JsonProperty("deprecated")
     private boolean deprecated;
     @JsonProperty("sets")
-    private List<Set> sets = new ArrayList<>();
+    private List<MtGSet> mtgSets = new ArrayList<>();
     @JsonProperty("bans")
     private List<Ban> bans = new ArrayList<>();
 
@@ -48,13 +48,13 @@ public class WhatsInStandardData {
     }
 
     @JsonProperty("sets")
-    public List<Set> getSets() {
-        return sets;
+    public List<MtGSet> getSets() {
+        return mtgSets;
     }
 
     @JsonProperty("sets")
-    public void setSets(List<Set> sets) {
-        this.sets = sets;
+    public void setSets(List<MtGSet> mtgSets) {
+        this.mtgSets = mtgSets;
     }
 
     @JsonProperty("bans")

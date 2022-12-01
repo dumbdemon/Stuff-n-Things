@@ -16,7 +16,7 @@ import javax.annotation.Generated;
     "exitDate"
 })
 @Generated("jsonschema2pojo")
-public class Set {
+public class MtGSet {
 
     @JsonProperty("name")
     private String name;

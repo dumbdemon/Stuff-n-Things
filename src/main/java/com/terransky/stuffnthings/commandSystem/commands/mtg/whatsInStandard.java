@@ -7,7 +7,7 @@ import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.Ban;
-import com.terransky.stuffnthings.dataSources.whatsInStandard.Set;
+import com.terransky.stuffnthings.dataSources.whatsInStandard.MtGSet;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.WhatsInStandardData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
@@ -25,9 +25,9 @@ import java.util.Date;
 import java.util.List;
 
 public class whatsInStandard implements ISlashCommand {
-    private @NotNull String getSets(@NotNull List<Set> wisData) {
+    private @NotNull String getSets(@NotNull List<MtGSet> wisData) {
         StringBuilder theSets = new StringBuilder();
-        for (Set mtgSet : wisData) {
+        for (MtGSet mtgSet : wisData) {
             if (mtgSet.getCode() != null && mtgSet.getEnterDate().getExact().compareTo(new Date()) <= 0) {
                 theSets.append("```%s (%s) || Leaves: %s```"
                     .formatted(
@@ -78,7 +78,7 @@ public class whatsInStandard implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.MTG,
             format.parse("27-10-2022_12:46"),
-            format.parse("23-11-2022_15:00")
+            format.parse("30-11-2022_21:41")
         );
 
         metadata.addSubcommands(
