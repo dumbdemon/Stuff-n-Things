@@ -27,9 +27,9 @@ public class Set {
     @JsonProperty("symbol")
     private Symbol symbol;
     @JsonProperty("enterDate")
-    private EnterDate enterDate;
+    private E2Date enterDate;
     @JsonProperty("exitDate")
-    private ExitDate exitDate;
+    private E2Date exitDate;
 
     @JsonProperty("name")
     public String getName() {
@@ -72,22 +72,22 @@ public class Set {
     }
 
     @JsonProperty("enterDate")
-    public EnterDate getEnterDate() {
+    public E2Date getEnterDate() {
         return enterDate;
     }
 
     @JsonProperty("enterDate")
-    public void setEnterDate(EnterDate enterDate) {
+    public void setEnterDate(E2Date enterDate) {
         this.enterDate = enterDate;
     }
 
     @JsonProperty("exitDate")
-    public ExitDate getExitDate() {
+    public E2Date getExitDate() {
         return exitDate;
     }
 
     @JsonProperty("exitDate")
-    public void setExitDate(ExitDate exitDate) {
+    public void setExitDate(E2Date exitDate) {
         this.exitDate = exitDate;
     }
 

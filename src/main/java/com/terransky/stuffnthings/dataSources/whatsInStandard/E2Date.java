@@ -13,7 +13,7 @@ import java.util.Date;
     "rough"
 })
 @Generated("jsonschema2pojo")
-public class ExitDate {
+public class E2Date {
 
     @JsonProperty("exact")
     private Date exact;

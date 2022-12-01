@@ -15,34 +15,10 @@ import java.util.List;
     "subsenses"
 })
 @Generated("jsonschema2pojo")
-public class Sense {
+public class Sense extends Subsense {
 
-    @JsonProperty("definitions")
-    private List<String> definitions = new ArrayList<>();
-    @JsonProperty("id")
-    private String id;
     @JsonProperty("subsenses")
     private List<Subsense> subsenses = new ArrayList<>();
-
-    @JsonProperty("definitions")
-    public List<String> getDefinitions() {
-        return definitions;
-    }
-
-    @JsonProperty("definitions")
-    public void setDefinitions(List<String> definitions) {
-        this.definitions = definitions;
-    }
-
-    @JsonProperty("id")
-    public String getId() {
-        return id;
-    }
-
-    @JsonProperty("id")
-    public void setId(String id) {
-        this.id = id;
-    }
 
     @JsonProperty("subsenses")
     public List<Subsense> getSubsenses() {
