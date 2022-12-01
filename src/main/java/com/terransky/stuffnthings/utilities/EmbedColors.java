@@ -22,6 +22,6 @@ public class EmbedColors {
 
     @Contract(value = " -> new", pure = true)
     public static @NotNull Color getError() {
-        return new Color(149, 4, 78);
+        return new Color(153, 0, 102);
     }
 }
