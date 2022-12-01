@@ -2,9 +2,9 @@ package com.terransky.stuffnthings.commandSystem;
 
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.interfaces.IMessageContext;
-import com.terransky.stuffnthings.utilities.CannedBotResponses;
 import com.terransky.stuffnthings.utilities.Config;
 import com.terransky.stuffnthings.utilities.EmbedColors;
+import com.terransky.stuffnthings.utilities.GuildOnly;
 import com.terransky.stuffnthings.utilities.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -89,7 +89,7 @@ public class MessageContextManager extends ListenerAdapter {
     @Override
     public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event) {
         if (event.getGuild() == null) {
-            CannedBotResponses.botIsGuildOnly(event);
+            GuildOnly.interactionResponse(event);
             return;
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());

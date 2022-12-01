@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.utilities;
 
+import com.terransky.stuffnthings.commandSystem.utilities.CannedResponses;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
@@ -7,38 +8,38 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class CannedBotResponses {
+public class GuildOnly {
 
     private static final EmbedBuilder BOT_IS_GUILD_ONLY = new EmbedBuilder()
         .setTitle("This bot is a server only bot.")
-        .setDescription("Please execute this interaction in a server.")
+        .setDescription(CannedResponses.GUILD_ONLY.getResponse())
         .setColor(EmbedColors.getError());
 
-    private CannedBotResponses() {
+    private GuildOnly() {
     }
 
-    public static void botIsGuildOnly(@NotNull GenericCommandInteractionEvent event) {
+    public static void interactionResponse(@NotNull GenericCommandInteractionEvent event) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
                 .build()
         ).queue();
     }
 
-    public static void botIsGuildOnly(@NotNull ModalInteractionEvent event) {
+    public static void interactionResponse(@NotNull ModalInteractionEvent event) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
                 .build()
         ).queue();
     }
 
-    public static void botIsGuildOnly(@NotNull EntitySelectInteractionEvent event) {
+    public static void interactionResponse(@NotNull EntitySelectInteractionEvent event) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
                 .build()
         ).queue();
     }
 
-    public static void botIsGuildOnly(@NotNull ButtonInteractionEvent event) {
+    public static void interactionResponse(@NotNull ButtonInteractionEvent event) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl()
             ).build()

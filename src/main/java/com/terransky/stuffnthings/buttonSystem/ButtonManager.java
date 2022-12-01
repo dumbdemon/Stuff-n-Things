@@ -4,9 +4,9 @@ import com.terransky.stuffnthings.buttonSystem.buttons.expiredButton;
 import com.terransky.stuffnthings.buttonSystem.buttons.getMoreDadJokes;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.interfaces.IButton;
-import com.terransky.stuffnthings.utilities.CannedBotResponses;
 import com.terransky.stuffnthings.utilities.Config;
 import com.terransky.stuffnthings.utilities.EmbedColors;
+import com.terransky.stuffnthings.utilities.GuildOnly;
 import com.terransky.stuffnthings.utilities.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -72,7 +72,7 @@ public class ButtonManager extends ListenerAdapter {
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         if (event.getButton().getId() == null) return;
         else if (event.getGuild() == null) {
-            CannedBotResponses.botIsGuildOnly(event);
+            GuildOnly.interactionResponse(event);
             return;
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());

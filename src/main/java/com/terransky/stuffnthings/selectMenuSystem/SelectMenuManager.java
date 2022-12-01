@@ -2,9 +2,9 @@ package com.terransky.stuffnthings.selectMenuSystem;
 
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.interfaces.ISelectMenu;
-import com.terransky.stuffnthings.utilities.CannedBotResponses;
 import com.terransky.stuffnthings.utilities.Config;
 import com.terransky.stuffnthings.utilities.EmbedColors;
+import com.terransky.stuffnthings.utilities.GuildOnly;
 import com.terransky.stuffnthings.utilities.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -64,7 +64,7 @@ public class SelectMenuManager extends ListenerAdapter {
     @Override
     public void onEntitySelectInteraction(@NotNull EntitySelectInteractionEvent event) {
         if (event.getGuild() == null) {
-            CannedBotResponses.botIsGuildOnly(event);
+            GuildOnly.interactionResponse(event);
             return;
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());

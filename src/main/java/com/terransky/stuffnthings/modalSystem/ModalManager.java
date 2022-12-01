@@ -3,9 +3,9 @@ package com.terransky.stuffnthings.modalSystem;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.interfaces.IModal;
 import com.terransky.stuffnthings.modalSystem.modals.killSuggest;
-import com.terransky.stuffnthings.utilities.CannedBotResponses;
 import com.terransky.stuffnthings.utilities.Config;
 import com.terransky.stuffnthings.utilities.EmbedColors;
+import com.terransky.stuffnthings.utilities.GuildOnly;
 import com.terransky.stuffnthings.utilities.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -66,7 +66,7 @@ public class ModalManager extends ListenerAdapter {
     @Override
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {
         if (event.getGuild() == null) {
-            CannedBotResponses.botIsGuildOnly(event);
+            GuildOnly.interactionResponse(event);
             return;
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
