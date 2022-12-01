@@ -123,7 +123,7 @@ public class CommandManager extends ListenerAdapter {
     public List<Command.Choice> getCommandsAsChoices() {
         List<Command.Choice> choices = new ArrayList<>();
         for (ISlashCommand command : iSlashCommandsList.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList()) {
-            choices.add(new Command.Choice(WordUtils.capitalize(command.getName().replace("-", "\s")), command.getName()));
+            choices.add(new Command.Choice(WordUtils.capitalize(command.getName().replace("-", " ")), command.getName()));
         }
         return choices;
     }

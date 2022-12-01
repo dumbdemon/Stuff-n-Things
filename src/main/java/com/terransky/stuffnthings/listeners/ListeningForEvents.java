@@ -25,7 +25,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.*;
 
-//TODO: Handle ParseException
+//todo: Handle ParseException
 public class ListeningForEvents extends ListenerAdapter {
     private final Logger log = LoggerFactory.getLogger(ListeningForEvents.class);
     private final List<CommandData> globalCommandData = new CommandManager().getCommandData();

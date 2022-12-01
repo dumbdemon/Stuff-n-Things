@@ -57,7 +57,7 @@ public class about implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("30-11-2022_13:41")
+            format.parse("30-11-2022_21:19")
         );
 
         metadata.addOptions(
@@ -85,7 +85,7 @@ public class about implements ISlashCommand {
         int guildCommandCnt = new CommandManager().getCommandData(blob.getGuildIdLong()).size();
         commandCnt += guildCommandCnt;
 
-        //TODO: Replace with database calls when fully implemented.
+        //todo: Replace with database calls when fully implemented.
         long guildCount = event.getJDA().getGuildCache().stream().distinct().count();
         long userCount = event.getJDA().getUserCache().stream().distinct().filter(user -> !user.isBot()).count();
 
