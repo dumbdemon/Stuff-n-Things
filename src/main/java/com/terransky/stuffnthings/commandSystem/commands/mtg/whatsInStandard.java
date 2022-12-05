@@ -22,50 +22,62 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class whatsInStandard implements ISlashCommand {
-    private @NotNull String getSets(@NotNull List<MtGSet> wisData) {
+    private @NotNull String getSets(@NotNull List<MtGSet> mtgSets) {
         StringBuilder theSets = new StringBuilder();
-        for (MtGSet mtgSet : wisData) {
-            if (mtgSet.getCode() != null && mtgSet.getEnterDate().getExact().compareTo(new Date()) <= 0) {
-                theSets.append("```%s (%s) || Leaves: %s```"
-                    .formatted(
-                        mtgSet.getName(),
-                        mtgSet.getCode(),
-                        mtgSet.getExitDate().getRough()
-                    )
-                );
-            }
+        for (MtGSet mtgSet : mtgSets.stream().filter(set ->
+            set.getCode() != null &&
+                set.getEnterDate().getExact().compareTo(new Date()) <= 0 &&
+                (set.getExitDate().getExact() == null || set.getExitDate().getExact().compareTo(new Date()) >= 0)
+        ).toList()) {
+            theSets.append("```%s (%s) || Leaves: %s```"
+                .formatted(
+                    mtgSet.getName(),
+                    mtgSet.getCode(),
+                    mtgSet.getExitDate().getRough()
+                )
+            );
         }
         return theSets.toString();
     }
 
-    private @NotNull String getBans(@NotNull List<Ban> wisData, boolean withReason) {
+    @NotNull
+    private List<String> getSetCodesOfCurrent(@NotNull List<MtGSet> mtgSets) {
+        List<String> setCodes = new ArrayList<>();
+        for (MtGSet mtgSet : mtgSets.stream().filter(set ->
+            set.getCode() != null &&
+                set.getEnterDate().getExact().compareTo(new Date()) <= 0 &&
+                (set.getExitDate().getExact() == null || set.getExitDate().getExact().compareTo(new Date()) >= 0)
+        ).toList()) {
+            setCodes.add(mtgSet.getCode());
+        }
+        return setCodes;
+    }
+
+    private @NotNull String getBans(@NotNull List<Ban> banList, @NotNull List<MtGSet> mtgSets, boolean withReason) {
         StringBuilder theBans = new StringBuilder();
-        for (Ban mtgBans : wisData) {
-            if (withReason) {
-                theBans.append("```%s (%s)\n Reason :: %s```".formatted(
-                        mtgBans.getCardName(),
-                        mtgBans.getSetCode(),
-                        mtgBans.getReason()
-                    )
-                );
-            } else {
-                theBans.append("```%s (%s)```".formatted(
-                        mtgBans.getCardName(),
-                        mtgBans.getSetCode()
-                    )
-                );
-            }
+        List<String> setCodes = getSetCodesOfCurrent(mtgSets);
+        for (Ban card : banList.stream().filter(card -> setCodes.stream().anyMatch(set -> set.equals(card.getSetCode()))).toList()) {
+            theBans.append("[```%s (%s)%s```](%s)".formatted(
+                    card.getCardName(),
+                    card.getSetCode(),
+                    withReason ? "\n Reason :: " + card.getReason() : "",
+                    "https://scryfall.com/search?q=!\"%s\" set:%s"
+                        .formatted(card.getCardName(), card.getSetCode())
+                        .replaceAll(" ", "%20")
+                )
+            );
         }
         return theBans.toString();
     }
 
     @Override
     public String getName() {
-        return "mtg-standard";
+        return "whats-in-standard";
     }
 
     @Override
@@ -79,14 +91,15 @@ public class whatsInStandard implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.MTG,
             format.parse("27-10-2022_12:46"),
-            format.parse("1-12-2022_12:37")
+            format.parse("4-12-2022_19:11")
         );
 
         metadata.addSubcommands(
             new SubcommandData("all", "Get all info about the standard format."),
             new SubcommandData("sets", "Get the standard sets only."),
             new SubcommandData("bans", "Get the ban list only.")
-                .addOption(OptionType.BOOLEAN, "include-reason", "Include reason for ban.")
+                .addOption(OptionType.BOOLEAN, "include-reason", "Include reason for ban."),
+            new SubcommandData("what-is-standard", "What is standard?")
         );
 
         return metadata;
@@ -116,12 +129,27 @@ public class whatsInStandard implements ISlashCommand {
 
         switch (subcommand) {
             case "all" ->
-                eb.setDescription("**Sets**:\n%s\n**Current Bans**:\n%s".formatted(this.getSets(wisData.getSets()), this.getBans(wisData.getBans(), false)));
+                eb.setDescription("**Sets**:\n%s\n**Current Bans**:\n%s".formatted(this.getSets(wisData.getSets()), this.getBans(wisData.getBans(), wisData.getSets(), false)));
             case "sets" -> eb.setDescription("**Sets**:\n%s".formatted(this.getSets(wisData.getSets())));
             case "bans" -> {
                 boolean withReason = event.getOption("include-reason", false, OptionMapping::getAsBoolean);
-                eb.setDescription("**Current Bans**:\n%s".formatted(this.getBans(wisData.getBans(), withReason)));
+                eb.setDescription("**Current Bans**:\n%s".formatted(this.getBans(wisData.getBans(), wisData.getSets(), withReason)));
             }
+            case "what-is-standard" -> eb.setDescription("""
+                **What *is* Standard?**
+                [Standard](https://magic.wizards.com/en/formats/standard) is a tournament format containing several recent Magic: The Gathering sets. Most sets enter the format when they're released and drop out about twenty-one months later.
+                                
+                Generally the group contains 5–8 sets; when a ninth would be released, the eldest four are dropped. This is a rule of thumb and exceptions are frequently made. This command will always have current information.
+                                
+                A **Standard card** is a card from a set currently part of the legal pool. *Different versions of a card count as the same card.*
+                               
+                A **Standard deck** contains 60+ Standard cards and can optionally have a sideboard of up to 15 additional such cards. Apart from basic lands, the combined main deck and sideboard cannot have more than four copies of any card.
+                                
+                **Related sets and formats**
+                [Brawl](https://magic.wizards.com/en/formats/brawl) is a format based on Standard—all rotations listed here apply to Brawl as well—but Brawl has its own ban list.
+                                
+                Not all sets enter Standard upon release. For example, Masters sets and [Commander](https://magic.wizards.com/en/formats/commander) sets never enter the format.
+                """);
         }
 
         event.getHook().sendMessageEmbeds(eb.build()).queue();
