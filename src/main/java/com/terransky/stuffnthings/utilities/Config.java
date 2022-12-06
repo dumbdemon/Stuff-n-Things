@@ -18,6 +18,10 @@ public class Config {
         return getConfig().get("TESTING_MODE").equals("true");
     }
 
+    public static String getErrorReportingLink() {
+        return getConfig().get("BOT_ERROR_REPORT");
+    }
+
     @Contract(pure = true)
     public static Dotenv getConfig() {
         return config;

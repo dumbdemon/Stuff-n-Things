@@ -19,10 +19,7 @@ import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
-import com.terransky.stuffnthings.utilities.Config;
-import com.terransky.stuffnthings.utilities.EmbedColors;
-import com.terransky.stuffnthings.utilities.GuildOnly;
-import com.terransky.stuffnthings.utilities.LogList;
+import com.terransky.stuffnthings.utilities.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -233,7 +230,7 @@ public class CommandManager extends ListenerAdapter {
         Optional<ISlashCommand> cmd = getCommand(event.getName());
         MessageEmbed cmdFailed = new EmbedBuilder()
             .setTitle("Oops!")
-            .setDescription("An error occurred while executing that command!\nPlease report this event [here](%s).".formatted(Config.getConfig().get("BOT_ERROR_REPORT")))
+            .setDescription(CannedResponses.INTERACTION_FAILED.getMessage(Interactions.SLASH_COMMAND))
             .setColor(EmbedColors.getError())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();

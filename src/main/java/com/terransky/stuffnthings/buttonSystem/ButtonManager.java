@@ -4,10 +4,7 @@ import com.terransky.stuffnthings.buttonSystem.buttons.expiredButton;
 import com.terransky.stuffnthings.buttonSystem.buttons.getMoreDadJokes;
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.interfaces.IButton;
-import com.terransky.stuffnthings.utilities.Config;
-import com.terransky.stuffnthings.utilities.EmbedColors;
-import com.terransky.stuffnthings.utilities.GuildOnly;
-import com.terransky.stuffnthings.utilities.LogList;
+import com.terransky.stuffnthings.utilities.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -80,7 +77,7 @@ public class ButtonManager extends ListenerAdapter {
         IButton butt = getButton(event.getButton().getId());
         MessageEmbed buttonFailed = new EmbedBuilder()
             .setTitle("Oops!")
-            .setDescription("An error occurred while executing the button!\nPlease report this event [here](%s).".formatted(Config.getConfig().get("BOT_ERROR_REPORT")))
+            .setDescription(CannedResponses.INTERACTION_FAILED.getMessage(Interactions.BUTTON))
             .setColor(EmbedColors.getDefault())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();

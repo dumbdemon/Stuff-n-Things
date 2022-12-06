@@ -2,10 +2,7 @@ package com.terransky.stuffnthings.commandSystem;
 
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.interfaces.IUserContext;
-import com.terransky.stuffnthings.utilities.Config;
-import com.terransky.stuffnthings.utilities.EmbedColors;
-import com.terransky.stuffnthings.utilities.GuildOnly;
-import com.terransky.stuffnthings.utilities.LogList;
+import com.terransky.stuffnthings.utilities.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
@@ -95,7 +92,7 @@ public class UserContextManager extends ListenerAdapter {
         Optional<IUserContext> ifMenu = getUserMenu(event.getName());
         MessageEmbed menuFailed = new EmbedBuilder()
             .setTitle("Oops!")
-            .setDescription("An error occurred while executing that context menu!\nPlease report this event [here](%s).".formatted(Config.getConfig().get("BOT_ERROR_REPORT")))
+            .setDescription(CannedResponses.INTERACTION_FAILED.getMessage(Interactions.CONTEXT_USER))
             .setColor(EmbedColors.getError())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();

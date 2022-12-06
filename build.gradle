@@ -7,7 +7,7 @@ plugins {
 mainClassName = 'com.terransky.stuffnthings.StuffNThings'
 
 group 'com.terransky.stuffnthings'
-version '18'
+version '19'
 compileJava.options.encoding = 'UTF-8'
 
 repositories {
