@@ -2,7 +2,7 @@ package com.terransky.stuffnthings.commandSystem;
 
 import com.terransky.stuffnthings.commandSystem.commands.admin.channelUnLock;
 import com.terransky.stuffnthings.commandSystem.commands.admin.checkPerms;
-import com.terransky.stuffnthings.commandSystem.commands.admin.config;
+import com.terransky.stuffnthings.commandSystem.commands.admin.configCmd;
 import com.terransky.stuffnthings.commandSystem.commands.devs.getInvite;
 import com.terransky.stuffnthings.commandSystem.commands.devs.test;
 import com.terransky.stuffnthings.commandSystem.commands.devs.userInfo;
@@ -49,7 +49,7 @@ public class CommandManager extends ListenerAdapter {
         //Admin Commands
         addCommand(new channelUnLock());
         addCommand(new checkPerms());
-        addCommand(new config());
+        addCommand(new configCmd());
 
         //Math Commands
         addCommand(new fibonacciSequence());

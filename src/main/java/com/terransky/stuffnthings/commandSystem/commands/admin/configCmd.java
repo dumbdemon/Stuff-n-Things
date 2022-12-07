@@ -30,8 +30,8 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Arrays;
 
-public class config implements ISlashCommand {
-    private final Logger log = LoggerFactory.getLogger(config.class);
+public class configCmd implements ISlashCommand {
+    private final Logger log = LoggerFactory.getLogger(configCmd.class);
 
     @Override
     public String getName() {
@@ -47,7 +47,7 @@ public class config implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.ADMIN,
             format.parse("28-08-2022_21:46"),
-            format.parse("1-12-2022_12:37")
+            format.parse("7-12-2022_09:47")
         );
 
         metadata.addDefaultPerms(Permission.MANAGE_SERVER);
@@ -72,7 +72,7 @@ public class config implements ISlashCommand {
 
     @Override
     public boolean isWorking() {
-        return Config.isTestingMode();
+        return Config.isDatabaseEnabled();
     }
 
     @Override
@@ -233,7 +233,7 @@ public class config implements ISlashCommand {
     protected MessageEmbed anErrorOccurred(@NotNull SQLException e) {
         EmbedBuilder eb = new EmbedBuilder().setColor(EmbedColors.getError());
         log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-        LogList.error(Arrays.asList(e.getStackTrace()), config.class);
+        LogList.error(Arrays.asList(e.getStackTrace()), configCmd.class);
         SQLiteDataSource.restartConnection();
         eb.setTitle("Uh-oh")
             .setDescription("An error occurred while executing the command!\n Try again in a moment!");
