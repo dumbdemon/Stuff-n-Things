@@ -193,7 +193,7 @@ public class CommandManager extends ListenerAdapter {
         final List<CommandData> commandData = new ArrayList<>();
 
         for (ISlashCommand command : iSlashCommandsList.stream().filter(it -> !it.isGlobal() && it.isWorking()).sorted().toList()) {
-            boolean addToServer = command.getServerRestrictions().stream().anyMatch(it -> it.equals(serverId)) || command.getServerRestrictions().isEmpty();
+            boolean addToServer = command.getServerRestrictions().contains(serverId) || command.getServerRestrictions().isEmpty();
 
             if (addToServer) commandData.add(command.getCommandData());
         }
@@ -216,7 +216,7 @@ public class CommandManager extends ListenerAdapter {
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
         //Add user to database or ignore if exists
-        if (Config.isEnableDatabase()) {
+        if (Config.isDatabaseEnabled()) {
             try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                 .prepareStatement("INSERT OR IGNORE INTO users_" + blob.getGuildId() + "(user_id) VALUES(?)")) {
                 stmt.setString(1, event.getUser().getId());

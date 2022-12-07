@@ -58,7 +58,7 @@ public class about implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("1-12-2022_12:37")
+            format.parse("7-12-2022_10:25")
         );
 
         metadata.addOptions(
@@ -99,9 +99,9 @@ public class about implements ISlashCommand {
                     > *What am I?*
                     An entertainment bot.
                     > [*I think I need help...*](%s)
-                    """.formatted(event.getJDA().getSelfUser().getAsMention(), Config.getConfig().get("SUPPORT_GUILD_INVITE")))
-                .setTitle(event.getJDA().getSelfUser().getName(), Config.getConfig().get("REPO_LINK"))
-                .setThumbnail(Config.getConfig().get("BOT_LOGO"))
+                    """.formatted(event.getJDA().getSelfUser().getAsMention(), Config.getSupportGuildInvite()))
+                .setTitle(event.getJDA().getSelfUser().getName(), Config.getRepositoryURL())
+                .setThumbnail(Config.getBotLogoURL())
                 .addField("Servers", "%d servers".formatted(guildCount), true)
                 .addField("Users", "%s users".formatted(calculateRats.largeNumberFormat(userCount)).replace(".0 ", " "), true)
                 .addField("Your Shard", "[%s/%s]".formatted(event.getJDA().getShardInfo().getShardId(), event.getJDA().getShardInfo().getShardTotal()), true)

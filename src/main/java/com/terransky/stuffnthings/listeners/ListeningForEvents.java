@@ -78,7 +78,7 @@ public class ListeningForEvents extends ListenerAdapter {
 
         log.info("I have left %s [%s]!".formatted(serverName, serverID));
 
-        if (Config.isEnableDatabase()) {
+        if (Config.isDatabaseEnabled()) {
             try {
                 try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
                     .prepareStatement("DELETE FROM guilds WHERE guild_id = ?")) {
@@ -103,7 +103,7 @@ public class ListeningForEvents extends ListenerAdapter {
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
         if (event.getUser().isBot()) return;
 
-        if (Config.isEnableDatabase()) {
+        if (Config.isDatabaseEnabled()) {
             String userID = event.getUser().getId(),
                 guildID = event.getGuild().getId();
 
@@ -127,6 +127,10 @@ public class ListeningForEvents extends ListenerAdapter {
 
     private void upsertGuildCommands(@NotNull GenericGuildEvent event) {
         if (Config.isTestingMode()) {
+            try {
+                globalCommandData.addAll(new CommandManager().getCommandData(event.getGuild().getIdLong()));
+            } catch (ParseException ignored) {
+            }
             event.getGuild().updateCommands().addCommands(globalCommandData).queue();
             log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
         } else {
@@ -141,7 +145,7 @@ public class ListeningForEvents extends ListenerAdapter {
     }
 
     private void addGuildToDB(@NotNull Guild guild) {
-        if (!Config.isEnableDatabase()) return;
+        if (!Config.isDatabaseEnabled()) return;
         String guildName = guild.getName(), guildId = guild.getId();
         try (final PreparedStatement sStmt = SQLiteDataSource.getConnection()
             .prepareStatement("INSERT OR IGNORE INTO guilds(guild_id) VALUES(?)")) {

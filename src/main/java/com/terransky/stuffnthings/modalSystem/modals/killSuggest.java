@@ -42,7 +42,7 @@ public class killSuggest implements IModal {
             victims.add(member.getAsMention());
         }
 
-        WebhookClientBuilder builder = new WebhookClientBuilder(Config.getConfig().get("REQUEST_WEBHOOK"));
+        WebhookClientBuilder builder = new WebhookClientBuilder(Config.getRequestWebhookURL());
         builder.setThreadFactory(job -> {
             Thread thread = new Thread(job);
             thread.setName("Kill_Suggestion");

@@ -43,7 +43,7 @@ public class getDadJokes implements ISlashCommand {
             """, Mastermind.USER,
             SlashModule.FUN,
             format.parse("25-8-2022_20:53"),
-            format.parse("1-12-2022_12:37")
+            format.parse("7-12-2022_10:25")
         );
     }
 
@@ -52,7 +52,7 @@ public class getDadJokes implements ISlashCommand {
         URL iCanHazDadJoke = new URL("https://icanhazdadjoke.com/");
         String iCanHazDadJokeLogo = "https://icanhazdadjoke.com/static/smile.svg";
         HttpURLConnection dadJoke = (HttpURLConnection) iCanHazDadJoke.openConnection();
-        dadJoke.addRequestProperty("User-Agent", Config.getConfig().get("BOT_USER_AGENT"));  //https://icanhazdadjoke.com/api#custom-user-agent
+        dadJoke.addRequestProperty("User-Agent", Config.getBotUserAgent());  //https://icanhazdadjoke.com/api#custom-user-agent
         dadJoke.addRequestProperty("Accept", "application/json");
         ObjectMapper om = new ObjectMapper();
         IcanhazdadjokeData theJoke = om.readValue(dadJoke.getInputStream(), IcanhazdadjokeData.class);

@@ -26,7 +26,7 @@ public class getMoreDadJokes implements IButton {
     public void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         URL iCanHazDadJoke = new URL("https://icanhazdadjoke.com/");
         HttpURLConnection dadJoke = (HttpURLConnection) iCanHazDadJoke.openConnection();
-        dadJoke.addRequestProperty("User-Agent", Config.getConfig().get("BOT_USER_AGENT")); //https://icanhazdadjoke.com/api#custom-user-agent
+        dadJoke.addRequestProperty("User-Agent", Config.getBotUserAgent()); //https://icanhazdadjoke.com/api#custom-user-agent
         dadJoke.addRequestProperty("Accept", "application/json");
         ObjectMapper om = new ObjectMapper();
         IcanhazdadjokeData theJoke = om.readValue(new InputStreamReader(dadJoke.getInputStream()), IcanhazdadjokeData.class);

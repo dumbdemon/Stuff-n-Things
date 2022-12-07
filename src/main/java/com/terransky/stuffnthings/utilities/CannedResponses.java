@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 public enum CannedResponses {
 
     //todo: Add Responses
-    INTERACTION_FAILED("An error occurred whilst executing this interaction, please submit an issue [here](%s).".formatted(Config.getErrorReportingLink())),
+    INTERACTION_FAILED("An error occurred whilst executing this interaction, please submit an issue [here](%s).".formatted(Config.getErrorReportingURL())),
     GUILD_ONLY("This interaction is guild only. Please use this interaction in a guild.");
 
     private final String message;

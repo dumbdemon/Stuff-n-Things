@@ -36,7 +36,7 @@ public class suggest implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("1-12-2022_12:37")
+            format.parse("7-12-2022_10:25")
         );
 
         metadata.addOptions(
@@ -55,7 +55,7 @@ public class suggest implements ISlashCommand {
         EmbedBuilder callReply = new EmbedBuilder().setColor(EmbedColors.getDefault());
         String description = "```\n" + suggestion + "\n```";
 
-        WebhookClientBuilder builder = new WebhookClientBuilder(Config.getConfig().get("REQUEST_WEBHOOK"));
+        WebhookClientBuilder builder = new WebhookClientBuilder(Config.getRequestWebhookURL());
         builder.setThreadFactory(job -> {
             Thread thread = new Thread(job);
             thread.setName("Suggestion");

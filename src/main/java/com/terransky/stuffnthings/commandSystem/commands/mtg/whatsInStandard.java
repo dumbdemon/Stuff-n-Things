@@ -91,7 +91,7 @@ public class whatsInStandard implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.MTG,
             format.parse("27-10-2022_12:46"),
-            format.parse("4-12-2022_19:11")
+            format.parse("7-12-2022_10:25")
         );
 
         metadata.addSubcommands(
@@ -120,7 +120,7 @@ public class whatsInStandard implements ISlashCommand {
         WhatsInStandardData wisData = om.readValue(wis, WhatsInStandardData.class);
         if (wisData.isDeprecated()) {
             event.getHook().sendMessageEmbeds(
-                eb.setDescription("Version %s has been deprecated. Please create an issue [here](%s).".formatted(version, Config.getConfig().get("BOT_ERROR_REPORT")))
+                eb.setDescription("Version %s has been deprecated. Please create an issue [here](%s).".formatted(version, Config.getErrorReportingURL()))
                     .setColor(EmbedColors.getError())
                     .build()
             ).queue();

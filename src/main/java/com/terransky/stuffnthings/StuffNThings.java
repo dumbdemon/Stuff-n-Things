@@ -9,7 +9,6 @@ import com.terransky.stuffnthings.listeners.ListeningForEvents;
 import com.terransky.stuffnthings.modalSystem.ModalManager;
 import com.terransky.stuffnthings.selectMenuSystem.SelectMenuManager;
 import com.terransky.stuffnthings.utilities.Config;
-import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -25,16 +24,10 @@ import java.util.Date;
 import java.util.Random;
 
 public class StuffNThings {
-    private final Dotenv config;
+    public static void main(String[] args) throws SQLException, ParseException {
+        if (Config.isDatabaseEnabled()) SQLiteDataSource.getConnection();
 
-    {
-        config = Config.getConfig();
-    }
-
-    public StuffNThings() throws SQLException, ParseException {
-        if (Config.isEnableDatabase()) SQLiteDataSource.getConnection();
-
-        DefaultShardManagerBuilder shards = DefaultShardManagerBuilder.createDefault(config.get("TOKEN"))
+        DefaultShardManagerBuilder shards = DefaultShardManagerBuilder.createDefault(Config.getToken())
             .enableIntents(
                 GatewayIntent.GUILD_MEMBERS,
                 GatewayIntent.GUILD_PRESENCES
@@ -63,9 +56,5 @@ public class StuffNThings {
             new SelectMenuManager(),
             new UserContextManager()
         );
-    }
-
-    public static void main(String[] args) throws SQLException, ParseException {
-        new StuffNThings();
     }
 }

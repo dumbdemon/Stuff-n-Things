@@ -1,10 +1,10 @@
 package com.terransky.stuffnthings.database;
 
+import com.terransky.stuffnthings.utilities.Config;
 import com.terransky.stuffnthings.utilities.LogList;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.HikariPoolMXBean;
-import io.github.cdimascio.dotenv.Dotenv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +17,6 @@ import java.util.Arrays;
 
 public class SQLiteDataSource { //todo: Set up MongoDB
     private static final Logger log = LoggerFactory.getLogger(SQLiteDataSource.class);
-    private static final Dotenv bConfig = Dotenv.configure().load();
     private static final HikariConfig config = new HikariConfig();
     private static final HikariDataSource ds;
     private static final HikariPoolMXBean poolBean;
@@ -40,8 +39,8 @@ public class SQLiteDataSource { //todo: Set up MongoDB
 
         config.setJdbcUrl("jdbc:sqlite:database.sqlite");
         config.setConnectionTestQuery("SELECT 1");
-        config.setUsername(bConfig.get("DB_USERNAME"));
-        config.setPassword(bConfig.get("DB_PASSWORD"));
+        config.setUsername(Config.getDBUsername());
+        config.setPassword(Config.getDBPassword());
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
@@ -72,7 +71,7 @@ public class SQLiteDataSource { //todo: Set up MongoDB
         return ds.getConnection();
     }
 
-    public static void restartConnection() {
+    public static void killIdleConnections() {
         poolBean.softEvictConnections();
     }
 }

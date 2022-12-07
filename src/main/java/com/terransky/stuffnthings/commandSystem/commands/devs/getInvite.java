@@ -32,7 +32,7 @@ public class getInvite implements ISlashCommand {
             """, Mastermind.DEFAULT,
             SlashModule.DEVS,
             format.parse("24-08-2022_11:10"),
-            format.parse("1-12-2022_12:37")
+            format.parse("7-12-2022_10:25")
         );
     }
 
@@ -43,9 +43,7 @@ public class getInvite implements ISlashCommand {
 
     @Override
     public @Nullable List<Long> getServerRestrictions() {
-        final List<Long> ids = new ArrayList<>();
-        ids.add(Long.parseLong(Config.getConfig().get("SUPPORT_GUILD_ID")));
-        return ids;
+        return new ArrayList<>(List.of(Config.getSupportGuildIdLong()));
     }
 
     @Override

@@ -62,7 +62,7 @@ public class userInfo implements ISlashCommand {
             }
         } else permText.append("Member");
 
-        if (member.getId().equals(Config.getConfig().get("OWNER_ID"))) {
+        if (member.getId().equals(Config.getOwnerId())) {
             permText.append(", Developer");
         }
         return permText.toString();
@@ -83,7 +83,7 @@ public class userInfo implements ISlashCommand {
             """, Mastermind.DEFAULT,
             SlashModule.DEVS,
             format.parse("24-08-2022_11:10"),
-            format.parse("1-12-2022_12:37")
+            format.parse("7-12-2022_10:25")
         );
 
         metadata.addOptions(

@@ -1,7 +1,6 @@
 package com.terransky.stuffnthings.utilities;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import org.jetbrains.annotations.Contract;
 
 public class Config {
 
@@ -10,20 +9,70 @@ public class Config {
     private Config() {
     }
 
-    public static boolean isEnableDatabase() {
-        return getConfig().get("ENABLE_DATABASE").equals("true");
+    //Main Stuff
+    public static String getToken() {
+        return config.get("TOKEN");
     }
 
     public static boolean isTestingMode() {
-        return getConfig().get("TESTING_MODE").equals("true");
+        return config.get("TESTING_MODE").equals("true");
     }
 
-    public static String getErrorReportingLink() {
-        return getConfig().get("BOT_ERROR_REPORT");
+    public static boolean isDatabaseEnabled() {
+        return config.get("ENABLE_DATABASE").equals("true");
     }
 
-    @Contract(pure = true)
-    public static Dotenv getConfig() {
-        return config;
+    public static String getOwnerId() {
+        return config.get("OWNER_ID");
+    }
+
+    public static String getSupportGuildId() {
+        return config.get("SUPPORT_GUILD_ID");
+    }
+
+    public static long getSupportGuildIdLong() {
+        return Long.parseLong(getSupportGuildId());
+    }
+
+    public static String getSupportGuildInvite() {
+        return config.get("SUPPORT_GUILD_INVITE");
+    }
+
+    public static String getErrorReportingURL() {
+        return config.get("BOT_ERROR_REPORT");
+    }
+
+    public static String getBotLogoURL() {
+        return config.get("BOT_LOGO");
+    }
+
+    public static String getBotUserAgent() {
+        return config.get("BOT_USER_AGENT");
+    }
+
+    public static String getRepositoryURL() {
+        return config.get("REPO_LINK");
+    }
+
+    public static String getRequestWebhookURL() {
+        return config.get("REQUEST_WEBHOOK");
+    }
+
+    //Database credentials
+    public static String getDBUsername() {
+        return config.get("DB_USERNAME");
+    }
+
+    public static String getDBPassword() {
+        return config.get("DB_PASSWORD");
+    }
+
+    //Other Tokens
+    public static String getOxfordId() {
+        return config.get("OXFORD_ID");
+    }
+
+    public static String getOxfordKey() {
+        return config.get("OXFORD_KEY");
     }
 }

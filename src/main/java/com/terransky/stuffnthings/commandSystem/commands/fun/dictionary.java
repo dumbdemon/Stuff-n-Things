@@ -146,7 +146,7 @@ public class dictionary implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("27-10-2022_12:46"),
-            format.parse("1-12-2022_12:37")
+            format.parse("7-12-2022_10:25")
         );
 
         metadata.addOptions(
@@ -186,8 +186,8 @@ public class dictionary implements ISlashCommand {
         URL dictionary = new URL("https://od-api.oxforddictionaries.com/api/v2/entries/%s/%s?fields=definitions&strictMatch=false".formatted(language.getValue(), toLookUp));
         HttpURLConnection oxfordConnection = (HttpURLConnection) dictionary.openConnection();
         oxfordConnection.addRequestProperty("Accept", "application/json");
-        oxfordConnection.addRequestProperty("app_id", Config.getConfig().get("OXFORD_ID"));
-        oxfordConnection.addRequestProperty("app_key", Config.getConfig().get("OXFORD_KEY"));
+        oxfordConnection.addRequestProperty("app_id", Config.getOxfordId());
+        oxfordConnection.addRequestProperty("app_key", Config.getOxfordKey());
         int responseCode = oxfordConnection.getResponseCode();
         ObjectMapper om = new ObjectMapper();
 
@@ -195,8 +195,8 @@ public class dictionary implements ISlashCommand {
             case 200 -> run200(event, eb, ebOverflow, language, toLookUp, oxfordConnection, om);
             case 400 -> {
                 event.getHook().sendMessageEmbeds(
-                    eb.setDescription("Unable to get the definition of [%s]. Make sure you have typed the word correctly, If this message continues to appear, please contact <@%s> to fix this."
-                            .formatted(toLookUp.toUpperCase(Locale.forLanguageTag(language.getValue())), Config.getConfig().get("OWNER_ID"))
+                    eb.setDescription("Unable to get the definition of [%s]. Make sure you have typed the word correctly, If this message continues to appear, please report this incident [here](%s)."
+                            .formatted(toLookUp.toUpperCase(Locale.forLanguageTag(language.getValue())), Config.getErrorReportingURL())
                         )
                         .setColor(EmbedColors.getError())
                         .build()
@@ -223,8 +223,8 @@ public class dictionary implements ISlashCommand {
             ).queue();
             case 500 -> {
                 event.getHook().sendMessageEmbeds(
-                    eb.setDescription("Looks like something went wrong with the API. Please let <@%s> know so he can send a message to Oxford."
-                            .formatted(Config.getConfig().get("OWNER_ID")))
+                    eb.setDescription("Looks like something went wrong with the API. Please report this incident [here](%s)"
+                            .formatted(Config.getErrorReportingURL()))
                         .setColor(EmbedColors.getError())
                         .build()
                 ).queue();

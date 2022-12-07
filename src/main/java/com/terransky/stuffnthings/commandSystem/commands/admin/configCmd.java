@@ -47,7 +47,7 @@ public class configCmd implements ISlashCommand {
             Mastermind.DEVELOPER,
             SlashModule.ADMIN,
             format.parse("28-08-2022_21:46"),
-            format.parse("7-12-2022_09:47")
+            format.parse("7-12-2022_10:31")
         );
 
         metadata.addDefaultPerms(Permission.MANAGE_SERVER);
@@ -234,7 +234,7 @@ public class configCmd implements ISlashCommand {
         EmbedBuilder eb = new EmbedBuilder().setColor(EmbedColors.getError());
         log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
         LogList.error(Arrays.asList(e.getStackTrace()), configCmd.class);
-        SQLiteDataSource.restartConnection();
+        SQLiteDataSource.killIdleConnections();
         eb.setTitle("Uh-oh")
             .setDescription("An error occurred while executing the command!\n Try again in a moment!");
         return eb.build();
