@@ -24,15 +24,13 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.*;
 
-//todo: Handle ParseException
 public class ListeningForEvents extends ListenerAdapter {
     private final Logger log = LoggerFactory.getLogger(ListeningForEvents.class);
     private final List<CommandData> globalCommandData = new CommandManager().getCommandData();
 
-    public ListeningForEvents() throws ParseException {
+    public ListeningForEvents() {
     }
 
     @Override
@@ -127,20 +125,13 @@ public class ListeningForEvents extends ListenerAdapter {
 
     private void upsertGuildCommands(@NotNull GenericGuildEvent event) {
         if (Config.isTestingMode()) {
-            try {
-                globalCommandData.addAll(new CommandManager().getCommandData(event.getGuild().getIdLong()));
-            } catch (ParseException ignored) {
-            }
+            globalCommandData.addAll(new CommandManager().getCommandData(event.getGuild()));
             event.getGuild().updateCommands().addCommands(globalCommandData).queue();
             log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
         } else {
-            try {
-                if (new CommandManager().getCommandData(event.getGuild().getIdLong()).size() > 0) {
-                    event.getGuild().updateCommands().addCommands(new CommandManager().getCommandData(event.getGuild().getIdLong())).queue();
-                } else event.getGuild().updateCommands().queue();
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
+            if (new CommandManager().getSlashCommandCount(event.getGuild()) > 0) {
+                event.getGuild().updateCommands().addCommands(new CommandManager().getCommandData(event.getGuild())).queue();
+            } else event.getGuild().updateCommands().queue();
         }
     }
 

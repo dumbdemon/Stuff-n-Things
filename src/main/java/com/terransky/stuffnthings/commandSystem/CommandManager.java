@@ -21,6 +21,7 @@ import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.interfaces.ISlashCommand;
 import com.terransky.stuffnthings.utilities.*;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -149,26 +150,31 @@ public class CommandManager extends ListenerAdapter {
 
     /**
      * Get the command data of all slash commands, message contexts, and user contexts.
+     * <p>
+     * If a {@link ParseException} occurs, it will not be pushed.
      *
      * @return Returns a list of {@link CommandData}.
-     * @throws ParseException            If the pattern used in {@code Metadata.getImplementationDate()} or {@code Metadata.getLastUpdated()} in an {@link ISlashCommand}
-     *                                   is given an invalid date string.
      * @throws IllegalArgumentException  If an {@link ISlashCommand} with that name is already indexed.
      * @throws IndexOutOfBoundsException If there are more than the combined total max slash commands, max message commands, and max user commands.
      */
-    public List<CommandData> getCommandData() throws ParseException {
+    public List<CommandData> getCommandData() {
         final List<CommandData> commandData = new ArrayList<>();
         final List<CommandData> messageContext = new MessageContextManager().getCommandData();
         final List<CommandData> userContext = new UserContextManager().getCommandData();
 
         for (ISlashCommand command : iSlashCommandsList.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList()) {
-            commandData.add(command.getCommandData());
+            try {
+                commandData.add(command.getCommandData());
+            } catch (ParseException e) {
+                log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(command.getName().toUpperCase()));
+            }
         }
 
         if (!messageContext.isEmpty()) {
             commandData.addAll(messageContext);
             log.debug("%d message contexts added".formatted(messageContext.size()));
         } else log.debug("No message contexts were added.");
+
         if (!userContext.isEmpty()) {
             commandData.addAll(userContext);
             log.debug("%d user contexts added".formatted(userContext.size()));
@@ -183,22 +189,71 @@ public class CommandManager extends ListenerAdapter {
 
     /**
      * Get the command data of all slash commands specifically for a server.
+     * <p>
+     * If a {@link ParseException} occurs, it will not be pushed.
      *
      * @param serverId The ID of the server to check for.
      * @return Returns a list of {@link CommandData}. Could potentially return an empty list.
-     * @throws ParseException If the pattern used in {@code Metadata.getImplementationDate()} or {@code Metadata.getLastUpdated()} in a slash command class
-     *                        is given an invalid date string.
      */
-    public List<CommandData> getCommandData(long serverId) throws ParseException {
+    public List<CommandData> getCommandData(long serverId) {
         final List<CommandData> commandData = new ArrayList<>();
 
         for (ISlashCommand command : iSlashCommandsList.stream().filter(it -> !it.isGlobal() && it.isWorking()).sorted().toList()) {
             boolean addToServer = command.getServerRestrictions().contains(serverId) || command.getServerRestrictions().isEmpty();
 
-            if (addToServer) commandData.add(command.getCommandData());
+            if (addToServer) try {
+                commandData.add(command.getCommandData());
+            } catch (ParseException e) {
+                log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(command.getName().toUpperCase()));
+            }
         }
 
         return commandData;
+    }
+
+    /**
+     * Get the command data of all slash commands specifically for a server.
+     * <p>
+     * If a {@link ParseException} occurs, it will not be pushed.
+     *
+     * @param guild The guild to look for.
+     * @return Returns a list of {@link CommandData}. Could potentially return an empty list.
+     */
+    public List<CommandData> getCommandData(@NotNull Guild guild) {
+        return getCommandData(guild.getIdLong());
+    }
+
+    /**
+     * Get the effective amount of global slash commands.
+     *
+     * @return The amount of slash commands.
+     */
+    public int getSlashCommandCount() {
+        return (int) iSlashCommandsList.stream().filter(it -> it.isGlobal() && it.isWorking()).count();
+    }
+
+    /**
+     * Get the effective amount of guild slash commands for a guild.
+     *
+     * @param serverId The server id to check for.
+     * @return The amount of slash commands.
+     */
+    public int getSlashCommandCount(long serverId) {
+        return (int) iSlashCommandsList.stream().filter(it ->
+            !it.isGlobal() &&
+                it.isWorking() &&
+                (it.getServerRestrictions().contains(serverId) || it.getServerRestrictions().isEmpty())
+        ).count();
+    }
+
+    /**
+     * Get the effective amount of guild slash commands for a guild.
+     *
+     * @param guild The guild to check for.
+     * @return The amount of slash commands.
+     */
+    public int getSlashCommandCount(@NotNull Guild guild) {
+        return getSlashCommandCount(guild.getIdLong());
     }
 
     /**

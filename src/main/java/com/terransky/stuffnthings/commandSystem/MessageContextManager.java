@@ -63,16 +63,20 @@ public class MessageContextManager extends ListenerAdapter {
 
     /**
      * Get the command data of message contexts menus.
+     * <p>
+     * If a {@link ParseException} occurs, it will not be pushed.
      *
      * @return Returns a list of {@link CommandData}.
-     * @throws ParseException If the pattern used in {@code Metadata.getImplementationDate()} or {@code Metadata.getLastUpdated()} in an {@link IMessageContext}
-     *                        is given an invalid date string.
      */
-    public List<CommandData> getCommandData() throws ParseException {
+    public List<CommandData> getCommandData() {
         final List<CommandData> commandData = new ArrayList<>();
 
         for (IMessageContext iMessageContext : iMessageContexts.stream().filter(IMessageContext::isWorking).toList()) {
-            commandData.add(iMessageContext.getCommandData());
+            try {
+                commandData.add(iMessageContext.getCommandData());
+            } catch (ParseException e) {
+                log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(iMessageContext.getName().toUpperCase()));
+            }
         }
 
         return commandData;

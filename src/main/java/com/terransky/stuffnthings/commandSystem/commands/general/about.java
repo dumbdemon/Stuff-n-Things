@@ -58,7 +58,7 @@ public class about implements ISlashCommand {
             """, Mastermind.DEVELOPER,
             SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("7-12-2022_10:25")
+            format.parse("7-12-2022_11:15")
         );
 
         metadata.addOptions(
@@ -82,8 +82,8 @@ public class about implements ISlashCommand {
         RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
         StringBuilder uptime = getStringBuilder(rb);
 
-        int commandCnt = new CommandManager().getCommandData().size();
-        int guildCommandCnt = new CommandManager().getCommandData(blob.getGuildIdLong()).size();
+        int commandCnt = new CommandManager().getSlashCommandCount();
+        int guildCommandCnt = new CommandManager().getSlashCommandCount(blob.getGuildIdLong());
         commandCnt += guildCommandCnt;
 
         //todo: Replace with database calls when fully implemented.

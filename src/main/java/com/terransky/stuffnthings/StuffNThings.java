@@ -19,12 +19,11 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.Random;
 
 public class StuffNThings {
-    public static void main(String[] args) throws SQLException, ParseException {
+    public static void main(String[] args) throws SQLException {
         if (Config.isDatabaseEnabled()) SQLiteDataSource.getConnection();
 
         DefaultShardManagerBuilder shards = DefaultShardManagerBuilder.createDefault(Config.getToken())

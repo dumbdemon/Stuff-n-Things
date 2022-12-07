@@ -61,16 +61,20 @@ public class UserContextManager extends ListenerAdapter {
 
     /**
      * Get the command data of User Context Menus.
+     * <p>
+     * If a {@link ParseException} occurs, it will not be pushed.
      *
      * @return Returns a list of {@link CommandData}.
-     * @throws ParseException If the pattern used in {@code Metadata.getImplementationDate()} or {@code Metadata.getLastUpdated()} in an {@link IUserContext}
-     *                        is given an invalid date string.
      */
-    public List<CommandData> getCommandData() throws ParseException {
+    public List<CommandData> getCommandData() {
         final List<CommandData> commandData = new ArrayList<>();
 
         for (IUserContext iUserContext : iMessageContexts.stream().filter(IUserContext::isWorking).toList()) {
-            commandData.add(iUserContext.getCommandData());
+            try {
+                commandData.add(iUserContext.getCommandData());
+            } catch (ParseException e) {
+                log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(iUserContext.getName().toUpperCase()));
+            }
         }
 
         return commandData;
