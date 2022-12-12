@@ -265,7 +265,7 @@ public class CommandManager extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getUser().isBot()) return;
         else if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event);
+            GuildOnly.interactionResponse(event, Interactions.SLASH_COMMAND);
             return;
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());

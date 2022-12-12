@@ -1,6 +1,5 @@
 package com.terransky.stuffnthings.utilities;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
@@ -31,9 +30,10 @@ public enum Interactions {
     }
 
     @NotNull
-    @Contract(" -> new")
     public static EnumSet<Interactions> getAllInteractions() {
-        return EnumSet.allOf(Interactions.class);
+        EnumSet<Interactions> enumSet = EnumSet.allOf(Interactions.class);
+        enumSet.remove(Interactions.UNKNOWN);
+        return enumSet;
     }
 
     public int getId() {

@@ -90,7 +90,7 @@ public class MessageContextManager extends ListenerAdapter {
     @Override
     public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event);
+            GuildOnly.interactionResponse(event, Interactions.CONTEXT_MESSAGE);
             return;
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());

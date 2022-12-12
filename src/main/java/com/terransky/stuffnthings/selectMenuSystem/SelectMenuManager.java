@@ -61,7 +61,7 @@ public class SelectMenuManager extends ListenerAdapter {
     @Override
     public void onEntitySelectInteraction(@NotNull EntitySelectInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event);
+            GuildOnly.interactionResponse(event, Interactions.SELECT_MENU);
             return;
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());

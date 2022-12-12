@@ -88,7 +88,7 @@ public class UserContextManager extends ListenerAdapter {
     @Override
     public void onUserContextInteraction(@NotNull UserContextInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event);
+            GuildOnly.interactionResponse(event, Interactions.CONTEXT_USER);
             return;
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());

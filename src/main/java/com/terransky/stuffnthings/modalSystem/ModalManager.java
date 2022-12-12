@@ -63,7 +63,7 @@ public class ModalManager extends ListenerAdapter {
     @Override
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event);
+            GuildOnly.interactionResponse(event, Interactions.MODAL);
             return;
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());

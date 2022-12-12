@@ -11,37 +11,40 @@ public class GuildOnly {
 
     private static final EmbedBuilder BOT_IS_GUILD_ONLY = new EmbedBuilder()
         .setTitle("This bot is a server only bot.")
-        .setDescription(CannedResponses.GUILD_ONLY.getMessage())
         .setColor(EmbedColors.getError());
 
     private GuildOnly() {
     }
 
-    public static void interactionResponse(@NotNull GenericCommandInteractionEvent event) {
+    public static void interactionResponse(@NotNull GenericCommandInteractionEvent event, Interactions interactions) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+                .setDescription(CannedResponses.GUILD_ONLY.getMessage(interactions))
                 .build()
         ).queue();
     }
 
-    public static void interactionResponse(@NotNull ModalInteractionEvent event) {
+    public static void interactionResponse(@NotNull ModalInteractionEvent event, Interactions interactions) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+                .setDescription(CannedResponses.GUILD_ONLY.getMessage(interactions))
                 .build()
         ).queue();
     }
 
-    public static void interactionResponse(@NotNull EntitySelectInteractionEvent event) {
+    public static void interactionResponse(@NotNull EntitySelectInteractionEvent event, Interactions interactions) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+                .setDescription(CannedResponses.GUILD_ONLY.getMessage(interactions))
                 .build()
         ).queue();
     }
 
-    public static void interactionResponse(@NotNull ButtonInteractionEvent event) {
+    public static void interactionResponse(@NotNull ButtonInteractionEvent event, Interactions interactions) {
         event.replyEmbeds(
-            BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl()
-            ).build()
+            BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+                .setDescription(CannedResponses.GUILD_ONLY.getMessage(interactions))
+                .build()
         ).queue();
     }
 }

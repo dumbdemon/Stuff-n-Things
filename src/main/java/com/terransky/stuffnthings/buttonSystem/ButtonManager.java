@@ -69,7 +69,7 @@ public class ButtonManager extends ListenerAdapter {
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         if (event.getButton().getId() == null) return;
         else if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event);
+            GuildOnly.interactionResponse(event, Interactions.BUTTON);
             return;
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
