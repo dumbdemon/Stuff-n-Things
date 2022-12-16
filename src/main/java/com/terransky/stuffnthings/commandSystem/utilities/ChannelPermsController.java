@@ -10,19 +10,14 @@ import net.dv8tion.jda.api.requests.restaction.PermissionOverrideAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ChannelPermsController<T extends IPermissionHolder> {
+public class ChannelPermsController {
 
-    private final T iPermissionHolder;
     private final GuildChannel guildChannel;
-    private PermissionOverride permissionOverride;
 
-    public ChannelPermsController(T iPermissionHolder, @NotNull GuildChannel guildChannel) {
-        this.iPermissionHolder = iPermissionHolder;
+    public ChannelPermsController(@NotNull GuildChannel guildChannel) {
         this.guildChannel = guildChannel;
-        this.permissionOverride = getPermissionOverride(iPermissionHolder, guildChannel.getPermissionContainer());
     }
 
     /**
@@ -33,7 +28,7 @@ public class ChannelPermsController<T extends IPermissionHolder> {
      * @return A {@link PermissionOverride} or null.
      */
     @Nullable
-    private PermissionOverride getPermissionOverride(T iPermissionHolder, @NotNull IPermissionContainer container) {
+    private <T extends IPermissionHolder> PermissionOverride getPermissionOverride(T iPermissionHolder, @NotNull IPermissionContainer container) {
         List<PermissionOverride> overrides = container.getPermissionOverrides();
         if (iPermissionHolder instanceof Role) {
             for (PermissionOverride override : overrides.stream().filter(PermissionOverride::isRoleOverride).toList()) {
@@ -56,13 +51,12 @@ public class ChannelPermsController<T extends IPermissionHolder> {
      * <p>
      * It is recommended that you check if the event has been acknowledged after this function.
      *
-     * @param permission      {@link Permission} to reset.
-     * @param morePermissions Additional {@link Permission}s
+     * @param iPermissionHolder An {@link Role} or {@link net.dv8tion.jda.api.entities.Member Member}.
+     * @param permissions       {@link Permission}s to reset
      * @return False if {@link PermissionOverride} is null; otherwise true.
      */
-    public boolean resetChannelPerms(Permission permission, Permission... morePermissions) {
-        List<Permission> permissions = new ArrayList<>(List.of(permission));
-        if (morePermissions != null) permissions.addAll(List.of(morePermissions));
+    public <T extends IPermissionHolder> boolean resetChannelPerms(T iPermissionHolder, Permission... permissions) {
+        PermissionOverride permissionOverride = getPermissionOverride(iPermissionHolder, guildChannel.getPermissionContainer());
 
         if (permissionOverride == null)
             return false;
@@ -77,12 +71,15 @@ public class ChannelPermsController<T extends IPermissionHolder> {
      * <p>
      * It is recommended that you check if the event has been acknowledged after this function.
      *
-     * @param permissions {@link Permission}s to grant.
+     * @param iPermissionHolder An {@link Role} or {@link net.dv8tion.jda.api.entities.Member Member}.
+     * @param permissions       {@link Permission}s to grant.
      * @return False if target channel already has the provided permissions granted for {@link IPermissionHolder}; otherwise true.
      */
-    public boolean grantChannelPerms(@NotNull Permission... permissions) {
+    public <T extends IPermissionHolder> boolean grantChannelPerms(@NotNull T iPermissionHolder, @NotNull Permission... permissions) {
         if (iPermissionHolder.hasPermission(guildChannel, permissions))
             return false;
+
+        PermissionOverride permissionOverride = getPermissionOverride(iPermissionHolder, guildChannel.getPermissionContainer());
 
         if (permissionOverride == null) {
             permissionOverride = guildChannel.getPermissionContainer().upsertPermissionOverride(iPermissionHolder).complete();
@@ -98,12 +95,15 @@ public class ChannelPermsController<T extends IPermissionHolder> {
      * <p>
      * It is recommended that you check if the event has been acknowledged after this function.
      *
-     * @param permissions {@link Permission}s to deny.
+     * @param iPermissionHolder An {@link Role} or {@link net.dv8tion.jda.api.entities.Member Member}.
+     * @param permissions       {@link Permission}s to deny.
      * @return False if target channel already has the provided permissions denied for {@link IPermissionHolder}; otherwise true.
      */
-    public boolean denyChannelPerms(@NotNull Permission... permissions) {
+    public <T extends IPermissionHolder> boolean denyChannelPerms(@NotNull T iPermissionHolder, @NotNull Permission... permissions) {
         if (!iPermissionHolder.hasPermission(guildChannel, permissions))
             return false;
+
+        PermissionOverride permissionOverride = getPermissionOverride(iPermissionHolder, guildChannel.getPermissionContainer());
 
         if (permissionOverride == null) {
             permissionOverride = guildChannel.getPermissionContainer().upsertPermissionOverride(iPermissionHolder).complete();

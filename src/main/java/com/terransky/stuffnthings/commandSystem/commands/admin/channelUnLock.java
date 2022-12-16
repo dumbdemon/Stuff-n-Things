@@ -36,7 +36,7 @@ public class channelUnLock implements ISlashCommand {
         String description = "Lock or unlock a channel for everyone or from a specific role to see.";
         var metadata = new Metadata(this.getName(), description, description, Mastermind.DEVELOPER, SlashModule.ADMIN,
             format.parse("23-11-2022_18:34"),
-            format.parse("15-12-2022_18:03")
+            format.parse("15-12-2022_19:04")
         );
 
         metadata.addDefaultPerms(Permission.MANAGE_CHANNEL);
@@ -73,11 +73,11 @@ public class channelUnLock implements ISlashCommand {
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
 
         try {
-            ChannelPermsController<Role> permsController = new ChannelPermsController<>(targetRole, targetChannel);
+            ChannelPermsController permsController = new ChannelPermsController(targetChannel);
 
             switch (subcommand) {
                 case "lock" -> {
-                    if (!permsController.denyChannelPerms(Permission.VIEW_CHANNEL)) {
+                    if (!permsController.denyChannelPerms(targetRole, Permission.VIEW_CHANNEL)) {
                         event.replyEmbeds(
                             response
                                 .setDescription("%s is already set to not be viewed by %s.".formatted(targetChannel.getAsMention(), targetChannel.getAsMention()))
@@ -88,7 +88,7 @@ public class channelUnLock implements ISlashCommand {
                     }
                 }
                 case "unlock" -> {
-                    if (!permsController.grantChannelPerms(Permission.VIEW_CHANNEL)) {
+                    if (!permsController.grantChannelPerms(targetRole, Permission.VIEW_CHANNEL)) {
                         event.replyEmbeds(
                             response
                                 .setDescription("%s is already set to be viewable by %s.".formatted(targetChannel.getAsMention(), targetRole.getAsMention()))
@@ -99,7 +99,7 @@ public class channelUnLock implements ISlashCommand {
                     }
                 }
                 case "reset" -> {
-                    if (!permsController.resetChannelPerms(Permission.VIEW_CHANNEL)) {
+                    if (!permsController.resetChannelPerms(targetRole, Permission.VIEW_CHANNEL)) {
                         event.replyEmbeds(
                             response
                                 .setDescription("%s is not in the permissions list for %s.".formatted(targetRole.getAsMention(), targetChannel.getAsMention()))
