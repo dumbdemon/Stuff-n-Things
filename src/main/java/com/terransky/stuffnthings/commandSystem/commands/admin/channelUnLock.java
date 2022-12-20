@@ -36,7 +36,7 @@ public class channelUnLock implements ISlashCommand {
         String description = "Lock or unlock a channel for everyone or from a specific role to see.";
         var metadata = new Metadata(this.getName(), description, description, Mastermind.DEVELOPER, SlashModule.ADMIN,
             format.parse("23-11-2022_18:34"),
-            format.parse("15-12-2022_19:04")
+            format.parse("20-12-2022_11:03")
         );
 
         metadata.addDefaultPerms(Permission.MANAGE_CHANNEL);
@@ -80,7 +80,7 @@ public class channelUnLock implements ISlashCommand {
                     if (!permsController.denyChannelPerms(targetRole, Permission.VIEW_CHANNEL)) {
                         event.replyEmbeds(
                             response
-                                .setDescription("%s is already set to not be viewed by %s.".formatted(targetChannel.getAsMention(), targetChannel.getAsMention()))
+                                .setDescription("%s is already set to not be viewed by %s.".formatted(targetChannel.getAsMention(), targetRole.getAsMention()))
                                 .setColor(EmbedColors.getError())
                                 .build()
                         ).queue();
