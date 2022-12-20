@@ -4,7 +4,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.GenericSelectMenuInteractionEvent;
+import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import org.jetbrains.annotations.NotNull;
 
 public class GuildOnly {
@@ -32,7 +33,7 @@ public class GuildOnly {
         ).queue();
     }
 
-    public static void interactionResponse(@NotNull EntitySelectInteractionEvent event, Interactions interactions) {
+    public static <T extends GenericSelectMenuInteractionEvent<?, ? extends SelectMenu>> void interactionResponse(@NotNull T event, Interactions interactions) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
                 .setDescription(CannedResponses.GUILD_ONLY.getMessage(interactions))
