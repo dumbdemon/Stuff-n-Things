@@ -55,8 +55,6 @@ public class SQLiteDataSource { //todo: Set up MongoDB
                 "guild_id VARCHAR(20) UNIQUE NOT NULL," +
                 "killcmd_max INTEGER NOT NULL DEFAULT 5," +
                 "killcmd_timeout INTEGER NOT NULL DEFAULT 300000," +
-                "reporting_wh TEXT," +
-                "reporting_ar TEXT" +
                 ");");
         } catch (SQLException e) {
             log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));

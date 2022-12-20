@@ -48,8 +48,6 @@ public class ChannelPermsController {
 
     /**
      * Reset all provided permissions to the inherent state.
-     * <p>
-     * It is recommended that you check if the event has been acknowledged after this function.
      *
      * @param iPermissionHolder An {@link Role} or {@link net.dv8tion.jda.api.entities.Member Member}.
      * @param permissions       {@link Permission}s to reset
@@ -68,8 +66,6 @@ public class ChannelPermsController {
 
     /**
      * Grant permissions on a channel to a role or member.
-     * <p>
-     * It is recommended that you check if the event has been acknowledged after this function.
      *
      * @param iPermissionHolder An {@link Role} or {@link net.dv8tion.jda.api.entities.Member Member}.
      * @param permissions       {@link Permission}s to grant.
@@ -92,8 +88,6 @@ public class ChannelPermsController {
 
     /**
      * Deny permissions on a channel to a role or member.
-     * <p>
-     * It is recommended that you check if the event has been acknowledged after this function.
      *
      * @param iPermissionHolder An {@link Role} or {@link net.dv8tion.jda.api.entities.Member Member}.
      * @param permissions       {@link Permission}s to deny.
