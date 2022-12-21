@@ -298,7 +298,7 @@ public class CommandManager extends ListenerAdapter {
             } catch (Exception e) {
                 log.debug("Full command path that triggered error :: [" + event.getFullCommandName() + "]");
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-                LogList.error(Arrays.asList(e.getStackTrace()), CommandManager.class);
+                LogList.error(Arrays.asList(e.getStackTrace()), log);
                 if (event.isAcknowledged()) {
                     event.getHook().sendMessageEmbeds(cmdFailed).queue();
                 } else event.replyEmbeds(cmdFailed).setEphemeral(true).queue();
