@@ -9,7 +9,7 @@ import com.terransky.stuffnthings.dataSources.whatsInStandard.Ban;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.MtGSet;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.WhatsInStandardData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
-import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.interfaces.ICommandSlash;
 import com.terransky.stuffnthings.utilities.Config;
 import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class whatsInStandard implements ISlashCommand {
+public class whatsInStandard implements ICommandSlash {
     private @NotNull String getSets(@NotNull List<MtGSet> mtgSets) {
         StringBuilder theSets = new StringBuilder();
         for (MtGSet mtgSet : mtgSets.stream().filter(set ->

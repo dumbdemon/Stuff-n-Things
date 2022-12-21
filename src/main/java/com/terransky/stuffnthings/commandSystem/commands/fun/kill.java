@@ -5,7 +5,7 @@ import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
-import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.interfaces.ICommandSlash;
 import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-public class kill implements ISlashCommand {
+public class kill implements ICommandSlash {
 
     private final String[] randomStrings = {
         "was in their chem lab with %s trying to kill them with a 20 gauge shotgun!",

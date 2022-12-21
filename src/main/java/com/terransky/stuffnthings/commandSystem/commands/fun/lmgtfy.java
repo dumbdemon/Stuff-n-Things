@@ -4,7 +4,7 @@ import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
-import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.interfaces.ICommandSlash;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
 
-public class lmgtfy implements ISlashCommand {
+public class lmgtfy implements ICommandSlash {
     @Override
     public String getName() {
         return "lmgtfy";

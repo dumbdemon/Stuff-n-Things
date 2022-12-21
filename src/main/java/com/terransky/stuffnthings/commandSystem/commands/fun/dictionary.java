@@ -7,7 +7,7 @@ import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.dataSources.oxfordDictionary.*;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
-import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.interfaces.ICommandSlash;
 import com.terransky.stuffnthings.utilities.Config;
 import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -29,7 +29,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.*;
 
-public class dictionary implements ISlashCommand {
+public class dictionary implements ICommandSlash {
     private final Logger log = LoggerFactory.getLogger(dictionary.class);
     private final NavigableMap<String, String> langCodes = new TreeMap<>();
     private final List<Command.Choice> langChoices = new ArrayList<>();

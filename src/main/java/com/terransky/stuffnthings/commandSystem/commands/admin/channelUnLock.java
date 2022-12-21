@@ -2,7 +2,7 @@ package com.terransky.stuffnthings.commandSystem.commands.admin;
 
 import com.terransky.stuffnthings.commandSystem.utilities.*;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
-import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.interfaces.ICommandSlash;
 import com.terransky.stuffnthings.utilities.Config;
 import com.terransky.stuffnthings.utilities.EmbedColors;
 import com.terransky.stuffnthings.utilities.LogList;
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.text.ParseException;
 import java.util.Arrays;
 
-public class channelUnLock implements ISlashCommand {
+public class channelUnLock implements ICommandSlash {
 
     @Override
     public String getName() {

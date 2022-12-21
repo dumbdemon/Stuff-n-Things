@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.commandSystem;
 
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
-import com.terransky.stuffnthings.interfaces.IUserContext;
+import com.terransky.stuffnthings.interfaces.ICommandUser;
 import com.terransky.stuffnthings.utilities.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -20,37 +20,37 @@ import java.util.List;
 import java.util.Optional;
 
 public class UserContextManager extends ListenerAdapter {
-    private static final List<IUserContext> iMessageContexts = new ArrayList<>();
+    private static final List<ICommandUser> iMessageContexts = new ArrayList<>();
     private static final Logger log = LoggerFactory.getLogger(UserContextManager.class);
 
     public UserContextManager() {
     }
 
     /**
-     * Add a {@link IUserContext} object to be indexed and used.
+     * Add a {@link ICommandUser} object to be indexed and used.
      *
-     * @param iUserContext An {@link IUserContext} object.
-     * @throws IllegalArgumentException  If an {@link IUserContext} with that name is already indexed.
+     * @param iCommandUser An {@link ICommandUser} object.
+     * @throws IllegalArgumentException  If an {@link ICommandUser} with that name is already indexed.
      * @throws IndexOutOfBoundsException If {@code iMessageContexts} is more than the max user contexts.
      */
     @SuppressWarnings("unused")
-    private void addContextMenu(IUserContext iUserContext) {
-        boolean nameFound = iMessageContexts.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iUserContext.getName()));
+    private void addContextMenu(ICommandUser iCommandUser) {
+        boolean nameFound = iMessageContexts.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iCommandUser.getName()));
 
         if (nameFound) throw new IllegalArgumentException("A context menu with this name already exists");
 
         if (iMessageContexts.size() > Commands.MAX_USER_COMMANDS)
             throw new IndexOutOfBoundsException("You can only have at most %d user contexts".formatted(Commands.MAX_USER_COMMANDS));
-        else iMessageContexts.add(iUserContext);
+        else iMessageContexts.add(iCommandUser);
     }
 
     /**
-     * Get the {@link IUserContext} object for execution at {@code onUserContextInteraction()}.
+     * Get the {@link ICommandUser} object for execution at {@code onUserContextInteraction()}.
      *
-     * @param search An {@link Optional} of {@link IUserContext}.
+     * @param search An {@link Optional} of {@link ICommandUser}.
      */
-    private Optional<IUserContext> getUserMenu(@NotNull String search) {
-        for (IUserContext menu : iMessageContexts) {
+    private Optional<ICommandUser> getUserMenu(@NotNull String search) {
+        for (ICommandUser menu : iMessageContexts) {
             if (menu.getName().equals(search)) {
                 return Optional.of(menu);
             }
@@ -69,11 +69,11 @@ public class UserContextManager extends ListenerAdapter {
     public List<CommandData> getCommandData() {
         final List<CommandData> commandData = new ArrayList<>();
 
-        for (IUserContext iUserContext : iMessageContexts.stream().filter(IUserContext::isWorking).toList()) {
+        for (ICommandUser iCommandUser : iMessageContexts.stream().filter(ICommandUser::isWorking).toList()) {
             try {
-                commandData.add(iUserContext.getCommandData());
+                commandData.add(iCommandUser.getCommandData());
             } catch (ParseException e) {
-                log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(iUserContext.getName().toUpperCase()));
+                log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(iCommandUser.getName().toUpperCase()));
             }
         }
 
@@ -93,7 +93,7 @@ public class UserContextManager extends ListenerAdapter {
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
-        Optional<IUserContext> ifMenu = getUserMenu(event.getName());
+        Optional<ICommandUser> ifMenu = getUserMenu(event.getName());
         MessageEmbed menuFailed = new EmbedBuilder()
             .setTitle("Oops!")
             .setDescription(CannedResponses.INTERACTION_FAILED.getMessage(Interactions.CONTEXT_USER))
@@ -102,7 +102,7 @@ public class UserContextManager extends ListenerAdapter {
             .build();
 
         if (ifMenu.isPresent()) {
-            IUserContext context = ifMenu.get();
+            ICommandUser context = ifMenu.get();
             log.debug("Command \"" + context.getName().toUpperCase() + "\" called on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
             try {
                 context.execute(event, blob);

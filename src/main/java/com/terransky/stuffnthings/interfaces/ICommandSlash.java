@@ -13,7 +13,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface ISlashCommand extends ICommand {
+public interface ICommandSlash extends ICommand {
 
     /**
      * Builds a {@link CommandData} object based on {@link Metadata}.

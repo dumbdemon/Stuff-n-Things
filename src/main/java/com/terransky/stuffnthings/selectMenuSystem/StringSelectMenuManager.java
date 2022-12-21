@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.selectMenuSystem;
 
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
-import com.terransky.stuffnthings.interfaces.IStringSelectMenu;
+import com.terransky.stuffnthings.interfaces.ISelectMenuString;
 import com.terransky.stuffnthings.utilities.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -16,38 +16,38 @@ import java.util.List;
 import java.util.Optional;
 
 public class StringSelectMenuManager extends ListenerAdapter {
-    private final List<IStringSelectMenu> iStringSelectMenus = new ArrayList<>();
+    private final List<ISelectMenuString> iSelectMenuStrings = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(StringSelectMenuManager.class);
 
     public StringSelectMenuManager() {
     }
 
     /**
-     * Add an {@link IStringSelectMenu} to be indexed and used.
+     * Add an {@link ISelectMenuString} to be indexed and used.
      *
-     * @param iStringSelectMenu An {@link IStringSelectMenu} object.
+     * @param iSelectMenuString An {@link ISelectMenuString} object.
      */
     @SuppressWarnings("unused")
-    private void addMenu(IStringSelectMenu iStringSelectMenu) {
-        boolean menuFound = iStringSelectMenus.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iStringSelectMenu.getName()));
+    private void addMenu(ISelectMenuString iSelectMenuString) {
+        boolean menuFound = iSelectMenuStrings.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iSelectMenuString.getName()));
 
         if (menuFound) throw new IllegalArgumentException("A menu with this id already exists");
 
-        iStringSelectMenus.add(iStringSelectMenu);
+        iSelectMenuStrings.add(iSelectMenuString);
     }
 
     /**
-     * Get an {@link IStringSelectMenu} object to be used at {@code onSelectMenuInteraction()}
+     * Get an {@link ISelectMenuString} object to be used at {@code onSelectMenuInteraction()}
      *
-     * @param search The {@link IStringSelectMenu}'s ID.
-     * @return An {@link Optional} of {@link IStringSelectMenu}.
+     * @param search The {@link ISelectMenuString}'s ID.
+     * @return An {@link Optional} of {@link ISelectMenuString}.
      */
-    private Optional<IStringSelectMenu> getMenu(@NotNull String search) {
+    private Optional<ISelectMenuString> getMenu(@NotNull String search) {
         String toSearch = search.toLowerCase();
 
-        for (IStringSelectMenu iStringSelectMenu : iStringSelectMenus) {
-            if (iStringSelectMenu.getName().equals(toSearch)) {
-                return Optional.of(iStringSelectMenu);
+        for (ISelectMenuString iSelectMenuString : iSelectMenuStrings) {
+            if (iSelectMenuString.getName().equals(toSearch)) {
+                return Optional.of(iSelectMenuString);
             }
         }
 
@@ -67,7 +67,7 @@ public class StringSelectMenuManager extends ListenerAdapter {
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
-        List<Optional<IStringSelectMenu>> ifMenus = new ArrayList<>();
+        List<Optional<ISelectMenuString>> ifMenus = new ArrayList<>();
         for (String id : event.getInteraction().getValues()) {
             ifMenus.add(getMenu(id));
         }
@@ -80,9 +80,9 @@ public class StringSelectMenuManager extends ListenerAdapter {
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();
 
-        for (Optional<IStringSelectMenu> ifMenu : ifMenus) {
+        for (Optional<ISelectMenuString> ifMenu : ifMenus) {
             if (ifMenu.isPresent()) {
-                IStringSelectMenu menu = ifMenu.get();
+                ISelectMenuString menu = ifMenu.get();
                 log.debug("Select Menu %s[%s] called on %s [%d]".formatted(componentId.toUpperCase(), menu.getName().toUpperCase(),
                     blob.getGuildName(), blob.getGuildIdLong()));
                 try {

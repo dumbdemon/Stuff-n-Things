@@ -4,7 +4,7 @@ import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
-public interface IButton extends IInteractionElement {
+public interface IButton extends IInteraction {
 
     /**
      * The main handler for buttons.

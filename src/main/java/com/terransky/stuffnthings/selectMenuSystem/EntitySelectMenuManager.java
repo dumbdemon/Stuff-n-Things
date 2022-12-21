@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.selectMenuSystem;
 
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
-import com.terransky.stuffnthings.interfaces.IEntitySelectMenu;
+import com.terransky.stuffnthings.interfaces.ISelectMenuEntity;
 import com.terransky.stuffnthings.utilities.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -17,38 +17,38 @@ import java.util.List;
 import java.util.Optional;
 
 public class EntitySelectMenuManager extends ListenerAdapter {
-    private final List<IEntitySelectMenu> iEntitySelectMenus = new ArrayList<>();
+    private final List<ISelectMenuEntity> iSelectMenuEntities = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(EntitySelectMenuManager.class);
 
     public EntitySelectMenuManager() {
     }
 
     /**
-     * Add an {@link IEntitySelectMenu} to be indexed and used.
+     * Add an {@link ISelectMenuEntity} to be indexed and used.
      *
-     * @param iEntitySelectMenu An {@link IEntitySelectMenu} object.
+     * @param iSelectMenuEntity An {@link ISelectMenuEntity} object.
      */
     @SuppressWarnings("unused")
-    private void addMenu(IEntitySelectMenu iEntitySelectMenu) {
-        boolean menuFound = iEntitySelectMenus.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iEntitySelectMenu.getName()));
+    private void addMenu(ISelectMenuEntity iSelectMenuEntity) {
+        boolean menuFound = iSelectMenuEntities.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iSelectMenuEntity.getName()));
 
         if (menuFound) throw new IllegalArgumentException("A menu with this id already exists");
 
-        iEntitySelectMenus.add(iEntitySelectMenu);
+        iSelectMenuEntities.add(iSelectMenuEntity);
     }
 
     /**
-     * Get an {@link IEntitySelectMenu} object to be used at {@code onSelectMenuInteraction()}
+     * Get an {@link ISelectMenuEntity} object to be used at {@code onSelectMenuInteraction()}
      *
-     * @param search The {@link IEntitySelectMenu}'s ID.
-     * @return An {@link Optional} of {@link IEntitySelectMenu}.
+     * @param search The {@link ISelectMenuEntity}'s ID.
+     * @return An {@link Optional} of {@link ISelectMenuEntity}.
      */
-    private Optional<IEntitySelectMenu> getMenu(@NotNull String search) {
+    private Optional<ISelectMenuEntity> getMenu(@NotNull String search) {
         String toSearch = search.toLowerCase();
 
-        for (IEntitySelectMenu iEntitySelectMenu : iEntitySelectMenus) {
-            if (iEntitySelectMenu.getName().equals(toSearch)) {
-                return Optional.of(iEntitySelectMenu);
+        for (ISelectMenuEntity iSelectMenuEntity : iSelectMenuEntities) {
+            if (iSelectMenuEntity.getName().equals(toSearch)) {
+                return Optional.of(iSelectMenuEntity);
             }
         }
 
@@ -68,7 +68,7 @@ public class EntitySelectMenuManager extends ListenerAdapter {
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
-        Optional<IEntitySelectMenu> ifMenu = getMenu(event.getInteraction().getComponentId());
+        Optional<ISelectMenuEntity> ifMenu = getMenu(event.getInteraction().getComponentId());
         MessageEmbed menuFailed = new EmbedBuilder()
             .setTitle("Oops")
             .setDescription(CannedResponses.INTERACTION_FAILED.getMessage(Interactions.SELECT_MENU))
@@ -78,7 +78,7 @@ public class EntitySelectMenuManager extends ListenerAdapter {
 
         if (ifMenu.isEmpty()) return;
 
-        IEntitySelectMenu menu = ifMenu.get();
+        ISelectMenuEntity menu = ifMenu.get();
         log.debug("Select Menu %s called on %s [%d]".formatted(menu.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong()));
         try {
             menu.execute(event, blob);

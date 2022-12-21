@@ -4,7 +4,7 @@ import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
-public interface IUserContext extends ICommand {
+public interface ICommandUser extends ICommand {
 
     /**
      * The main handler for user context menus.

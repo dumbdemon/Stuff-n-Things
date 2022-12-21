@@ -8,7 +8,7 @@ import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
-import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.interfaces.ICommandSlash;
 import com.terransky.stuffnthings.utilities.Config;
 import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
 
-public class suggest implements ISlashCommand {
+public class suggest implements ICommandSlash {
 
     @Override
     public String getName() {

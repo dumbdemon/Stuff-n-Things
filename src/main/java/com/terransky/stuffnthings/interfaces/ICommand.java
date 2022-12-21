@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 
 import java.text.ParseException;
 
-public interface ICommand extends IInteractionElement {
+public interface ICommand extends IInteraction {
 
     /**
      * Get this commands {@link CommandData}.

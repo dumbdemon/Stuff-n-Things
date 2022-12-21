@@ -5,7 +5,7 @@ import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
-import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.interfaces.ICommandSlash;
 import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -25,7 +25,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
-public class checkPerms implements ISlashCommand {
+public class checkPerms implements ICommandSlash {
 
     public static @NotNull List<Permission> getRequiredPerms() {
         List<Permission> permissionList = new ArrayList<>();

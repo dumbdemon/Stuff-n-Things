@@ -6,7 +6,7 @@ import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
 import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.dataSources.icanhazdadjoke.IcanhazdadjokeData;
-import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.interfaces.ICommandSlash;
 import com.terransky.stuffnthings.utilities.Config;
 import com.terransky.stuffnthings.utilities.EmbedColors;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -27,7 +27,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.concurrent.TimeUnit;
 
-public class getDadJokes implements ISlashCommand {
+public class getDadJokes implements ICommandSlash {
     private final Logger log = LoggerFactory.getLogger(getDadJokes.class);
 
     @Override

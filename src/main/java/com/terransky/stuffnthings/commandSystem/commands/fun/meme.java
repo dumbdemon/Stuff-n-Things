@@ -7,7 +7,7 @@ import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.dataSources.freshMemes.FreshMemeData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
-import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.interfaces.ICommandSlash;
 import com.terransky.stuffnthings.utilities.EmbedColors;
 import com.terransky.stuffnthings.utilities.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -26,7 +26,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Arrays;
 
-public class meme implements ISlashCommand {
+public class meme implements ICommandSlash {
     private final Logger log = LoggerFactory.getLogger(meme.class);
 
     @Override

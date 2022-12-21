@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.commandSystem;
 
 import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
-import com.terransky.stuffnthings.interfaces.IMessageContext;
+import com.terransky.stuffnthings.interfaces.ICommandMessage;
 import com.terransky.stuffnthings.utilities.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -20,39 +20,39 @@ import java.util.List;
 import java.util.Optional;
 
 public class MessageContextManager extends ListenerAdapter {
-    private final List<IMessageContext> iMessageContexts = new ArrayList<>();
+    private final List<ICommandMessage> iCommandMessages = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(MessageContextManager.class);
 
     public MessageContextManager() {
     }
 
     /**
-     * Add a {@link IMessageContext} object to be indexed and used.
+     * Add a {@link ICommandMessage} object to be indexed and used.
      *
-     * @param iMessageContext An {@link IMessageContext} object.
-     * @throws IllegalArgumentException  If an {@link IMessageContext} with that name is already indexed.
+     * @param iCommandMessage An {@link ICommandMessage} object.
+     * @throws IllegalArgumentException  If an {@link ICommandMessage} with that name is already indexed.
      * @throws IndexOutOfBoundsException If {@code iMessageContexts} is more than the max message commands.
      */
     @SuppressWarnings("unused")
-    private void addContextMenu(IMessageContext iMessageContext) {
-        boolean nameFound = iMessageContexts.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iMessageContext.getName()));
+    private void addContextMenu(ICommandMessage iCommandMessage) {
+        boolean nameFound = iCommandMessages.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iCommandMessage.getName()));
 
         if (nameFound) throw new IllegalArgumentException("A context menu with this name already exists");
 
-        if (iMessageContexts.size() > Commands.MAX_MESSAGE_COMMANDS)
+        if (iCommandMessages.size() > Commands.MAX_MESSAGE_COMMANDS)
             throw new IndexOutOfBoundsException("You can only have at most %d message contexts".formatted(Commands.MAX_MESSAGE_COMMANDS));
-        else iMessageContexts.add(iMessageContext);
+        else iCommandMessages.add(iCommandMessage);
     }
 
     /**
      * /**
-     * Get the {@link IMessageContext} object for execution at {@code onMessageContextInteraction()}.
+     * Get the {@link ICommandMessage} object for execution at {@code onMessageContextInteraction()}.
      *
      * @param search The name of the Context Menu
-     * @return An {@link Optional} {@link IMessageContext}.
+     * @return An {@link Optional} {@link ICommandMessage}.
      */
-    private Optional<IMessageContext> getMessageMenu(@NotNull String search) {
-        for (IMessageContext menu : iMessageContexts) {
+    private Optional<ICommandMessage> getMessageMenu(@NotNull String search) {
+        for (ICommandMessage menu : iCommandMessages) {
             if (menu.getName().equals(search)) {
                 return Optional.of(menu);
             }
@@ -71,11 +71,11 @@ public class MessageContextManager extends ListenerAdapter {
     public List<CommandData> getCommandData() {
         final List<CommandData> commandData = new ArrayList<>();
 
-        for (IMessageContext iMessageContext : iMessageContexts.stream().filter(IMessageContext::isWorking).toList()) {
+        for (ICommandMessage iCommandMessage : iCommandMessages.stream().filter(ICommandMessage::isWorking).toList()) {
             try {
-                commandData.add(iMessageContext.getCommandData());
+                commandData.add(iCommandMessage.getCommandData());
             } catch (ParseException e) {
-                log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(iMessageContext.getName().toUpperCase()));
+                log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(iCommandMessage.getName().toUpperCase()));
             }
         }
 
@@ -95,7 +95,7 @@ public class MessageContextManager extends ListenerAdapter {
         }
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
-        Optional<IMessageContext> ifMenu = getMessageMenu(event.getName());
+        Optional<ICommandMessage> ifMenu = getMessageMenu(event.getName());
         MessageEmbed menuFailed = new EmbedBuilder()
             .setTitle("Oops!")
             .setDescription(CannedResponses.INTERACTION_FAILED.getMessage(Interactions.CONTEXT_MESSAGE))
@@ -104,7 +104,7 @@ public class MessageContextManager extends ListenerAdapter {
             .build();
 
         if (ifMenu.isPresent()) {
-            IMessageContext context = ifMenu.get();
+            ICommandMessage context = ifMenu.get();
             log.debug("Command \"" + context.getName().toUpperCase() + "\" called on %s [%d]".formatted(blob.getGuild().getName(), blob.getGuildIdLong()));
             try {
                 context.execute(event, blob);

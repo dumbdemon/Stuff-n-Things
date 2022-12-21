@@ -4,7 +4,7 @@ import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
-public interface IMessageContext extends ICommand {
+public interface ICommandMessage extends ICommand {
 
     /**
      * The main handler for message context menus.

@@ -6,7 +6,7 @@ import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
 import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
-import com.terransky.stuffnthings.interfaces.ISlashCommand;
+import com.terransky.stuffnthings.interfaces.ICommandSlash;
 import com.terransky.stuffnthings.utilities.Config;
 import com.terransky.stuffnthings.utilities.EmbedColors;
 import com.terransky.stuffnthings.utilities.LogList;
@@ -30,7 +30,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Arrays;
 
-public class configCmd implements ISlashCommand {
+public class configCmd implements ICommandSlash {
     private final Logger log = LoggerFactory.getLogger(configCmd.class);
 
     @Override
