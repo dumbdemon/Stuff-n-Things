@@ -7,7 +7,8 @@ import com.terransky.stuffnthings.commandSystem.UserContextManager;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.listeners.ListeningForEvents;
 import com.terransky.stuffnthings.modalSystem.ModalManager;
-import com.terransky.stuffnthings.selectMenuSystem.SelectMenuManager;
+import com.terransky.stuffnthings.selectMenuSystem.EntitySelectMenuManager;
+import com.terransky.stuffnthings.selectMenuSystem.StringSelectMenuManager;
 import com.terransky.stuffnthings.utilities.Config;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -52,7 +53,8 @@ public class StuffNThings {
             new ListeningForEvents(),
             new MessageContextManager(),
             new ModalManager(),
-            new SelectMenuManager(),
+            new StringSelectMenuManager(),
+            new EntitySelectMenuManager(),
             new UserContextManager()
         );
     }
