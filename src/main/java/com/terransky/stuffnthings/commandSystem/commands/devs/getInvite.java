@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class getInvite implements ICommandSlash {
@@ -32,7 +31,7 @@ public class getInvite implements ICommandSlash {
             """, Mastermind.DEFAULT,
             SlashModule.DEVS,
             format.parse("24-08-2022_11:10"),
-            format.parse("7-12-2022_10:25")
+            format.parse("21-12-2022_12:16")
         );
     }
 
@@ -43,7 +42,7 @@ public class getInvite implements ICommandSlash {
 
     @Override
     public @Nullable List<Long> getServerRestrictions() {
-        return new ArrayList<>(List.of(Config.getSupportGuildIdLong()));
+        return List.of(Config.getSupportGuildIdLong());
     }
 
     @Override

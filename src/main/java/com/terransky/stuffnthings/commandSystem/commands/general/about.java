@@ -2,10 +2,7 @@ package com.terransky.stuffnthings.commandSystem.commands.general;
 
 import com.terransky.stuffnthings.commandSystem.CommandManager;
 import com.terransky.stuffnthings.commandSystem.commands.mtg.calculateRats;
-import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
-import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
-import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
-import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
+import com.terransky.stuffnthings.commandSystem.utilities.*;
 import com.terransky.stuffnthings.interfaces.ICommandSlash;
 import com.terransky.stuffnthings.utilities.Config;
 import com.terransky.stuffnthings.utilities.EmbedColors;
@@ -22,6 +19,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.text.ParseException;
 import java.time.Duration;
+import java.util.Date;
 import java.util.Optional;
 
 public class about implements ICommandSlash {
@@ -58,7 +56,7 @@ public class about implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("7-12-2022_11:15")
+            format.parse("21-12-2022_12:47")
         );
 
         metadata.addOptions(
@@ -79,8 +77,9 @@ public class about implements ICommandSlash {
             return;
         }
 
-        RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
-        StringBuilder uptime = getStringBuilder(rb);
+        RuntimeMXBean mxBean = ManagementFactory.getRuntimeMXBean();
+        StringBuilder uptime = getStringBuilder(mxBean);
+        Date startTime = new Date(mxBean.getStartTime());
 
         int commandCnt = new CommandManager().getSlashCommandCount();
         int guildCommandCnt = new CommandManager().getSlashCommandCount(blob.getGuildIdLong());
@@ -104,8 +103,8 @@ public class about implements ICommandSlash {
                 .setThumbnail(Config.getBotLogoURL())
                 .addField("Servers", "%d servers".formatted(guildCount), true)
                 .addField("Users", "%s users".formatted(calculateRats.largeNumberFormat(userCount)).replace(".0 ", " "), true)
-                .addField("Your Shard", "[%s/%s]".formatted(event.getJDA().getShardInfo().getShardId(), event.getJDA().getShardInfo().getShardTotal()), true)
-                .addField("Start Time", "<t:%s:F>".formatted((int) (rb.getStartTime() / 1_000f)), false)
+                .addField("Your Shard", event.getJDA().getShardInfo().getShardString(), true)
+                .addField("Start Time", Timestamp.getDateAsTimestamp(startTime, Timestamp.LONG_DATE_W_DoW_SHORT_TIME), false)
                 .addField("Uptime", uptime.toString(), false)
                 .addField("Total Commands", "%s on %s\n%s of which are guild commands"
                     .formatted(
@@ -120,11 +119,12 @@ public class about implements ICommandSlash {
     private void getCommandInfo(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, String command) throws ParseException {
         Optional<Metadata> ifMetadata = new CommandManager().getMetadata(command);
         Metadata metadata = ifMetadata.orElse(this.getMetadata());
+        String formattedCommandName = WordUtils.capitalize(metadata.getCommandName().replaceAll("-", " "));
 
         if (!metadata.getDefaultPerms().isEmpty() && event.getMember() != null && !event.getMember().hasPermission(metadata.getDefaultPerms())) {
             event.replyEmbeds(
                 new EmbedBuilder()
-                    .setTitle("About Command")
+                    .setTitle("About Command - %s".formatted(formattedCommandName))
                     .setDescription("You don't have access to this command to see its details.")
                     .setColor(EmbedColors.getDefault())
                     .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
@@ -133,19 +133,23 @@ public class about implements ICommandSlash {
             return;
         }
 
-        long implementedDate = metadata.getImplementedAsEpochSecond(),
-            lastEditedDate = metadata.getLastEditedAsEpochSecond();
+        String[] timestamps = {
+            metadata.getImplementedAsTimestamp(Timestamp.LONG_DATE_W_DoW_SHORT_TIME),
+            metadata.getImplementedAsTimestamp(Timestamp.RELATIVE),
+            metadata.getLastEditedAsTimestamp(Timestamp.LONG_DATE_W_DoW_SHORT_TIME),
+            metadata.getLastEditedAsTimestamp(Timestamp.RELATIVE)
+        };
 
         event.getHook().sendMessageEmbeds(
             new EmbedBuilder()
-                .setTitle("About Command - %s".formatted(WordUtils.capitalize(metadata.getCommandName().replace("-", " "))))
+                .setTitle("About Command - %s".formatted(formattedCommandName))
                 .setDescription(metadata.getLongDescription())
                 .setColor(EmbedColors.getDefault())
                 .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
                 .addField("Mastermind", metadata.getMastermind().getWho(), true)
                 .addField("Module", metadata.getModule().getName(), true)
-                .addField("Implementation Date", "<t:%s:f> (<t:%s:R>)".formatted(implementedDate, implementedDate), false)
-                .addField("Last Edited", "<t:%s:f> (<t:%s:R>)".formatted(lastEditedDate, lastEditedDate), false)
+                .addField("Implementation Date", "%s (%s)".formatted(timestamps[0], timestamps[1]), false)
+                .addField("Last Edited", "%s (%s)".formatted(timestamps[2], timestamps[3]), false)
                 .build()
         ).queue();
     }

@@ -1,9 +1,6 @@
 package com.terransky.stuffnthings.commandSystem.commands.devs;
 
-import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
-import com.terransky.stuffnthings.commandSystem.utilities.Mastermind;
-import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
-import com.terransky.stuffnthings.commandSystem.utilities.SlashModule;
+import com.terransky.stuffnthings.commandSystem.utilities.*;
 import com.terransky.stuffnthings.interfaces.ICommandSlash;
 import com.terransky.stuffnthings.utilities.Config;
 import com.terransky.stuffnthings.utilities.EmbedColors;
@@ -83,7 +80,7 @@ public class userInfo implements ICommandSlash {
             """, Mastermind.DEFAULT,
             SlashModule.DEVS,
             format.parse("24-08-2022_11:10"),
-            format.parse("7-12-2022_10:25")
+            format.parse("21-12-2022_12:33")
         );
 
         metadata.addOptions(
@@ -113,8 +110,8 @@ public class userInfo implements ICommandSlash {
             .addField("Total Roles", "%d Role%s".formatted(roleCount, roleCount > 1 ? "s" : ""), true)
             .addField("Top Role", topRole.getAsMention(), true)
             .addField("Server Permissions", "```%s```".formatted(userPerms), false)
-            .addField("Joined Server on", "<t:%s:F>".formatted(member.getTimeJoined().toEpochSecond()), true)
-            .addField("Joined Discord on", "<t:%s:F>".formatted(member.getUser().getTimeCreated().toEpochSecond()), true)
+            .addField("Joined Server on", Timestamp.getDateAsTimestamp(member.getTimeJoined(), Timestamp.LONG_DATE_W_DoW_SHORT_TIME), true)
+            .addField("Joined Discord on", Timestamp.getDateAsTimestamp(member.getUser().getTimeCreated(), Timestamp.LONG_DATE_W_DoW_SHORT_TIME), true)
             .setFooter("Requested by " + event.getUser().getAsTag() + " | " + event.getUser().getId(), blob.getMemberEffectiveAvatarUrl());
 
         if (!member.getUser().isBot()) {

@@ -148,16 +148,16 @@ public class Metadata implements Comparable<Metadata> {
         return implementationDate;
     }
 
-    public long getImplementedAsEpochSecond() {
-        return this.getImplementationDate().toInstant().getEpochSecond();
+    public String getImplementedAsTimestamp(@NotNull Timestamp timestamp) {
+        return Timestamp.getDateAsTimestamp(getImplementationDate(), timestamp);
     }
 
     public Date getLastUpdated() {
         return lastUpdated;
     }
 
-    public long getLastEditedAsEpochSecond() {
-        return this.getLastUpdated().toInstant().getEpochSecond();
+    public String getLastEditedAsTimestamp(@NotNull Timestamp timestamp) {
+        return Timestamp.getDateAsTimestamp(getLastUpdated(), timestamp);
     }
 
     /**
