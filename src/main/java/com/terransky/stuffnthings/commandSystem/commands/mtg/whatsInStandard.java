@@ -84,7 +84,6 @@ public class whatsInStandard implements ICommandSlash {
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
         return new Metadata(this.getName(), "Get Magic: the Gathering's set list for the standard format.", """
-            *M:tG Command*
             Prints out the sets and ban list information for Magic: the Gathering's standard formant created by Wizards of the Coast.
             Information the bot uses is provided by [WhatsInStandard.com](https://whatsinstandard.com).
             """,
