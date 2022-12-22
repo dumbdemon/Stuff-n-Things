@@ -37,21 +37,18 @@ public class meme implements ICommandSlash {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
-        var metadata = new Metadata(this.getName(), "Get a random meme.", """
+        return new Metadata(this.getName(), "Get a random meme.", """
             Get your fresh hot (or cold) memes here!
             Reddit pulls from [r/memes](https://www.reddit.com/r/memes), [r/dankmemes](https://www.reddit.com/r/dankmemes), or from [r/me_irl](https://www.reddit.com/r/me_irl).
             """, Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("1-12-2022_12:37")
-        );
-
-        metadata.addSubcommands(
-            new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, or from r/me_irl.")
-                .addOption(OptionType.STRING, "subreddit", "You can specify a subreddit outside of the default.")
-        );
-
-        return metadata;
+            format.parse("21-12-2022_20:01")
+        )
+            .addSubcommands(
+                new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, or from r/me_irl.")
+                    .addOption(OptionType.STRING, "subreddit", "You can specify a subreddit outside of the default.")
+            );
     }
 
     @Override

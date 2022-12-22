@@ -31,7 +31,7 @@ public class UserContextManager extends ListenerAdapter {
      *
      * @param iCommandUser An {@link ICommandUser} object.
      * @throws IllegalArgumentException  If an {@link ICommandUser} with that name is already indexed.
-     * @throws IndexOutOfBoundsException If {@code iMessageContexts} is more than the max user contexts.
+     * @throws IndexOutOfBoundsException If {@link UserContextManager#iMessageContexts} has more than the {@link Commands#MAX_USER_COMMANDS}.
      */
     @SuppressWarnings("unused")
     private void addContextMenu(ICommandUser iCommandUser) {

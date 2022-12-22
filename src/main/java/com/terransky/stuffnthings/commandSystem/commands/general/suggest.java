@@ -31,21 +31,18 @@ public class suggest implements ICommandSlash {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
-        var metadata = new Metadata(this.getName(), "Have something you want the bot to do? Suggest here!", """
+        return new Metadata(this.getName(), "Have something you want the bot to do? Suggest here!", """
             Have a command that you would like the bot to have? Suggest it with this command!
             """, Mastermind.DEVELOPER,
             SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("7-12-2022_10:25")
-        );
-
-        metadata.addOptions(
-            new OptionData(OptionType.STRING, "suggestion", "What do you want the bot to do?", true),
-            new OptionData(OptionType.INTEGER, "importance", "How important on a scale. Where 1 is low, 50 is semi, 100 is high, and everything in-between.", true)
-                .setRequiredRange(1, 100)
-        );
-
-        return metadata;
+            format.parse("21-12-2022_20:03")
+        )
+            .addOptions(
+                new OptionData(OptionType.STRING, "suggestion", "What do you want the bot to do?", true),
+                new OptionData(OptionType.INTEGER, "importance", "How important on a scale. Where 1 is low, 50 is semi, 100 is high, and everything in-between.", true)
+                    .setRequiredRange(1, 100)
+            );
     }
 
     @Override

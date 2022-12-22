@@ -36,14 +36,23 @@ public class EventBlob {
         return this;
     }
 
+    /**
+     * @see Guild#getName()
+     */
     public String getGuildName() {
         return getGuild().getName();
     }
 
+    /**
+     * @see Guild#getId()
+     */
     public String getGuildId() {
         return getGuild().getId();
     }
 
+    /**
+     * @see Guild#getIdLong()
+     */
     public long getGuildIdLong() {
         return getGuild().getIdLong();
     }
@@ -57,6 +66,9 @@ public class EventBlob {
         return this;
     }
 
+    /**
+     * @see Member#getEffectiveAvatarUrl()
+     */
     public String getMemberEffectiveAvatarUrl() {
         return getMember().getEffectiveAvatarUrl();
     }

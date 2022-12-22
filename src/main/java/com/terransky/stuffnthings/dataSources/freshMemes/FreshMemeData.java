@@ -41,6 +41,7 @@ public class FreshMemeData {
     private long ups;
     @JsonProperty("preview")
     private List<String> preview = new ArrayList<>();
+
     @JsonProperty("postLink")
     public String getPostLink() {
         return postLink;

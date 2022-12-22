@@ -43,7 +43,7 @@ import java.util.Optional;
 
 
 public class CommandManager extends ListenerAdapter {
-    private final List<ICommandSlash> iCommandsListSlash = new ArrayList<>();
+    private final List<ICommandSlash> iCommandSlashes = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(CommandManager.class);
 
     public CommandManager() {
@@ -86,20 +86,20 @@ public class CommandManager extends ListenerAdapter {
      * Add a {@link ICommandSlash} object to be indexed and used.
      *
      * @param iCommandSlash An {@link ICommandSlash} object.
-     * @throws IndexOutOfBoundsException If the {@code iSlashCommandsList} is more than the max slash commands.
+     * @throws IndexOutOfBoundsException If {@link CommandManager#iCommandSlashes} has more than the {@link Commands#MAX_SLASH_COMMANDS}.
      */
     private void addCommand(ICommandSlash iCommandSlash) {
-        boolean nameFound = iCommandsListSlash.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iCommandSlash.getName()));
+        boolean nameFound = iCommandSlashes.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iCommandSlash.getName()));
 
         if (nameFound) throw new IllegalArgumentException("A command with this name already exists");
 
-        if (iCommandsListSlash.size() > Commands.MAX_SLASH_COMMANDS)
+        if (iCommandSlashes.size() > Commands.MAX_SLASH_COMMANDS)
             throw new IndexOutOfBoundsException("You can only have at most %d slash commands.".formatted(Commands.MAX_SLASH_COMMANDS));
-        else iCommandsListSlash.add(iCommandSlash);
+        else iCommandSlashes.add(iCommandSlash);
     }
 
     /**
-     * Get the {@link ICommandSlash} object for execution at {@code onSlashCommandInteraction()}.
+     * Get the {@link ICommandSlash} object for execution at {@link CommandManager#onSlashCommandInteraction(SlashCommandInteractionEvent)}.
      *
      * @param search The name of the command.
      * @return An {@link Optional} of {@link ICommandSlash}.
@@ -107,9 +107,9 @@ public class CommandManager extends ListenerAdapter {
     private Optional<ICommandSlash> getCommand(@NotNull String search) {
         String toSearch = search.toLowerCase();
 
-        for (ICommandSlash cmd : iCommandsListSlash) {
-            if (cmd.getName().equals(toSearch)) {
-                return Optional.of(cmd);
+        for (ICommandSlash slash : iCommandSlashes) {
+            if (slash.getName().equals(toSearch)) {
+                return Optional.of(slash);
             }
         }
 
@@ -123,7 +123,7 @@ public class CommandManager extends ListenerAdapter {
      */
     public List<Command.Choice> getCommandsAsChoices() {
         List<Command.Choice> choices = new ArrayList<>();
-        for (ICommandSlash command : iCommandsListSlash.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList()) {
+        for (ICommandSlash command : iCommandSlashes.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList()) {
             choices.add(new Command.Choice(WordUtils.capitalize(command.getName().replace("-", " ")), command.getName()));
         }
         return choices;
@@ -134,15 +134,15 @@ public class CommandManager extends ListenerAdapter {
      *
      * @param search The name of the command to look for.
      * @return An {@link Optional} of {@link Metadata}.
-     * @throws ParseException If the pattern used in {@code Metadata.getImplementationDate()} or {@code Metadata.getLastUpdated()} in a slash command class
+     * @throws ParseException If the pattern used in {@link Metadata#getImplementationDate()} or {@link Metadata#getLastUpdated()} in a slash command class
      *                        is given an invalid date string.
      */
     public Optional<Metadata> getMetadata(@NotNull String search) throws ParseException {
         String toSearch = search.toLowerCase();
 
-        for (ICommandSlash cmd : iCommandsListSlash) {
-            if (cmd.getName().equals(toSearch)) {
-                return Optional.of(cmd.getMetadata());
+        for (ICommandSlash slash : iCommandSlashes) {
+            if (slash.getName().equals(toSearch)) {
+                return Optional.of(slash.getMetadata());
             }
         }
         return Optional.empty();
@@ -151,23 +151,27 @@ public class CommandManager extends ListenerAdapter {
     /**
      * Get the command data of all slash commands, message contexts, and user contexts.
      * <p>
-     * If a {@link ParseException} occurs, it will not be pushed.
+     * <b>This to note:</b><br>
+     * • If a {@link ParseException} occurs, it will not be pushed.<br>
+     * • If there is more than {@link Commands#MAX_SLASH_COMMANDS}, than it will return a truncated list.
      *
      * @return Returns a list of {@link CommandData}.
-     * @throws IllegalArgumentException  If an {@link ICommandSlash} with that name is already indexed.
-     * @throws IndexOutOfBoundsException If there are more than the combined total max slash commands, max message commands, and max user commands.
      */
     public List<CommandData> getCommandData() {
-        final List<CommandData> commandData = new ArrayList<>();
+        List<CommandData> commandData = new ArrayList<>();
         final List<CommandData> messageContext = new MessageContextManager().getCommandData();
         final List<CommandData> userContext = new UserContextManager().getCommandData();
 
-        for (ICommandSlash command : iCommandsListSlash.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList()) {
+        for (ICommandSlash command : iCommandSlashes.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList()) {
             try {
                 commandData.add(command.getCommandData());
             } catch (ParseException e) {
                 log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(command.getName().toUpperCase()));
             }
+        }
+
+        if (commandData.size() > Commands.MAX_SLASH_COMMANDS) {
+            commandData = commandData.subList(0, Commands.MAX_SLASH_COMMANDS);
         }
 
         if (!messageContext.isEmpty()) {
@@ -180,33 +184,37 @@ public class CommandManager extends ListenerAdapter {
             log.debug("%d user contexts added".formatted(userContext.size()));
         } else log.debug("No user contexts were added.");
 
-        int commandLimit = Commands.MAX_SLASH_COMMANDS + Commands.MAX_MESSAGE_COMMANDS + Commands.MAX_USER_COMMANDS;
-        if (commandData.size() > commandLimit)
-            throw new IndexOutOfBoundsException("CommandData List can not be more than %s. You have %s in the list.".formatted(commandLimit, commandData.size()));
-
         return commandData;
     }
 
     /**
      * Get the command data of all slash commands specifically for a server.
      * <p>
-     * If a {@link ParseException} occurs, it will not be pushed.
+     * <b>This to note:</b><br>
+     * • If a {@link ParseException} occurs, it will not be pushed.<br>
+     * • If there is more than {@link Commands#MAX_SLASH_COMMANDS}, than it will return a truncated list.
      *
      * @param serverId The ID of the server to check for.
      * @return Returns a list of {@link CommandData}. Could potentially return an empty list.
      */
     public List<CommandData> getCommandData(long serverId) {
         final List<CommandData> commandData = new ArrayList<>();
+        List<ICommandSlash> effectiveSlashes = iCommandSlashes.stream().filter(it ->
+            !it.isGlobal() &&
+                it.isWorking() &&
+                (it.getServerRestrictions().contains(serverId) || it.getServerRestrictions().isEmpty())
+        ).sorted().toList();
 
-        for (ICommandSlash command : iCommandsListSlash.stream().filter(it -> !it.isGlobal() && it.isWorking()).sorted().toList()) {
-            boolean addToServer = command.getServerRestrictions().contains(serverId) || command.getServerRestrictions().isEmpty();
-
-            if (addToServer) try {
+        for (ICommandSlash command : effectiveSlashes) {
+            try {
                 commandData.add(command.getCommandData());
             } catch (ParseException e) {
                 log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(command.getName().toUpperCase()));
             }
         }
+
+        if (commandData.size() > Commands.MAX_SLASH_COMMANDS)
+            return commandData.subList(0, Commands.MAX_SLASH_COMMANDS);
 
         return commandData;
     }
@@ -214,7 +222,9 @@ public class CommandManager extends ListenerAdapter {
     /**
      * Get the command data of all slash commands specifically for a server.
      * <p>
-     * If a {@link ParseException} occurs, it will not be pushed.
+     * <b>This to note:</b><br>
+     * • If a {@link ParseException} occurs, it will not be pushed.<br>
+     * • If there is more than {@link Commands#MAX_SLASH_COMMANDS}, than it will return a truncated list.
      *
      * @param guild The guild to look for.
      * @return Returns a list of {@link CommandData}. Could potentially return an empty list.
@@ -229,7 +239,7 @@ public class CommandManager extends ListenerAdapter {
      * @return The amount of slash commands.
      */
     public int getSlashCommandCount() {
-        return (int) iCommandsListSlash.stream().filter(it -> it.isGlobal() && it.isWorking()).count();
+        return (int) iCommandSlashes.stream().filter(it -> it.isGlobal() && it.isWorking()).count();
     }
 
     /**
@@ -239,7 +249,7 @@ public class CommandManager extends ListenerAdapter {
      * @return The amount of slash commands.
      */
     public int getSlashCommandCount(long serverId) {
-        return (int) iCommandsListSlash.stream().filter(it ->
+        return (int) iCommandSlashes.stream().filter(it ->
             !it.isGlobal() &&
                 it.isWorking() &&
                 (it.getServerRestrictions().contains(serverId) || it.getServerRestrictions().isEmpty())
@@ -282,7 +292,7 @@ public class CommandManager extends ListenerAdapter {
             }
         }
 
-        Optional<ICommandSlash> cmd = getCommand(event.getName());
+        Optional<ICommandSlash> ifSlash = getCommand(event.getName());
         MessageEmbed cmdFailed = new EmbedBuilder()
             .setTitle("Oops!")
             .setDescription(CannedResponses.INTERACTION_FAILED.getMessage(Interactions.SLASH_COMMAND))
@@ -290,11 +300,11 @@ public class CommandManager extends ListenerAdapter {
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();
 
-        if (cmd.isPresent()) {
-            ICommandSlash command = cmd.get();
-            log.debug("Command " + command.getName().toUpperCase() + " called on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
+        if (ifSlash.isPresent()) {
+            ICommandSlash slash = ifSlash.get();
+            log.debug("Command " + slash.getName().toUpperCase() + " called on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
             try {
-                command.execute(event, blob);
+                slash.execute(event, blob);
             } catch (Exception e) {
                 log.debug("Full command path that triggered error :: [" + event.getFullCommandName() + "]");
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));

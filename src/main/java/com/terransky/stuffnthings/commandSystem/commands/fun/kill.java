@@ -28,6 +28,7 @@ import java.util.Random;
 
 public class kill implements ICommandSlash {
 
+    public static final String MODAL_NAME = "kill-suggestion";
     private final String[] randomStrings = {
         "was in their chem lab with %s trying to kill them with a 20 gauge shotgun!",
         "proctored the duel between Red [%s] and Blue [%s]. Blue won by a landslide!",
@@ -54,7 +55,6 @@ public class kill implements ICommandSlash {
     private final String[] targetStrings = {
         "tried to kill %s but they couldn't because that's bad manners!"
     };
-    public static final String MODAL_NAME = "kill-suggestion";
 
     @Override
     public String getName() {
@@ -64,22 +64,19 @@ public class kill implements ICommandSlash {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
-        var metadata = new Metadata(this.getName(), "Time to un-alive random members!", """
+        return new Metadata(this.getName(), "Time to un-alive random members!", """
             Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
             """, Mastermind.USER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("1-12-2022_12:37")
-        );
-
-        metadata.addSubcommands(
-            new SubcommandData("random", "Try your hand at un-aliving someone!"),
-            new SubcommandData("target", "Target someone for a kill.")
-                .addOption(OptionType.USER, "target", "Your target", true),
-            new SubcommandData("suggest", "Suggest a kill-string. Use \"%s\" to represent targets. Up to four can be in a kill-string.")
-        );
-
-        return metadata;
+            format.parse("21-12-2022_20:07")
+        )
+            .addSubcommands(
+                new SubcommandData("random", "Try your hand at un-aliving someone!"),
+                new SubcommandData("target", "Target someone for a kill.")
+                    .addOption(OptionType.USER, "target", "Your target", true),
+                new SubcommandData("suggest", "Suggest a kill-string. Use \"%s\" to represent targets. Up to four can be in a kill-string.")
+            );
     }
 
     @Override

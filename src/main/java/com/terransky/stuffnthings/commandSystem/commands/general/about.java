@@ -23,11 +23,6 @@ import java.util.Date;
 import java.util.Optional;
 
 public class about implements ICommandSlash {
-    @Override
-    public String getName() {
-        return "about";
-    }
-
     @NotNull
     private static StringBuilder getStringBuilder(@NotNull RuntimeMXBean rb) {
         Duration duration = Duration.ofMillis(rb.getUptime());
@@ -49,22 +44,24 @@ public class about implements ICommandSlash {
     }
 
     @Override
+    public String getName() {
+        return "about";
+    }
+
+    @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
-        var metadata = new Metadata(this.getName(), "What am I? Who am I?", """
+        return new Metadata(this.getName(), "What am I? Who am I?", """
             The about command. What else did you expect?
             """, Mastermind.DEVELOPER,
             SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("21-12-2022_12:47")
-        );
-
-        metadata.addOptions(
-            new OptionData(OptionType.STRING, "command", "Get more info on a Command.")
-                .addChoices(new CommandManager().getCommandsAsChoices())
-        );
-
-        return metadata;
+            format.parse("21-12-2022_20:03")
+        )
+            .addOptions(
+                new OptionData(OptionType.STRING, "command", "Get more info on a Command.")
+                    .addChoices(new CommandManager().getCommandsAsChoices())
+            );
     }
 
     @Override

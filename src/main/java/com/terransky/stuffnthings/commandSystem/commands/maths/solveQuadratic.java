@@ -27,21 +27,19 @@ public class solveQuadratic implements ICommandSlash {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
-        var metadata = new Metadata(this.getName(), "Solve a Quadratic Equation.", """
+
+        return new Metadata(this.getName(), "Solve a Quadratic Equation.", """
             Given a, b, and c, solve for when the parabola intersects the x-axis.
             """, Mastermind.DEVELOPER,
             SlashModule.MATHS,
             format.parse("19-11-2022_13:09"),
-            format.parse("1-12-2022_12:37")
-        );
-
-        metadata.addOptions(
-            new OptionData(OptionType.NUMBER, "value-a", "A value of Quadratic Formula"),
-            new OptionData(OptionType.NUMBER, "value-b", "B value of Quadratic Formula"),
-            new OptionData(OptionType.NUMBER, "value-c", "C value of Quadratic Formula")
-        );
-
-        return metadata;
+            format.parse("21-12-2022_20:04")
+        )
+            .addOptions(
+                new OptionData(OptionType.NUMBER, "value-a", "A value of Quadratic Formula"),
+                new OptionData(OptionType.NUMBER, "value-b", "B value of Quadratic Formula"),
+                new OptionData(OptionType.NUMBER, "value-c", "C value of Quadratic Formula")
+            );
     }
 
     @Override

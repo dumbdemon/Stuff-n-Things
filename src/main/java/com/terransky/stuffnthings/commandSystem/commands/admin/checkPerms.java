@@ -58,7 +58,7 @@ public class checkPerms implements ICommandSlash {
             permString.append(requiredPerm.getName()).append(", ");
         }
 
-        var metadata = new Metadata(this.getName(), "Check if I have all of my perms needed for all of my commands.", """
+        return new Metadata(this.getName(), "Check if I have all of my perms needed for all of my commands.", """
             Checks if the bot has all necessary permissions for this server or channel.
             Currently the bot requires:
             ```
@@ -67,20 +67,17 @@ public class checkPerms implements ICommandSlash {
             Mastermind.DEVELOPER,
             SlashModule.ADMIN,
             format.parse("30-08-2022_16:14"),
-            format.parse("1-12-2022_12:37")
-        );
-
-        metadata.addDefaultPerms(Permission.MANAGE_ROLES);
-        metadata.addSubcommands(
-            new SubcommandData("server", "Check if I have all of my perms needed for all of my commands for the server."),
-            new SubcommandData("channel", "Check if I have all of my perms needed for all of my commands in a specific channel.")
-                .addOptions(
-                    new OptionData(OptionType.CHANNEL, "check-channel", "The channel to check.", true)
-                        .setChannelTypes(ChannelType.TEXT, ChannelType.VOICE)
-                )
-        );
-
-        return metadata;
+            format.parse("21-12-2022_19:57")
+        )
+            .addDefaultPerms(Permission.MANAGE_ROLES)
+            .addSubcommands(
+                new SubcommandData("server", "Check if I have all of my perms needed for all of my commands for the server."),
+                new SubcommandData("channel", "Check if I have all of my perms needed for all of my commands in a specific channel.")
+                    .addOptions(
+                        new OptionData(OptionType.CHANNEL, "check-channel", "The channel to check.", true)
+                            .setChannelTypes(ChannelType.TEXT, ChannelType.VOICE)
+                    )
+            );
     }
 
     @Override

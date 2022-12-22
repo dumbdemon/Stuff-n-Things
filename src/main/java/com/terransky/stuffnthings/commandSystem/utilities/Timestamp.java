@@ -15,7 +15,6 @@ public enum Timestamp {
     SHORT_TIME(5, 't'),
     RELATIVE(6, 'R');
 
-
     private final int id;
     private final Character code;
 

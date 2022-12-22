@@ -83,7 +83,7 @@ public class whatsInStandard implements ICommandSlash {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
-        var metadata = new Metadata(this.getName(), "Get Magic: the Gathering's set list for the standard format.", """
+        return new Metadata(this.getName(), "Get Magic: the Gathering's set list for the standard format.", """
             *M:tG Command*
             Prints out the sets and ban list information for Magic: the Gathering's standard formant created by Wizards of the Coast.
             Information the bot uses is provided by [WhatsInStandard.com](https://whatsinstandard.com).
@@ -91,18 +91,15 @@ public class whatsInStandard implements ICommandSlash {
             Mastermind.DEVELOPER,
             SlashModule.MTG,
             format.parse("27-10-2022_12:46"),
-            format.parse("7-12-2022_10:25")
-        );
-
-        metadata.addSubcommands(
-            new SubcommandData("all", "Get all info about the standard format."),
-            new SubcommandData("sets", "Get the standard sets only."),
-            new SubcommandData("bans", "Get the ban list only.")
-                .addOption(OptionType.BOOLEAN, "include-reason", "Include reason for ban."),
-            new SubcommandData("what-is-standard", "What is standard?")
-        );
-
-        return metadata;
+            format.parse("21-12-2022_20:05")
+        )
+            .addSubcommands(
+                new SubcommandData("all", "Get all info about the standard format."),
+                new SubcommandData("sets", "Get the standard sets only."),
+                new SubcommandData("bans", "Get the ban list only.")
+                    .addOption(OptionType.BOOLEAN, "include-reason", "Include reason for ban."),
+                new SubcommandData("what-is-standard", "What is standard?")
+            );
     }
 
     @Override

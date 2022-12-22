@@ -21,11 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class userInfo implements ICommandSlash {
-    @Override
-    public String getName() {
-        return "user-info";
-    }
-
     private static String setUserPerms(@NotNull Member member) {
         StringBuilder userPerms = new StringBuilder();
         String finalUserPerms;
@@ -66,9 +61,14 @@ public class userInfo implements ICommandSlash {
     }
 
     @Override
+    public String getName() {
+        return "user-info";
+    }
+
+    @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
-        var metadata = new Metadata(this.getName(), "Get info on a specific user on the server! Defaults to you.", """
+        return new Metadata(this.getName(), "Get info on a specific user on the server! Defaults to you.", """
             Get info on a user or bot.
             The following info with be returned:
             • User ID
@@ -80,14 +80,11 @@ public class userInfo implements ICommandSlash {
             """, Mastermind.DEFAULT,
             SlashModule.DEVS,
             format.parse("24-08-2022_11:10"),
-            format.parse("21-12-2022_12:33")
-        );
-
-        metadata.addOptions(
-            new OptionData(OptionType.USER, "user", "Who you want to know about.")
-        );
-
-        return metadata;
+            format.parse("21-12-2022_19:57")
+        )
+            .addOptions(
+                new OptionData(OptionType.USER, "user", "Who you want to know about.")
+            );
     }
 
     @Override

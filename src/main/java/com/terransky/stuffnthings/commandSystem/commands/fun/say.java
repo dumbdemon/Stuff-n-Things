@@ -27,23 +27,20 @@ public class say implements ICommandSlash {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
-        var metadata = new Metadata(this.getName(), "Make the bot say anything!", """
+        return new Metadata(this.getName(), "Make the bot say anything!", """
             Make the bot say anything!
                         
             ~~Subject to your server's rules and [Discord Community Guidelines](https://discord.com/guidelines).~~
             """, Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("1-12-2022_12:37")
-        );
-
-        metadata.addOptions(
-            new OptionData(OptionType.STRING, "message", "The message you want sent.", true),
-            new OptionData(OptionType.CHANNEL, "channel", "the channel where you want the message to be sent.")
-                .setChannelTypes(ChannelType.TEXT, ChannelType.VOICE, ChannelType.GUILD_PUBLIC_THREAD, ChannelType.GUILD_NEWS_THREAD)
-        );
-
-        return metadata;
+            format.parse("21-12-2022_20:03")
+        )
+            .addOptions(
+                new OptionData(OptionType.STRING, "message", "The message you want sent.", true),
+                new OptionData(OptionType.CHANNEL, "channel", "the channel where you want the message to be sent.")
+                    .setChannelTypes(ChannelType.TEXT, ChannelType.VOICE, ChannelType.GUILD_PUBLIC_THREAD, ChannelType.GUILD_NEWS_THREAD)
+            );
     }
 
     @Override
