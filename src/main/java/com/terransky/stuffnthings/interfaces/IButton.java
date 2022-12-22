@@ -1,6 +1,6 @@
 package com.terransky.stuffnthings.interfaces;
 
-import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
+import com.terransky.stuffnthings.utilities.EventBlob;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 

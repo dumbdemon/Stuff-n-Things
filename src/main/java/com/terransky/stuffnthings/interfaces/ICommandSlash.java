@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.interfaces;
 
-import com.terransky.stuffnthings.commandSystem.utilities.EventBlob;
-import com.terransky.stuffnthings.commandSystem.utilities.Metadata;
+import com.terransky.stuffnthings.utilities.EventBlob;
+import com.terransky.stuffnthings.utilities.Metadata;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;

@@ -1,14 +1,7 @@
 package com.terransky.stuffnthings;
 
-import com.terransky.stuffnthings.buttonSystem.ButtonManager;
-import com.terransky.stuffnthings.commandSystem.CommandManager;
-import com.terransky.stuffnthings.commandSystem.MessageContextManager;
-import com.terransky.stuffnthings.commandSystem.UserContextManager;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.listeners.ListeningForEvents;
-import com.terransky.stuffnthings.modalSystem.ModalManager;
-import com.terransky.stuffnthings.selectMenuSystem.EntitySelectMenuManager;
-import com.terransky.stuffnthings.selectMenuSystem.StringSelectMenuManager;
 import com.terransky.stuffnthings.utilities.Config;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -47,15 +40,16 @@ public class StuffNThings {
         }
         ShardManager shardManager = shards.build();
 
+        InteractionManager manager = new InteractionManager();
         shardManager.addEventListener(
-            new ButtonManager(),
-            new CommandManager(),
             new ListeningForEvents(),
-            new MessageContextManager(),
-            new ModalManager(),
-            new StringSelectMenuManager(),
-            new EntitySelectMenuManager(),
-            new UserContextManager()
+            manager.getButtonManager(),
+            manager.getModalManager(),
+            manager.getSlashManager(),
+            manager.getMessageContextManager(),
+            manager.getUserContextManager(),
+            manager.getEntitySelectMenuManager(),
+            manager.getStringSelectMenuManager()
         );
     }
 }
