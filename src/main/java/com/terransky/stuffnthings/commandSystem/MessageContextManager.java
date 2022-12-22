@@ -31,7 +31,7 @@ public class MessageContextManager extends ListenerAdapter {
      *
      * @param iCommandMessage An {@link ICommandMessage} object.
      * @throws IllegalArgumentException  If an {@link ICommandMessage} with that name is already indexed.
-     * @throws IndexOutOfBoundsException If {@code iMessageContexts} is more than the max message commands.
+     * @throws IndexOutOfBoundsException If {@link MessageContextManager#iCommandMessages} has more than the {@link Commands#MAX_MESSAGE_COMMANDS}.
      */
     @SuppressWarnings("unused")
     private void addContextMenu(ICommandMessage iCommandMessage) {

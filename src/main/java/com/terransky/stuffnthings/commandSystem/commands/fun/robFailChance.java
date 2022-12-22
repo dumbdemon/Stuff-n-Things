@@ -30,20 +30,17 @@ public class robFailChance implements ICommandSlash {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
-        var metadata = new Metadata(this.getName(), "Calculate the fail chance to rob a member for the UnbelievaBoat bot!", """
+        return new Metadata(this.getName(), "Calculate the fail chance to rob a member for the UnbelievaBoat bot!", """
             Returns the chance of failure of the `/rob` command of the bot UnbelievaBoat. If you don't have the bot, you can ask your admins to invite it [here](%s).
             """.formatted(uBoatInvite), Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("1-12-2022_12:37")
-        );
-
-        metadata.addOptions(
-            new OptionData(OptionType.INTEGER, "your-net-worth", "Your net-worth.", true),
-            new OptionData(OptionType.INTEGER, "their-cash", "The amount of cash for the person you are trying to rob", true)
-        );
-
-        return metadata;
+            format.parse("21-12-2022_20:02")
+        )
+            .addOptions(
+                new OptionData(OptionType.INTEGER, "your-net-worth", "Your net-worth.", true),
+                new OptionData(OptionType.INTEGER, "their-cash", "The amount of cash for the person you are trying to rob", true)
+            );
     }
 
     @Override

@@ -58,32 +58,30 @@ public class numbersAPI implements ICommandSlash {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
-        var metadata = new Metadata(this.getName(), "Get some fun info on a number", """
+
+        return new Metadata(this.getName(), "Get some fun info on a number", """
             Random facts about numbers! How nerdy/geeky can you get? Leaving any option empty will return a random fact of that category.
             Facts are provided by [NumbersAPI](http://numbersapi.com).
             """, Mastermind.DEVELOPER,
             SlashModule.MATHS,
             format.parse("10-11-2022_20:45"),
-            format.parse("1-12-2022_12:37")
-        );
-
-        metadata.addSubcommands(
-            new SubcommandData("number", "A fact about a number.")
-                .addOption(OptionType.NUMBER, "n-number", "A number"),
-            new SubcommandData("math", "A math fact about a number.")
-                .addOption(OptionType.NUMBER, "m-number", "A number"),
-            new SubcommandData("date", "A random historical fact on a particular month and day.")
-                .addOptions(
-                    new OptionData(OptionType.INTEGER, "month", "The month.")
-                        .setRequiredRange(1, 12),
-                    new OptionData(OptionType.INTEGER, "day", "The day.")
-                        .setRequiredRange(1, 31)
-                ),
-            new SubcommandData("year", "A random historical fact during a particular year.")
-                .addOption(OptionType.NUMBER, "year", "A year.")
-        );
-
-        return metadata;
+            format.parse("21-12-2022_20:04")
+        )
+            .addSubcommands(
+                new SubcommandData("number", "A fact about a number.")
+                    .addOption(OptionType.NUMBER, "n-number", "A number"),
+                new SubcommandData("math", "A math fact about a number.")
+                    .addOption(OptionType.NUMBER, "m-number", "A number"),
+                new SubcommandData("date", "A random historical fact on a particular month and day.")
+                    .addOptions(
+                        new OptionData(OptionType.INTEGER, "month", "The month.")
+                            .setRequiredRange(1, 12),
+                        new OptionData(OptionType.INTEGER, "day", "The day.")
+                            .setRequiredRange(1, 31)
+                    ),
+                new SubcommandData("year", "A random historical fact during a particular year.")
+                    .addOption(OptionType.NUMBER, "year", "A year.")
+            );
     }
 
     @Override

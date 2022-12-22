@@ -34,31 +34,28 @@ public class channelUnLock implements ICommandSlash {
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
         String description = "Lock or unlock a channel for everyone or from a specific role to see.";
-        var metadata = new Metadata(this.getName(), description, description, Mastermind.DEVELOPER, SlashModule.ADMIN,
+        return new Metadata(this.getName(), description, description, Mastermind.DEVELOPER, SlashModule.ADMIN,
             format.parse("23-11-2022_18:34"),
-            format.parse("20-12-2022_11:03")
-        );
-
-        metadata.addDefaultPerms(Permission.MANAGE_CHANNEL);
-        metadata.addSubcommands(
-            new SubcommandData("lock", "Lock a channel.")
-                .addOptions(
-                    new OptionData(OptionType.ROLE, "role", "Prevent a role from seeing the channel"),
-                    new OptionData(OptionType.CHANNEL, "target-channel", "Lock a different channel.")
-                ),
-            new SubcommandData("unlock", "Unlock a channel")
-                .addOptions(
-                    new OptionData(OptionType.ROLE, "role", "Allow a role to see the channel"),
-                    new OptionData(OptionType.CHANNEL, "target-channel", "Unlock a different channel.")
-                ),
-            new SubcommandData("reset", "Reset role's View Channel to inherent in a channel.")
-                .addOptions(
-                    new OptionData(OptionType.ROLE, "role", "The role to reset", true),
-                    new OptionData(OptionType.CHANNEL, "target-channel", "Remove from a different channel.")
-                )
-        );
-
-        return metadata;
+            format.parse("21-12-2022_19:54")
+        )
+            .addDefaultPerms(Permission.MANAGE_CHANNEL)
+            .addSubcommands(
+                new SubcommandData("lock", "Lock a channel.")
+                    .addOptions(
+                        new OptionData(OptionType.ROLE, "role", "Prevent a role from seeing the channel"),
+                        new OptionData(OptionType.CHANNEL, "target-channel", "Lock a different channel.")
+                    ),
+                new SubcommandData("unlock", "Unlock a channel")
+                    .addOptions(
+                        new OptionData(OptionType.ROLE, "role", "Allow a role to see the channel"),
+                        new OptionData(OptionType.CHANNEL, "target-channel", "Unlock a different channel.")
+                    ),
+                new SubcommandData("reset", "Reset role's View Channel to inherent in a channel.")
+                    .addOptions(
+                        new OptionData(OptionType.ROLE, "role", "The role to reset", true),
+                        new OptionData(OptionType.CHANNEL, "target-channel", "Remove from a different channel.")
+                    )
+            );
     }
 
     @Override

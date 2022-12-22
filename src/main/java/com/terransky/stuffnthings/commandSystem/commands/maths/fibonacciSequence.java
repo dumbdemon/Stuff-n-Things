@@ -34,7 +34,8 @@ public class fibonacciSequence implements ICommandSlash {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
-        var metadata = new Metadata(this.getName(), "Get the nth number in the Fibonacci sequence.", """
+
+        return new Metadata(this.getName(), "Get the nth number in the Fibonacci sequence.", """
             *From Oxford Languages*
             > a series of numbers in which each number (Fibonacci number) is the sum of the two preceding numbers.
                         
@@ -42,23 +43,20 @@ public class fibonacciSequence implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             SlashModule.MATHS,
             format.parse("11-11-2022_20:50"),
-            format.parse("1-12-2022_12:37")
-        );
-
-        metadata.addSubcommands(
-            new SubcommandData("at-nth", "Get a specific value.")
-                .addOptions(
-                    new OptionData(OptionType.INTEGER, "nth", "Which value to return.", true)
-                        .setRequiredRange(1, 186)
-                ),
-            new SubcommandData("whole-sequence", "Get the whole sequence until the nth value")
-                .addOptions(
-                    new OptionData(OptionType.INTEGER, "nth", "Which value to return up to.", true)
-                        .setRequiredRange(1, 186)
-                )
-        );
-
-        return metadata;
+            format.parse("21-12-2022_20:04")
+        )
+            .addSubcommands(
+                new SubcommandData("at-nth", "Get a specific value.")
+                    .addOptions(
+                        new OptionData(OptionType.INTEGER, "nth", "Which value to return.", true)
+                            .setRequiredRange(1, 186)
+                    ),
+                new SubcommandData("whole-sequence", "Get the whole sequence until the nth value")
+                    .addOptions(
+                        new OptionData(OptionType.INTEGER, "nth", "Which value to return up to.", true)
+                            .setRequiredRange(1, 186)
+                    )
+            );
     }
 
     @Override

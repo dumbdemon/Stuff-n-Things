@@ -51,11 +51,6 @@ public class dictionary implements ICommandSlash {
         }
     }
 
-    @Override
-    public String getName() {
-        return "dictionary";
-    }
-
     private static void run200(@NotNull SlashCommandInteractionEvent event, EmbedBuilder eb, EmbedBuilder ebOverflow, Map.Entry<String, String> language,
                                String toLookUp, @NotNull HttpURLConnection oxfordConnection, @NotNull ObjectMapper om) throws IOException {
         OxfordData oxfordData = om.readValue(oxfordConnection.getInputStream(), OxfordData.class);
@@ -136,9 +131,14 @@ public class dictionary implements ICommandSlash {
     }
 
     @Override
+    public String getName() {
+        return "dictionary";
+    }
+
+    @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
-        var metadata = new Metadata(this.getName(), "Look up a word in the dictionary in up to 9 different languages.", """
+        return new Metadata(this.getName(), "Look up a word in the dictionary in up to 9 different languages.", """
             Powered by Oxford Languages, this command returns all definitions of a given word in up to %d languages as long as it is within that language's lexicon.
                         
             WARNING: depending on the word it may return no definitions. Try a different variation of that word if it happens.
@@ -146,16 +146,13 @@ public class dictionary implements ICommandSlash {
             Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("27-10-2022_12:46"),
-            format.parse("7-12-2022_10:25")
-        );
-
-        metadata.addOptions(
-            new OptionData(OptionType.STRING, "word", "The word to look up.", true),
-            new OptionData(OptionType.STRING, "language", "The source language to look up. US English is default.", false)
-                .addChoices(langChoices)
-        );
-
-        return metadata;
+            format.parse("21-12-2022_20:00")
+        )
+            .addOptions(
+                new OptionData(OptionType.STRING, "word", "The word to look up.", true),
+                new OptionData(OptionType.STRING, "language", "The source language to look up. US English is default.", false)
+                    .addChoices(langChoices)
+            );
     }
 
     @Override

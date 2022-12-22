@@ -69,24 +69,21 @@ public class calculateRats implements ICommandSlash {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
-        var metadata = new Metadata(this.getName(), "How many rats you have?", """
+        return new Metadata(this.getName(), "How many rats you have?", """
             *M:tG Command*
             Returns an amount of 1/1 black Rat creature tokens after X triggers created by the interaction between [Marrow-Gnawer](%s) equipped with [Thornbite Staff](%s).
             """.formatted("https://scryfall.com/card/chk/124/marrow-gnawer", "https://scryfall.com/card/mor/145/thornbite-staff"),
             Mastermind.DEVELOPER,
             SlashModule.MTG,
             format.parse("5-10-2022_11:48"),
-            format.parse("1-12-2022_12:37")
-        );
-
-        metadata.addOptions(
-            new OptionData(OptionType.INTEGER, "start-count", "How many do you have right now?", true)
-                .setMinValue(3),
-            new OptionData(OptionType.INTEGER, "iterations", "How many iterations?", true)
-                .setMinValue(1)
-        );
-
-        return metadata;
+            format.parse("21-12-2022_20:05")
+        )
+            .addOptions(
+                new OptionData(OptionType.INTEGER, "start-count", "How many do you have right now?", true)
+                    .setMinValue(3),
+                new OptionData(OptionType.INTEGER, "iterations", "How many iterations?", true)
+                    .setMinValue(1)
+            );
     }
 
     @Override

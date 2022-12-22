@@ -44,10 +44,10 @@ public class Metadata implements Comparable<Metadata> {
      * It is recommended that when constructing a Metadata Object for {@link CommandData}, that you use the top level type used in the {@code ISlashCommand.getCommandData()}.
      * Hierarchy (from highest to lowest) goes as follows: none, {@link SubcommandGroupData}, {@link SubcommandData}, {@link OptionData}.
      *
-     * @param commandName        The name of the command. Cannot be no than MAX_NAME_LENGTH in {@link CommandData}.
-     * @param shortDescription   The description of the command. Cannot be no longer than MAX_DESCRIPTION_LENGTH in {@link CommandData}.
+     * @param commandName        The name of the command. Cannot be no than {@link CommandData#MAX_NAME_LENGTH}.
+     * @param shortDescription   The description of the command. Cannot be no longer than {@link MessageEmbed#DESCRIPTION_MAX_LENGTH}.
      * @param longDescription    The description of the command used in {@link com.terransky.stuffnthings.commandSystem.commands.general.about /about [command]}.
-     *                           It will be truncated if it has more characters than DESCRIPTION_MAX_LENGTH stated in {@link MessageEmbed}.
+     *                           It will be truncated if it has more characters than {@link MessageEmbed#DESCRIPTION_MAX_LENGTH}.
      * @param mastermind         The {@link Mastermind}.
      * @param module             The {@link SlashModule}.
      * @param implementationDate The {@link Date} when the command was first created.
@@ -64,12 +64,22 @@ public class Metadata implements Comparable<Metadata> {
         this.lastUpdated = lastUpdated;
     }
 
+    /**
+     * The default formatting for all Metadata dates
+     *
+     * @return A {@link FastDateFormat}
+     */
+    public static FastDateFormat getFastDateFormat() {
+        return FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+    }
+
     public SlashModule getModule() {
         return module;
     }
 
-    public void setModule(SlashModule module) {
+    public Metadata setModule(SlashModule module) {
         this.module = module;
+        return this;
     }
 
     public String getShortDescription() {
@@ -80,56 +90,63 @@ public class Metadata implements Comparable<Metadata> {
         return isNsfw;
     }
 
-    public void setNsfw(boolean nsfw) {
+    public Metadata setNsfw(boolean nsfw) {
         isNsfw = nsfw;
+        return this;
     }
 
     public List<SubcommandGroupData> getSubcommandGroups() {
         return subcommandGroups;
     }
 
-    public void addSubcommandGroups(List<SubcommandGroupData> subcommandGroups) {
+    public Metadata addSubcommandGroups(List<SubcommandGroupData> subcommandGroups) {
         this.subcommandGroups.addAll(subcommandGroups);
+        return this;
     }
 
-    public void addSubcommandGroups(SubcommandGroupData... subcommandGroups) {
-        addSubcommandGroups(List.of(subcommandGroups));
+    public Metadata addSubcommandGroups(SubcommandGroupData... subcommandGroups) {
+        return addSubcommandGroups(List.of(subcommandGroups));
     }
 
     public List<SubcommandData> getSubcommands() {
         return subcommands;
     }
 
-    public void addSubcommands(List<SubcommandData> subcommands) {
+    public Metadata addSubcommands(List<SubcommandData> subcommands) {
         this.subcommands.addAll(subcommands);
+        return this;
     }
 
-    public void addSubcommands(SubcommandData... subcommands) {
+    public Metadata addSubcommands(SubcommandData... subcommands) {
         addSubcommands(List.of(subcommands));
+        return this;
     }
 
     public List<OptionData> getOptions() {
         return options;
     }
 
-    public void addOptions(List<OptionData> options) {
+    public Metadata addOptions(List<OptionData> options) {
         this.options.addAll(options);
+        return this;
     }
 
-    public void addOptions(OptionData... options) {
+    public Metadata addOptions(OptionData... options) {
         addOptions(List.of(options));
+        return this;
     }
 
     public List<Permission> getDefaultPerms() {
         return defaultPerms;
     }
 
-    public void addDefaultPerms(List<Permission> defaultPerms) {
+    public Metadata addDefaultPerms(List<Permission> defaultPerms) {
         this.defaultPerms.addAll(defaultPerms);
+        return this;
     }
 
-    public void addDefaultPerms(Permission... permissions) {
-        addDefaultPerms(List.of(permissions));
+    public Metadata addDefaultPerms(Permission... permissions) {
+        return addDefaultPerms(List.of(permissions));
     }
 
     public String getCommandName() {
@@ -140,8 +157,9 @@ public class Metadata implements Comparable<Metadata> {
         return mastermind;
     }
 
-    public void setMastermind(Mastermind mastermind) {
+    public Metadata setMastermind(Mastermind mastermind) {
         this.mastermind = mastermind;
+        return this;
     }
 
     public Date getImplementationDate() {
@@ -163,7 +181,7 @@ public class Metadata implements Comparable<Metadata> {
     /**
      * Gets the long descriptions of a {@link Metadata} object.
      *
-     * @return The long description or it's truncated variant if it has more characters than DESCRIPTION_MAX_LENGTH stated in {@link MessageEmbed}.
+     * @return The long description or it's truncated variant if it has more characters than {@link MessageEmbed#DESCRIPTION_MAX_LENGTH}.
      */
     public String getLongDescription() {
         int descriptionMaxLength = MessageEmbed.DESCRIPTION_MAX_LENGTH;
@@ -173,10 +191,6 @@ public class Metadata implements Comparable<Metadata> {
         }
 
         return longDescription;
-    }
-
-    public static FastDateFormat getFastDateFormat() {
-        return FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
     }
 
     @Override

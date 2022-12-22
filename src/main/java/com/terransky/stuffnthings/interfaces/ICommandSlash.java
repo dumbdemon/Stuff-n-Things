@@ -19,8 +19,8 @@ public interface ICommandSlash extends ICommand {
      * Builds a {@link CommandData} object based on {@link Metadata}.
      *
      * @return A built {@link CommandData} object.
-     * @throws ParseException If the pattern used in {@code Metadata.getImplementationDate()} or {@code Metadata.getLastUpdated()} in a slash command class
-     *                        is given an invalid date string.
+     * @throws ParseException If the pattern used in {@link Metadata#getImplementationDate()} or {@link Metadata#getLastUpdated()}
+     *                        in a slash command class is given an invalid date string.
      */
     @Override
     default CommandData getCommandData() throws ParseException {
@@ -45,8 +45,8 @@ public interface ICommandSlash extends ICommand {
      * Get the {@link Metadata} object of an ISlashCommand.
      *
      * @return A {@link Metadata} object.
-     * @throws ParseException If the pattern used in {@code Metadata.getImplementationDate()} or {@code Metadata.getLastUpdated()} in a slash command class
-     *                        is given an invalid date string.
+     * @throws ParseException If the pattern used in {@link Metadata#getImplementationDate()} or {@link Metadata#getLastUpdated()}
+     *                        in a slash command class is given an invalid date string.
      */
     Metadata getMetadata() throws ParseException;
 

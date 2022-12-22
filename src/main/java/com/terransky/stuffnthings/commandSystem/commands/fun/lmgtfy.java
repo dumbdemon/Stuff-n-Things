@@ -25,28 +25,25 @@ public class lmgtfy implements ICommandSlash {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
-        var metadata = new Metadata(this.getName(), "Let me Google that for you!", """
+        return new Metadata(this.getName(), "Let me Google that for you!", """
             When a person is too lazy to search it up themselves, call this on 'em.
             """, Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("1-12-2022_12:37")
-        );
-
-        metadata.addSubcommands(
-            new SubcommandData("web", "Let me Google that for you!")
-                .addOptions(
-                    new OptionData(OptionType.STRING, "search", "What to search for.", true),
-                    new OptionData(OptionType.USER, "victim", "Ping this person to victimize them!")
-                ),
-            new SubcommandData("images", "Let me Google an image for you!")
-                .addOptions(
-                    new OptionData(OptionType.STRING, "search", "What to search for.", true),
-                    new OptionData(OptionType.USER, "victim", "Ping this person to victimize them!")
-                )
-        );
-
-        return metadata;
+            format.parse("21-12-2022_20:00")
+        )
+            .addSubcommands(
+                new SubcommandData("web", "Let me Google that for you!")
+                    .addOptions(
+                        new OptionData(OptionType.STRING, "search", "What to search for.", true),
+                        new OptionData(OptionType.USER, "victim", "Ping this person to victimize them!")
+                    ),
+                new SubcommandData("images", "Let me Google an image for you!")
+                    .addOptions(
+                        new OptionData(OptionType.STRING, "search", "What to search for.", true),
+                        new OptionData(OptionType.USER, "victim", "Ping this person to victimize them!")
+                    )
+            );
     }
 
     @Override
