@@ -123,7 +123,9 @@ public class SlashManager extends CommandManager<ICommandSlash> {
         }
 
         if (commandData.size() > Commands.MAX_SLASH_COMMANDS) {
+            int previousAmount = commandData.size();
             commandData = commandData.subList(0, Commands.MAX_SLASH_COMMANDS);
+            log.warn("There are too many slash commands (%d commands)! Truncating to %d...".formatted(previousAmount, Commands.MAX_SLASH_COMMANDS));
         }
 
         if (!messageContext.isEmpty()) {

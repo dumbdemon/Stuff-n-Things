@@ -10,8 +10,6 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 public interface ICommandSlash extends ICommand {
 
@@ -42,31 +40,13 @@ public interface ICommandSlash extends ICommand {
     }
 
     /**
-     * Get the {@link Metadata} object of an ISlashCommand.
+     * Get the {@link Metadata} object of an {@link ICommandSlash}.
      *
      * @return A {@link Metadata} object.
      * @throws ParseException If the pattern used in {@link Metadata#getImplementationDate()} or {@link Metadata#getLastUpdated()}
      *                        in a slash command class is given an invalid date string.
      */
     Metadata getMetadata() throws ParseException;
-
-    /**
-     * If this command can be used in all servers.
-     *
-     * @return True unless otherwise.
-     */
-    default boolean isGlobal() {
-        return true;
-    }
-
-    /**
-     * If guild command, which guild(s) can it be used in.
-     *
-     * @return {@link List} of Guild IDs.
-     */
-    default List<Long> getServerRestrictions() {
-        return new ArrayList<>();
-    }
 
     /**
      * The main slash command handler.

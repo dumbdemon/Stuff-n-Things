@@ -48,7 +48,11 @@ public class CommandManager<T extends ICommand> extends Manager<T> {
 
     public List<CommandData> getCommandData(long serverId) {
         final List<CommandData> commandData = new ArrayList<>();
-        List<T> effectiveCommand = commands.stream().filter(ICommand::isWorking).sorted().toList();
+        List<T> effectiveCommand = commands.stream().filter(it ->
+            !it.isGlobal() &&
+                it.isWorking() &&
+                (it.getServerRestrictions().contains(serverId) || it.getServerRestrictions().isEmpty())
+        ).sorted().toList();
 
         for (T command : effectiveCommand) {
             try {

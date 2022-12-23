@@ -3,6 +3,8 @@ package com.terransky.stuffnthings.interfaces;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 public interface ICommand extends IInteraction {
 
@@ -22,5 +24,23 @@ public interface ICommand extends IInteraction {
      */
     default boolean isWorking() {
         return true;
+    }
+
+    /**
+     * If this command can be used in all servers.
+     *
+     * @return True unless otherwise.
+     */
+    default boolean isGlobal() {
+        return true;
+    }
+
+    /**
+     * If guild command, which guild(s) can it be used in.
+     *
+     * @return {@link List} of Guild IDs.
+     */
+    default List<Long> getServerRestrictions() {
+        return new ArrayList<>();
     }
 }
