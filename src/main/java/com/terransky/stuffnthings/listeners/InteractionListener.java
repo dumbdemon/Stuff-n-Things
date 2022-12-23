@@ -55,12 +55,13 @@ public class InteractionListener extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        var slashManager = manager.getSlashManager();
         if (event.getUser().isBot()) return;
         else if (event.getGuild() == null) {
             GuildOnly.interactionResponse(event, Interactions.SLASH_COMMAND);
             return;
         }
+
+        var slashManager = manager.getSlashManager();
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
         //Add user to database or ignore if exists
@@ -95,11 +96,12 @@ public class InteractionListener extends ListenerAdapter {
 
     @Override
     public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event) {
-        var contextManager = manager.getMessageContextManager();
         if (event.getGuild() == null) {
             GuildOnly.interactionResponse(event, Interactions.CONTEXT_MESSAGE);
             return;
         }
+
+        var contextManager = manager.getMessageContextManager();
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
         Optional<ICommandMessage> ifMenu = contextManager.getInteraction(event.getName());
@@ -121,11 +123,12 @@ public class InteractionListener extends ListenerAdapter {
 
     @Override
     public void onUserContextInteraction(@NotNull UserContextInteractionEvent event) {
-        var contextManager = manager.getUserContextManager();
         if (event.getGuild() == null) {
             GuildOnly.interactionResponse(event, Interactions.CONTEXT_USER);
             return;
         }
+
+        var contextManager = manager.getUserContextManager();
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
         Optional<ICommandUser> ifMenu = contextManager.getInteraction(event.getName());
@@ -146,12 +149,13 @@ public class InteractionListener extends ListenerAdapter {
 
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
-        var buttonManager = manager.getButtonManager();
         if (event.getButton().getId() == null) return;
         else if (event.getGuild() == null) {
             GuildOnly.interactionResponse(event, Interactions.BUTTON);
             return;
         }
+
+        var buttonManager = manager.getButtonManager();
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
         Optional<IButton> ifButton = buttonManager.getInteraction(event.getButton().getId());
@@ -170,14 +174,15 @@ public class InteractionListener extends ListenerAdapter {
 
     @Override
     public void onEntitySelectInteraction(@NotNull EntitySelectInteractionEvent event) {
-        var selectMenuManager = manager.getEntitySelectMenuManager();
         if (event.getGuild() == null) {
             GuildOnly.interactionResponse(event, Interactions.SELECT_MENU);
             return;
         }
-        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
-        Optional<ISelectMenuEntity> ifMenu = selectMenuManager.getInteraction(event.getInteraction().getComponentId());
 
+        var selectMenuManager = manager.getEntitySelectMenuManager();
+        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
+
+        Optional<ISelectMenuEntity> ifMenu = selectMenuManager.getInteraction(event.getInteraction().getComponentId());
         if (ifMenu.isEmpty()) return;
 
         MessageEmbed menuFailed = getFailedInteractionMessage(Interactions.SELECT_MENU, blob);
@@ -195,14 +200,15 @@ public class InteractionListener extends ListenerAdapter {
 
     @Override
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {
-        var modalManager = manager.getModalManager();
         if (event.getGuild() == null) {
             GuildOnly.interactionResponse(event, Interactions.MODAL);
             return;
         }
-        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
-        Optional<IModal> ifModal = modalManager.getInteraction(event.getModalId());
 
+        var modalManager = manager.getModalManager();
+        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
+
+        Optional<IModal> ifModal = modalManager.getInteraction(event.getModalId());
         if (ifModal.isEmpty()) return;
 
         MessageEmbed modalFailed = getFailedInteractionMessage(Interactions.MODAL, blob);
@@ -220,11 +226,12 @@ public class InteractionListener extends ListenerAdapter {
 
     @Override
     public void onStringSelectInteraction(@NotNull StringSelectInteractionEvent event) {
-        var selectMenuManager = manager.getStringSelectMenuManager();
         if (event.getGuild() == null) {
             GuildOnly.interactionResponse(event, Interactions.SELECT_MENU);
             return;
         }
+
+        var selectMenuManager = manager.getStringSelectMenuManager();
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
         List<Optional<ISelectMenuString>> ifMenus = new ArrayList<>();
@@ -237,12 +244,11 @@ public class InteractionListener extends ListenerAdapter {
         for (Optional<ISelectMenuString> ifMenu : ifMenus) {
             if (ifMenu.isPresent()) {
                 ISelectMenuString menu = ifMenu.get();
-                log.debug("Select Menu %s[%s] called on %s [%d]".formatted(componentId.toUpperCase(), menu.getName().toUpperCase(),
-                    blob.getGuildName(), blob.getGuildIdLong()));
+                String interactionName = "%s[%s]".formatted(componentId.toUpperCase(), menu.getName().toUpperCase());
+                log.debug("Select Menu %s called on %s [%d]".formatted(interactionName, blob.getGuildName(), blob.getGuildIdLong()));
                 try {
                     menu.execute(event, blob);
                 } catch (Exception e) {
-                    String interactionName = "%s[%s]".formatted(componentId.toUpperCase(), menu.getName().toUpperCase());
                     logInteractionFailure(interactionName, blob, e);
                     if (event.isAcknowledged()) {
                         event.getHook().sendMessageEmbeds(menuFailed).queue();
