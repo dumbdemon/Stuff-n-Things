@@ -175,7 +175,7 @@ public class InteractionListener extends ListenerAdapter {
     @Override
     public void onEntitySelectInteraction(@NotNull EntitySelectInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, Interactions.SELECT_MENU);
+            GuildOnly.interactionResponse(event, Interactions.SELECTION_ENTITY);
             return;
         }
 
@@ -185,7 +185,7 @@ public class InteractionListener extends ListenerAdapter {
         Optional<ISelectMenuEntity> ifMenu = selectMenuManager.getInteraction(event.getInteraction().getComponentId());
         if (ifMenu.isEmpty()) return;
 
-        MessageEmbed menuFailed = getFailedInteractionMessage(Interactions.SELECT_MENU, blob);
+        MessageEmbed menuFailed = getFailedInteractionMessage(Interactions.SELECTION_ENTITY, blob);
         ISelectMenuEntity menu = ifMenu.get();
         log.debug("Select Menu %s called on %s [%d]".formatted(menu.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong()));
         try {
@@ -227,7 +227,7 @@ public class InteractionListener extends ListenerAdapter {
     @Override
     public void onStringSelectInteraction(@NotNull StringSelectInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, Interactions.SELECT_MENU);
+            GuildOnly.interactionResponse(event, Interactions.SELECTION_STRING);
             return;
         }
 
@@ -239,7 +239,7 @@ public class InteractionListener extends ListenerAdapter {
             ifMenus.add(selectMenuManager.getInteraction(id));
         }
         String componentId = event.getComponentId();
-        MessageEmbed menuFailed = getFailedInteractionMessage(Interactions.SELECT_MENU, blob);
+        MessageEmbed menuFailed = getFailedInteractionMessage(Interactions.SELECTION_STRING, blob);
 
         for (Optional<ISelectMenuString> ifMenu : ifMenus) {
             if (ifMenu.isPresent()) {

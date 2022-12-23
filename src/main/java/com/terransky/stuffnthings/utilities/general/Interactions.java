@@ -9,11 +9,12 @@ public enum Interactions {
 
     UNKNOWN(-1, "UNKNOWN"), //For future interactions
     SLASH_COMMAND(0, "Slash Command"),
-    BUTTON(1, "Button"),
+    BUTTON(1, "Button", true),
     MODAL(2, "Modal", true),
-    SELECT_MENU(3, "Selection Menu"),
-    CONTEXT_MESSAGE(4, "Message Context Menu", true),
-    CONTEXT_USER(5, "User Context Menu", true);
+    SELECTION_STRING(3, "Selection Menu", true),
+    SELECTION_ENTITY(4, "Entity Selection Menu", true),
+    CONTEXT_MESSAGE(5, "Message Context Menu", true),
+    CONTEXT_USER(6, "User Context Menu", true);
 
     private final int id;
     private final String type;
