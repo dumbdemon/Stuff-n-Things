@@ -1,8 +1,10 @@
-package com.terransky.stuffnthings.utilities;
+package com.terransky.stuffnthings.utilities.cannedAgenda;
 
+import com.terransky.stuffnthings.utilities.general.Config;
+import com.terransky.stuffnthings.utilities.general.Interactions;
 import org.jetbrains.annotations.NotNull;
 
-public enum CannedResponses {
+public enum Responses {
 
     //todo: Add Responses
     INTERACTION_FAILED("An error occurred whilst executing this interaction, please submit an issue [here](%s).".formatted(Config.getErrorReportingURL())),
@@ -10,7 +12,7 @@ public enum CannedResponses {
 
     private final String message;
 
-    CannedResponses(String message) {
+    Responses(String message) {
         this.message = message;
     }
 

@@ -3,7 +3,14 @@ package com.terransky.stuffnthings.managers;
 import com.terransky.stuffnthings.InteractionManager;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.interfaces.ICommandSlash;
-import com.terransky.stuffnthings.utilities.*;
+import com.terransky.stuffnthings.utilities.cannedAgenda.GuildOnly;
+import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
+import com.terransky.stuffnthings.utilities.command.EmbedColors;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.Metadata;
+import com.terransky.stuffnthings.utilities.general.Config;
+import com.terransky.stuffnthings.utilities.general.Interactions;
+import com.terransky.stuffnthings.utilities.general.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -250,7 +257,7 @@ public class CommandManager extends ListenerAdapter {
         Optional<ICommandSlash> ifSlash = getCommand(event.getName());
         MessageEmbed cmdFailed = new EmbedBuilder()
             .setTitle("Oops!")
-            .setDescription(CannedResponses.INTERACTION_FAILED.getMessage(Interactions.SLASH_COMMAND))
+            .setDescription(Responses.INTERACTION_FAILED.getMessage(Interactions.SLASH_COMMAND))
             .setColor(EmbedColors.getError())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();

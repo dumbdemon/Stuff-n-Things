@@ -2,7 +2,7 @@ package com.terransky.stuffnthings;
 
 import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.listeners.ListeningForEvents;
-import com.terransky.stuffnthings.utilities.Config;
+import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -45,7 +45,7 @@ public class StuffNThings {
             new ListeningForEvents(),
             manager.getButtonManager(),
             manager.getModalManager(),
-            manager.getSlashManager(),
+            manager.getCommandManager(),
             manager.getMessageContextManager(),
             manager.getUserContextManager(),
             manager.getEntitySelectMenuManager(),

@@ -2,7 +2,10 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.admin;
 
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.ICommandSlash;
-import com.terransky.stuffnthings.utilities.*;
+import com.terransky.stuffnthings.utilities.command.*;
+import com.terransky.stuffnthings.utilities.general.Config;
+import com.terransky.stuffnthings.utilities.general.LogList;
+import com.terransky.stuffnthings.utilities.jda.ChannelPermsController;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;

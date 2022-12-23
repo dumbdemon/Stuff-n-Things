@@ -1,5 +1,7 @@
-package com.terransky.stuffnthings.utilities;
+package com.terransky.stuffnthings.utilities.cannedAgenda;
 
+import com.terransky.stuffnthings.utilities.command.EmbedColors;
+import com.terransky.stuffnthings.utilities.general.Interactions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
@@ -20,7 +22,7 @@ public class GuildOnly {
     public static void interactionResponse(@NotNull GenericCommandInteractionEvent event, Interactions interactions) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
-                .setDescription(CannedResponses.GUILD_ONLY.getMessage(interactions))
+                .setDescription(Responses.GUILD_ONLY.getMessage(interactions))
                 .build()
         ).queue();
     }
@@ -28,7 +30,7 @@ public class GuildOnly {
     public static void interactionResponse(@NotNull ModalInteractionEvent event, Interactions interactions) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
-                .setDescription(CannedResponses.GUILD_ONLY.getMessage(interactions))
+                .setDescription(Responses.GUILD_ONLY.getMessage(interactions))
                 .build()
         ).queue();
     }
@@ -36,7 +38,7 @@ public class GuildOnly {
     public static <T extends GenericSelectMenuInteractionEvent<?, ? extends SelectMenu>> void interactionResponse(@NotNull T event, Interactions interactions) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
-                .setDescription(CannedResponses.GUILD_ONLY.getMessage(interactions))
+                .setDescription(Responses.GUILD_ONLY.getMessage(interactions))
                 .build()
         ).queue();
     }
@@ -44,7 +46,7 @@ public class GuildOnly {
     public static void interactionResponse(@NotNull ButtonInteractionEvent event, Interactions interactions) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
-                .setDescription(CannedResponses.GUILD_ONLY.getMessage(interactions))
+                .setDescription(Responses.GUILD_ONLY.getMessage(interactions))
                 .build()
         ).queue();
     }

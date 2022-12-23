@@ -1,5 +1,6 @@
-package com.terransky.stuffnthings.utilities;
+package com.terransky.stuffnthings.utilities.command;
 
+import com.terransky.stuffnthings.utilities.general.Timestamp;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;

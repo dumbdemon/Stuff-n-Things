@@ -1,8 +1,8 @@
 package com.terransky.stuffnthings.interactions.buttons;
 
 import com.terransky.stuffnthings.interfaces.IButton;
-import com.terransky.stuffnthings.utilities.EmbedColors;
-import com.terransky.stuffnthings.utilities.EventBlob;
+import com.terransky.stuffnthings.utilities.command.EmbedColors;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.jetbrains.annotations.NotNull;

@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.utilities;
+package com.terransky.stuffnthings.utilities.command;
 
 public enum Mastermind {
     USER("User"),

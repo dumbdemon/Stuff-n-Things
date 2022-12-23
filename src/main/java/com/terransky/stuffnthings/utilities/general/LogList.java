@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.utilities;
+package com.terransky.stuffnthings.utilities.general;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;

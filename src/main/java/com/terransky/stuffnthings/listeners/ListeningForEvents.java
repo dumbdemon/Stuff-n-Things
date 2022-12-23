@@ -4,9 +4,9 @@ import com.terransky.stuffnthings.InteractionManager;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.managers.CommandManager;
 import com.terransky.stuffnthings.secretsAndLies;
-import com.terransky.stuffnthings.utilities.Config;
-import com.terransky.stuffnthings.utilities.EmbedColors;
-import com.terransky.stuffnthings.utilities.LogList;
+import com.terransky.stuffnthings.utilities.command.EmbedColors;
+import com.terransky.stuffnthings.utilities.general.Config;
+import com.terransky.stuffnthings.utilities.general.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
@@ -29,11 +29,8 @@ import java.util.*;
 
 public class ListeningForEvents extends ListenerAdapter {
     private final Logger log = LoggerFactory.getLogger(ListeningForEvents.class);
-    private final CommandManager commandManager = new InteractionManager().getSlashManager();
+    private final CommandManager commandManager = new InteractionManager().getCommandManager();
     private final List<CommandData> globalCommandData = commandManager.getCommandData();
-
-    public ListeningForEvents() {
-    }
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {

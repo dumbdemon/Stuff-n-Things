@@ -22,7 +22,7 @@ import com.terransky.stuffnthings.managers.*;
 
 public class InteractionManager {
 
-    private final CommandManager slashManager = new CommandManager(
+    private final CommandManager commandManager = new CommandManager(
         //Admin Commands
         new channelUnLock(),
         new checkPerms(),
@@ -75,8 +75,8 @@ public class InteractionManager {
 
     private final StringSelectMenuManager stringSelectMenuManager = new StringSelectMenuManager();
 
-    public CommandManager getSlashManager() {
-        return slashManager;
+    public CommandManager getCommandManager() {
+        return commandManager;
     }
 
     public ButtonManager getButtonManager() {

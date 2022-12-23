@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.utilities;
+package com.terransky.stuffnthings.utilities.general;
 
 import io.github.cdimascio.dotenv.Dotenv;
 

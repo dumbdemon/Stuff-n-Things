@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.utilities;
+package com.terransky.stuffnthings.utilities.command;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

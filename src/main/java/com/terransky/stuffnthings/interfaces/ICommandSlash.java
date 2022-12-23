@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.interfaces;
 
-import com.terransky.stuffnthings.utilities.EventBlob;
-import com.terransky.stuffnthings.utilities.Metadata;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -74,7 +74,7 @@ public interface ICommandSlash extends ICommand {
      * @param event A {@link SlashCommandInteractionEvent}.
      * @param blob  An {@link EventBlob} containing checked non-null {@link net.dv8tion.jda.api.entities.Guild Guild} object
      *              and {@link net.dv8tion.jda.api.entities.Member Member} object.
-     * @throws Exception Any exception could get thrown across all ISlashCommands.
+     * @throws Exception Any exception could get thrown.
      */
     void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception;
 }

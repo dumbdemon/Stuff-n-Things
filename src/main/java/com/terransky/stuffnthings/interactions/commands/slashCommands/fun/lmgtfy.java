@@ -1,10 +1,10 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.terransky.stuffnthings.interfaces.ICommandSlash;
-import com.terransky.stuffnthings.utilities.EventBlob;
-import com.terransky.stuffnthings.utilities.Mastermind;
-import com.terransky.stuffnthings.utilities.Metadata;
-import com.terransky.stuffnthings.utilities.SlashModule;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.Mastermind;
+import com.terransky.stuffnthings.utilities.command.Metadata;
+import com.terransky.stuffnthings.utilities.command.SlashModule;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;

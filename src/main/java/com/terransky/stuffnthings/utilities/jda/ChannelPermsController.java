@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.utilities;
+package com.terransky.stuffnthings.utilities.jda;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.IPermissionHolder;

@@ -1,7 +1,12 @@
 package com.terransky.stuffnthings.managers;
 
 import com.terransky.stuffnthings.interfaces.IModal;
-import com.terransky.stuffnthings.utilities.*;
+import com.terransky.stuffnthings.utilities.cannedAgenda.GuildOnly;
+import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
+import com.terransky.stuffnthings.utilities.command.EmbedColors;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.general.Interactions;
+import com.terransky.stuffnthings.utilities.general.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
@@ -71,7 +76,7 @@ public class ModalManager extends ListenerAdapter {
         Optional<IModal> ifModal = getModal(event.getModalId());
         MessageEmbed modalFailed = new EmbedBuilder()
             .setTitle("Oops!")
-            .setDescription(CannedResponses.INTERACTION_FAILED.getMessage(Interactions.MODAL))
+            .setDescription(Responses.INTERACTION_FAILED.getMessage(Interactions.MODAL))
             .setColor(EmbedColors.getError())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();

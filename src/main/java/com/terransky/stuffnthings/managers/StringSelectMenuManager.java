@@ -1,7 +1,12 @@
 package com.terransky.stuffnthings.managers;
 
 import com.terransky.stuffnthings.interfaces.ISelectMenuString;
-import com.terransky.stuffnthings.utilities.*;
+import com.terransky.stuffnthings.utilities.cannedAgenda.GuildOnly;
+import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
+import com.terransky.stuffnthings.utilities.command.EmbedColors;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.general.Interactions;
+import com.terransky.stuffnthings.utilities.general.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
@@ -77,7 +82,7 @@ public class StringSelectMenuManager extends ListenerAdapter {
 
         MessageEmbed menuFailed = new EmbedBuilder()
             .setTitle("Oops")
-            .setDescription(CannedResponses.INTERACTION_FAILED.getMessage(Interactions.SELECT_MENU))
+            .setDescription(Responses.INTERACTION_FAILED.getMessage(Interactions.SELECT_MENU))
             .setColor(EmbedColors.getError())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();

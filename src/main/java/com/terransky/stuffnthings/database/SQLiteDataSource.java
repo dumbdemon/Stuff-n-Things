@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.database;
 
-import com.terransky.stuffnthings.utilities.Config;
-import com.terransky.stuffnthings.utilities.LogList;
+import com.terransky.stuffnthings.utilities.general.Config;
+import com.terransky.stuffnthings.utilities.general.LogList;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.HikariPoolMXBean;
