@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings;
 
 import com.terransky.stuffnthings.database.SQLiteDataSource;
+import com.terransky.stuffnthings.listeners.InteractionListener;
 import com.terransky.stuffnthings.listeners.ListeningForEvents;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -40,16 +41,9 @@ public class StuffNThings {
         }
         ShardManager shardManager = shards.build();
 
-        InteractionManager manager = new InteractionManager();
         shardManager.addEventListener(
             new ListeningForEvents(),
-            manager.getButtonManager(),
-            manager.getModalManager(),
-            manager.getCommandManager(),
-            manager.getMessageContextManager(),
-            manager.getUserContextManager(),
-            manager.getEntitySelectMenuManager(),
-            manager.getStringSelectMenuManager()
+            new InteractionListener()
         );
     }
 }

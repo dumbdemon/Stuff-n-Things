@@ -1,8 +1,9 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.general;
 
+import com.terransky.stuffnthings.InteractionManager;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.calculateRats;
 import com.terransky.stuffnthings.interfaces.ICommandSlash;
-import com.terransky.stuffnthings.managers.CommandManager;
+import com.terransky.stuffnthings.managers.SlashManager;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
@@ -56,11 +57,11 @@ public class about implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("21-12-2022_20:03")
+            format.parse("23-12-2022_08:44")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "command", "Get more info on a Command.")
-                    .addChoices(new CommandManager().getCommandsAsChoices())
+                    .addChoices(new InteractionManager().getSlashManager().getCommandsAsChoices())
             );
     }
 
@@ -78,8 +79,9 @@ public class about implements ICommandSlash {
         StringBuilder uptime = getStringBuilder(mxBean);
         Date startTime = new Date(mxBean.getStartTime());
 
-        int commandCnt = new CommandManager().getSlashCommandCount();
-        int guildCommandCnt = new CommandManager().getSlashCommandCount(blob.getGuildIdLong());
+        SlashManager manager = new InteractionManager().getSlashManager();
+        int commandCnt = manager.getSlashCommandCount();
+        int guildCommandCnt = manager.getSlashCommandCount(blob.getGuildIdLong());
         commandCnt += guildCommandCnt;
 
         //todo: Replace with database calls when fully implemented.
@@ -114,7 +116,7 @@ public class about implements ICommandSlash {
     }
 
     private void getCommandInfo(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, String command) throws ParseException {
-        Optional<Metadata> ifMetadata = new CommandManager().getMetadata(command);
+        Optional<Metadata> ifMetadata = new SlashManager().getMetadata(command);
         Metadata metadata = ifMetadata.orElse(this.getMetadata());
         String formattedCommandName = WordUtils.capitalize(metadata.getCommandName().replaceAll("-", " "));
 

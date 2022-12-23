@@ -18,11 +18,14 @@ import com.terransky.stuffnthings.interactions.commands.slashCommands.maths.solv
 import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.calculateRats;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.whatsInStandard;
 import com.terransky.stuffnthings.interactions.modals.killSuggest;
-import com.terransky.stuffnthings.managers.*;
+import com.terransky.stuffnthings.interfaces.*;
+import com.terransky.stuffnthings.managers.CommandManager;
+import com.terransky.stuffnthings.managers.Manager;
+import com.terransky.stuffnthings.managers.SlashManager;
 
 public class InteractionManager {
 
-    private final CommandManager commandManager = new CommandManager(
+    private final SlashManager slashManager = new SlashManager(
         //Admin Commands
         new channelUnLock(),
         new checkPerms(),
@@ -58,48 +61,48 @@ public class InteractionManager {
         new userInfo()
     );
 
-    private final ButtonManager buttonManager = new ButtonManager(
+    private final Manager<IButton> buttonManager = new Manager<>(
         new expiredButton(),
         new getMoreDadJokes()
     );
 
-    private final ModalManager modalManager = new ModalManager(
+    private final Manager<IModal> modalManager = new Manager<>(
         new killSuggest()
     );
 
-    private final MessageContextManager messageContextManager = new MessageContextManager();
+    private final CommandManager<ICommandMessage> messageContextManager = new CommandManager<>();
 
-    private final UserContextManager userContextManager = new UserContextManager();
+    private final CommandManager<ICommandUser> userContextManager = new CommandManager<>();
 
-    private final EntitySelectMenuManager entitySelectMenuManager = new EntitySelectMenuManager();
+    private final Manager<ISelectMenuEntity> entitySelectMenuManager = new Manager<>();
 
-    private final StringSelectMenuManager stringSelectMenuManager = new StringSelectMenuManager();
+    private final Manager<ISelectMenuString> stringSelectMenuManager = new Manager<>();
 
-    public CommandManager getCommandManager() {
-        return commandManager;
+    public SlashManager getSlashManager() {
+        return slashManager;
     }
 
-    public ButtonManager getButtonManager() {
+    public Manager<IButton> getButtonManager() {
         return buttonManager;
     }
 
-    public MessageContextManager getMessageContextManager() {
+    public CommandManager<ICommandMessage> getMessageContextManager() {
         return messageContextManager;
     }
 
-    public UserContextManager getUserContextManager() {
+    public CommandManager<ICommandUser> getUserContextManager() {
         return userContextManager;
     }
 
-    public ModalManager getModalManager() {
+    public Manager<IModal> getModalManager() {
         return modalManager;
     }
 
-    public EntitySelectMenuManager getEntitySelectMenuManager() {
+    public Manager<ISelectMenuEntity> getEntitySelectMenuManager() {
         return entitySelectMenuManager;
     }
 
-    public StringSelectMenuManager getStringSelectMenuManager() {
+    public Manager<ISelectMenuString> getStringSelectMenuManager() {
         return stringSelectMenuManager;
     }
 }

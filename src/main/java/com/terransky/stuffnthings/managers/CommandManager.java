@@ -1,130 +1,41 @@
 package com.terransky.stuffnthings.managers;
 
-import com.terransky.stuffnthings.InteractionManager;
-import com.terransky.stuffnthings.database.SQLiteDataSource;
-import com.terransky.stuffnthings.interfaces.ICommandSlash;
-import com.terransky.stuffnthings.utilities.cannedAgenda.GuildOnly;
-import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
-import com.terransky.stuffnthings.utilities.command.EmbedColors;
-import com.terransky.stuffnthings.utilities.command.EventBlob;
-import com.terransky.stuffnthings.utilities.command.Metadata;
-import com.terransky.stuffnthings.utilities.general.Config;
-import com.terransky.stuffnthings.utilities.general.Interactions;
-import com.terransky.stuffnthings.utilities.general.LogList;
-import net.dv8tion.jda.api.EmbedBuilder;
+import com.terransky.stuffnthings.interfaces.ICommand;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
+public class CommandManager<T extends ICommand> extends Manager<T> {
 
-public class CommandManager extends ListenerAdapter {
-    private final List<ICommandSlash> iCommandSlashes = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(CommandManager.class);
+    private final List<T> commands = new ArrayList<>();
 
-    public CommandManager(@NotNull ICommandSlash... iCommandSlashes) {
-        for (ICommandSlash iCommandSlash : iCommandSlashes) {
-            addCommand(iCommandSlash);
+    @SafeVarargs
+    public CommandManager(@NotNull T... commands) {
+        for (T command : commands) {
+            addInteraction(command);
         }
     }
 
-    /**
-     * Add a {@link ICommandSlash} object to be indexed and used.
-     *
-     * @param iCommandSlash An {@link ICommandSlash} object.
-     * @throws IndexOutOfBoundsException If {@link CommandManager#iCommandSlashes} has more than the {@link Commands#MAX_SLASH_COMMANDS}.
-     */
-    private void addCommand(ICommandSlash iCommandSlash) {
-        boolean nameFound = iCommandSlashes.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iCommandSlash.getName()));
+    @Override
+    public void addInteraction(T command) {
+        boolean interactionFound = commands.stream().anyMatch(it -> it.getName().equalsIgnoreCase(command.getName()));
 
-        if (nameFound) throw new IllegalArgumentException("A command with this name already exists");
+        if (interactionFound) throw new IllegalArgumentException("A command with that name already exists");
 
-        if (iCommandSlashes.size() > Commands.MAX_SLASH_COMMANDS)
-            throw new IndexOutOfBoundsException("You can only have at most %d slash commands.".formatted(Commands.MAX_SLASH_COMMANDS));
-        else iCommandSlashes.add(iCommandSlash);
+        commands.add(command);
     }
 
-    /**
-     * Get the {@link ICommandSlash} object for execution at {@link CommandManager#onSlashCommandInteraction(SlashCommandInteractionEvent)}.
-     *
-     * @param search The name of the command.
-     * @return An {@link Optional} of {@link ICommandSlash}.
-     */
-    private Optional<ICommandSlash> getCommand(@NotNull String search) {
-        String toSearch = search.toLowerCase();
-
-        for (ICommandSlash slash : iCommandSlashes) {
-            if (slash.getName().equals(toSearch)) {
-                return Optional.of(slash);
-            }
-        }
-
-        return Optional.empty();
-    }
-
-    /**
-     * Get all command names as {@link Command.Choice Choises} for the {@link com.terransky.stuffnthings.interactions.commands.slashCommands.general.about about} command.
-     *
-     * @return A {@link List} of {@link Command.Choice Choises}.
-     */
-    public List<Command.Choice> getCommandsAsChoices() {
-        List<Command.Choice> choices = new ArrayList<>();
-        for (ICommandSlash command : iCommandSlashes.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList()) {
-            choices.add(new Command.Choice(WordUtils.capitalize(command.getName().replace("-", " ")), command.getName()));
-        }
-        return choices;
-    }
-
-    /**
-     * Get the {@link Metadata} of an {@link ICommandSlash}.
-     *
-     * @param search The name of the command to look for.
-     * @return An {@link Optional} of {@link Metadata}.
-     * @throws ParseException If the pattern used in {@link Metadata#getImplementationDate()} or {@link Metadata#getLastUpdated()} in a slash command class
-     *                        is given an invalid date string.
-     */
-    public Optional<Metadata> getMetadata(@NotNull String search) throws ParseException {
-        String toSearch = search.toLowerCase();
-
-        for (ICommandSlash slash : iCommandSlashes) {
-            if (slash.getName().equals(toSearch)) {
-                return Optional.of(slash.getMetadata());
-            }
-        }
-        return Optional.empty();
-    }
-
-    /**
-     * Get the command data of all slash commands, message contexts, and user contexts.
-     * <p>
-     * <b>This to note:</b><br>
-     * • If a {@link ParseException} occurs, it will not be pushed.<br>
-     * • If there is more than {@link Commands#MAX_SLASH_COMMANDS}, than it will return a truncated list.
-     *
-     * @return Returns a list of {@link CommandData}.
-     */
     public List<CommandData> getCommandData() {
-        InteractionManager manager = new InteractionManager();
-        List<CommandData> commandData = new ArrayList<>();
-        final List<CommandData> messageContext = manager.getMessageContextManager().getCommandData();
-        final List<CommandData> userContext = manager.getUserContextManager().getCommandData();
+        final List<CommandData> commandData = new ArrayList<>();
 
-        for (ICommandSlash command : iCommandSlashes.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList()) {
+        for (T command : commands.stream().filter(ICommand::isWorking).toList()) {
             try {
                 commandData.add(command.getCommandData());
             } catch (ParseException e) {
@@ -132,42 +43,14 @@ public class CommandManager extends ListenerAdapter {
             }
         }
 
-        if (commandData.size() > Commands.MAX_SLASH_COMMANDS) {
-            commandData = commandData.subList(0, Commands.MAX_SLASH_COMMANDS);
-        }
-
-        if (!messageContext.isEmpty()) {
-            commandData.addAll(messageContext);
-            log.debug("%d message contexts added".formatted(messageContext.size()));
-        } else log.debug("No message contexts were added.");
-
-        if (!userContext.isEmpty()) {
-            commandData.addAll(userContext);
-            log.debug("%d user contexts added".formatted(userContext.size()));
-        } else log.debug("No user contexts were added.");
-
         return commandData;
     }
 
-    /**
-     * Get the command data of all slash commands specifically for a server.
-     * <p>
-     * <b>This to note:</b><br>
-     * • If a {@link ParseException} occurs, it will not be pushed.<br>
-     * • If there is more than {@link Commands#MAX_SLASH_COMMANDS}, than it will return a truncated list.
-     *
-     * @param serverId The ID of the server to check for.
-     * @return Returns a list of {@link CommandData}. Could potentially return an empty list.
-     */
     public List<CommandData> getCommandData(long serverId) {
         final List<CommandData> commandData = new ArrayList<>();
-        List<ICommandSlash> effectiveSlashes = iCommandSlashes.stream().filter(it ->
-            !it.isGlobal() &&
-                it.isWorking() &&
-                (it.getServerRestrictions().contains(serverId) || it.getServerRestrictions().isEmpty())
-        ).sorted().toList();
+        List<T> effectiveCommand = commands.stream().filter(ICommand::isWorking).sorted().toList();
 
-        for (ICommandSlash command : effectiveSlashes) {
+        for (T command : effectiveCommand) {
             try {
                 commandData.add(command.getCommandData());
             } catch (ParseException e) {
@@ -175,106 +58,10 @@ public class CommandManager extends ListenerAdapter {
             }
         }
 
-        if (commandData.size() > Commands.MAX_SLASH_COMMANDS)
-            return commandData.subList(0, Commands.MAX_SLASH_COMMANDS);
-
         return commandData;
     }
 
-    /**
-     * Get the command data of all slash commands specifically for a server.
-     * <p>
-     * <b>This to note:</b><br>
-     * • If a {@link ParseException} occurs, it will not be pushed.<br>
-     * • If there is more than {@link Commands#MAX_SLASH_COMMANDS}, than it will return a truncated list.
-     *
-     * @param guild The guild to look for.
-     * @return Returns a list of {@link CommandData}. Could potentially return an empty list.
-     */
     public List<CommandData> getCommandData(@NotNull Guild guild) {
         return getCommandData(guild.getIdLong());
-    }
-
-    /**
-     * Get the effective amount of global slash commands.
-     *
-     * @return The amount of slash commands.
-     */
-    public int getSlashCommandCount() {
-        return (int) iCommandSlashes.stream().filter(it -> it.isGlobal() && it.isWorking()).count();
-    }
-
-    /**
-     * Get the effective amount of guild slash commands for a guild.
-     *
-     * @param serverId The server id to check for.
-     * @return The amount of slash commands.
-     */
-    public int getSlashCommandCount(long serverId) {
-        return (int) iCommandSlashes.stream().filter(it ->
-            !it.isGlobal() &&
-                it.isWorking() &&
-                (it.getServerRestrictions().contains(serverId) || it.getServerRestrictions().isEmpty())
-        ).count();
-    }
-
-    /**
-     * Get the effective amount of guild slash commands for a guild.
-     *
-     * @param guild The guild to check for.
-     * @return The amount of slash commands.
-     */
-    public int getSlashCommandCount(@NotNull Guild guild) {
-        return getSlashCommandCount(guild.getIdLong());
-    }
-
-    /**
-     * The main event handler for all slash commands.
-     *
-     * @param event The {@link SlashCommandInteractionEvent}
-     */
-    @Override
-    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        if (event.getUser().isBot()) return;
-        else if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, Interactions.SLASH_COMMAND);
-            return;
-        }
-        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
-
-        //Add user to database or ignore if exists
-        if (Config.isDatabaseEnabled()) {
-            try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                .prepareStatement("INSERT OR IGNORE INTO users_" + blob.getGuildId() + "(user_id) VALUES(?)")) {
-                stmt.setString(1, event.getUser().getId());
-                stmt.execute();
-            } catch (SQLException e) {
-                log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-                LogList.error(Arrays.asList(e.getStackTrace()), CommandManager.class);
-            }
-        }
-
-        Optional<ICommandSlash> ifSlash = getCommand(event.getName());
-        MessageEmbed cmdFailed = new EmbedBuilder()
-            .setTitle("Oops!")
-            .setDescription(Responses.INTERACTION_FAILED.getMessage(Interactions.SLASH_COMMAND))
-            .setColor(EmbedColors.getError())
-            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
-            .build();
-
-        if (ifSlash.isPresent()) {
-            ICommandSlash slash = ifSlash.get();
-            log.debug("Command " + slash.getName().toUpperCase() + " called on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
-            try {
-                slash.execute(event, blob);
-            } catch (Exception e) {
-                log.debug("Full command path that triggered error :: [" + event.getFullCommandName() + "]");
-                log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-                LogList.error(Arrays.asList(e.getStackTrace()), log);
-                if (event.isAcknowledged()) {
-                    event.getHook().sendMessageEmbeds(cmdFailed).queue();
-                } else event.replyEmbeds(cmdFailed).setEphemeral(true).queue();
-            }
-        }
     }
 }

@@ -2,7 +2,7 @@ package com.terransky.stuffnthings.listeners;
 
 import com.terransky.stuffnthings.InteractionManager;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
-import com.terransky.stuffnthings.managers.CommandManager;
+import com.terransky.stuffnthings.managers.SlashManager;
 import com.terransky.stuffnthings.secretsAndLies;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
 import com.terransky.stuffnthings.utilities.general.Config;
@@ -29,8 +29,8 @@ import java.util.*;
 
 public class ListeningForEvents extends ListenerAdapter {
     private final Logger log = LoggerFactory.getLogger(ListeningForEvents.class);
-    private final CommandManager commandManager = new InteractionManager().getCommandManager();
-    private final List<CommandData> globalCommandData = commandManager.getCommandData();
+    private final SlashManager slashManager = new InteractionManager().getSlashManager();
+    private final List<CommandData> globalCommandData = slashManager.getCommandData();
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
@@ -124,12 +124,13 @@ public class ListeningForEvents extends ListenerAdapter {
 
     private void upsertGuildCommands(@NotNull GenericGuildEvent event) {
         if (Config.isTestingMode()) {
-            globalCommandData.addAll(commandManager.getCommandData(event.getGuild()));
-            event.getGuild().updateCommands().addCommands(globalCommandData).queue();
-            log.info(globalCommandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
+            List<CommandData> commandData = new ArrayList<>(globalCommandData);
+            commandData.addAll(slashManager.getCommandData(event.getGuild()));
+            event.getGuild().updateCommands().addCommands(commandData).queue();
+            log.info(commandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
         } else {
-            if (commandManager.getSlashCommandCount(event.getGuild()) > 0) {
-                event.getGuild().updateCommands().addCommands(commandManager.getCommandData(event.getGuild())).queue();
+            if (slashManager.getSlashCommandCount(event.getGuild()) > 0) {
+                event.getGuild().updateCommands().addCommands(slashManager.getCommandData(event.getGuild())).queue();
             } else event.getGuild().updateCommands().queue();
         }
     }
