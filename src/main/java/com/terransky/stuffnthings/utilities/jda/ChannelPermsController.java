@@ -6,7 +6,6 @@ import net.dv8tion.jda.api.entities.PermissionOverride;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.attribute.IPermissionContainer;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
-import net.dv8tion.jda.api.requests.restaction.PermissionOverrideAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,8 +58,7 @@ public class ChannelPermsController {
         if (permissionOverride == null)
             return false;
 
-        PermissionOverrideAction permAction = permissionOverride.getManager();
-        permAction.clear(permissions).queue();
+        permissionOverride.getManager().clear(permissions).queue();
         return true;
     }
 
@@ -81,8 +79,7 @@ public class ChannelPermsController {
             permissionOverride = guildChannel.getPermissionContainer().upsertPermissionOverride(iPermissionHolder).complete();
         }
 
-        PermissionOverrideAction permAction = permissionOverride.getManager();
-        permAction.grant(permissions).queue();
+        permissionOverride.getManager().grant(permissions).queue();
         return true;
     }
 
@@ -103,8 +100,7 @@ public class ChannelPermsController {
             permissionOverride = guildChannel.getPermissionContainer().upsertPermissionOverride(iPermissionHolder).complete();
         }
 
-        PermissionOverrideAction permAction = permissionOverride.getManager();
-        permAction.deny(permissions).queue();
+        permissionOverride.getManager().deny(permissions).queue();
         return true;
     }
 }
