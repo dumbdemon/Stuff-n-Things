@@ -172,10 +172,6 @@ public class SlashManager extends CommandManager<ICommandSlash> {
         return commandData;
     }
 
-    public List<CommandData> getCommandData(@NotNull Guild guild) {
-        return this.getCommandData(guild.getIdLong());
-    }
-
     /**
      * Get the effective amount of global slash commands.
      *
