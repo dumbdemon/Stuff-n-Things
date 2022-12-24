@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CommandManager<T extends ICommand> extends Manager<T> {
 
@@ -30,6 +31,17 @@ public class CommandManager<T extends ICommand> extends Manager<T> {
         if (interactionFound) throw new IllegalArgumentException("A command with that name already exists");
 
         commands.add(command);
+    }
+
+    @Override
+    public Optional<T> getInteraction(@NotNull String search) {
+        for (T interaction : commands) {
+            if (interaction.getName().equalsIgnoreCase(search)) {
+                return Optional.of(interaction);
+            }
+        }
+
+        return Optional.empty();
     }
 
     /**
