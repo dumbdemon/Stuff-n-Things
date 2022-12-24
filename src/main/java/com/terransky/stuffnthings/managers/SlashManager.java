@@ -41,8 +41,8 @@ public class SlashManager extends CommandManager<ICommandSlash> {
 
         if (nameFound) throw new IllegalArgumentException("A command with this name already exists");
 
-        if (iCommandSlashes.size() > Commands.MAX_SLASH_COMMANDS)
-            throw new IndexOutOfBoundsException("You can only have at most %d slash commands.".formatted(Commands.MAX_SLASH_COMMANDS));
+        if (iCommandSlashes.size() + 1 > Commands.MAX_SLASH_COMMANDS)
+            throw new IllegalArgumentException("You can only have at most %d slash commands.".formatted(Commands.MAX_SLASH_COMMANDS));
         else iCommandSlashes.add(iCommandSlash);
     }
 
@@ -101,9 +101,10 @@ public class SlashManager extends CommandManager<ICommandSlash> {
     /**
      * Get the command data of all slash commands, message contexts, and user contexts.
      * <p>
-     * <b>This to note:</b><br>
+     * <b>Things to note:</b><br>
      * • If a {@link ParseException} occurs, it will not be pushed.<br>
-     * • If there is more than {@link Commands#MAX_SLASH_COMMANDS}, than it will return a truncated list.
+     * • If there is more than {@link Commands#MAX_SLASH_COMMANDS}, {@link Commands#MAX_MESSAGE_COMMANDS}, and
+     * {@link Commands#MAX_USER_COMMANDS}, than it will return a truncated list of each.
      *
      * @return Returns a list of {@link CommandData}.
      */
@@ -129,12 +130,16 @@ public class SlashManager extends CommandManager<ICommandSlash> {
         }
 
         if (!messageContext.isEmpty()) {
-            commandData.addAll(messageContext);
+            if (messageContext.size() > Commands.MAX_MESSAGE_COMMANDS)
+                commandData.addAll(messageContext.subList(0, Commands.MAX_MESSAGE_COMMANDS));
+            else commandData.addAll(messageContext);
             log.debug("%d message contexts added".formatted(messageContext.size()));
         } else log.debug("No message contexts were added.");
 
         if (!userContext.isEmpty()) {
-            commandData.addAll(userContext);
+            if (userContext.size() > Commands.MAX_USER_COMMANDS)
+                commandData.addAll(userContext.subList(0, Commands.MAX_USER_COMMANDS));
+            else commandData.addAll(userContext);
             log.debug("%d user contexts added".formatted(userContext.size()));
         } else log.debug("No user contexts were added.");
 
@@ -144,7 +149,7 @@ public class SlashManager extends CommandManager<ICommandSlash> {
     /**
      * Get the command data of all slash commands specifically for a server.
      * <p>
-     * <b>This to note:</b><br>
+     * <b>Things to note:</b><br>
      * • If a {@link ParseException} occurs, it will not be pushed.<br>
      * • If there is more than {@link Commands#MAX_SLASH_COMMANDS}, than it will return a truncated list.
      *

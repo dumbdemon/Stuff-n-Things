@@ -18,6 +18,11 @@ public class Manager<T extends IInteraction> {
         }
     }
 
+    /**
+     * Add an {@link IInteraction} to the list.
+     *
+     * @param interaction An {@link IInteraction}
+     */
     public void addInteraction(T interaction) {
         boolean interactionFound = interactions.stream().anyMatch(it -> it.getName().equalsIgnoreCase(interaction.getName()));
 
@@ -26,6 +31,12 @@ public class Manager<T extends IInteraction> {
         interactions.add(interaction);
     }
 
+    /**
+     * Get an {@link IInteraction} from the list.
+     *
+     * @param search The name of a command to look for
+     * @return Get an {@link Optional} of an {@link IInteraction}
+     */
     public Optional<T> getInteraction(@NotNull String search) {
         for (T interaction : interactions) {
             if (interaction.getName().equalsIgnoreCase(search)) {
