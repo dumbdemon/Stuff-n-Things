@@ -3,7 +3,7 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.stuffnthings.dataSources.oxfordDictionary.*;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
-import com.terransky.stuffnthings.interfaces.ICommandSlash;
+import com.terransky.stuffnthings.interfaces.discordInteractions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;

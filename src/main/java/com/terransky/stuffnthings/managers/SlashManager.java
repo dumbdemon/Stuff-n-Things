@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.managers;
 
 import com.terransky.stuffnthings.InteractionManager;
-import com.terransky.stuffnthings.interfaces.ICommandSlash;
+import com.terransky.stuffnthings.interfaces.discordInteractions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;

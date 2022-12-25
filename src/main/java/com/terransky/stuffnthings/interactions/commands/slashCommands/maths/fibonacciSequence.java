@@ -2,7 +2,7 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.maths;
 
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.calculateRats;
-import com.terransky.stuffnthings.interfaces.ICommandSlash;
+import com.terransky.stuffnthings.interfaces.discordInteractions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;

@@ -1,6 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.devs;
 
-import com.terransky.stuffnthings.interfaces.ICommandSlash;
+import com.terransky.stuffnthings.interfaces.discordInteractions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.Timestamp;

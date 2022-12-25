@@ -1,6 +1,6 @@
 package com.terransky.stuffnthings.interactions.buttons;
 
-import com.terransky.stuffnthings.interfaces.IButton;
+import com.terransky.stuffnthings.interfaces.discordInteractions.IButton;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import net.dv8tion.jda.api.EmbedBuilder;

@@ -1,6 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
-import com.terransky.stuffnthings.interfaces.ICommandSlash;
+import com.terransky.stuffnthings.interfaces.discordInteractions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.Mastermind;
 import com.terransky.stuffnthings.utilities.command.Metadata;

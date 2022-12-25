@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.interfaces;
+package com.terransky.stuffnthings.interfaces.discordInteractions;
 
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;

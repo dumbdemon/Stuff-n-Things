@@ -31,7 +31,7 @@ public class Metadata implements Comparable<Metadata> {
     private boolean isNsfw = false;
 
     /**
-     * Extended details for an {@link com.terransky.stuffnthings.interfaces.ICommandSlash ICommandSlash}.
+     * Extended details for an {@link com.terransky.stuffnthings.interfaces.discordInteractions.ICommandSlash ICommandSlash}.
      * <p>
      * It is recommended that when constructing a Metadata Object for {@link CommandData}, that you use the top level type used in the {@code ISlashCommand.getCommandData()}.
      * Hierarchy (from highest to lowest) goes as follows: none, {@link SubcommandGroupData}, {@link SubcommandData}, {@link OptionData}.
@@ -40,7 +40,7 @@ public class Metadata implements Comparable<Metadata> {
     }
 
     /**
-     * Extended details for an {@link com.terransky.stuffnthings.interfaces.ICommandSlash ICommandSlash}.
+     * Extended details for an {@link com.terransky.stuffnthings.interfaces.discordInteractions.ICommandSlash ICommandSlash}.
      * <p>
      * It is recommended that when constructing a Metadata Object for {@link CommandData}, that you use the top level type used in the {@code ISlashCommand.getCommandData()}.
      * Hierarchy (from highest to lowest) goes as follows: none, {@link SubcommandGroupData}, {@link SubcommandData}, {@link OptionData}.

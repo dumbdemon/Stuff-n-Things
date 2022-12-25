@@ -2,7 +2,7 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.general;
 
 import com.terransky.stuffnthings.InteractionManager;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.calculateRats;
-import com.terransky.stuffnthings.interfaces.ICommandSlash;
+import com.terransky.stuffnthings.interfaces.discordInteractions.ICommandSlash;
 import com.terransky.stuffnthings.managers.SlashManager;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;

@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
-import com.terransky.stuffnthings.interfaces.ICommandSlash;
+import com.terransky.stuffnthings.interfaces.discordInteractions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -83,7 +83,7 @@ public class colorInfo implements ICommandSlash {
             .addField("RGB", "rgb(**%d**, **%d**, **%d**)".formatted(r, g, b), true)
             .addField("CMYK", "**%d**, **%d**, **%d**, **%d**".formatted(c, m, y, k), true)
             .addField("HSB/HSV", "Hue **%s**\nSaturation **%s**\nBrightness **%s**".formatted(h, s, v), false)
-            .addField("More Info", "[link](https://www.colorhexa.com/%s)".formatted(hexTriplet), false)
+            .addField("More Info", "[link](https://www.colorhexa.com/%s)".formatted(hexTriplet.substring(1)), false)
             .setColor(new Color(r, g, b))
             .build();
     }
@@ -115,7 +115,7 @@ public class colorInfo implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("20-9-2022_12:10"),
-            format.parse("21-12-2022_19:59")
+            format.parse("25-12-2022_17:32")
         )
             .addSubcommands(
                 new SubcommandData("hex-triplet", "Get more info on a hex triplet. EX: #663366")

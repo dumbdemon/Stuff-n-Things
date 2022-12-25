@@ -1,6 +1,6 @@
 package com.terransky.stuffnthings.managers;
 
-import com.terransky.stuffnthings.interfaces.IInteraction;
+import com.terransky.stuffnthings.interfaces.discordInteractions.IInteraction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

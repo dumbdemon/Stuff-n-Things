@@ -18,7 +18,7 @@ import com.terransky.stuffnthings.interactions.commands.slashCommands.maths.solv
 import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.calculateRats;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.whatsInStandard;
 import com.terransky.stuffnthings.interactions.modals.killSuggest;
-import com.terransky.stuffnthings.interfaces.*;
+import com.terransky.stuffnthings.interfaces.discordInteractions.*;
 import com.terransky.stuffnthings.managers.CommandManager;
 import com.terransky.stuffnthings.managers.Manager;
 import com.terransky.stuffnthings.managers.SlashManager;
@@ -49,6 +49,7 @@ public class InteractionManager {
         new meme(),
         new robFailChance(),
         new say(),
+        new twentyQuestions(),
 
         //General Commands
         new about(),

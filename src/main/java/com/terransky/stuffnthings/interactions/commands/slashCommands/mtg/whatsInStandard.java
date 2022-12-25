@@ -5,7 +5,7 @@ import com.terransky.stuffnthings.dataSources.whatsInStandard.Ban;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.MtGSet;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.WhatsInStandardData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
-import com.terransky.stuffnthings.interfaces.ICommandSlash;
+import com.terransky.stuffnthings.interfaces.discordInteractions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
