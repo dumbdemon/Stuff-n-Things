@@ -11,12 +11,10 @@ import org.slf4j.LoggerFactory;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class CommandManager<T extends ICommand> extends Manager<T> {
 
     private final Logger log = LoggerFactory.getLogger(CommandManager.class);
-    private final List<T> commands = new ArrayList<>();
 
     @SafeVarargs
     public CommandManager(@NotNull T... commands) {
@@ -27,24 +25,13 @@ public class CommandManager<T extends ICommand> extends Manager<T> {
 
     @Override
     public void addInteraction(@NotNull T command) {
-        boolean interactionFound = commands.stream().anyMatch(it -> it.getName().equalsIgnoreCase(command.getName()));
+        boolean interactionFound = interactions.stream().anyMatch(it -> it.getName().equalsIgnoreCase(command.getName()));
 
         if (command.getInteractionType() == Interactions.COMMAND_SLASH)
             throw new IllegalArgumentException(String.format("Please use %s for slash commands", SlashManager.class.getName()));
         if (interactionFound) throw new IllegalArgumentException("A command with that name already exists");
 
-        commands.add(command);
-    }
-
-    @Override
-    public Optional<T> getInteraction(@NotNull String search) {
-        for (T interaction : commands) {
-            if (interaction.getName().equalsIgnoreCase(search)) {
-                return Optional.of(interaction);
-            }
-        }
-
-        return Optional.empty();
+        interactions.add(command);
     }
 
     /**
@@ -56,7 +43,7 @@ public class CommandManager<T extends ICommand> extends Manager<T> {
      * @return A {@link List} of {@link CommandData}
      */
     public List<CommandData> getCommandData() {
-        final List<T> effectiveCommands = commands.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList();
+        final List<T> effectiveCommands = interactions.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList();
 
         return getCommands(effectiveCommands);
     }
@@ -71,7 +58,7 @@ public class CommandManager<T extends ICommand> extends Manager<T> {
      * @return A {@link List} of {@link CommandData}
      */
     public List<CommandData> getCommandData(long serverId) {
-        List<T> effectiveCommands = commands.stream().filter(it ->
+        List<T> effectiveCommands = interactions.stream().filter(it ->
             !it.isGlobal() &&
                 it.isWorking() &&
                 (it.getServerRestrictions().contains(serverId) || it.getServerRestrictions().isEmpty())

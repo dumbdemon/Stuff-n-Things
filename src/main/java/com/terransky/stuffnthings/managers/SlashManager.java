@@ -4,7 +4,6 @@ import com.terransky.stuffnthings.ManagersManager;
 import com.terransky.stuffnthings.interfaces.discordInteractions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -19,11 +18,10 @@ import java.util.Optional;
 
 
 public class SlashManager extends CommandManager<ICommandSlash> {
-    private final List<ICommandSlash> iCommandSlashes = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(SlashManager.class);
 
-    public SlashManager(@NotNull ICommandSlash... iCommandSlashes) {
-        for (ICommandSlash iCommandSlash : iCommandSlashes) {
+    public SlashManager(@NotNull ICommandSlash... interactions) {
+        for (ICommandSlash iCommandSlash : interactions) {
             addInteraction(iCommandSlash);
         }
     }
@@ -32,37 +30,18 @@ public class SlashManager extends CommandManager<ICommandSlash> {
      * Add a {@link ICommandSlash} object to be indexed and used.
      *
      * @param iCommandSlash An {@link ICommandSlash} object.
-     * @throws IndexOutOfBoundsException If {@link SlashManager#iCommandSlashes} has more than the {@link Commands#MAX_SLASH_COMMANDS}.
+     * @throws IndexOutOfBoundsException If {@link SlashManager#interactions} has more than the {@link Commands#MAX_SLASH_COMMANDS} or,
+     *                                   if an {@link ICommandSlash} with that name already exists.
      */
     @Override
     public void addInteraction(@NotNull ICommandSlash iCommandSlash) {
-        boolean nameFound = iCommandSlashes.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iCommandSlash.getName()));
+        boolean nameFound = interactions.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iCommandSlash.getName()));
 
         if (nameFound) throw new IllegalArgumentException("A command with this name already exists");
 
-        if (iCommandSlashes.size() + 1 > Commands.MAX_SLASH_COMMANDS)
+        if (interactions.size() + 1 > Commands.MAX_SLASH_COMMANDS)
             throw new IllegalArgumentException("You can only have at most %d slash commands.".formatted(Commands.MAX_SLASH_COMMANDS));
-        else iCommandSlashes.add(iCommandSlash);
-    }
-
-    /**
-     * Get the {@link ICommandSlash} object for execution at
-     * {@link com.terransky.stuffnthings.listeners.InteractionListener#onSlashCommandInteraction(SlashCommandInteractionEvent) InteractionListener.onSlashCommandInteraction()}.
-     *
-     * @param search The name of the command.
-     * @return An {@link Optional} of {@link ICommandSlash}.
-     */
-    @Override
-    public Optional<ICommandSlash> getInteraction(@NotNull String search) {
-        String toSearch = search.toLowerCase();
-
-        for (ICommandSlash slash : iCommandSlashes) {
-            if (slash.getName().equals(toSearch)) {
-                return Optional.of(slash);
-            }
-        }
-
-        return Optional.empty();
+        else interactions.add(iCommandSlash);
     }
 
     /**
@@ -72,7 +51,7 @@ public class SlashManager extends CommandManager<ICommandSlash> {
      */
     public List<Command.Choice> getCommandsAsChoices() {
         List<Command.Choice> choices = new ArrayList<>();
-        for (ICommandSlash command : iCommandSlashes.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList()) {
+        for (ICommandSlash command : interactions.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList()) {
             choices.add(new Command.Choice(command.getNameReadable(), command.getName()));
         }
         return choices;
@@ -89,7 +68,7 @@ public class SlashManager extends CommandManager<ICommandSlash> {
     public Optional<Metadata> getMetadata(@NotNull String search) throws ParseException {
         String toSearch = search.toLowerCase();
 
-        for (ICommandSlash slash : iCommandSlashes) {
+        for (ICommandSlash slash : interactions) {
             if (slash.getName().equals(toSearch)) {
                 return Optional.of(slash.getMetadata());
             }
@@ -109,18 +88,10 @@ public class SlashManager extends CommandManager<ICommandSlash> {
      */
     @Override
     public List<CommandData> getCommandData() {
+        List<CommandData> commandData = new ArrayList<>(super.getCommandData());
         ManagersManager manager = new ManagersManager();
-        List<CommandData> commandData = new ArrayList<>();
         final List<CommandData> messageContext = manager.getMessageContextManager().getCommandData();
         final List<CommandData> userContext = manager.getUserContextManager().getCommandData();
-
-        for (ICommandSlash command : iCommandSlashes.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList()) {
-            try {
-                commandData.add(command.getCommandData());
-            } catch (ParseException e) {
-                log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(command.getName().toUpperCase()));
-            }
-        }
 
         if (commandData.size() > Commands.MAX_SLASH_COMMANDS) {
             int previousAmount = commandData.size();
@@ -157,20 +128,7 @@ public class SlashManager extends CommandManager<ICommandSlash> {
      */
     @Override
     public List<CommandData> getCommandData(long serverId) {
-        final List<CommandData> commandData = new ArrayList<>();
-        List<ICommandSlash> effectiveSlashes = iCommandSlashes.stream().filter(it ->
-            !it.isGlobal() &&
-                it.isWorking() &&
-                (it.getServerRestrictions().contains(serverId) || it.getServerRestrictions().isEmpty())
-        ).sorted().toList();
-
-        for (ICommandSlash command : effectiveSlashes) {
-            try {
-                commandData.add(command.getCommandData());
-            } catch (ParseException e) {
-                log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(command.getName().toUpperCase()));
-            }
-        }
+        final List<CommandData> commandData = new ArrayList<>(super.getCommandData(serverId));
 
         if (commandData.size() > Commands.MAX_SLASH_COMMANDS)
             return commandData.subList(0, Commands.MAX_SLASH_COMMANDS);
@@ -184,7 +142,7 @@ public class SlashManager extends CommandManager<ICommandSlash> {
      * @return The amount of slash commands.
      */
     public int getSlashCommandCount() {
-        return (int) iCommandSlashes.stream().filter(it -> it.isGlobal() && it.isWorking()).count();
+        return (int) interactions.stream().filter(it -> it.isGlobal() && it.isWorking()).count();
     }
 
     /**
@@ -194,7 +152,7 @@ public class SlashManager extends CommandManager<ICommandSlash> {
      * @return The amount of slash commands.
      */
     public int getSlashCommandCount(long serverId) {
-        return (int) iCommandSlashes.stream().filter(it ->
+        return (int) interactions.stream().filter(it ->
             !it.isGlobal() &&
                 it.isWorking() &&
                 (it.getServerRestrictions().contains(serverId) || it.getServerRestrictions().isEmpty())

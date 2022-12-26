@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class Manager<T extends IInteraction> {
 
-    private final List<T> interactions = new ArrayList<>();
+    final List<T> interactions = new ArrayList<>();
 
     @SafeVarargs
     public Manager(@NotNull T... interactions) {
