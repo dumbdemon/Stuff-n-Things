@@ -53,17 +53,9 @@ public class CommandManager<T extends ICommand> extends Manager<T> {
      * @return A {@link List} of {@link CommandData}
      */
     public List<CommandData> getCommandData() {
-        final List<CommandData> commandData = new ArrayList<>();
+        final List<T> effectiveCommands = commands.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList();
 
-        for (T command : commands.stream().filter(ICommand::isWorking).toList()) {
-            try {
-                commandData.add(command.getCommandData());
-            } catch (ParseException e) {
-                log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(command.getName().toUpperCase()));
-            }
-        }
-
-        return commandData;
+        return getCommands(effectiveCommands);
     }
 
     /**
@@ -76,14 +68,20 @@ public class CommandManager<T extends ICommand> extends Manager<T> {
      * @return A {@link List} of {@link CommandData}
      */
     public List<CommandData> getCommandData(long serverId) {
-        final List<CommandData> commandData = new ArrayList<>();
-        List<T> effectiveCommand = commands.stream().filter(it ->
+        List<T> effectiveCommands = commands.stream().filter(it ->
             !it.isGlobal() &&
                 it.isWorking() &&
                 (it.getServerRestrictions().contains(serverId) || it.getServerRestrictions().isEmpty())
         ).sorted().toList();
 
-        for (T command : effectiveCommand) {
+        return getCommands(effectiveCommands);
+    }
+
+    @NotNull
+    private List<CommandData> getCommands(@NotNull List<T> effectiveCommands) {
+        final List<CommandData> commandData = new ArrayList<>();
+
+        for (T command : effectiveCommands) {
             try {
                 commandData.add(command.getCommandData());
             } catch (ParseException e) {
