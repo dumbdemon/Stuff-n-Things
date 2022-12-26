@@ -6,7 +6,7 @@ import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.kill;
-import com.terransky.stuffnthings.interfaces.discordInteractions.IModal;
+import com.terransky.stuffnthings.interfaces.interactions.IModal;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.Config;

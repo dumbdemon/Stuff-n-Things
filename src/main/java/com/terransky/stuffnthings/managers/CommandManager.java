@@ -1,6 +1,6 @@
 package com.terransky.stuffnthings.managers;
 
-import com.terransky.stuffnthings.interfaces.discordInteractions.ICommand;
+import com.terransky.stuffnthings.interfaces.interactions.ICommand;
 import com.terransky.stuffnthings.utilities.general.InteractionType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;

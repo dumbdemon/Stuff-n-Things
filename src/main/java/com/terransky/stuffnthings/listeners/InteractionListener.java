@@ -2,7 +2,7 @@ package com.terransky.stuffnthings.listeners;
 
 import com.terransky.stuffnthings.ManagersManager;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
-import com.terransky.stuffnthings.interfaces.discordInteractions.*;
+import com.terransky.stuffnthings.interfaces.interactions.*;
 import com.terransky.stuffnthings.managers.SlashManager;
 import com.terransky.stuffnthings.utilities.cannedAgenda.GuildOnly;
 import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;

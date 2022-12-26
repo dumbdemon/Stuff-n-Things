@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.interfaces.discordInteractions;
+package com.terransky.stuffnthings.interfaces.interactions;
 
 import com.terransky.stuffnthings.utilities.general.InteractionType;
 import org.jetbrains.annotations.NotNull;

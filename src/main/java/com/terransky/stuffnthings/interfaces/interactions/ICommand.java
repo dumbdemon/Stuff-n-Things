@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.interfaces.discordInteractions;
+package com.terransky.stuffnthings.interfaces.interactions;
 
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 

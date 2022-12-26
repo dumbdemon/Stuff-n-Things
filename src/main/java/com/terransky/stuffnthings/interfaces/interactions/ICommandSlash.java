@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.interfaces.discordInteractions;
+package com.terransky.stuffnthings.interfaces.interactions;
 
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.Metadata;
