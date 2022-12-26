@@ -1,6 +1,6 @@
 package com.terransky.stuffnthings.interfaces.discordInteractions;
 
-import com.terransky.stuffnthings.utilities.general.Interactions;
+import com.terransky.stuffnthings.utilities.general.InteractionType;
 import org.jetbrains.annotations.NotNull;
 
 public interface IInteraction extends Comparable<IInteraction> {
@@ -12,7 +12,12 @@ public interface IInteraction extends Comparable<IInteraction> {
      */
     String getName();
 
-    Interactions getInteractionType();
+    /**
+     * Get the interaction type.
+     *
+     * @return An {@link InteractionType}.
+     */
+    InteractionType getInteractionType();
 
     @Override
     default int compareTo(@NotNull IInteraction iInteraction) {

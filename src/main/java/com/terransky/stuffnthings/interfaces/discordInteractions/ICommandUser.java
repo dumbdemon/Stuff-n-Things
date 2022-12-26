@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.interfaces.discordInteractions;
 
 import com.terransky.stuffnthings.utilities.command.EventBlob;
-import com.terransky.stuffnthings.utilities.general.Interactions;
+import com.terransky.stuffnthings.utilities.general.InteractionType;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,7 @@ public interface ICommandUser extends ICommand {
     void execute(@NotNull UserContextInteractionEvent event, @NotNull EventBlob blob) throws Exception;
 
     @Override
-    default Interactions getInteractionType() {
-        return Interactions.COMMAND_USER;
+    default InteractionType getInteractionType() {
+        return InteractionType.COMMAND_CONTEXT_USER;
     }
 }

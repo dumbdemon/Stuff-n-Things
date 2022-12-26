@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.utilities.cannedAgenda;
 
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
-import com.terransky.stuffnthings.utilities.general.Interactions;
+import com.terransky.stuffnthings.utilities.general.InteractionType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
@@ -19,34 +19,34 @@ public class GuildOnly {
     private GuildOnly() {
     }
 
-    public static void interactionResponse(@NotNull GenericCommandInteractionEvent event, Interactions interactions) {
+    public static void interactionResponse(@NotNull GenericCommandInteractionEvent event, InteractionType interactionType) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
-                .setDescription(Responses.GUILD_ONLY.getMessage(interactions))
+                .setDescription(Responses.GUILD_ONLY.getMessage(interactionType))
                 .build()
         ).queue();
     }
 
-    public static void interactionResponse(@NotNull ModalInteractionEvent event, Interactions interactions) {
+    public static void interactionResponse(@NotNull ModalInteractionEvent event, InteractionType interactionType) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
-                .setDescription(Responses.GUILD_ONLY.getMessage(interactions))
+                .setDescription(Responses.GUILD_ONLY.getMessage(interactionType))
                 .build()
         ).queue();
     }
 
-    public static <T extends GenericSelectMenuInteractionEvent<?, ? extends SelectMenu>> void interactionResponse(@NotNull T event, Interactions interactions) {
+    public static <T extends GenericSelectMenuInteractionEvent<?, ? extends SelectMenu>> void interactionResponse(@NotNull T event, InteractionType interactionType) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
-                .setDescription(Responses.GUILD_ONLY.getMessage(interactions))
+                .setDescription(Responses.GUILD_ONLY.getMessage(interactionType))
                 .build()
         ).queue();
     }
 
-    public static void interactionResponse(@NotNull ButtonInteractionEvent event, Interactions interactions) {
+    public static void interactionResponse(@NotNull ButtonInteractionEvent event, InteractionType interactionType) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
-                .setDescription(Responses.GUILD_ONLY.getMessage(interactions))
+                .setDescription(Responses.GUILD_ONLY.getMessage(interactionType))
                 .build()
         ).queue();
     }

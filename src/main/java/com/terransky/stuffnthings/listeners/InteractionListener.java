@@ -9,7 +9,7 @@ import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.Config;
-import com.terransky.stuffnthings.utilities.general.Interactions;
+import com.terransky.stuffnthings.utilities.general.InteractionType;
 import com.terransky.stuffnthings.utilities.general.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -38,7 +38,7 @@ public class InteractionListener extends ListenerAdapter {
     private final ManagersManager manager = new ManagersManager();
 
     @NotNull
-    private MessageEmbed getFailedInteractionMessage(Interactions interaction, @NotNull EventBlob blob) {
+    private MessageEmbed getFailedInteractionMessage(InteractionType interaction, @NotNull EventBlob blob) {
         return new EmbedBuilder()
             .setTitle("Oops!")
             .setDescription(Responses.INTERACTION_FAILED.getMessage(interaction))
@@ -57,7 +57,7 @@ public class InteractionListener extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getUser().isBot()) return;
         else if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, Interactions.COMMAND_SLASH);
+            GuildOnly.interactionResponse(event, InteractionType.COMMAND_SLASH);
             return;
         }
 
@@ -77,7 +77,7 @@ public class InteractionListener extends ListenerAdapter {
         }
 
         Optional<ICommandSlash> ifSlash = slashManager.getInteraction(event.getName());
-        MessageEmbed cmdFailed = getFailedInteractionMessage(Interactions.COMMAND_SLASH, blob);
+        MessageEmbed cmdFailed = getFailedInteractionMessage(InteractionType.COMMAND_SLASH, blob);
 
         if (ifSlash.isPresent()) {
             ICommandSlash slash = ifSlash.get();
@@ -97,7 +97,7 @@ public class InteractionListener extends ListenerAdapter {
     @Override
     public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, Interactions.COMMAND_MESSAGE);
+            GuildOnly.interactionResponse(event, InteractionType.COMMAND_CONTEXT_MESSAGE);
             return;
         }
 
@@ -107,7 +107,7 @@ public class InteractionListener extends ListenerAdapter {
         Optional<ICommandMessage> ifMenu = contextManager.getInteraction(event.getName());
         if (ifMenu.isEmpty()) return;
 
-        MessageEmbed menuFailed = getFailedInteractionMessage(Interactions.COMMAND_MESSAGE, blob);
+        MessageEmbed menuFailed = getFailedInteractionMessage(InteractionType.COMMAND_CONTEXT_MESSAGE, blob);
         ICommandMessage commandMessage = ifMenu.get();
         log.debug("Command \"" + commandMessage.getName().toUpperCase() + "\" called on %s [%d]".formatted(blob.getGuild().getName(), blob.getGuildIdLong()));
         try {
@@ -123,7 +123,7 @@ public class InteractionListener extends ListenerAdapter {
     @Override
     public void onUserContextInteraction(@NotNull UserContextInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, Interactions.COMMAND_USER);
+            GuildOnly.interactionResponse(event, InteractionType.COMMAND_CONTEXT_USER);
             return;
         }
 
@@ -133,7 +133,7 @@ public class InteractionListener extends ListenerAdapter {
         Optional<ICommandUser> ifMenu = contextManager.getInteraction(event.getName());
         if (ifMenu.isEmpty()) return;
 
-        MessageEmbed menuFailed = getFailedInteractionMessage(Interactions.COMMAND_USER, blob);
+        MessageEmbed menuFailed = getFailedInteractionMessage(InteractionType.COMMAND_CONTEXT_USER, blob);
         ICommandUser commandUser = ifMenu.get();
         log.debug("Command \"" + commandUser.getName().toUpperCase() + "\" called on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
         try {
@@ -150,7 +150,7 @@ public class InteractionListener extends ListenerAdapter {
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         if (event.getButton().getId() == null) return;
         else if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, Interactions.BUTTON);
+            GuildOnly.interactionResponse(event, InteractionType.BUTTON);
             return;
         }
 
@@ -160,7 +160,7 @@ public class InteractionListener extends ListenerAdapter {
         Optional<IButton> ifButton = buttonManager.getInteraction(event.getButton().getId());
         if (ifButton.isEmpty()) return;
 
-        MessageEmbed buttonFailed = getFailedInteractionMessage(Interactions.BUTTON, blob);
+        MessageEmbed buttonFailed = getFailedInteractionMessage(InteractionType.BUTTON, blob);
         IButton iButton = ifButton.get();
         log.debug("Button %s called on %s [%d]".formatted(iButton.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong()));
         try {
@@ -174,7 +174,7 @@ public class InteractionListener extends ListenerAdapter {
     @Override
     public void onEntitySelectInteraction(@NotNull EntitySelectInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, Interactions.SELECTION_ENTITY);
+            GuildOnly.interactionResponse(event, InteractionType.SELECTION_ENTITY);
             return;
         }
 
@@ -184,7 +184,7 @@ public class InteractionListener extends ListenerAdapter {
         Optional<ISelectMenuEntity> ifMenu = selectMenuManager.getInteraction(event.getInteraction().getComponentId());
         if (ifMenu.isEmpty()) return;
 
-        MessageEmbed menuFailed = getFailedInteractionMessage(Interactions.SELECTION_ENTITY, blob);
+        MessageEmbed menuFailed = getFailedInteractionMessage(InteractionType.SELECTION_ENTITY, blob);
         ISelectMenuEntity menu = ifMenu.get();
         log.debug("Select Menu %s called on %s [%d]".formatted(menu.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong()));
         try {
@@ -200,7 +200,7 @@ public class InteractionListener extends ListenerAdapter {
     @Override
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, Interactions.MODAL);
+            GuildOnly.interactionResponse(event, InteractionType.MODAL);
             return;
         }
 
@@ -210,7 +210,7 @@ public class InteractionListener extends ListenerAdapter {
         Optional<IModal> ifModal = modalManager.getInteraction(event.getModalId());
         if (ifModal.isEmpty()) return;
 
-        MessageEmbed modalFailed = getFailedInteractionMessage(Interactions.MODAL, blob);
+        MessageEmbed modalFailed = getFailedInteractionMessage(InteractionType.MODAL, blob);
         IModal modal = ifModal.get();
         log.debug("Modal %s called on %s [%d]".formatted(modal.getName().toUpperCase(), blob.getGuild().getName(), blob.getGuildIdLong()));
         try {
@@ -226,7 +226,7 @@ public class InteractionListener extends ListenerAdapter {
     @Override
     public void onStringSelectInteraction(@NotNull StringSelectInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, Interactions.SELECTION_STRING);
+            GuildOnly.interactionResponse(event, InteractionType.SELECTION_STRING);
             return;
         }
 
@@ -238,7 +238,7 @@ public class InteractionListener extends ListenerAdapter {
             ifMenus.add(selectMenuManager.getInteraction(id));
         }
         String componentId = event.getComponentId();
-        MessageEmbed menuFailed = getFailedInteractionMessage(Interactions.SELECTION_STRING, blob);
+        MessageEmbed menuFailed = getFailedInteractionMessage(InteractionType.SELECTION_STRING, blob);
 
         for (Optional<ISelectMenuString> ifMenu : ifMenus) {
             if (ifMenu.isPresent()) {

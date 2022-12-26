@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.interfaces.discordInteractions;
 
 import com.terransky.stuffnthings.utilities.command.EventBlob;
-import com.terransky.stuffnthings.utilities.general.Interactions;
+import com.terransky.stuffnthings.utilities.general.InteractionType;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,7 @@ public interface ISelectMenuEntity extends IInteraction {
     void execute(@NotNull EntitySelectInteractionEvent event, @NotNull EventBlob blob) throws Exception;
 
     @Override
-    default Interactions getInteractionType() {
-        return Interactions.SELECTION_ENTITY;
+    default InteractionType getInteractionType() {
+        return InteractionType.SELECTION_ENTITY;
     }
 }

@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.utilities.cannedAgenda;
 
 import com.terransky.stuffnthings.utilities.general.Config;
-import com.terransky.stuffnthings.utilities.general.Interactions;
+import com.terransky.stuffnthings.utilities.general.InteractionType;
 import org.jetbrains.annotations.NotNull;
 
 public enum Responses {
@@ -21,8 +21,8 @@ public enum Responses {
     }
 
     @NotNull
-    public String getMessage(@NotNull Interactions interaction) {
-        if (interaction == Interactions.UNKNOWN)
+    public String getMessage(@NotNull InteractionType interaction) {
+        if (interaction == InteractionType.UNKNOWN)
             throw new IllegalArgumentException("Interaction cannot be unknown.");
 
         return getMessage().replaceAll("(?i)interaction", interaction.getName());

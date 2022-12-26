@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.managers;
 
 import com.terransky.stuffnthings.interfaces.discordInteractions.IInteraction;
-import com.terransky.stuffnthings.utilities.general.Interactions;
+import com.terransky.stuffnthings.utilities.general.InteractionType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -24,14 +24,14 @@ public class Manager<T extends IInteraction> {
      *
      * @param interaction An {@link IInteraction}
      * @throws IllegalArgumentException Either the {@link IInteraction} already exists in the index or the type is either
-     *                                  {@link Interactions#COMMAND_SLASH}, {@link Interactions#COMMAND_MESSAGE},
-     *                                  {@link Interactions#COMMAND_USER}.
+     *                                  {@link InteractionType#COMMAND_SLASH}, {@link InteractionType#COMMAND_CONTEXT_MESSAGE}, or
+     *                                  {@link InteractionType#COMMAND_CONTEXT_USER}.
      */
     public void addInteraction(@NotNull T interaction) {
         boolean interactionFound = interactions.stream().anyMatch(it -> it.getName().equalsIgnoreCase(interaction.getName()));
-        Interactions type = interaction.getInteractionType();
+        InteractionType type = interaction.getInteractionType();
 
-        if (type == Interactions.COMMAND_SLASH || type == Interactions.COMMAND_MESSAGE || type == Interactions.COMMAND_USER)
+        if (type.hasDedicatedManager())
             throw new IllegalArgumentException("Please use the appropriate manager for this type.");
 
         if (interactionFound) throw new IllegalArgumentException("An interaction with that name already exists");
