@@ -1,6 +1,6 @@
 package com.terransky.stuffnthings.managers;
 
-import com.terransky.stuffnthings.InteractionManager;
+import com.terransky.stuffnthings.ManagersManager;
 import com.terransky.stuffnthings.interfaces.discordInteractions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.entities.Guild;
@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +73,7 @@ public class SlashManager extends CommandManager<ICommandSlash> {
     public List<Command.Choice> getCommandsAsChoices() {
         List<Command.Choice> choices = new ArrayList<>();
         for (ICommandSlash command : iCommandSlashes.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList()) {
-            choices.add(new Command.Choice(WordUtils.capitalize(command.getName().replace("-", " ")), command.getName()));
+            choices.add(new Command.Choice(command.getNameReadable(), command.getName()));
         }
         return choices;
     }
@@ -110,7 +109,7 @@ public class SlashManager extends CommandManager<ICommandSlash> {
      */
     @Override
     public List<CommandData> getCommandData() {
-        InteractionManager manager = new InteractionManager();
+        ManagersManager manager = new ManagersManager();
         List<CommandData> commandData = new ArrayList<>();
         final List<CommandData> messageContext = manager.getMessageContextManager().getCommandData();
         final List<CommandData> userContext = manager.getUserContextManager().getCommandData();

@@ -65,7 +65,7 @@ public class kill implements ICommandSlash {
             """, Mastermind.USER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("21-12-2022_20:07")
+            format.parse("25-12-2022_20:37")
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),
@@ -77,11 +77,14 @@ public class kill implements ICommandSlash {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+        String subcommand = event.getSubcommandName();
+        if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
+
         Random random = new Random(new Date().getTime());
         List<String> victims = new ArrayList<>();
-        String subcommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(EmbedColors.getDefault())
+            .setTitle(blob.getMember().getEffectiveName())
             .setFooter("Requested by " + event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
         List<Member> memberList =
             blob.getGuild().getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
@@ -89,10 +92,6 @@ public class kill implements ICommandSlash {
         for (Member member : memberList) {
             victims.add(member.getAsMention());
         }
-
-        if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
-        String killer = "";
-        if (event.getMember() != null) killer = blob.getMember().getEffectiveName();
 
         switch (subcommand) {
             case "random" -> {
@@ -107,7 +106,6 @@ public class kill implements ICommandSlash {
                     message += " :O";
 
                 eb.setColor(EmbedColors.getDefault())
-                    .setTitle(killer)
                     .setDescription("… " + message);
 
                 event.replyEmbeds(eb.build()).queue();
@@ -132,8 +130,7 @@ public class kill implements ICommandSlash {
                 if (target.equals(event.getJDA().getSelfUser().getAsMention())) {
                     target += " (hey wait a second...)";
                 }
-                eb.setTitle(killer)
-                    .setDescription("… %s".formatted(targetStrings[random.nextInt(targetStrings.length)]).formatted(target));
+                eb.setDescription("… %s".formatted(targetStrings[random.nextInt(targetStrings.length)]).formatted(target));
                 event.replyEmbeds(eb.build()).queue();
             }
         }

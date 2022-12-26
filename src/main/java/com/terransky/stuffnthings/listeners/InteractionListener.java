@@ -1,6 +1,6 @@
 package com.terransky.stuffnthings.listeners;
 
-import com.terransky.stuffnthings.InteractionManager;
+import com.terransky.stuffnthings.ManagersManager;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.interfaces.discordInteractions.*;
 import com.terransky.stuffnthings.managers.SlashManager;
@@ -35,7 +35,7 @@ import java.util.Optional;
 public class InteractionListener extends ListenerAdapter {
 
     private final Logger log = LoggerFactory.getLogger(InteractionListener.class);
-    private final InteractionManager manager = new InteractionManager();
+    private final ManagersManager manager = new ManagersManager();
 
     @NotNull
     private MessageEmbed getFailedInteractionMessage(Interactions interaction, @NotNull EventBlob blob) {

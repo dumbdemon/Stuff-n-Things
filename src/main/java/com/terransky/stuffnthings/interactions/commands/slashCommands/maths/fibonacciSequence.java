@@ -39,7 +39,7 @@ public class fibonacciSequence implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             SlashModule.MATHS,
             format.parse("11-11-2022_20:50"),
-            format.parse("22-12-2022_14:04")
+            format.parse("25-12-2022_20:45")
         )
             .addSubcommands(
                 new SubcommandData("at-nth", "Get a specific value.")
@@ -78,10 +78,12 @@ public class fibonacciSequence implements ICommandSlash {
         ).queue();
 
         if (subcommand.equals("at-nth")) {
+            String replace;
             if (nthValue < 1e3) {
-                returnString = calculateRats.largeNumberFormat(nthValue).replace(".0", "");
-            } else returnString = calculateRats.largeNumberFormat(nthValue).replace(".0 ", " ");
+                replace = "";
+            } else replace = " ";
 
+            returnString = calculateRats.largeNumberFormat(nthValue).replace(".0" + replace, replace);
             messageEditData = new MessageEditBuilder()
                 .setEmbeds(
                     eb.setDescription("The %s%s value of the Fibonacci sequence is:\n```%s```"

@@ -23,7 +23,7 @@ import com.terransky.stuffnthings.managers.CommandManager;
 import com.terransky.stuffnthings.managers.Manager;
 import com.terransky.stuffnthings.managers.SlashManager;
 
-public class InteractionManager {
+public class ManagersManager {
 
     private final SlashManager slashManager = new SlashManager(
         //Admin Commands
@@ -49,7 +49,6 @@ public class InteractionManager {
         new meme(),
         new robFailChance(),
         new say(),
-        new twentyQuestions(),
 
         //General Commands
         new about(),
