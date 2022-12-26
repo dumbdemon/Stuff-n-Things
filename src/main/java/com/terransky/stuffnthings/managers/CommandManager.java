@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.managers;
 
 import com.terransky.stuffnthings.interfaces.discordInteractions.ICommand;
+import com.terransky.stuffnthings.utilities.general.Interactions;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import org.jetbrains.annotations.NotNull;
@@ -25,9 +26,11 @@ public class CommandManager<T extends ICommand> extends Manager<T> {
     }
 
     @Override
-    public void addInteraction(T command) {
+    public void addInteraction(@NotNull T command) {
         boolean interactionFound = commands.stream().anyMatch(it -> it.getName().equalsIgnoreCase(command.getName()));
 
+        if (command.getInteractionType() == Interactions.COMMAND_SLASH)
+            throw new IllegalArgumentException(String.format("Please use %s for slash commands", SlashManager.class.getName()));
         if (interactionFound) throw new IllegalArgumentException("A command with that name already exists");
 
         commands.add(command);

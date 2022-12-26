@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interfaces.discordInteractions;
 
 import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.general.Interactions;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,4 +16,9 @@ public interface IButton extends IInteraction {
      * @throws Exception Any exception that could get thrown.
      */
     void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws Exception;
+
+    @Override
+    default Interactions getInteractionType() {
+        return Interactions.BUTTON;
+    }
 }

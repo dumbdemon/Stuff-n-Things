@@ -35,7 +35,7 @@ public class SlashManager extends CommandManager<ICommandSlash> {
      * @throws IndexOutOfBoundsException If {@link SlashManager#iCommandSlashes} has more than the {@link Commands#MAX_SLASH_COMMANDS}.
      */
     @Override
-    public void addInteraction(ICommandSlash iCommandSlash) {
+    public void addInteraction(@NotNull ICommandSlash iCommandSlash) {
         boolean nameFound = iCommandSlashes.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iCommandSlash.getName()));
 
         if (nameFound) throw new IllegalArgumentException("A command with this name already exists");

@@ -2,6 +2,7 @@ package com.terransky.stuffnthings.interfaces.discordInteractions;
 
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.Metadata;
+import com.terransky.stuffnthings.utilities.general.Interactions;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -62,4 +63,9 @@ public interface ICommandSlash extends ICommand {
      * @throws Exception Any exception could get thrown.
      */
     void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception;
+
+    @Override
+    default Interactions getInteractionType() {
+        return Interactions.COMMAND_SLASH;
+    }
 }

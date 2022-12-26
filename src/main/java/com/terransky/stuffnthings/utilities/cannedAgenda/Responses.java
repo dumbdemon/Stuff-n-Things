@@ -25,6 +25,6 @@ public enum Responses {
         if (interaction == Interactions.UNKNOWN)
             throw new IllegalArgumentException("Interaction cannot be unknown.");
 
-        return getMessage().replaceAll("(?i)interaction", interaction.getType());
+        return getMessage().replaceAll("(?i)interaction", interaction.getName());
     }
 }
