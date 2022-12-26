@@ -1,6 +1,6 @@
 package com.terransky.stuffnthings.listeners;
 
-import com.terransky.stuffnthings.InteractionManager;
+import com.terransky.stuffnthings.ManagersManager;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.managers.SlashManager;
 import com.terransky.stuffnthings.secretsAndLies;
@@ -29,7 +29,7 @@ import java.util.*;
 
 public class ListeningForEvents extends ListenerAdapter {
     private final Logger log = LoggerFactory.getLogger(ListeningForEvents.class);
-    private final SlashManager slashManager = new InteractionManager().getSlashManager();
+    private final SlashManager slashManager = new ManagersManager().getSlashManager();
     private final List<CommandData> globalCommandData = slashManager.getCommandData();
 
     @Override

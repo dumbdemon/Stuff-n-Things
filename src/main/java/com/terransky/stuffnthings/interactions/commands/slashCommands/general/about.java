@@ -1,6 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.general;
 
-import com.terransky.stuffnthings.InteractionManager;
+import com.terransky.stuffnthings.ManagersManager;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.calculateRats;
 import com.terransky.stuffnthings.interfaces.discordInteractions.ICommandSlash;
 import com.terransky.stuffnthings.managers.SlashManager;
@@ -57,11 +57,11 @@ public class about implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("23-12-2022_08:44")
+            format.parse("25-12-2022_19:30")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "command", "Get more info on a Command.")
-                    .addChoices(new InteractionManager().getSlashManager().getCommandsAsChoices())
+                    .addChoices(new ManagersManager().getSlashManager().getCommandsAsChoices())
             );
     }
 
@@ -79,7 +79,7 @@ public class about implements ICommandSlash {
         StringBuilder uptime = getStringBuilder(mxBean);
         Date startTime = new Date(mxBean.getStartTime());
 
-        SlashManager manager = new InteractionManager().getSlashManager();
+        SlashManager manager = new ManagersManager().getSlashManager();
         int commandCnt = manager.getSlashCommandCount();
         int guildCommandCnt = manager.getSlashCommandCount(blob.getGuildIdLong());
         commandCnt += guildCommandCnt;

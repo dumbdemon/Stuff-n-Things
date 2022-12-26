@@ -39,7 +39,7 @@ public class meme implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("21-12-2022_21:04")
+            format.parse("25-12-2022_20:38")
         )
             .addSubcommands(
                 new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, or from r/me_irl.")
@@ -49,12 +49,12 @@ public class meme implements ICommandSlash {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+        String subcommand = event.getSubcommandName();
+        if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
         event.deferReply().queue();
         DecimalFormat largeNumber = new DecimalFormat("##,###");
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(EmbedColors.getDefault());
-        String subcommand = event.getSubcommandName();
-        if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 
         if (subcommand.equals("reddit")) goForReddit(event, largeNumber, eb);
     }

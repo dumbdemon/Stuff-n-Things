@@ -9,8 +9,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
-import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.apache.commons.lang3.time.FastDateFormat;
@@ -39,7 +37,7 @@ public class getDadJokes implements ICommandSlash {
             """, Mastermind.USER,
             SlashModule.FUN,
             format.parse("25-8-2022_20:53"),
-            format.parse("7-12-2022_10:25")
+            format.parse("25-12-2022_20:33")
         );
     }
 
@@ -53,20 +51,15 @@ public class getDadJokes implements ICommandSlash {
         ObjectMapper om = new ObjectMapper();
         IcanhazdadjokeData theJoke = om.readValue(dadJoke.getInputStream(), IcanhazdadjokeData.class);
 
-        MessageCreateData message = new MessageCreateBuilder()
-            .setEmbeds(new EmbedBuilder()
-                .setDescription(theJoke.getJoke())
-                .setThumbnail(iCanHazDadJokeLogo)
-                .setColor(EmbedColors.getDefault())
-                .setFooter("Requested by %s | ID #%s".formatted(event.getUser().getAsTag(), theJoke.getId()))
-                .build()
-            )
-            .addComponents(
-                ActionRow.of(Button.primary("get-dad-joke", "Get new Dad Joke!"))
-            )
-            .build();
-
-        event.reply(message).queue(msg -> {
+        event.replyEmbeds(new EmbedBuilder()
+            .setDescription(theJoke.getJoke())
+            .setThumbnail(iCanHazDadJokeLogo)
+            .setColor(EmbedColors.getDefault())
+            .setFooter("Requested by %s | ID #%s".formatted(event.getUser().getAsTag(), theJoke.getId()))
+            .build()
+        ).addActionRow(
+            Button.primary("get-dad-joke", "Get new Dad Joke!")
+        ).queue(msg -> {
             MessageEditData editData = new MessageEditBuilder()
                 .setComponents(
                     ActionRow.of(Button.danger("expired-button", "Get new Dad Joke!"))
