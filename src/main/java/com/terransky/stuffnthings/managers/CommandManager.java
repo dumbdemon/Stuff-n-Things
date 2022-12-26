@@ -80,6 +80,19 @@ public class CommandManager<T extends ICommand> extends Manager<T> {
         return getCommands(effectiveCommands);
     }
 
+    /**
+     * Get the command data of all slash commands, message contexts, and user contexts.
+     * <p>
+     * <b>Things to note:</b><br>
+     * • If a {@link ParseException} occurs, it will not be pushed.<br>
+     *
+     * @param guild A {@link Guild} to check for.
+     * @return A {@link List} of {@link CommandData}
+     */
+    public List<CommandData> getCommandData(@NotNull Guild guild) {
+        return getCommandData(guild.getIdLong());
+    }
+
     @NotNull
     private List<CommandData> getCommands(@NotNull List<T> effectiveCommands) {
         final List<CommandData> commandData = new ArrayList<>();
@@ -93,18 +106,5 @@ public class CommandManager<T extends ICommand> extends Manager<T> {
         }
 
         return commandData;
-    }
-
-    /**
-     * Get the command data of all slash commands, message contexts, and user contexts.
-     * <p>
-     * <b>Things to note:</b><br>
-     * • If a {@link ParseException} occurs, it will not be pushed.<br>
-     *
-     * @param guild A {@link Guild} to check for.
-     * @return A {@link List} of {@link CommandData}
-     */
-    public List<CommandData> getCommandData(@NotNull Guild guild) {
-        return getCommandData(guild.getIdLong());
     }
 }
