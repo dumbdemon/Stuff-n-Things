@@ -27,27 +27,27 @@ import java.util.*;
 
 public class dictionary implements ICommandSlash {
     private final Logger log = LoggerFactory.getLogger(dictionary.class);
-    private final NavigableMap<String, String> langCodes = new TreeMap<>();
+    private final NavigableMap<String, Locale> langCodes = new TreeMap<>();
     private final List<Command.Choice> langChoices = new ArrayList<>();
 
     {
-        langCodes.put("US English", "en-us");
-        langCodes.put("UK English", "en_gb");
-        langCodes.put("French", "fr");
-        langCodes.put("Gujarati", "gu");
-        langCodes.put("Hindi", "hi");
-        langCodes.put("Latvian", "lv");
-        langCodes.put("Romanian", "ro");
-        langCodes.put("Spanish", "es");
-        langCodes.put("Swahili", "sw");
-        langCodes.put("Tamil", "ta");
+        langCodes.put("US English", Locale.forLanguageTag("en-us"));
+        langCodes.put("UK English", Locale.forLanguageTag("en-gb"));
+        langCodes.put("French", Locale.forLanguageTag("fr"));
+        langCodes.put("Gujarati", Locale.forLanguageTag("gu"));
+        langCodes.put("Hindi", Locale.forLanguageTag("hi"));
+        langCodes.put("Latvian", Locale.forLanguageTag("lv"));
+        langCodes.put("Romanian", Locale.forLanguageTag("ro"));
+        langCodes.put("Spanish", Locale.forLanguageTag("es"));
+        langCodes.put("Swahili", Locale.forLanguageTag("sw"));
+        langCodes.put("Tamil", Locale.forLanguageTag("ta"));
 
         for (String lang : langCodes.keySet()) {
             langChoices.add(new Command.Choice(lang, lang));
         }
     }
 
-    private static void run200(@NotNull SlashCommandInteractionEvent event, EmbedBuilder eb, EmbedBuilder ebOverflow, Map.Entry<String, String> language,
+    private static void run200(@NotNull SlashCommandInteractionEvent event, EmbedBuilder eb, EmbedBuilder ebOverflow, Map.Entry<String, Locale> language,
                                String toLookUp, @NotNull HttpURLConnection oxfordConnection, @NotNull ObjectMapper om) throws IOException {
         OxfordData oxfordData = om.readValue(oxfordConnection.getInputStream(), OxfordData.class);
         int wordCount = 0;
@@ -61,7 +61,7 @@ public class dictionary implements ICommandSlash {
 
         if (wordCount == 0) {
             event.getHook().sendMessageEmbeds(
-                eb.setTitle("Definition - %s".formatted(returnedWord.toUpperCase(Locale.forLanguageTag(language.getValue()))))
+                eb.setTitle("Definition - %s".formatted(returnedWord.toUpperCase(language.getValue())))
                     .setDescription("%s is in the dictionary; however, there appears to be no definitions. Try using a different variation of the word."
                         .formatted(WordUtils.capitalize(returnedWord))
                     ).build()
@@ -71,7 +71,7 @@ public class dictionary implements ICommandSlash {
 
         boolean moreThanOne = wordCount > 1;
 
-        eb.setTitle("Definition - %s".formatted(returnedWord.toUpperCase(Locale.forLanguageTag(language.getValue()))))
+        eb.setTitle("Definition - %s".formatted(returnedWord.toUpperCase(language.getValue())))
             .setDescription("There %s %d *%s* definition%s for *%s*.%s"
                 .formatted(
                     moreThanOne ? "are" : "is",
@@ -84,7 +84,7 @@ public class dictionary implements ICommandSlash {
             );
 
         if (fieldOverflow.size() > 0) {
-            ebOverflow.setTitle("Definition - %s cont.".formatted(returnedWord.toUpperCase(Locale.forLanguageTag(language.getValue()))));
+            ebOverflow.setTitle("Definition - %s cont.".formatted(returnedWord.toUpperCase(language.getValue())));
             for (MessageEmbed.Field field : fieldOverflow) {
                 ebOverflow.addField(field);
             }
@@ -142,7 +142,7 @@ public class dictionary implements ICommandSlash {
             Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("27-10-2022_12:46"),
-            format.parse("25-12-2022_20:32")
+            format.parse("26-12-2022_16:12")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "word", "The word to look up.", true),
@@ -171,10 +171,11 @@ public class dictionary implements ICommandSlash {
         }
         if (userWords[0].equals(""))
             throw new DiscordAPIException("Required option [%s] was not given".formatted("word"));
-        Map.Entry<String, String> language = langCodes.floorEntry(event.getOption("language", "US English", OptionMapping::getAsString));
-        String toLookUp = userWords[0].toLowerCase(Locale.forLanguageTag(language.getValue()));
+        Map.Entry<String, Locale> language = langCodes.floorEntry(event.getOption("language", "US English", OptionMapping::getAsString));
+        String toLookUp = userWords[0].toLowerCase(language.getValue());
 
-        URL dictionary = new URL("https://od-api.oxforddictionaries.com/api/v2/entries/%s/%s?fields=definitions&strictMatch=false".formatted(language.getValue(), toLookUp));
+        URL dictionary = new URL("https://od-api.oxforddictionaries.com/api/v2/entries/%s/%s?fields=definitions&strictMatch=false"
+            .formatted(language.getValue().toLanguageTag().toLowerCase(), toLookUp));
         HttpURLConnection oxfordConnection = (HttpURLConnection) dictionary.openConnection();
         oxfordConnection.addRequestProperty("Accept", "application/json");
         oxfordConnection.addRequestProperty("app_id", Config.getOxfordId());
@@ -186,8 +187,9 @@ public class dictionary implements ICommandSlash {
             case 200 -> run200(event, eb, ebOverflow, language, toLookUp, oxfordConnection, om);
             case 400 -> {
                 event.getHook().sendMessageEmbeds(
-                    eb.setDescription("Unable to get the definition of [%s]. Make sure you have typed the word correctly, If this message continues to appear, please report this incident [here](%s)."
-                            .formatted(toLookUp.toUpperCase(Locale.forLanguageTag(language.getValue())), Config.getErrorReportingURL())
+                    eb.setDescription(("Unable to get the definition of [%s]. Make sure you have typed the word correctly," +
+                            " If this message continues to appear, please report this incident [here](%s).")
+                            .formatted(toLookUp.toUpperCase(language.getValue()), Config.getErrorReportingURL())
                         )
                         .setColor(EmbedColors.getError())
                         .build()
@@ -207,8 +209,9 @@ public class dictionary implements ICommandSlash {
                 log.error("403 Authentication failed: %s".formatted(message));
             }
             case 404 -> event.getHook().sendMessageEmbeds(
-                eb.setTitle("Definition - %s".formatted(toLookUp.toUpperCase(Locale.forLanguageTag(language.getValue()))))
-                    .setDescription("There are no *%s* definitions for [%s].\n\nEither the word does not exist or you have mistyped.".formatted(language.getKey(), toLookUp.toUpperCase(Locale.forLanguageTag(language.getValue()))))
+                eb.setTitle("Definition - %s".formatted(toLookUp.toUpperCase(language.getValue())))
+                    .setDescription("There are no *%s* definitions for [%s].\n\nEither the word does not exist or you have mistyped."
+                        .formatted(language.getKey(), toLookUp.toUpperCase(language.getValue())))
                     .setColor(EmbedColors.getError())
                     .build()
             ).queue();
