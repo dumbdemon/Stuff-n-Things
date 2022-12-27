@@ -1,15 +1,10 @@
 package com.terransky.stuffnthings.managers;
 
-import com.terransky.stuffnthings.ManagersManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.Metadata;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.Command;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -18,7 +13,6 @@ import java.util.Optional;
 
 
 public class SlashManager extends CommandManager<ICommandSlash> {
-    private final Logger log = LoggerFactory.getLogger(SlashManager.class);
 
     public SlashManager(@NotNull ICommandSlash... interactions) {
         for (ICommandSlash iCommandSlash : interactions) {
@@ -51,7 +45,7 @@ public class SlashManager extends CommandManager<ICommandSlash> {
      */
     public List<Command.Choice> getCommandsAsChoices() {
         List<Command.Choice> choices = new ArrayList<>();
-        for (ICommandSlash command : interactions.stream().filter(it -> it.isGlobal() && it.isWorking()).sorted().toList()) {
+        for (ICommandSlash command : interactions.stream().filter(super::checkIfGlobal).sorted().toList()) {
             choices.add(new Command.Choice(command.getNameReadable(), command.getName()));
         }
         return choices;
@@ -77,72 +71,12 @@ public class SlashManager extends CommandManager<ICommandSlash> {
     }
 
     /**
-     * Get the command data of all slash commands, message contexts, and user contexts.
-     * <p>
-     * <b>Things to note:</b><br>
-     * • If a {@link ParseException} occurs, it will not be pushed.<br>
-     * • If there is more than {@link Commands#MAX_SLASH_COMMANDS}, {@link Commands#MAX_MESSAGE_COMMANDS}, and
-     * {@link Commands#MAX_USER_COMMANDS}, than it will return a truncated list of each.
-     *
-     * @return Returns a list of {@link CommandData}.
-     */
-    @Override
-    public List<CommandData> getCommandData() {
-        List<CommandData> commandData = new ArrayList<>(super.getCommandData());
-        ManagersManager manager = new ManagersManager();
-        final List<CommandData> messageContext = manager.getMessageContextManager().getCommandData();
-        final List<CommandData> userContext = manager.getUserContextManager().getCommandData();
-
-        if (commandData.size() > Commands.MAX_SLASH_COMMANDS) {
-            int previousAmount = commandData.size();
-            commandData = commandData.subList(0, Commands.MAX_SLASH_COMMANDS);
-            log.warn("There are too many slash commands (%d commands)! Truncating to %d...".formatted(previousAmount, Commands.MAX_SLASH_COMMANDS));
-        }
-
-        if (!messageContext.isEmpty()) {
-            if (messageContext.size() > Commands.MAX_MESSAGE_COMMANDS)
-                commandData.addAll(messageContext.subList(0, Commands.MAX_MESSAGE_COMMANDS));
-            else commandData.addAll(messageContext);
-            log.debug("%d message contexts added".formatted(messageContext.size()));
-        } else log.debug("No message contexts were added.");
-
-        if (!userContext.isEmpty()) {
-            if (userContext.size() > Commands.MAX_USER_COMMANDS)
-                commandData.addAll(userContext.subList(0, Commands.MAX_USER_COMMANDS));
-            else commandData.addAll(userContext);
-            log.debug("%d user contexts added".formatted(userContext.size()));
-        } else log.debug("No user contexts were added.");
-
-        return commandData;
-    }
-
-    /**
-     * Get the command data of all slash commands specifically for a server.
-     * <p>
-     * <b>Things to note:</b><br>
-     * • If a {@link ParseException} occurs, it will not be pushed.<br>
-     * • If there is more than {@link Commands#MAX_SLASH_COMMANDS}, than it will return a truncated list.
-     *
-     * @param serverId The ID of the server to check for.
-     * @return Returns a list of {@link CommandData}. Could potentially return an empty list.
-     */
-    @Override
-    public List<CommandData> getCommandData(long serverId) {
-        final List<CommandData> commandData = new ArrayList<>(super.getCommandData(serverId));
-
-        if (commandData.size() > Commands.MAX_SLASH_COMMANDS)
-            return commandData.subList(0, Commands.MAX_SLASH_COMMANDS);
-
-        return commandData;
-    }
-
-    /**
      * Get the effective amount of global slash commands.
      *
      * @return The amount of slash commands.
      */
     public int getSlashCommandCount() {
-        return (int) interactions.stream().filter(it -> it.isGlobal() && it.isWorking()).count();
+        return (int) interactions.stream().filter(super::checkIfGlobal).count();
     }
 
     /**
@@ -152,20 +86,7 @@ public class SlashManager extends CommandManager<ICommandSlash> {
      * @return The amount of slash commands.
      */
     public int getSlashCommandCount(long serverId) {
-        return (int) interactions.stream().filter(it ->
-            !it.isGlobal() &&
-                it.isWorking() &&
-                (it.getServerRestrictions().contains(serverId) || it.getServerRestrictions().isEmpty())
-        ).count();
+        return (int) interactions.stream().filter(iCommandSlash -> super.checkIfGuild(iCommandSlash, serverId)).count();
     }
 
-    /**
-     * Get the effective amount of guild slash commands for a guild.
-     *
-     * @param guild The guild to check for.
-     * @return The amount of slash commands.
-     */
-    public int getSlashCommandCount(@NotNull Guild guild) {
-        return getSlashCommandCount(guild.getIdLong());
-    }
 }

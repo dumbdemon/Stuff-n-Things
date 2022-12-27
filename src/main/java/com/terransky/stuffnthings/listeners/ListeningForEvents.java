@@ -2,6 +2,10 @@ package com.terransky.stuffnthings.listeners;
 
 import com.terransky.stuffnthings.ManagersManager;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
+import com.terransky.stuffnthings.exceptions.DiscordAPIException;
+import com.terransky.stuffnthings.interfaces.interactions.ICommandMessage;
+import com.terransky.stuffnthings.interfaces.interactions.ICommandUser;
+import com.terransky.stuffnthings.managers.CommandManager;
 import com.terransky.stuffnthings.managers.SlashManager;
 import com.terransky.stuffnthings.secretsAndLies;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
@@ -19,6 +23,7 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,29 +34,39 @@ import java.util.*;
 
 public class ListeningForEvents extends ListenerAdapter {
     private final Logger log = LoggerFactory.getLogger(ListeningForEvents.class);
-    private final SlashManager slashManager = new ManagersManager().getSlashManager();
+    private final ManagersManager manager = new ManagersManager();
+    private final SlashManager slashManager = manager.getSlashManager();
     private final List<CommandData> globalCommandData = slashManager.getCommandData();
+    private final CommandManager<ICommandMessage> messageManager = manager.getMessageContextManager();
+    private final CommandManager<ICommandUser> userManager = manager.getUserContextManager();
+
+    {
+        globalCommandData.addAll(messageManager.getCommandData());
+        globalCommandData.addAll(userManager.getCommandData());
+    }
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
-        long timerInMS = 600000;
-        if (!Config.isTestingMode()) {
-            log.info(globalCommandData.size() + " global commands loaded!");
-            event.getJDA().updateCommands().addCommands(globalCommandData).queue();
-        } else event.getJDA().updateCommands().queue();
-        log.info("Service started!");
-
-        if (!Config.isTestingMode()) {
-            new Timer().scheduleAtFixedRate(new TimerTask() {
-                @Override
-                @SuppressWarnings("ConstantConditions")
-                public void run() {
-                    String[] watchList = secretsAndLies.whatAmIWatching;
-
-                    event.getJDA().getShardManager().setActivity(Activity.playing(watchList[(new Random()).nextInt(watchList.length)]));
-                }
-            }, timerInMS, timerInMS);
+        if (Config.isTestingMode()) {
+            event.getJDA().updateCommands().queue();
+            return;
         }
+
+        event.getJDA().updateCommands()
+            .addCommands(globalCommandData)
+            .queue(commands -> log.info(commands.size() + " global commands loaded!"),
+                DiscordAPIException::new);
+
+        long timerInMS = 600000;
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            @SuppressWarnings("ConstantConditions")
+            public void run() {
+                String[] watchList = secretsAndLies.whatAmIWatching;
+
+                event.getJDA().getShardManager().setActivity(Activity.playing(watchList[(new Random()).nextInt(watchList.length)]));
+            }
+        }, timerInMS, timerInMS);
     }
 
     @Override
@@ -123,16 +138,21 @@ public class ListeningForEvents extends ListenerAdapter {
     }
 
     private void upsertGuildCommands(@NotNull GenericGuildEvent event) {
+        Guild guild = event.getGuild();
+        CommandListUpdateAction updateAction = guild.updateCommands()
+            .addCommands(slashManager.getCommandData(guild))
+            .addCommands(messageManager.getCommandData(guild))
+            .addCommands(userManager.getCommandData(guild));
+
         if (Config.isTestingMode()) {
-            List<CommandData> commandData = new ArrayList<>(globalCommandData);
-            commandData.addAll(slashManager.getCommandData(event.getGuild()));
-            event.getGuild().updateCommands().addCommands(commandData).queue();
-            log.info(commandData.size() + " global commands loaded as guild commands on " + event.getGuild().getName() + " [" + event.getGuild().getIdLong() + "]!");
-        } else {
-            if (slashManager.getSlashCommandCount(event.getGuild()) > 0) {
-                event.getGuild().updateCommands().addCommands(slashManager.getCommandData(event.getGuild())).queue();
-            } else event.getGuild().updateCommands().queue();
+            updateAction.addCommands(globalCommandData)
+                .queue(commands -> log.info("%s global commands loaded as guild commands on %s[%s]".formatted(commands.size(), guild.getName(), guild.getId())),
+                    DiscordAPIException::new);
+            return;
         }
+
+        updateAction.queue(commands -> log.info("%s guild commands loaded onto %s[%s]".formatted(commands.size(), guild.getName(), guild.getId())),
+            DiscordAPIException::new);
     }
 
     private void addGuildToDB(@NotNull Guild guild) {
