@@ -55,7 +55,7 @@ public class checkPerms implements ICommandSlash {
         }
 
         return new Metadata(this.getName(), "Check if I have all of my perms needed for all of my commands.", """
-            Checks if the bot has all necessary permissions for this server or channel.
+            Checks if the bot has **all necessary** permissions for this server or channel.
             Currently the bot requires:
             ```
             %s```
@@ -63,7 +63,7 @@ public class checkPerms implements ICommandSlash {
             Mastermind.DEVELOPER,
             SlashModule.ADMIN,
             format.parse("30-08-2022_16:14"),
-            format.parse("21-12-2022_19:57")
+            format.parse("27-12-2022_11:30")
         )
             .addDefaultPerms(Permission.MANAGE_ROLES)
             .addSubcommands(
@@ -90,29 +90,33 @@ public class checkPerms implements ICommandSlash {
             myPerms = blob.getGuild().getSelfMember().getPermissions(toCheck);
         }
 
-        List<Permission> doNotHaveThis = new ArrayList<>();
+        List<Permission> doNotHaveThis = new ArrayList<>(getRequiredPerms().stream().filter(permission -> !myPerms.contains(permission)).toList());
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(EmbedColors.getDefault())
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
             .setTitle("Permission Checker");
 
-        for (Permission requiredPerm : getRequiredPerms()) {
-            if (!myPerms.contains(requiredPerm)) doNotHaveThis.add(requiredPerm);
+        boolean ifToCheck = toCheck != null,
+            adminCheck = doNotHaveThis.size() == 1 && doNotHaveThis.stream().anyMatch(permission -> permission.equals(Permission.ADMINISTRATOR));
+
+        if (doNotHaveThis.isEmpty() || adminCheck) {
+            if (adminCheck)
+                eb.addField("WARNING: Administrator", "One or more commands needs `Administrator` to work without extra effort from the user.", false);
+
+            event.replyEmbeds(eb.setDescription("I have all necessary permissions for %s. Thank you! :heart:"
+                .formatted(ifToCheck ? toCheck.getAsMention() : "this server")).build()).queue();
+            return;
         }
 
-        boolean ifToCheck = toCheck != null;
-        if (doNotHaveThis.isEmpty()) {
-            event.replyEmbeds(eb.setDescription("I have all necessary permissions for %s. Thank you! :heart:".formatted(ifToCheck ? toCheck.getAsMention() : "this server")).build()).queue();
-        } else {
-            StringBuilder sb = new StringBuilder();
-            eb.setDescription("I'm missing the following permissions for %s:\n```json\n[\n".formatted(ifToCheck ? toCheck.getAsMention() : "this server"));
-            for (Permission permission : doNotHaveThis) {
-                String oneWord = permission.getName().replace("(s)", "s").replace(" ", "_");
-                sb.append("\s\s").append(oneWord).append(" : false,\n");
-            }
-            eb.appendDescription(sb.substring(0, sb.length() - 2) + "\n]```")
-                .setColor(EmbedColors.getError());
-            event.replyEmbeds(eb.build()).queue();
+        StringBuilder sb = new StringBuilder();
+        eb.setDescription("I'm missing the following permissions for %s:\n```json\n[\n".formatted(ifToCheck ? toCheck.getAsMention() : "this server"));
+        for (Permission permission : doNotHaveThis.stream().sorted().toList()) {
+            String oneWord = permission.getName().replace("(s)", "s").replaceAll(" ", "_");
+            sb.append("\s\s\s\s").append(oneWord).append(" : false,\n");
         }
+        eb.appendDescription(sb.substring(0, sb.length() - 2))
+            .appendDescription("\n]```")
+            .setColor(EmbedColors.getError());
+        event.replyEmbeds(eb.build()).queue();
     }
 }
