@@ -3,7 +3,6 @@ package com.terransky.stuffnthings.listeners;
 import com.terransky.stuffnthings.ManagersManager;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.interfaces.interactions.*;
-import com.terransky.stuffnthings.managers.SlashManager;
 import com.terransky.stuffnthings.utilities.cannedAgenda.GuildOnly;
 import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
@@ -72,7 +71,7 @@ public class InteractionListener extends ListenerAdapter {
                 stmt.execute();
             } catch (SQLException e) {
                 log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-                LogList.error(Arrays.asList(e.getStackTrace()), SlashManager.class);
+                LogList.error(Arrays.asList(e.getStackTrace()), log);
             }
         }
 
