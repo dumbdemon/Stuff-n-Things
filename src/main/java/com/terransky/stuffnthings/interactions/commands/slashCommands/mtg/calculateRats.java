@@ -58,7 +58,7 @@ public class calculateRats implements ICommandSlash {
 
     @Override
     public String getName() {
-        return "ner";
+        return "not-enough-rats";
     }
 
     @SuppressWarnings("SpellCheckingInspection")
@@ -71,12 +71,12 @@ public class calculateRats implements ICommandSlash {
             Mastermind.DEVELOPER,
             SlashModule.MTG,
             format.parse("5-10-2022_11:48"),
-            format.parse("21-12-2022_20:05")
+            format.parse("28-12-2022_13:52")
         )
             .addOptions(
                 new OptionData(OptionType.INTEGER, "start-count", "How many do you have right now?", true)
                     .setMinValue(3),
-                new OptionData(OptionType.INTEGER, "iterations", "How many iterations?", true)
+                new OptionData(OptionType.INTEGER, "triggers", "How many triggers?", true)
                     .setMinValue(1)
             );
     }
@@ -85,17 +85,17 @@ public class calculateRats implements ICommandSlash {
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         event.deferReply().queue();
         float startCNT = event.getOption("start-count", 3, OptionMapping::getAsInt);
-        float iterations = event.getOption("iterations", 100, OptionMapping::getAsInt);
+        float triggers = event.getOption("triggers", 100, OptionMapping::getAsInt);
         float finalCNT = startCNT;
         DecimalFormat largeNumber = new DecimalFormat("##,###");
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(EmbedColors.getDefault())
             .setTitle("Is there enough rats?")
             .addField("Starting total", "%s rats".formatted(largeNumber.format(startCNT)), true)
-            .addField("Iterations", "%s triggers".formatted(largeNumber.format(iterations)), true)
+            .addField("Iterations", "%s triggers".formatted(largeNumber.format(triggers)), true)
             .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
 
-        for (float i = 0; i < iterations; i++) {
+        for (float i = 0; i < triggers; i++) {
             finalCNT = (finalCNT - 1f) * 2f;
         }
 
