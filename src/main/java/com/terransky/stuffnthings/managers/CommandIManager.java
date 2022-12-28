@@ -1,10 +1,10 @@
 package com.terransky.stuffnthings.managers;
 
 import com.terransky.stuffnthings.interfaces.interactions.ICommand;
+import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.general.InteractionType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,30 +13,30 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandManager<T extends ICommand> extends Manager<T> {
+public class CommandIManager<T extends ICommand> extends IManager<T> {
 
-    private final Logger log = LoggerFactory.getLogger(CommandManager.class);
+    private final Logger log = LoggerFactory.getLogger(CommandIManager.class);
 
     @SafeVarargs
-    public CommandManager(@NotNull T... commands) {
+    public CommandIManager(@NotNull T... commands) {
         for (T command : commands) {
             addInteraction(command);
         }
     }
 
     @Override
-    public void addInteraction(@NotNull T command) {
+    void addInteraction(@NotNull T command) {
         boolean interactionFound = interactions.stream().anyMatch(it -> it.getName().equalsIgnoreCase(command.getName()));
 
         if (command.getInteractionType() == InteractionType.COMMAND_SLASH)
-            throw new IllegalArgumentException(String.format("Please use %s for slash commands", SlashManager.class.getName()));
+            throw new IllegalArgumentException(String.format("Please use %s for slash commands", SlashIManager.class.getName()));
         if (interactionFound) throw new IllegalArgumentException("A command with that name already exists");
 
         interactions.add(command);
     }
 
     /**
-     * Get the command data of all slash commands, message contexts, and user contexts.
+     * Get the command data of all commands.
      * <p>
      * <b>Things to note:</b><br>
      * • If a {@link ParseException} occurs, it will not be pushed.<br>
@@ -50,7 +50,7 @@ public class CommandManager<T extends ICommand> extends Manager<T> {
     }
 
     /**
-     * Get the command data of all slash commands, message contexts, and user contexts.
+     * Get the command data of all commands.
      * <p>
      * <b>Things to note:</b><br>
      * • If a {@link ParseException} occurs, it will not be pushed.<br>
@@ -65,7 +65,7 @@ public class CommandManager<T extends ICommand> extends Manager<T> {
     }
 
     /**
-     * Get the command data of all slash commands, message contexts, and user contexts.
+     * Get the command data of all commands.
      * <p>
      * <b>Things to note:</b><br>
      * • If a {@link ParseException} occurs, it will not be pushed.<br>
@@ -79,29 +79,16 @@ public class CommandManager<T extends ICommand> extends Manager<T> {
 
     @NotNull
     private List<CommandData> getCommands(@NotNull List<T> effectiveCommands) {
-        if (effectiveCommands.size() > 0) {
-            int previousAmount = effectiveCommands.size();
-            InteractionType type = effectiveCommands.get(0).getInteractionType();
-
-            switch (type) {
-                case COMMAND_CONTEXT_MESSAGE -> effectiveCommands = getEffectiveCommands(effectiveCommands,
-                    Commands.MAX_MESSAGE_COMMANDS, type, previousAmount);
-
-                case COMMAND_CONTEXT_USER -> effectiveCommands = getEffectiveCommands(effectiveCommands,
-                    Commands.MAX_USER_COMMANDS, type, previousAmount);
-
-                case COMMAND_SLASH -> effectiveCommands = getEffectiveCommands(effectiveCommands,
-                    Commands.MAX_SLASH_COMMANDS, type, previousAmount);
-            }
-        }
+        if (effectiveCommands.isEmpty()) return new ArrayList<>();
 
         final List<CommandData> commandData = new ArrayList<>();
-
-        for (T command : effectiveCommands) {
+        for (T command : getEffectiveCommands(effectiveCommands, effectiveCommands.get(0).getInteractionType())) {
             try {
                 commandData.add(command.getCommandData());
             } catch (ParseException e) {
-                log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(command.getName().toUpperCase()));
+                String commandName = command instanceof ICommandSlash ?
+                    ((ICommandSlash) command).getNameReadable() : command.getName();
+                log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(commandName.toUpperCase()));
             }
         }
 
@@ -109,12 +96,13 @@ public class CommandManager<T extends ICommand> extends Manager<T> {
     }
 
     @NotNull
-    private List<T> getEffectiveCommands(@NotNull List<T> effectiveCommands, int max, @NotNull InteractionType type, int previousAmount) {
+    private List<T> getEffectiveCommands(@NotNull List<T> effectiveCommands, @NotNull InteractionType type) {
+        int max = type.getMaximum();
         log.info("Checking quantity of %ss against maximum of %d...".formatted(type.getName(), max));
         if (effectiveCommands.size() > max) {
             log.warn("There are too many %ss (there's %d)! Truncating to %d..."
-                .formatted(type.getName(), previousAmount, max));
-            effectiveCommands = effectiveCommands.subList(0, max);
+                .formatted(type.getName(), effectiveCommands.size(), max));
+            return effectiveCommands.subList(0, max);
         }
         return effectiveCommands;
     }

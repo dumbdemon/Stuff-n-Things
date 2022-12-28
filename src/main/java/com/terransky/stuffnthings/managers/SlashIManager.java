@@ -3,7 +3,6 @@ package com.terransky.stuffnthings.managers;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.interactions.commands.Command;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
@@ -12,9 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class SlashManager extends CommandManager<ICommandSlash> {
+public class SlashIManager extends CommandIManager<ICommandSlash> {
 
-    public SlashManager(@NotNull ICommandSlash... interactions) {
+    public SlashIManager(@NotNull ICommandSlash... interactions) {
         for (ICommandSlash iCommandSlash : interactions) {
             addInteraction(iCommandSlash);
         }
@@ -24,18 +23,15 @@ public class SlashManager extends CommandManager<ICommandSlash> {
      * Add a {@link ICommandSlash} object to be indexed and used.
      *
      * @param iCommandSlash An {@link ICommandSlash} object.
-     * @throws IndexOutOfBoundsException If {@link SlashManager#interactions} has more than the {@link Commands#MAX_SLASH_COMMANDS} or,
-     *                                   if an {@link ICommandSlash} with that name already exists.
+     * @throws IndexOutOfBoundsException If an {@link ICommandSlash} with that name already exists.
      */
     @Override
-    public void addInteraction(@NotNull ICommandSlash iCommandSlash) {
+    void addInteraction(@NotNull ICommandSlash iCommandSlash) {
         boolean nameFound = interactions.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iCommandSlash.getName()));
 
         if (nameFound) throw new IllegalArgumentException("A command with this name already exists");
 
-        if (interactions.size() + 1 > Commands.MAX_SLASH_COMMANDS)
-            throw new IllegalArgumentException("You can only have at most %d slash commands.".formatted(Commands.MAX_SLASH_COMMANDS));
-        else interactions.add(iCommandSlash);
+        interactions.add(iCommandSlash);
     }
 
     /**

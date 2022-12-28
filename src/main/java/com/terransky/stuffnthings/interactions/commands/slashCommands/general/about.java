@@ -3,7 +3,7 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.general;
 import com.terransky.stuffnthings.ManagersManager;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.calculateRats;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
-import com.terransky.stuffnthings.managers.SlashManager;
+import com.terransky.stuffnthings.managers.SlashIManager;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
@@ -57,7 +57,7 @@ public class about implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("25-12-2022_19:30")
+            format.parse("28-12-2022_14:17")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "command", "Get more info on a Command.")
@@ -79,7 +79,7 @@ public class about implements ICommandSlash {
         StringBuilder uptime = getStringBuilder(mxBean);
         Date startTime = new Date(mxBean.getStartTime());
 
-        SlashManager manager = new ManagersManager().getSlashManager();
+        SlashIManager manager = new ManagersManager().getSlashManager();
         int commandCnt = manager.getSlashCommandCount();
         int guildCommandCnt = manager.getSlashCommandCount(blob.getGuildIdLong());
         commandCnt += guildCommandCnt;
@@ -116,7 +116,7 @@ public class about implements ICommandSlash {
     }
 
     private void getCommandInfo(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, String command) throws ParseException {
-        Optional<Metadata> ifMetadata = new SlashManager().getMetadata(command);
+        Optional<Metadata> ifMetadata = new SlashIManager().getMetadata(command);
         Metadata metadata = ifMetadata.orElse(this.getMetadata());
         String formattedCommandName = WordUtils.capitalize(metadata.getCommandName().replaceAll("-", " "));
 

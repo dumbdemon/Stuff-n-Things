@@ -5,8 +5,8 @@ import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandMessage;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandUser;
-import com.terransky.stuffnthings.managers.CommandManager;
-import com.terransky.stuffnthings.managers.SlashManager;
+import com.terransky.stuffnthings.managers.CommandIManager;
+import com.terransky.stuffnthings.managers.SlashIManager;
 import com.terransky.stuffnthings.secretsAndLies;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
 import com.terransky.stuffnthings.utilities.general.Config;
@@ -35,10 +35,10 @@ import java.util.*;
 public class ListeningForEvents extends ListenerAdapter {
     private final Logger log = LoggerFactory.getLogger(ListeningForEvents.class);
     private final ManagersManager manager = new ManagersManager();
-    private final SlashManager slashManager = manager.getSlashManager();
+    private final SlashIManager slashManager = manager.getSlashManager();
     private final List<CommandData> globalCommandData = slashManager.getCommandData();
-    private final CommandManager<ICommandMessage> messageManager = manager.getMessageContextManager();
-    private final CommandManager<ICommandUser> userManager = manager.getUserContextManager();
+    private final CommandIManager<ICommandMessage> messageManager = manager.getMessageContextManager();
+    private final CommandIManager<ICommandUser> userManager = manager.getUserContextManager();
 
     {
         globalCommandData.addAll(messageManager.getCommandData());

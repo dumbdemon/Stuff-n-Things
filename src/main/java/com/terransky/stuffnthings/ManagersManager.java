@@ -19,13 +19,13 @@ import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.calcul
 import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.whatsInStandard;
 import com.terransky.stuffnthings.interactions.modals.killSuggest;
 import com.terransky.stuffnthings.interfaces.interactions.*;
-import com.terransky.stuffnthings.managers.CommandManager;
-import com.terransky.stuffnthings.managers.Manager;
-import com.terransky.stuffnthings.managers.SlashManager;
+import com.terransky.stuffnthings.managers.CommandIManager;
+import com.terransky.stuffnthings.managers.IManager;
+import com.terransky.stuffnthings.managers.SlashIManager;
 
 public class ManagersManager {
 
-    private final SlashManager slashManager = new SlashManager(
+    private final SlashIManager slashIManager = new SlashIManager(
         //Admin Commands
         new channelUnLock(),
         new checkPerms(),
@@ -61,48 +61,48 @@ public class ManagersManager {
         new userInfo()
     );
 
-    private final Manager<IButton> buttonManager = new Manager<>(
+    private final IManager<IButton> buttonIManager = new IManager<>(
         new expiredButton(),
         new getMoreDadJokes()
     );
 
-    private final Manager<IModal> modalManager = new Manager<>(
+    private final IManager<IModal> modalIManager = new IManager<>(
         new killSuggest()
     );
 
-    private final CommandManager<ICommandMessage> messageContextManager = new CommandManager<>();
+    private final CommandIManager<ICommandMessage> messageCommandIManager = new CommandIManager<>();
 
-    private final CommandManager<ICommandUser> userContextManager = new CommandManager<>();
+    private final CommandIManager<ICommandUser> userCommandIManager = new CommandIManager<>();
 
-    private final Manager<ISelectMenuEntity> entitySelectMenuManager = new Manager<>();
+    private final IManager<ISelectMenuEntity> entitySelectMenuIManager = new IManager<>();
 
-    private final Manager<ISelectMenuString> stringSelectMenuManager = new Manager<>();
+    private final IManager<ISelectMenuString> stringSelectMenuIManager = new IManager<>();
 
-    public SlashManager getSlashManager() {
-        return slashManager;
+    public SlashIManager getSlashManager() {
+        return slashIManager;
     }
 
-    public Manager<IButton> getButtonManager() {
-        return buttonManager;
+    public IManager<IButton> getButtonManager() {
+        return buttonIManager;
     }
 
-    public CommandManager<ICommandMessage> getMessageContextManager() {
-        return messageContextManager;
+    public CommandIManager<ICommandMessage> getMessageContextManager() {
+        return messageCommandIManager;
     }
 
-    public CommandManager<ICommandUser> getUserContextManager() {
-        return userContextManager;
+    public CommandIManager<ICommandUser> getUserContextManager() {
+        return userCommandIManager;
     }
 
-    public Manager<IModal> getModalManager() {
-        return modalManager;
+    public IManager<IModal> getModalManager() {
+        return modalIManager;
     }
 
-    public Manager<ISelectMenuEntity> getEntitySelectMenuManager() {
-        return entitySelectMenuManager;
+    public IManager<ISelectMenuEntity> getEntitySelectMenuManager() {
+        return entitySelectMenuIManager;
     }
 
-    public Manager<ISelectMenuString> getStringSelectMenuManager() {
-        return stringSelectMenuManager;
+    public IManager<ISelectMenuString> getStringSelectMenuManager() {
+        return stringSelectMenuIManager;
     }
 }

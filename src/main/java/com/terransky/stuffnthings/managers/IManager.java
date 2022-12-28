@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class Manager<T extends IInteraction> {
+public class IManager<T extends IInteraction> {
 
     final List<T> interactions = new ArrayList<>();
 
     @SafeVarargs
-    public Manager(@NotNull T... interactions) {
+    public IManager(@NotNull T... interactions) {
         for (T interaction : interactions) {
             addInteraction(interaction);
         }
@@ -27,7 +27,7 @@ public class Manager<T extends IInteraction> {
      *                                  {@link InteractionType#COMMAND_SLASH}, {@link InteractionType#COMMAND_CONTEXT_MESSAGE}, or
      *                                  {@link InteractionType#COMMAND_CONTEXT_USER}.
      */
-    public void addInteraction(@NotNull T interaction) {
+    void addInteraction(@NotNull T interaction) {
         boolean interactionFound = interactions.stream().anyMatch(it -> it.getName().equalsIgnoreCase(interaction.getName()));
         InteractionType type = interaction.getInteractionType();
 
