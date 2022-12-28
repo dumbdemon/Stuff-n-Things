@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interfaces.interactions;
 
+import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 
 import java.text.ParseException;
@@ -12,7 +13,7 @@ public interface ICommand extends IInteraction {
      * Get this commands {@link CommandData}.
      *
      * @return A {@link CommandData} object.
-     * @throws ParseException If the pattern used in {@code Metadata.getImplementationDate()} or {@code Metadata.getLastUpdated()} in a slash command class
+     * @throws ParseException If the pattern used in {@link Metadata#getImplementationDate()} or {@link Metadata#getLastUpdated()} in a slash command class
      *                        is given an invalid date string.
      */
     CommandData getCommandData() throws ParseException;
