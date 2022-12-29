@@ -15,23 +15,8 @@ public class SlashIManager extends CommandIManager<ICommandSlash> {
 
     public SlashIManager(@NotNull ICommandSlash... interactions) {
         for (ICommandSlash iCommandSlash : interactions) {
-            addInteraction(iCommandSlash);
+            noTypeCheckAddInteraction(iCommandSlash);
         }
-    }
-
-    /**
-     * Add a {@link ICommandSlash} object to be indexed and used.
-     *
-     * @param iCommandSlash An {@link ICommandSlash} object.
-     * @throws IndexOutOfBoundsException If an {@link ICommandSlash} with that name already exists.
-     */
-    @Override
-    void addInteraction(@NotNull ICommandSlash iCommandSlash) {
-        boolean nameFound = interactions.stream().anyMatch(it -> it.getName().equalsIgnoreCase(iCommandSlash.getName()));
-
-        if (nameFound) throw new IllegalArgumentException("A command with this name already exists");
-
-        interactions.add(iCommandSlash);
     }
 
     /**
@@ -82,7 +67,7 @@ public class SlashIManager extends CommandIManager<ICommandSlash> {
      * @return The amount of slash commands.
      */
     public int getSlashCommandCount(long serverId) {
-        return (int) interactions.stream().filter(iCommandSlash -> super.checkIfGuild(iCommandSlash, serverId)).count();
+        return (int) interactions.stream().filter(iCommandSlash -> checkIfGuild(iCommandSlash, serverId)).count();
     }
 
 }

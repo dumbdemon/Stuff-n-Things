@@ -26,13 +26,9 @@ public class CommandIManager<T extends ICommand> extends IManager<T> {
 
     @Override
     void addInteraction(@NotNull T command) {
-        boolean interactionFound = interactions.stream().anyMatch(it -> it.getName().equalsIgnoreCase(command.getName()));
-
         if (command.getInteractionType() == InteractionType.COMMAND_SLASH)
             throw new IllegalArgumentException(String.format("Please use %s for slash commands", SlashIManager.class.getName()));
-        if (interactionFound) throw new IllegalArgumentException("A command with that name already exists");
-
-        interactions.add(command);
+        noTypeCheckAddInteraction(command);
     }
 
     /**

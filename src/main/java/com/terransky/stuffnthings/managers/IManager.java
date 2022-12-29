@@ -26,16 +26,23 @@ public class IManager<T extends IInteraction> {
      * Add an {@link IInteraction} to the list.
      *
      * @param interaction An {@link IInteraction}
-     * @throws IllegalArgumentException Either the {@link IInteraction} already exists in the index or the type is either
-     *                                  {@link InteractionType#COMMAND_SLASH}, {@link InteractionType#COMMAND_MESSAGE}, or
-     *                                  {@link InteractionType#COMMAND_USER}.
+     * @throws IllegalArgumentException Either the {@link IInteraction} already exists in the index or if the interaction type has a dedicated manager.
      */
     void addInteraction(@NotNull T interaction) {
-        boolean interactionFound = interactions.stream().anyMatch(it -> it.getName().equalsIgnoreCase(interaction.getName()));
-        InteractionType type = interaction.getInteractionType();
-
-        if (type.hasDedicatedManager())
+        if (interaction.getInteractionType().hasDedicatedManager())
             throw new IllegalArgumentException("Please use the appropriate manager for this type.");
+        noTypeCheckAddInteraction(interaction);
+    }
+
+    /**
+     * Add an {@link IInteraction} to the index without type checking.<br>
+     * Please use {@link #addInteraction(IInteraction)} when adding normally.
+     *
+     * @param interaction An {@link IInteraction}
+     * @throws IllegalArgumentException If an {@link IInteraction} with that name already exists in the index.
+     */
+    void noTypeCheckAddInteraction(@NotNull T interaction) {
+        boolean interactionFound = interactions.stream().anyMatch(it -> it.getName().equalsIgnoreCase(interaction.getName()));
 
         if (interactionFound) throw new IllegalArgumentException("An interaction with that name already exists");
 
