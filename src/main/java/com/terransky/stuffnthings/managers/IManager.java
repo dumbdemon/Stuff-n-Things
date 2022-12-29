@@ -3,6 +3,8 @@ package com.terransky.stuffnthings.managers;
 import com.terransky.stuffnthings.interfaces.interactions.IInteraction;
 import com.terransky.stuffnthings.utilities.general.InteractionType;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.Optional;
 public class IManager<T extends IInteraction> {
 
     final List<T> interactions = new ArrayList<>();
+    private final Logger log = LoggerFactory.getLogger(IManager.class);
 
     @SafeVarargs
     public IManager(@NotNull T... interactions) {
@@ -53,5 +56,24 @@ public class IManager<T extends IInteraction> {
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * Get the effective amount of {@link IInteraction}.
+     *
+     * @param interactions A {@link List} of {@link IInteraction}s.
+     * @param type         An {@link InteractionType}.
+     * @return A {@link List} of {@link IInteraction}s that does not exceed their maximum count.
+     */
+    @NotNull
+    List<T> getEffectiveCounts(@NotNull List<T> interactions, @NotNull InteractionType type) {
+        int max = type.getMaximum();
+        log.info("Checking quantity of %ss against maximum of %d...".formatted(type.getName(), max));
+        if (interactions.size() > max) {
+            log.warn("There are too many %ss (there's %d)! Truncating to %d..."
+                .formatted(type.getName(), interactions.size(), max));
+            return interactions.subList(0, max);
+        }
+        return interactions;
     }
 }

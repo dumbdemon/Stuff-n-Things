@@ -43,7 +43,7 @@ public class configCmd implements ICommandSlash {
             Mastermind.DEVELOPER,
             SlashModule.ADMIN,
             format.parse("28-08-2022_21:46"),
-            format.parse("21-12-2022_19:56")
+            format.parse("28-12-2022_18:39")
         )
             .addDefaultPerms(Permission.MANAGE_SERVER)
             .addSubcommandGroups(
@@ -128,7 +128,6 @@ public class configCmd implements ICommandSlash {
                 }
             }
         } catch (SQLException e) {
-            event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
             event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
             return;
         }

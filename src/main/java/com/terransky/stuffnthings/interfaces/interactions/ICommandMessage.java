@@ -3,9 +3,16 @@ package com.terransky.stuffnthings.interfaces.interactions;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.InteractionType;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
 
 public interface ICommandMessage extends ICommand {
+
+    @Override
+    default CommandData getCommandData() {
+        return Commands.message(getName());
+    }
 
     /**
      * The main handler for message context menus.

@@ -82,7 +82,7 @@ public class CommandIManager<T extends ICommand> extends IManager<T> {
         if (effectiveCommands.isEmpty()) return new ArrayList<>();
 
         final List<CommandData> commandData = new ArrayList<>();
-        for (T command : getEffectiveCommands(effectiveCommands, effectiveCommands.get(0).getInteractionType())) {
+        for (T command : getEffectiveCounts(effectiveCommands, effectiveCommands.get(0).getInteractionType())) {
             try {
                 commandData.add(command.getCommandData());
             } catch (ParseException e) {
@@ -93,18 +93,6 @@ public class CommandIManager<T extends ICommand> extends IManager<T> {
         }
 
         return commandData;
-    }
-
-    @NotNull
-    private List<T> getEffectiveCommands(@NotNull List<T> effectiveCommands, @NotNull InteractionType type) {
-        int max = type.getMaximum();
-        log.info("Checking quantity of %ss against maximum of %d...".formatted(type.getName(), max));
-        if (effectiveCommands.size() > max) {
-            log.warn("There are too many %ss (there's %d)! Truncating to %d..."
-                .formatted(type.getName(), effectiveCommands.size(), max));
-            return effectiveCommands.subList(0, max);
-        }
-        return effectiveCommands;
     }
 
     /**
