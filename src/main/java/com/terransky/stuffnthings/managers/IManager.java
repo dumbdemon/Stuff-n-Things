@@ -1,6 +1,6 @@
 package com.terransky.stuffnthings.managers;
 
-import com.terransky.stuffnthings.interfaces.interactions.IInteraction;
+import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.utilities.general.InteractionType;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -27,8 +27,8 @@ public class IManager<T extends IInteraction> {
      *
      * @param interaction An {@link IInteraction}
      * @throws IllegalArgumentException Either the {@link IInteraction} already exists in the index or the type is either
-     *                                  {@link InteractionType#COMMAND_SLASH}, {@link InteractionType#COMMAND_CONTEXT_MESSAGE}, or
-     *                                  {@link InteractionType#COMMAND_CONTEXT_USER}.
+     *                                  {@link InteractionType#COMMAND_SLASH}, {@link InteractionType#COMMAND_MESSAGE}, or
+     *                                  {@link InteractionType#COMMAND_USER}.
      */
     void addInteraction(@NotNull T interaction) {
         boolean interactionFound = interactions.stream().anyMatch(it -> it.getName().equalsIgnoreCase(interaction.getName()));

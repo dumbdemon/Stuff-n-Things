@@ -26,6 +26,6 @@ public interface ICommandMessage extends ICommand {
 
     @Override
     default InteractionType getInteractionType() {
-        return InteractionType.COMMAND_CONTEXT_MESSAGE;
+        return InteractionType.COMMAND_MESSAGE;
     }
 }

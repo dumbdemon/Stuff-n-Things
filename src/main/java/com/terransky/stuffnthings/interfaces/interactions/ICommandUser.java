@@ -26,6 +26,6 @@ public interface ICommandUser extends ICommand {
 
     @Override
     default InteractionType getInteractionType() {
-        return InteractionType.COMMAND_CONTEXT_USER;
+        return InteractionType.COMMAND_USER;
     }
 }

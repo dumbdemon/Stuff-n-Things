@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.interfaces.interactions;
+package com.terransky.stuffnthings.interfaces;
 
 import com.terransky.stuffnthings.utilities.general.InteractionType;
 import org.jetbrains.annotations.NotNull;

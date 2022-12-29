@@ -6,12 +6,12 @@ public enum InteractionType {
 
     UNKNOWN(-1, "UNKNOWN", 0), //For future interactions
     COMMAND_SLASH(0, "Slash Command", Commands.MAX_SLASH_COMMANDS, true),
-    BUTTON(1, "Button"),
-    MODAL(2, "Modal"),
-    SELECTION_STRING(3, "Selection Menu"),
-    SELECTION_ENTITY(4, "Entity Selection Menu"),
-    COMMAND_CONTEXT_MESSAGE(5, "Message Context Menu", Commands.MAX_MESSAGE_COMMANDS, true),
-    COMMAND_CONTEXT_USER(6, "User Context Menu", Commands.MAX_USER_COMMANDS, true);
+    COMMAND_USER(1, "User Context Menu", Commands.MAX_USER_COMMANDS, true),
+    COMMAND_MESSAGE(2, "Message Context Menu", Commands.MAX_MESSAGE_COMMANDS, true),
+    BUTTON(3, "Button"),
+    MODAL(4, "Modal"),
+    SELECTION_STRING(5, "Selection Menu"),
+    SELECTION_ENTITY(6, "Entity Selection Menu");
 
     private final int id;
     private final String name;

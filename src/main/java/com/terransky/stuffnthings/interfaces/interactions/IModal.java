@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interfaces.interactions;
 
+import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.InteractionType;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;

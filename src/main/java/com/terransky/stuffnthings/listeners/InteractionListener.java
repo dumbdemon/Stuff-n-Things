@@ -96,7 +96,7 @@ public class InteractionListener extends ListenerAdapter {
     @Override
     public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, InteractionType.COMMAND_CONTEXT_MESSAGE);
+            GuildOnly.interactionResponse(event, InteractionType.COMMAND_MESSAGE);
             return;
         }
 
@@ -106,7 +106,7 @@ public class InteractionListener extends ListenerAdapter {
         Optional<ICommandMessage> ifMenu = contextManager.getInteraction(event.getName());
         if (ifMenu.isEmpty()) return;
 
-        MessageEmbed menuFailed = getFailedInteractionMessage(InteractionType.COMMAND_CONTEXT_MESSAGE, blob);
+        MessageEmbed menuFailed = getFailedInteractionMessage(InteractionType.COMMAND_MESSAGE, blob);
         ICommandMessage commandMessage = ifMenu.get();
         log.debug("Command \"" + commandMessage.getName().toUpperCase() + "\" called on %s [%d]".formatted(blob.getGuild().getName(), blob.getGuildIdLong()));
         try {
@@ -122,7 +122,7 @@ public class InteractionListener extends ListenerAdapter {
     @Override
     public void onUserContextInteraction(@NotNull UserContextInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, InteractionType.COMMAND_CONTEXT_USER);
+            GuildOnly.interactionResponse(event, InteractionType.COMMAND_USER);
             return;
         }
 
@@ -132,7 +132,7 @@ public class InteractionListener extends ListenerAdapter {
         Optional<ICommandUser> ifMenu = contextManager.getInteraction(event.getName());
         if (ifMenu.isEmpty()) return;
 
-        MessageEmbed menuFailed = getFailedInteractionMessage(InteractionType.COMMAND_CONTEXT_USER, blob);
+        MessageEmbed menuFailed = getFailedInteractionMessage(InteractionType.COMMAND_USER, blob);
         ICommandUser commandUser = ifMenu.get();
         log.debug("Command \"" + commandUser.getName().toUpperCase() + "\" called on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
         try {
