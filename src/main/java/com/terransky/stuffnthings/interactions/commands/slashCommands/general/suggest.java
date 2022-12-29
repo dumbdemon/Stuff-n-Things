@@ -32,7 +32,7 @@ public class suggest implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("21-12-2022_20:03")
+            format.parse("29-12-2022_10:14")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "suggestion", "What do you want the bot to do?", true),
@@ -63,7 +63,7 @@ public class suggest implements ICommandSlash {
                 .setTitle(new WebhookEmbed.EmbedTitle("Command Suggestion", null))
                 .setDescription(description)
                 .addField(new WebhookEmbed.EmbedField(false, "Importance Value", "[" + importance + "/100]"))
-                .addField(new WebhookEmbed.EmbedField(false, "From", "@" + event.getUser().getAsTag()))
+                .addField(new WebhookEmbed.EmbedField(false, "From", "@" + blob.getMemberAsTag()))
                 .build();
 
             client.send(request);

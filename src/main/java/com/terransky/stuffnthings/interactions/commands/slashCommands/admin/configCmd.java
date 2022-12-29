@@ -43,7 +43,7 @@ public class configCmd implements ICommandSlash {
             Mastermind.DEVELOPER,
             SlashModule.ADMIN,
             format.parse("28-08-2022_21:46"),
-            format.parse("28-12-2022_18:39")
+            format.parse("29-12-2022_10:14")
         )
             .addDefaultPerms(Permission.MANAGE_SERVER)
             .addSubcommandGroups(
@@ -82,7 +82,7 @@ public class configCmd implements ICommandSlash {
         String subcommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(EmbedColors.getDefault())
-            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
+            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
 
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 

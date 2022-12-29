@@ -63,7 +63,7 @@ public class checkPerms implements ICommandSlash {
             Mastermind.DEVELOPER,
             SlashModule.ADMIN,
             format.parse("30-08-2022_16:14"),
-            format.parse("27-12-2022_11:30")
+            format.parse("29-12-2022_10:14")
         )
             .addDefaultPerms(Permission.MANAGE_ROLES)
             .addSubcommands(
@@ -93,7 +93,7 @@ public class checkPerms implements ICommandSlash {
         List<Permission> doNotHaveThis = new ArrayList<>(getRequiredPerms().stream().filter(permission -> !myPerms.contains(permission)).toList());
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(EmbedColors.getDefault())
-            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
+            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
             .setTitle("Permission Checker");
 
         boolean ifToCheck = toCheck != null,

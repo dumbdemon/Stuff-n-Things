@@ -115,7 +115,7 @@ public class colorInfo implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("20-9-2022_12:10"),
-            format.parse("25-12-2022_17:32")
+            format.parse("29-12-2022_10:14")
         )
             .addSubcommands(
                 new SubcommandData("hex-triplet", "Get more info on a hex triplet. EX: #663366")
@@ -152,7 +152,7 @@ public class colorInfo implements ICommandSlash {
         String subcommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle(WordUtils.capitalize(this.getName().replace("-", " ")))
-            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
+            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 
         switch (subcommand) {

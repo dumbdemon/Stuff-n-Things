@@ -142,7 +142,7 @@ public class dictionary implements ICommandSlash {
             Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("27-10-2022_12:46"),
-            format.parse("26-12-2022_16:12")
+            format.parse("29-12-2022_10:14")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "word", "The word to look up.", true),
@@ -157,7 +157,7 @@ public class dictionary implements ICommandSlash {
         String[] userWords = event.getOption("word", "", OptionMapping::getAsString).split(" ");
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle(getNameReadable())
-            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
+            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
             .setImage("https://languages.oup.com/wp-content/uploads/ol-logo-colour-300px-sfw.jpg")
             .setColor(EmbedColors.getDefault());
         EmbedBuilder ebOverflow = new EmbedBuilder(eb)

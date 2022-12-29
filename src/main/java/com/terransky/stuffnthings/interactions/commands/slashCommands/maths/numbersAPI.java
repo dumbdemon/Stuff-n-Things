@@ -61,7 +61,7 @@ public class numbersAPI implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             SlashModule.MATHS,
             format.parse("10-11-2022_20:45"),
-            format.parse("21-12-2022_20:04")
+            format.parse("29-12-2022_10:14")
         )
             .addSubcommands(
                 new SubcommandData("number", "A fact about a number.")
@@ -88,7 +88,7 @@ public class numbersAPI implements ICommandSlash {
         String theUrl = "http://numbersapi.com/";
         EmbedBuilder response = new EmbedBuilder()
             .setColor(EmbedColors.getDefault())
-            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
+            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
 
         switch (subcommand) {
             case "number" -> apiNumber(event, theUrl, response);

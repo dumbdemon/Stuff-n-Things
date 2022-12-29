@@ -12,49 +12,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.TreeMap;
 
 public class calculateRats implements ICommandSlash {
-    private static final NavigableMap<Float, String> suffixes = new TreeMap<>();
-
-    static {
-        suffixes.put(1e3f, " Thousand");
-        suffixes.put(1e6f, " Million");
-        suffixes.put(1e9f, " Billion");
-        suffixes.put(1e12f, " Trillion");
-        suffixes.put(1e15f, " Quadrillion");
-        suffixes.put(1e18f, " Quintillion");
-        suffixes.put(1e21f, " Sextillion");
-        suffixes.put(1e24f, " Septillion");
-        suffixes.put(1e27f, " Octillion");
-        suffixes.put(1e30f, " Nonillion");
-        suffixes.put(1e33f, " Decillion");
-        suffixes.put(1e36f, " Undecillion");
-    }
-
-    /**
-     * Makes extra large numbers look nice~ <br />
-     * Code Courtesy of <a href="https://stackoverflow.com/questions/4753251/how-to-go-about-formatting-1200-to-1-2k-in-java">assylias's answer</a> on stackoverflow.
-     *
-     * @return {@link String} that contains a two-point decimal and the scale of value.
-     */
-    public static String largeNumberFormat(float value) {
-        DecimalFormat simpleNum = new DecimalFormat("#.##");
-
-        if (value == Float.MIN_VALUE) return largeNumberFormat(Float.MIN_VALUE + 1);
-        if (value < 0) return "-" + largeNumberFormat(-value);
-        if (value < 1000) return Float.toString(value);
-
-        Map.Entry<Float, String> e = suffixes.floorEntry(value);
-        float divideBy = e.getKey();
-        String suffix = e.getValue();
-
-        float truncated = value / (divideBy / 10);
-        boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
-        return hasDecimal ? simpleNum.format(truncated / 10d) + suffix : simpleNum.format(truncated / 10) + suffix;
-    }
 
     @Override
     public String getName() {
@@ -71,7 +30,7 @@ public class calculateRats implements ICommandSlash {
             Mastermind.DEVELOPER,
             SlashModule.MTG,
             format.parse("5-10-2022_11:48"),
-            format.parse("28-12-2022_13:52")
+            format.parse("29-12-2022_10:14")
         )
             .addOptions(
                 new OptionData(OptionType.INTEGER, "start-count", "How many do you have right now?", true)
@@ -93,7 +52,7 @@ public class calculateRats implements ICommandSlash {
             .setTitle("Is there enough rats?")
             .addField("Starting total", "%s rats".formatted(largeNumber.format(startCNT)), true)
             .addField("Iterations", "%s triggers".formatted(largeNumber.format(triggers)), true)
-            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
+            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
 
         for (float i = 0; i < triggers; i++) {
             finalCNT = (finalCNT - 1f) * 2f;
@@ -103,7 +62,7 @@ public class calculateRats implements ICommandSlash {
             eb.setDescription("Yes.")
                 .addField("Final Count", "INFINITE", false);
         } else eb.setDescription("No.")
-            .addField("Final Count (Short-Hand)", ("%s rats".formatted(largeNumberFormat(finalCNT)).replace(".0 ", " ")), false)
+            .addField("Final Count (Short-Hand)", ("%s rats".formatted(Formatter.largeNumberFormat(finalCNT)).replace(".0 ", " ")), false)
             .addField("Final Count (Full Number)", "%s rats".formatted(largeNumber.format(finalCNT)), false);
 
         event.getHook().sendMessageEmbeds(eb.build()).queue();

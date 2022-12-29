@@ -73,6 +73,10 @@ public class EventBlob {
         return getMember().getEffectiveAvatarUrl();
     }
 
+    public String getMemberAsTag() {
+        return getMember().getUser().getAsTag();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

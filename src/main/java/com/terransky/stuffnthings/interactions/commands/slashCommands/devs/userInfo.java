@@ -80,7 +80,7 @@ public class userInfo implements ICommandSlash {
             """, Mastermind.DEFAULT,
             SlashModule.DEVS,
             format.parse("24-08-2022_11:10"),
-            format.parse("21-12-2022_19:57")
+            format.parse("29-12-2022_10:14")
         )
             .addOptions(
                 new OptionData(OptionType.USER, "user", "Who you want to know about.")
@@ -109,7 +109,7 @@ public class userInfo implements ICommandSlash {
             .addField("Server Permissions", "```%s```".formatted(userPerms), false)
             .addField("Joined Server on", Timestamp.getDateAsTimestamp(member.getTimeJoined(), Timestamp.LONG_DATE_W_DoW_SHORT_TIME), true)
             .addField("Joined Discord on", Timestamp.getDateAsTimestamp(member.getUser().getTimeCreated(), Timestamp.LONG_DATE_W_DoW_SHORT_TIME), true)
-            .setFooter("Requested by " + event.getUser().getAsTag() + " | " + event.getUser().getId(), blob.getMemberEffectiveAvatarUrl());
+            .setFooter("Requested by " + blob.getMemberAsTag() + " | " + event.getUser().getId(), blob.getMemberEffectiveAvatarUrl());
 
         if (!member.getUser().isBot()) {
             String boostedText =

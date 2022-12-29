@@ -1,7 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.maths;
 
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.calculateRats;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -13,7 +12,6 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
@@ -39,7 +37,7 @@ public class fibonacciSequence implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             SlashModule.MATHS,
             format.parse("11-11-2022_20:50"),
-            format.parse("25-12-2022_20:45")
+            format.parse("29-12-2022_10:14")
         )
             .addSubcommands(
                 new SubcommandData("at-nth", "Get a specific value.")
@@ -60,17 +58,17 @@ public class fibonacciSequence implements ICommandSlash {
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 
-        int n = event.getOption("nth", 3, OptionMapping::getAsInt);
+        int nth = event.getOption("nth", 3, OptionMapping::getAsInt);
         EmbedBuilder eb = new EmbedBuilder()
-            .setTitle(WordUtils.capitalize(this.getName()))
+            .setTitle(getNameReadable())
             .setColor(EmbedColors.getDefault())
-            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
+            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
         MessageEditData messageEditData;
 
-        fibonacciCache = new float[n + 1];
+        fibonacciCache = new float[nth + 1];
         fibonacciCache[1] = 1;
-        float nthValue = getFibonacciAt(n);
-        String numSuffix = n % 10 == 2 ? "nd" : (n % 10 == 3 ? "rd" : "th"), returnString;
+        float nthValue = getFibonacciAt(nth);
+        String nthSuffix = nth % 10 == 2 ? "nd" : (nth % 10 == 3 ? "rd" : "th"), returnString;
 
         event.replyEmbeds(
             eb.setDescription("Please wait. This may take a while...")
@@ -83,11 +81,11 @@ public class fibonacciSequence implements ICommandSlash {
                 replace = "";
             } else replace = " ";
 
-            returnString = calculateRats.largeNumberFormat(nthValue).replace(".0" + replace, replace);
+            returnString = Formatter.largeNumberFormat(nthValue).replace(".0" + replace, replace);
             messageEditData = new MessageEditBuilder()
                 .setEmbeds(
                     eb.setDescription("The %s%s value of the Fibonacci sequence is:\n```%s```"
-                            .formatted(n, numSuffix, returnString))
+                            .formatted(nth, nthSuffix, returnString))
                         .build()
                 )
                 .build();
@@ -95,7 +93,7 @@ public class fibonacciSequence implements ICommandSlash {
             StringBuilder fibonacciString = new StringBuilder();
 
             for (float v : fibonacciCache) {
-                fibonacciString.append(calculateRats.largeNumberFormat(v)).append(", ");
+                fibonacciString.append(Formatter.largeNumberFormat(v)).append(", ");
             }
             returnString = fibonacciString.substring(0, fibonacciString.length() - 2)
                 .replaceAll(".0 ", " ")
@@ -104,7 +102,7 @@ public class fibonacciSequence implements ICommandSlash {
             messageEditData = new MessageEditBuilder()
                 .setEmbeds(
                     eb.setDescription("The Fibonacci sequence up to the %s%s value is:\n```%s```"
-                            .formatted(n, numSuffix, returnString.replace(".0", "")))
+                            .formatted(nth, nthSuffix, returnString.replace(".0", "")))
                         .build()
                 )
                 .build();

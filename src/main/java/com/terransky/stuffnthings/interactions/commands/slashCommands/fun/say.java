@@ -48,7 +48,7 @@ public class say implements ICommandSlash {
         MessageChannel channel = (MessageChannel) event.getOption("channel", event.getChannel().asGuildMessageChannel(), OptionMapping::getAsChannel);
 
         eb.setDescription(message)
-            .setFooter("Sent by " + event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
+            .setFooter("Sent by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
 
         channel.sendMessageEmbeds(eb.build()).queue();
         event.reply("Your message has been sent.").setEphemeral(true).queue();

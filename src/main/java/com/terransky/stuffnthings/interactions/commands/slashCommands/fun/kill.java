@@ -65,7 +65,7 @@ public class kill implements ICommandSlash {
             """, Mastermind.USER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("25-12-2022_20:37")
+            format.parse("29-12-2022_10:14")
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),
@@ -85,7 +85,7 @@ public class kill implements ICommandSlash {
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(EmbedColors.getDefault())
             .setTitle(blob.getMember().getEffectiveName())
-            .setFooter("Requested by " + event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
+            .setFooter("Requested by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
         List<Member> memberList =
             blob.getGuild().getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
 

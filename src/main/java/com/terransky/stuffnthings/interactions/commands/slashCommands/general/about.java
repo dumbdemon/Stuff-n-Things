@@ -1,7 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.general;
 
 import com.terransky.stuffnthings.ManagersManager;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.calculateRats;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.managers.SlashIManager;
 import com.terransky.stuffnthings.utilities.command.*;
@@ -57,7 +56,7 @@ public class about implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("28-12-2022_14:17")
+            format.parse("29-12-2022_10:14")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "command", "Get more info on a Command.")
@@ -101,7 +100,7 @@ public class about implements ICommandSlash {
                 .setTitle(event.getJDA().getSelfUser().getName(), Config.getRepositoryURL())
                 .setThumbnail(Config.getBotLogoURL())
                 .addField("Servers", "%d servers".formatted(guildCount), true)
-                .addField("Users", "%s users".formatted(calculateRats.largeNumberFormat(userCount)).replace(".0 ", " "), true)
+                .addField("Users", "%s users".formatted(Formatter.largeNumberFormat(userCount)).replace(".0 ", " "), true)
                 .addField("Your Shard", event.getJDA().getShardInfo().getShardString(), true)
                 .addField("Start Time", Timestamp.getDateAsTimestamp(startTime, Timestamp.LONG_DATE_W_DoW_SHORT_TIME), false)
                 .addField("Uptime", uptime.toString(), false)
@@ -126,7 +125,7 @@ public class about implements ICommandSlash {
                     .setTitle("About Command - %s".formatted(formattedCommandName))
                     .setDescription("You don't have access to this command to see its details.")
                     .setColor(EmbedColors.getDefault())
-                    .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
+                    .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
                     .build()
             ).queue();
             return;
@@ -144,7 +143,7 @@ public class about implements ICommandSlash {
                 .setTitle("About Command - %s".formatted(formattedCommandName))
                 .setDescription(metadata.getLongDescription())
                 .setColor(EmbedColors.getDefault())
-                .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
+                .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
                 .addField("Mastermind", metadata.getMastermind().getWho(), true)
                 .addField("Module", metadata.getModule().getName(), true)
                 .addField("Implementation Date", "%s (%s)".formatted(timestamps[0], timestamps[1]), false)

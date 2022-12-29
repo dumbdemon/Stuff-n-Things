@@ -36,7 +36,7 @@ public class channelUnLock implements ICommandSlash {
         String description = "Lock or unlock a channel for everyone or from a specific role to see.";
         return new Metadata(this.getName(), description, description, Mastermind.DEVELOPER, SlashModule.ADMIN,
             format.parse("23-11-2022_18:34"),
-            format.parse("21-12-2022_19:54")
+            format.parse("29-12-2022_10:14")
         )
             .addDefaultPerms(Permission.MANAGE_CHANNEL)
             .addSubcommands(
@@ -67,7 +67,7 @@ public class channelUnLock implements ICommandSlash {
         EmbedBuilder response = new EmbedBuilder()
             .setTitle("Channel Control - " + WordUtils.capitalize(subcommand))
             .setColor(EmbedColors.getDefault())
-            .setFooter(event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl());
+            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
 
         try {
             ChannelPermsController permsController = new ChannelPermsController(targetChannel);
