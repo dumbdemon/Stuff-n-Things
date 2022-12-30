@@ -72,7 +72,7 @@ public class solveQuadratic implements ICommandSlash {
         }
 
         if (d == 0.0) {
-            r1 = -b / 2.0 * a;
+            r1 = -b / (2.0 * a);
 
             event.replyEmbeds(eb.setDescription("""
                     Given:
