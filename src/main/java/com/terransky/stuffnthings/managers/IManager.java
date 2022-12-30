@@ -39,14 +39,14 @@ public class IManager<T extends IInteraction> {
      * Please use {@link #addInteraction(IInteraction)} when adding normally.
      *
      * @param interaction An {@link IInteraction}
-     * @throws IllegalArgumentException If an {@link IInteraction} with that name already exists in the index.
      */
     void noTypeCheckAddInteraction(@NotNull T interaction) {
         boolean interactionFound = interactions.stream().anyMatch(it -> it.getName().equalsIgnoreCase(interaction.getName()));
 
-        if (interactionFound) throw new IllegalArgumentException("An interaction with that name already exists");
-
-        interactions.add(interaction);
+        if (interactionFound)
+            log.warn("An interaction with that name already exists");
+        else
+            interactions.add(interaction);
     }
 
     /**
