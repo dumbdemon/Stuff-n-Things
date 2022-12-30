@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.utilities.command;
 
+import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -8,6 +9,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import org.apache.commons.lang3.time.FastDateFormat;
+import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -42,13 +44,15 @@ public class Metadata implements Comparable<Metadata> {
     /**
      * Extended details for an {@link com.terransky.stuffnthings.interfaces.interactions.ICommandSlash ICommandSlash}.
      * <p>
-     * It is recommended that when constructing a Metadata Object for {@link CommandData}, that you use the top level type used in the {@code ISlashCommand.getCommandData()}.
-     * Hierarchy (from highest to lowest) goes as follows: none, {@link SubcommandGroupData}, {@link SubcommandData}, {@link OptionData}.
+     * It is recommended that when constructing a Metadata Object for {@link CommandData}, that you use the top level
+     * type used in the {@link ICommandSlash#getCommandData()}. Hierarchy (from highest to lowest) goes as follows: none,
+     * {@link SubcommandGroupData}, {@link SubcommandData}, {@link OptionData}.
      *
-     * @param commandName        The name of the command. Cannot be no than {@link CommandData#MAX_NAME_LENGTH}.
-     * @param shortDescription   The description of the command. Cannot be no longer than {@link MessageEmbed#DESCRIPTION_MAX_LENGTH}.
-     * @param longDescription    The description of the command used in {@link com.terransky.stuffnthings.interactions.commands.slashCommands.general.about /about [command]}.
-     *                           It will be truncated if it has more characters than {@link MessageEmbed#DESCRIPTION_MAX_LENGTH}.
+     * @param commandName        The name of the command. Cannot be no than {@value CommandData#MAX_NAME_LENGTH} characters.
+     * @param shortDescription   The description of the command. Cannot be no longer than
+     *                           {@value MessageEmbed#DESCRIPTION_MAX_LENGTH} characters.
+     * @param longDescription    The description of the command used in {@link com.terransky.stuffnthings.interactions.commands.slashCommands.general.about
+     *                           /about [command]}. It will be truncated if it has more than {@value MessageEmbed#DESCRIPTION_MAX_LENGTH} characters.
      * @param mastermind         The {@link Mastermind}.
      * @param module             The {@link SlashModule}.
      * @param implementationDate The {@link Date} when the command was first created.
@@ -152,6 +156,10 @@ public class Metadata implements Comparable<Metadata> {
         return commandName;
     }
 
+    public String getCommandNameReadable() {
+        return WordUtils.capitalize(getCommandName().replaceAll("-", " "));
+    }
+
     public Mastermind getMastermind() {
         return mastermind;
     }
@@ -197,16 +205,18 @@ public class Metadata implements Comparable<Metadata> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Metadata metadata = (Metadata) o;
-        return getCommandName().equals(metadata.getCommandName()) &&
-            getShortDescription().equals(metadata.getShortDescription()) &&
-            getLongDescription().equals(metadata.getLongDescription()) &&
-            getMastermind() == metadata.getMastermind() &&
-            getImplementationDate().equals(metadata.getImplementationDate()) &&
-            getLastUpdated().equals(metadata.getLastUpdated()) &&
+        return isNsfw() == metadata.isNsfw() &&
             getDefaultPerms().equals(metadata.getDefaultPerms()) &&
             getSubcommandGroups().equals(metadata.getSubcommandGroups()) &&
             getSubcommands().equals(metadata.getSubcommands()) &&
-            getOptions().equals(metadata.getOptions());
+            getOptions().equals(metadata.getOptions()) &&
+            getCommandName().equals(metadata.getCommandName()) &&
+            getShortDescription().equals(metadata.getShortDescription()) &&
+            getLongDescription().equals(metadata.getLongDescription()) &&
+            getMastermind() == metadata.getMastermind() &&
+            getModule() == metadata.getModule() &&
+            getImplementationDate().equals(metadata.getImplementationDate()) &&
+            getLastUpdated().equals(metadata.getLastUpdated());
     }
 
     @Override

@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.management.ManagementFactory;
@@ -24,8 +23,8 @@ import java.util.Optional;
 
 public class about implements ICommandSlash {
     @NotNull
-    private static StringBuilder getStringBuilder(@NotNull RuntimeMXBean rb) {
-        Duration duration = Duration.ofMillis(rb.getUptime());
+    private static String getUptime(@NotNull RuntimeMXBean mxBean) {
+        Duration duration = Duration.ofMillis(mxBean.getUptime());
         long days = duration.toDaysPart();
         int hours = duration.toHoursPart();
         int minutes = duration.toMinutesPart();
@@ -40,7 +39,7 @@ public class about implements ICommandSlash {
         if (minutes != 0)
             uptime.append("%s minute%s ".formatted(minutes, minutes > 1 ? "s" : ""));
         uptime.append("%s.%s secs".formatted(seconds, millis));
-        return uptime;
+        return uptime.toString();
     }
 
     @Override
@@ -56,7 +55,7 @@ public class about implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("29-12-2022_10:14")
+            format.parse("29-12-2022_19:52")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "command", "Get more info on a Command.")
@@ -75,7 +74,7 @@ public class about implements ICommandSlash {
         }
 
         RuntimeMXBean mxBean = ManagementFactory.getRuntimeMXBean();
-        StringBuilder uptime = getStringBuilder(mxBean);
+        String uptime = getUptime(mxBean);
         Date startTime = new Date(mxBean.getStartTime());
 
         SlashIManager manager = new ManagersManager().getSlashManager();
@@ -103,7 +102,7 @@ public class about implements ICommandSlash {
                 .addField("Users", "%s users".formatted(Formatter.largeNumberFormat(userCount)).replace(".0 ", " "), true)
                 .addField("Your Shard", event.getJDA().getShardInfo().getShardString(), true)
                 .addField("Start Time", Timestamp.getDateAsTimestamp(startTime, Timestamp.LONG_DATE_W_DoW_SHORT_TIME), false)
-                .addField("Uptime", uptime.toString(), false)
+                .addField("Uptime", uptime, false)
                 .addField("Total Commands", "%s on %s\n%s of which are guild commands"
                     .formatted(
                         commandCnt,
@@ -115,14 +114,14 @@ public class about implements ICommandSlash {
     }
 
     private void getCommandInfo(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, String command) throws ParseException {
-        Optional<Metadata> ifMetadata = new SlashIManager().getMetadata(command);
-        Metadata metadata = ifMetadata.orElse(this.getMetadata());
-        String formattedCommandName = WordUtils.capitalize(metadata.getCommandName().replaceAll("-", " "));
+        Optional<Metadata> ifMetadata = new ManagersManager().getSlashManager().getMetadata(command);
+        Metadata metadata = ifMetadata.orElse(getMetadata());
+        String commandName = metadata.getCommandNameReadable();
 
-        if (!metadata.getDefaultPerms().isEmpty() && event.getMember() != null && !event.getMember().hasPermission(metadata.getDefaultPerms())) {
+        if (!metadata.getDefaultPerms().isEmpty() && !blob.getMember().hasPermission(metadata.getDefaultPerms())) {
             event.replyEmbeds(
                 new EmbedBuilder()
-                    .setTitle("About Command - %s".formatted(formattedCommandName))
+                    .setTitle("About Command - %s".formatted(commandName))
                     .setDescription("You don't have access to this command to see its details.")
                     .setColor(EmbedColors.getDefault())
                     .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
@@ -140,7 +139,7 @@ public class about implements ICommandSlash {
 
         event.getHook().sendMessageEmbeds(
             new EmbedBuilder()
-                .setTitle("About Command - %s".formatted(formattedCommandName))
+                .setTitle("About Command - %s".formatted(commandName))
                 .setDescription(metadata.getLongDescription())
                 .setColor(EmbedColors.getDefault())
                 .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
