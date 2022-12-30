@@ -29,7 +29,7 @@ public class solveQuadratic implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             SlashModule.MATHS,
             format.parse("19-11-2022_13:09"),
-            format.parse("21-12-2022_20:04")
+            format.parse("29-12-2022_20:35")
         )
             .addOptions(
                 new OptionData(OptionType.NUMBER, "value-a", "A value of Quadratic Formula"),
@@ -72,7 +72,7 @@ public class solveQuadratic implements ICommandSlash {
         }
 
         if (d == 0.0) {
-            r1 = -b / 2.0 * a;
+            r1 = -b / (2.0 * a);
 
             event.replyEmbeds(eb.setDescription("""
                     Given:
