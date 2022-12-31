@@ -28,8 +28,8 @@ public interface ICommandSlash extends ICommand {
      */
     @Override
     default CommandData getCommandData() throws ParseException {
-        Metadata metadata = this.getMetadata();
-        SlashCommandData commandData = Commands.slash(this.getName(), metadata.getShortDescription())
+        Metadata metadata = getMetadata();
+        SlashCommandData commandData = Commands.slash(getName(), metadata.getShortDescription())
             .setNSFW(metadata.isNsfw())
             .setDefaultPermissions(DefaultMemberPermissions.enabledFor(metadata.getDefaultPerms()));
 
