@@ -6,18 +6,25 @@ import org.jetbrains.annotations.NotNull;
 
 public enum Responses {
 
-    INTERACTION_FAILED("An error occurred whilst executing this interaction, please submit an issue [here](%s).".formatted(Config.getErrorReportingURL())),
-    GUILD_ONLY("This interaction is guild only. Please use this interaction in a guild.");
+    INTERACTION_FAILED("An error occurred whilst executing this interaction, please submit an issue [here](%s).".formatted(Config.getErrorReportingURL()),
+        true),
+    GUILD_ONLY("This interaction is guild only. Please use this interaction in a guild.", true);
 
     private final String message;
+    private final boolean isInteractionReplaceable;
     private final boolean isAllCaps;
 
     Responses(String message) {
-        this(message, false);
+        this(message, true);
     }
 
-    Responses(String message, boolean isAllCaps) {
+    Responses(String message, boolean isInteractionReplaceable) {
+        this(message, isInteractionReplaceable, false);
+    }
+
+    Responses(String message, boolean isInteractionReplaceable, boolean isAllCaps) {
         this.message = message;
+        this.isInteractionReplaceable = isInteractionReplaceable;
         this.isAllCaps = isAllCaps;
     }
 
@@ -25,15 +32,23 @@ public enum Responses {
         return message;
     }
 
+    @NotNull
+    public String getMessage(@NotNull InteractionType interaction) {
+        if (!isInteractionReplaceable())
+            return getMessage();
+
+        if (interaction == InteractionType.UNKNOWN)
+            throw new IllegalArgumentException("Interaction cannot be unknown.");
+
+        String name = interaction.getName();
+        return getMessage().replaceAll("(?i)interaction", isAllCaps() ? name.toUpperCase() : name);
+    }
+
     public boolean isAllCaps() {
         return isAllCaps;
     }
 
-    @NotNull
-    public String getMessage(@NotNull InteractionType interaction) {
-        if (interaction == InteractionType.UNKNOWN)
-            throw new IllegalArgumentException("Interaction cannot be unknown.");
-
-        return getMessage().replaceAll("(?i)interaction", isAllCaps() ? interaction.getName().toUpperCase() : interaction.getName());
+    public boolean isInteractionReplaceable() {
+        return isInteractionReplaceable;
     }
 }
