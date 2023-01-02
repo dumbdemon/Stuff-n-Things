@@ -8,10 +8,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class DiscordWebhook {
 
-    private final WebhookClient client;
+    private final WebhookClientBuilder clientBuilder;
 
-    public DiscordWebhook(WebhookClient client) {
-        this.client = client;
+    public DiscordWebhook(WebhookClientBuilder clientBuilder) {
+        this.clientBuilder = clientBuilder;
     }
 
     public DiscordWebhook(String threadName) {
@@ -27,12 +27,11 @@ public class DiscordWebhook {
                 return thread;
             })
             .setWait(true)
-            .build()
         );
     }
 
     public DiscordWebhook sendMessage(@NotNull MessageEmbed webhookEmbed) {
-        try (WebhookClient client = this.client) {
+        try (WebhookClient client = clientBuilder.build()) {
             client.send(WebhookEmbedBuilder
                 .fromJDA(webhookEmbed)
                 .build()

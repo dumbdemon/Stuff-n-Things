@@ -7,7 +7,6 @@ import com.terransky.stuffnthings.utilities.command.EmbedColors;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.DiscordWebhook;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import org.jetbrains.annotations.NotNull;
@@ -29,12 +28,9 @@ public class killSuggest implements IModal {
         Optional<ModalMapping> ifSuggestion = Optional.ofNullable(event.getValue(kill.MODAL_NAME));
         String suggestion = ifSuggestion.orElseThrow(DiscordAPIException::new).getAsString();
 
-        List<Member> members =
-            blob.getGuild().getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
-
-        for (Member member : members) {
-            victims.add(member.getAsMention());
-        }
+        blob.getGuild().getMembers().stream()
+            .filter(member -> !member.getUser().isBot() || member.getUser().equals(event.getJDA().getSelfUser()))
+            .forEach(member -> victims.add(member.getAsMention()));
 
         var ignored = new DiscordWebhook("Kill_Suggestion")
             .sendMessage(new EmbedBuilder()

@@ -4,7 +4,6 @@ import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -65,7 +64,7 @@ public class kill implements ICommandSlash {
             """, Mastermind.USER,
             SlashModule.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("29-12-2022_10:14")
+            format.parse("2-1-2022_12:04")
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),
@@ -86,12 +85,10 @@ public class kill implements ICommandSlash {
             .setColor(EmbedColors.getDefault())
             .setTitle(blob.getMember().getEffectiveName())
             .setFooter("Requested by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
-        List<Member> memberList =
-            blob.getGuild().getMembers().stream().filter(it -> !it.getUser().isBot() || it.getUser().equals(event.getJDA().getSelfUser())).toList();
 
-        for (Member member : memberList) {
-            victims.add(member.getAsMention());
-        }
+        blob.getGuild().getMembers().stream()
+            .filter(member -> !member.getUser().isBot() || member.getUser().equals(event.getJDA().getSelfUser()))
+            .forEach(member -> victims.add(member.getAsMention()));
 
         switch (subcommand) {
             case "random" -> {
