@@ -15,17 +15,9 @@ public class EmbedColors {
         return new Color(102, 51, 102);
     }
 
-    public static int getDefaultRGB() {
-        return getDefault().getRGB();
-    }
-
     @Contract(value = " -> new", pure = true)
     public static @NotNull Color getSecondary() {
         return new Color(153, 102, 153);
-    }
-
-    public static int getSecondaryRGB() {
-        return getSecondary().getRGB();
     }
 
     @Contract(value = " -> new", pure = true)
