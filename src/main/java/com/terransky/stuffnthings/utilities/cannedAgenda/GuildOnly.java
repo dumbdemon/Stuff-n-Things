@@ -5,9 +5,7 @@ import com.terransky.stuffnthings.utilities.general.InteractionType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.GenericSelectMenuInteractionEvent;
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
+import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class GuildOnly {
@@ -27,23 +25,15 @@ public class GuildOnly {
         ).queue();
     }
 
+    public static void interactionResponse(@NotNull GenericComponentInteractionCreateEvent event, InteractionType interactionType) {
+        event.replyEmbeds(
+            BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+                .setDescription(Responses.GUILD_ONLY.getMessage(interactionType))
+                .build()
+        ).queue();
+    }
+
     public static void interactionResponse(@NotNull ModalInteractionEvent event, InteractionType interactionType) {
-        event.replyEmbeds(
-            BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
-                .setDescription(Responses.GUILD_ONLY.getMessage(interactionType))
-                .build()
-        ).queue();
-    }
-
-    public static <T extends GenericSelectMenuInteractionEvent<?, ? extends SelectMenu>> void interactionResponse(@NotNull T event, InteractionType interactionType) {
-        event.replyEmbeds(
-            BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
-                .setDescription(Responses.GUILD_ONLY.getMessage(interactionType))
-                .build()
-        ).queue();
-    }
-
-    public static void interactionResponse(@NotNull ButtonInteractionEvent event, InteractionType interactionType) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
                 .setDescription(Responses.GUILD_ONLY.getMessage(interactionType))
