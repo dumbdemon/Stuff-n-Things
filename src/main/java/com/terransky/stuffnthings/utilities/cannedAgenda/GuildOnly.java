@@ -17,7 +17,7 @@ public class GuildOnly {
     private GuildOnly() {
     }
 
-    public static void interactionResponse(@NotNull GenericCommandInteractionEvent event, InteractionType interactionType) {
+    public static <T extends GenericCommandInteractionEvent> void interactionResponse(@NotNull T event, InteractionType interactionType) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
                 .setDescription(Responses.GUILD_ONLY.getMessage(interactionType))
@@ -25,7 +25,7 @@ public class GuildOnly {
         ).queue();
     }
 
-    public static void interactionResponse(@NotNull GenericComponentInteractionCreateEvent event, InteractionType interactionType) {
+    public static <T extends GenericComponentInteractionCreateEvent> void interactionResponse(@NotNull T event, InteractionType interactionType) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
                 .setDescription(Responses.GUILD_ONLY.getMessage(interactionType))
