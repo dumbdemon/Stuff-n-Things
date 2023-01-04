@@ -4,25 +4,30 @@ import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.InteractionType;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public enum Responses {
 
-    INTERACTION_FAILED("An error occurred whilst executing this interaction, please submit an issue [here](%s).".formatted(Config.getErrorReportingURL()),
-        true),
-    GUILD_ONLY("This interaction is guild only. Please use this interaction in a guild.", true);
+    INTERACTION_FAILED(true,
+        "An error occurred whilst executing this interaction, please submit an issue [here](%s).".formatted(Config.getErrorReportingURL())),
+    GUILD_ONLY(true, "This interaction is guild only. Please use this interaction in a guild.");
 
     private final String message;
     private final boolean isInteractionReplaceable;
     private final boolean isAllCaps;
 
     Responses(String message) {
-        this(message, true);
+        this(false, message);
     }
 
-    Responses(String message, boolean isInteractionReplaceable) {
-        this(message, isInteractionReplaceable, false);
+    Responses(boolean isInteractionReplaceable, String message) {
+        this(isInteractionReplaceable, message, false);
     }
 
-    Responses(String message, boolean isInteractionReplaceable, boolean isAllCaps) {
+    Responses(String message, boolean isAllCaps) {
+        this(false, message, isAllCaps);
+    }
+
+    Responses(boolean isInteractionReplaceable, String message, boolean isAllCaps) {
         this.message = message;
         this.isInteractionReplaceable = isInteractionReplaceable;
         this.isAllCaps = isAllCaps;
