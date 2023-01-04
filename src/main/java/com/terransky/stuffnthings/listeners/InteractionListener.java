@@ -2,6 +2,7 @@ package com.terransky.stuffnthings.listeners;
 
 import com.terransky.stuffnthings.ManagersManager;
 import com.terransky.stuffnthings.database.SQLiteDataSource;
+import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.interfaces.interactions.*;
 import com.terransky.stuffnthings.utilities.cannedAgenda.GuildOnly;
 import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
@@ -13,11 +14,13 @@ import com.terransky.stuffnthings.utilities.general.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -52,6 +55,24 @@ public class InteractionListener extends ListenerAdapter {
         LogList.error(Arrays.asList(e.getStackTrace()), log);
     }
 
+    private void errorHandler(@NotNull GenericCommandInteractionEvent event, @NotNull IInteraction interaction,
+                              InteractionType type, EventBlob blob, Exception e) {
+        MessageEmbed commandFailed = getFailedInteractionMessage(type, blob);
+        logInteractionFailure(interaction.getName(), blob, e);
+        if (event.isAcknowledged()) {
+            event.getHook().sendMessageEmbeds(commandFailed).queue();
+        } else event.replyEmbeds(commandFailed).setEphemeral(true).queue();
+    }
+
+    private void errorHandler(@NotNull GenericComponentInteractionCreateEvent event, @NotNull IInteraction interaction,
+                              InteractionType type, EventBlob blob, Exception e) {
+        MessageEmbed componentFailed = getFailedInteractionMessage(type, blob);
+        logInteractionFailure(interaction.getName(), blob, e);
+        if (event.isAcknowledged()) {
+            event.getHook().sendMessageEmbeds(componentFailed).queue();
+        } else event.replyEmbeds(componentFailed).setEphemeral(true).queue();
+    }
+
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getUser().isBot()) return;
@@ -61,6 +82,8 @@ public class InteractionListener extends ListenerAdapter {
         }
 
         var slashManager = manager.getSlashManager();
+        Optional<ICommandSlash> ifSlash = slashManager.getInteraction(event.getName());
+        if (ifSlash.isEmpty()) return;
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
         //Add user to database or ignore if exists
@@ -75,21 +98,13 @@ public class InteractionListener extends ListenerAdapter {
             }
         }
 
-        Optional<ICommandSlash> ifSlash = slashManager.getInteraction(event.getName());
-        MessageEmbed cmdFailed = getFailedInteractionMessage(InteractionType.COMMAND_SLASH, blob);
-
-        if (ifSlash.isPresent()) {
-            ICommandSlash slash = ifSlash.get();
-            log.debug("Command " + slash.getName().toUpperCase() + " called on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
-            try {
-                slash.execute(event, blob);
-            } catch (Exception e) {
-                log.debug("Full command path that triggered error :: [" + event.getFullCommandName() + "]");
-                logInteractionFailure(slash.getName(), blob, e);
-                if (event.isAcknowledged()) {
-                    event.getHook().sendMessageEmbeds(cmdFailed).queue();
-                } else event.replyEmbeds(cmdFailed).setEphemeral(true).queue();
-            }
+        ICommandSlash slash = ifSlash.get();
+        log.debug("Command " + slash.getName().toUpperCase() + " called on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
+        try {
+            slash.execute(event, blob);
+        } catch (Exception e) {
+            log.debug("Full command path that triggered error :: [" + event.getFullCommandName() + "]");
+            errorHandler(event, slash, InteractionType.COMMAND_SLASH, blob, e);
         }
     }
 
@@ -101,21 +116,17 @@ public class InteractionListener extends ListenerAdapter {
         }
 
         var contextManager = manager.getMessageContextManager();
-        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
-
         Optional<ICommandMessage> ifMenu = contextManager.getInteraction(event.getName());
         if (ifMenu.isEmpty()) return;
 
-        MessageEmbed menuFailed = getFailedInteractionMessage(InteractionType.COMMAND_MESSAGE, blob);
+        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
+
         ICommandMessage commandMessage = ifMenu.get();
         log.debug("Command \"" + commandMessage.getName().toUpperCase() + "\" called on %s [%d]".formatted(blob.getGuild().getName(), blob.getGuildIdLong()));
         try {
             commandMessage.execute(event, blob);
         } catch (Exception e) {
-            logInteractionFailure(commandMessage.getName(), blob, e);
-            if (event.isAcknowledged()) {
-                event.getHook().sendMessageEmbeds(menuFailed).queue();
-            } else event.replyEmbeds(menuFailed).setEphemeral(true).queue();
+            errorHandler(event, commandMessage, InteractionType.COMMAND_MESSAGE, blob, e);
         }
     }
 
@@ -127,21 +138,17 @@ public class InteractionListener extends ListenerAdapter {
         }
 
         var contextManager = manager.getUserContextManager();
-        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
-
         Optional<ICommandUser> ifMenu = contextManager.getInteraction(event.getName());
         if (ifMenu.isEmpty()) return;
 
-        MessageEmbed menuFailed = getFailedInteractionMessage(InteractionType.COMMAND_USER, blob);
+        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
+
         ICommandUser commandUser = ifMenu.get();
         log.debug("Command \"" + commandUser.getName().toUpperCase() + "\" called on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
         try {
             commandUser.execute(event, blob);
         } catch (Exception e) {
-            logInteractionFailure(commandUser.getName(), blob, e);
-            if (event.isAcknowledged()) {
-                event.getHook().sendMessageEmbeds(menuFailed).queue();
-            } else event.replyEmbeds(menuFailed).setEphemeral(true).queue();
+            errorHandler(event, commandUser, InteractionType.COMMAND_USER, blob, e);
         }
     }
 
@@ -154,19 +161,17 @@ public class InteractionListener extends ListenerAdapter {
         }
 
         var buttonManager = manager.getButtonManager();
-        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
-
         Optional<IButton> ifButton = buttonManager.getInteraction(event.getButton().getId());
         if (ifButton.isEmpty()) return;
 
-        MessageEmbed buttonFailed = getFailedInteractionMessage(InteractionType.BUTTON, blob);
+        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
+
         IButton iButton = ifButton.get();
         log.debug("Button %s called on %s [%d]".formatted(iButton.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong()));
         try {
             iButton.execute(event, blob);
         } catch (Exception e) {
-            logInteractionFailure(iButton.getName(), blob, e);
-            event.replyEmbeds(buttonFailed).setEphemeral(true).queue();
+            errorHandler(event, iButton, InteractionType.BUTTON, blob, e);
         }
     }
 
@@ -178,21 +183,17 @@ public class InteractionListener extends ListenerAdapter {
         }
 
         var selectMenuManager = manager.getEntitySelectMenuManager();
-        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
-
         Optional<ISelectMenuEntity> ifMenu = selectMenuManager.getInteraction(event.getInteraction().getComponentId());
         if (ifMenu.isEmpty()) return;
 
-        MessageEmbed menuFailed = getFailedInteractionMessage(InteractionType.SELECTION_ENTITY, blob);
+
+        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
         ISelectMenuEntity menu = ifMenu.get();
         log.debug("Select Menu %s called on %s [%d]".formatted(menu.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong()));
         try {
             menu.execute(event, blob);
         } catch (Exception e) {
-            logInteractionFailure(menu.getName(), blob, e);
-            if (event.isAcknowledged()) {
-                event.getHook().sendMessageEmbeds(menuFailed).queue();
-            } else event.replyEmbeds(menuFailed).setEphemeral(true).queue();
+            errorHandler(event, menu, InteractionType.SELECTION_ENTITY, blob, e);
         }
     }
 
@@ -204,17 +205,16 @@ public class InteractionListener extends ListenerAdapter {
         }
 
         var modalManager = manager.getModalManager();
-        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
-
         Optional<IModal> ifModal = modalManager.getInteraction(event.getModalId());
         if (ifModal.isEmpty()) return;
 
-        MessageEmbed modalFailed = getFailedInteractionMessage(InteractionType.MODAL, blob);
+        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
         IModal modal = ifModal.get();
         log.debug("Modal %s called on %s [%d]".formatted(modal.getName().toUpperCase(), blob.getGuild().getName(), blob.getGuildIdLong()));
         try {
             modal.execute(event, blob);
         } catch (Exception e) {
+            MessageEmbed modalFailed = getFailedInteractionMessage(InteractionType.MODAL, blob);
             logInteractionFailure(modal.getName(), blob, e);
             if (event.isAcknowledged()) {
                 event.getHook().sendMessageEmbeds(modalFailed).queue();
@@ -230,14 +230,13 @@ public class InteractionListener extends ListenerAdapter {
         }
 
         var selectMenuManager = manager.getStringSelectMenuManager();
-        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
-
         List<Optional<ISelectMenuString>> ifMenus = new ArrayList<>();
         for (String id : event.getInteraction().getValues()) {
             ifMenus.add(selectMenuManager.getInteraction(id));
         }
+
         String componentId = event.getComponentId();
-        MessageEmbed menuFailed = getFailedInteractionMessage(InteractionType.SELECTION_STRING, blob);
+        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
         for (Optional<ISelectMenuString> ifMenu : ifMenus) {
             if (ifMenu.isPresent()) {
@@ -247,10 +246,7 @@ public class InteractionListener extends ListenerAdapter {
                 try {
                     menu.execute(event, blob);
                 } catch (Exception e) {
-                    logInteractionFailure(interactionName, blob, e);
-                    if (event.isAcknowledged()) {
-                        event.getHook().sendMessageEmbeds(menuFailed).queue();
-                    } else event.replyEmbeds(menuFailed).setEphemeral(true).queue();
+                    errorHandler(event, menu, InteractionType.BUTTON, blob, e);
                 }
             }
         }
