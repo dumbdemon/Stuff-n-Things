@@ -1,7 +1,9 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.terransky.stuffnthings.dataSources.oxfordDictionary.*;
+import com.terransky.stuffnthings.dataSources.oxfordDictionary.OxfordData;
+import com.terransky.stuffnthings.dataSources.oxfordDictionary.OxfordError;
+import com.terransky.stuffnthings.dataSources.oxfordDictionary.Result;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
@@ -26,6 +28,7 @@ import java.text.ParseException;
 import java.util.*;
 
 public class dictionary implements ICommandSlash {
+    private static final int MAX_FIELDS = 25;
     private final Logger log = LoggerFactory.getLogger(dictionary.class);
     private final NavigableMap<String, Locale> langCodes = new TreeMap<>();
     private final List<Command.Choice> langChoices = new ArrayList<>();
@@ -47,23 +50,17 @@ public class dictionary implements ICommandSlash {
         }
     }
 
-    private static void run200(@NotNull SlashCommandInteractionEvent event, EmbedBuilder eb, EmbedBuilder ebOverflow, Map.Entry<String, Locale> language,
-                               String toLookUp, @NotNull HttpURLConnection oxfordConnection, @NotNull ObjectMapper om) throws IOException {
+    private static void run200(@NotNull SlashCommandInteractionEvent event, EmbedBuilder embedBuilder, Locale language, String word,
+                               @NotNull HttpURLConnection oxfordConnection, @NotNull ObjectMapper om) throws IOException {
         OxfordData oxfordData = om.readValue(oxfordConnection.getInputStream(), OxfordData.class);
-        int wordCount = 0;
-        String returnedWord = "";
-        List<MessageEmbed.Field> fieldOverflow = new ArrayList<>();
-
-        for (Result result : oxfordData.getResults().stream().filter(it -> it.getWord().equalsIgnoreCase(toLookUp)).toList()) {
-            returnedWord = result.getWord();
-            wordCount = getWordCount(eb, wordCount, returnedWord, fieldOverflow, result);
-        }
+        List<MessageEmbed.Field> definitionFields = getDefinitionFields(oxfordData.getResults().stream().filter(it -> it.getWord().equalsIgnoreCase(word)).toList());
+        int wordCount = definitionFields.size();
 
         if (wordCount == 0) {
             event.getHook().sendMessageEmbeds(
-                eb.setTitle("Definition - %s".formatted(returnedWord.toUpperCase(language.getValue())))
+                embedBuilder.setTitle("Definition - %s".formatted(word.toUpperCase(language)))
                     .setDescription("%s is in the dictionary; however, there appears to be no definitions. Try using a different variation of the word."
-                        .formatted(WordUtils.capitalize(returnedWord))
+                        .formatted(WordUtils.capitalize(word))
                     ).build()
             ).queue();
             return;
@@ -71,59 +68,70 @@ public class dictionary implements ICommandSlash {
 
         boolean moreThanOne = wordCount > 1;
 
-        eb.setTitle("Definition - %s".formatted(returnedWord.toUpperCase(language.getValue())))
+        embedBuilder.setTitle("Definition - %s".formatted(word.toUpperCase(language)))
             .setDescription("There %s %d *%s* definition%s for *%s*.%s"
                 .formatted(
                     moreThanOne ? "are" : "is",
                     wordCount,
-                    language.getKey(),
+                    language.getDisplayName(),
                     moreThanOne ? "s" : "",
-                    returnedWord,
-                    language.getKey().endsWith("English") ? "" : "\n\n**Warning**: You are searching in a language other than English. Certain characters may not show if your browser/device does not support it."
+                    word,
+                    language.getDisplayName().contains("English") ? "" :
+                        "\n\n**Warning**: You are searching in a language other than English. Certain characters may not show if your browser/device does not support it."
                 )
             );
 
-        if (fieldOverflow.size() > 0) {
-            ebOverflow.setTitle("Definition - %s cont.".formatted(returnedWord.toUpperCase(language.getValue())));
-            for (MessageEmbed.Field field : fieldOverflow) {
-                ebOverflow.addField(field);
+        int stopHere = Math.min(MAX_FIELDS, wordCount);
+        for (int i = 0; i < stopHere; i++) {
+            embedBuilder.addField(definitionFields.get(i));
+        }
+
+        if (wordCount > MAX_FIELDS) {
+            EmbedBuilder ebOverflow = new EmbedBuilder(embedBuilder)
+                .setColor(EmbedColors.getSecondary());
+            for (int i = MAX_FIELDS; i < wordCount; i++) {
+                ebOverflow.addField(definitionFields.get(i));
             }
-            event.getHook().sendMessageEmbeds(eb.build(), ebOverflow.build()).queue();
-        } else event.getHook().sendMessageEmbeds(eb.build()).queue();
+            event.getHook().sendMessageEmbeds(embedBuilder.build(), ebOverflow.build()).queue();
+            return;
+        }
+
+        event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
     }
 
-    private static int getWordCount(EmbedBuilder eb, int wordCount, String returnedWord, List<MessageEmbed.Field> fieldOverflow, @NotNull Result result) {
-        for (LexicalEntry lexicalEntry : result.getLexicalEntries()) {
-            for (Entry entry : lexicalEntry.getEntries()) {
-                for (Sense sens : entry.getSenses()) {
-                    String fieldTitle;
-                    for (String definition : sens.getDefinitions()) {
-                        fieldTitle = "%s — *%s*.".formatted(WordUtils.capitalize(returnedWord), lexicalEntry.getLexicalCategory().getText());
-                        if (wordCount < 25) {
-                            eb.addField(fieldTitle, "```%s```".formatted(definition), false);
-                        } else {
-                            fieldOverflow.add(new MessageEmbed.Field(fieldTitle, "```%s```".formatted(definition), false));
-                        }
-                        wordCount++;
-                    }
-                    if (!sens.getSubsenses().isEmpty()) {
-                        for (Subsense subsets : sens.getSubsenses()) {
-                            for (String subsetsDefinition : subsets.getDefinitions()) {
-                                fieldTitle = "˪ %s — *%s*."
-                                    .formatted(WordUtils.capitalize(returnedWord), lexicalEntry.getLexicalCategory().getText());
-                                if (wordCount < 25) {
-                                    eb.addField(fieldTitle, "```%s```".formatted(subsetsDefinition), false);
-                                } else {
-                                    fieldOverflow.add(new MessageEmbed.Field(fieldTitle, "```%s```".formatted(subsetsDefinition), false));
-                                }
-                                wordCount++;
+    @NotNull
+    private static List<MessageEmbed.Field> getDefinitionFields(@NotNull List<Result> results) {
+        List<MessageEmbed.Field> fields = new ArrayList<>();
+        results.forEach(result -> {
+                String returnedWord = result.getWord();
+                result.getLexicalEntries().forEach(lexicalEntry ->
+                    lexicalEntry.getEntries().forEach(entry ->
+                        entry.getSenses().forEach(sense -> {
+                                final String[] fieldTitle = {""};
+                                sense.getDefinitions().forEach(definition -> {
+                                    fieldTitle[0] = "%s — *%s*.".formatted(WordUtils.capitalize(returnedWord), lexicalEntry.getLexicalCategory().getText());
+                                    fields.add(getField(fieldTitle[0], definition));
+                                    sense.getSubsenses().forEach(subsense ->
+                                        subsense.getDefinitions()
+                                            .forEach(subDefinition -> {
+                                                fieldTitle[0] = "˪ %s — *%s*."
+                                                    .formatted(WordUtils.capitalize(returnedWord), lexicalEntry.getLexicalCategory().getText());
+                                                fields.add(getField(fieldTitle[0], subDefinition));
+                                            })
+                                    );
+                                });
                             }
-                        }
-                    }
-                }
+                        )
+                    )
+                );
             }
-        }
-        return wordCount;
+        );
+        return fields;
+    }
+
+    @NotNull
+    private static MessageEmbed.Field getField(String fieldTitle, String definition) {
+        return new MessageEmbed.Field(fieldTitle, "```%s```".formatted(definition), false);
     }
 
     @Override
@@ -142,7 +150,7 @@ public class dictionary implements ICommandSlash {
             Mastermind.DEVELOPER,
             SlashModule.FUN,
             format.parse("27-10-2022_12:46"),
-            format.parse("29-12-2022_10:14")
+            format.parse("3-1-2022_18:31")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "word", "The word to look up.", true),
@@ -160,8 +168,6 @@ public class dictionary implements ICommandSlash {
             .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
             .setImage("https://languages.oup.com/wp-content/uploads/ol-logo-colour-300px-sfw.jpg")
             .setColor(EmbedColors.getDefault());
-        EmbedBuilder ebOverflow = new EmbedBuilder(eb)
-            .setColor(EmbedColors.getSecondary());
         if (userWords.length > 1) {
             event.getHook().sendMessageEmbeds(
                 eb.setDescription("Only one word can be looked up at one time. Please try again.")
@@ -184,7 +190,7 @@ public class dictionary implements ICommandSlash {
         ObjectMapper om = new ObjectMapper();
 
         switch (responseCode) {
-            case 200 -> run200(event, eb, ebOverflow, language, toLookUp, oxfordConnection, om);
+            case 200 -> run200(event, eb, language.getValue(), toLookUp, oxfordConnection, om);
             case 400 -> {
                 event.getHook().sendMessageEmbeds(
                     eb.setDescription(("Unable to get the definition of [%s]. Make sure you have typed the word correctly," +
