@@ -38,6 +38,15 @@ public interface ICommand extends IInteraction {
     }
 
     /**
+     * Whether this command can only be run by the Owner or by anyone.
+     *
+     * @return False unless otherwise.
+     */
+    default boolean isOwnerOnly() {
+        return false;
+    }
+
+    /**
      * If guild command, which guild(s) can it be used in.
      *
      * @return {@link List} of Guild IDs.

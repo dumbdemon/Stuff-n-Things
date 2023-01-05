@@ -73,6 +73,17 @@ public class InteractionListener extends ListenerAdapter {
         } else event.replyEmbeds(componentFailed).setEphemeral(true).queue();
     }
 
+    private void commandIsOwnerOnly(@NotNull GenericCommandInteractionEvent event, @NotNull EventBlob blob,
+                                    @NotNull IInteractionType type) {
+        String typeName = type.getName();
+        event.replyEmbeds(new EmbedBuilder()
+            .setTitle(String.format("%s is Owner Only", typeName))
+            .setDescription(String.format("This %s can only be ran by the only only.", typeName))
+            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+            .build()
+        ).setEphemeral(true).queue();
+    }
+
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getUser().isBot()) return;
@@ -100,6 +111,12 @@ public class InteractionListener extends ListenerAdapter {
 
         ICommandSlash slash = ifSlash.get();
         log.debug("Command " + slash.getName().toUpperCase() + " called on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
+
+        if (slash.isOwnerOnly() && !blob.getMember().isOwner()) {
+            commandIsOwnerOnly(event, blob, IInteractionType.COMMAND_SLASH);
+            return;
+        }
+
         try {
             slash.execute(event, blob);
         } catch (Exception e) {
@@ -123,6 +140,12 @@ public class InteractionListener extends ListenerAdapter {
 
         ICommandMessage commandMessage = ifMenu.get();
         log.debug("Command \"" + commandMessage.getName().toUpperCase() + "\" called on %s [%d]".formatted(blob.getGuild().getName(), blob.getGuildIdLong()));
+
+        if (commandMessage.isOwnerOnly() && !blob.getMember().isOwner()) {
+            commandIsOwnerOnly(event, blob, IInteractionType.COMMAND_MESSAGE);
+            return;
+        }
+
         try {
             commandMessage.execute(event, blob);
         } catch (Exception e) {
@@ -145,6 +168,12 @@ public class InteractionListener extends ListenerAdapter {
 
         ICommandUser commandUser = ifMenu.get();
         log.debug("Command \"" + commandUser.getName().toUpperCase() + "\" called on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
+
+        if (commandUser.isOwnerOnly() && !blob.getMember().isOwner()) {
+            commandIsOwnerOnly(event, blob, IInteractionType.COMMAND_USER);
+            return;
+        }
+
         try {
             commandUser.execute(event, blob);
         } catch (Exception e) {
