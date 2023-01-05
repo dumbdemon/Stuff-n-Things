@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.interfaces.interactions;
 
 import com.terransky.stuffnthings.utilities.command.EventBlob;
-import com.terransky.stuffnthings.utilities.general.InteractionType;
+import com.terransky.stuffnthings.utilities.general.IInteractionType;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -25,7 +25,7 @@ public interface ICommandMessage extends ICommand {
     void execute(@NotNull MessageContextInteractionEvent event, @NotNull EventBlob blob) throws Exception;
 
     @Override
-    default InteractionType getInteractionType() {
-        return InteractionType.COMMAND_MESSAGE;
+    default IInteractionType getInteractionType() {
+        return IInteractionType.COMMAND_MESSAGE;
     }
 }

@@ -9,7 +9,7 @@ import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.Config;
-import com.terransky.stuffnthings.utilities.general.InteractionType;
+import com.terransky.stuffnthings.utilities.general.IInteractionType;
 import com.terransky.stuffnthings.utilities.general.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -40,7 +40,7 @@ public class InteractionListener extends ListenerAdapter {
     private final ManagersManager manager = new ManagersManager();
 
     @NotNull
-    private MessageEmbed getFailedInteractionMessage(InteractionType interaction, @NotNull EventBlob blob) {
+    private MessageEmbed getFailedInteractionMessage(IInteractionType interaction, @NotNull EventBlob blob) {
         return new EmbedBuilder()
             .setTitle("Oops!")
             .setDescription(Responses.INTERACTION_FAILED.getMessage(interaction))
@@ -56,7 +56,7 @@ public class InteractionListener extends ListenerAdapter {
     }
 
     private void errorHandler(@NotNull GenericCommandInteractionEvent event, @NotNull IInteraction interaction,
-                              InteractionType type, EventBlob blob, Exception e) {
+                              IInteractionType type, EventBlob blob, Exception e) {
         MessageEmbed commandFailed = getFailedInteractionMessage(type, blob);
         logInteractionFailure(interaction.getName(), blob, e);
         if (event.isAcknowledged()) {
@@ -65,7 +65,7 @@ public class InteractionListener extends ListenerAdapter {
     }
 
     private void errorHandler(@NotNull GenericComponentInteractionCreateEvent event, @NotNull IInteraction interaction,
-                              InteractionType type, EventBlob blob, Exception e) {
+                              IInteractionType type, EventBlob blob, Exception e) {
         MessageEmbed componentFailed = getFailedInteractionMessage(type, blob);
         logInteractionFailure(interaction.getName(), blob, e);
         if (event.isAcknowledged()) {
@@ -77,7 +77,7 @@ public class InteractionListener extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getUser().isBot()) return;
         else if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, InteractionType.COMMAND_SLASH);
+            GuildOnly.interactionResponse(event, IInteractionType.COMMAND_SLASH);
             return;
         }
 
@@ -104,14 +104,14 @@ public class InteractionListener extends ListenerAdapter {
             slash.execute(event, blob);
         } catch (Exception e) {
             log.debug("Full command path that triggered error :: [" + event.getFullCommandName() + "]");
-            errorHandler(event, slash, InteractionType.COMMAND_SLASH, blob, e);
+            errorHandler(event, slash, IInteractionType.COMMAND_SLASH, blob, e);
         }
     }
 
     @Override
     public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, InteractionType.COMMAND_MESSAGE);
+            GuildOnly.interactionResponse(event, IInteractionType.COMMAND_MESSAGE);
             return;
         }
 
@@ -126,14 +126,14 @@ public class InteractionListener extends ListenerAdapter {
         try {
             commandMessage.execute(event, blob);
         } catch (Exception e) {
-            errorHandler(event, commandMessage, InteractionType.COMMAND_MESSAGE, blob, e);
+            errorHandler(event, commandMessage, IInteractionType.COMMAND_MESSAGE, blob, e);
         }
     }
 
     @Override
     public void onUserContextInteraction(@NotNull UserContextInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, InteractionType.COMMAND_USER);
+            GuildOnly.interactionResponse(event, IInteractionType.COMMAND_USER);
             return;
         }
 
@@ -148,7 +148,7 @@ public class InteractionListener extends ListenerAdapter {
         try {
             commandUser.execute(event, blob);
         } catch (Exception e) {
-            errorHandler(event, commandUser, InteractionType.COMMAND_USER, blob, e);
+            errorHandler(event, commandUser, IInteractionType.COMMAND_USER, blob, e);
         }
     }
 
@@ -156,7 +156,7 @@ public class InteractionListener extends ListenerAdapter {
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         if (event.getButton().getId() == null) return;
         else if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, InteractionType.BUTTON);
+            GuildOnly.interactionResponse(event, IInteractionType.BUTTON);
             return;
         }
 
@@ -171,14 +171,14 @@ public class InteractionListener extends ListenerAdapter {
         try {
             iButton.execute(event, blob);
         } catch (Exception e) {
-            errorHandler(event, iButton, InteractionType.BUTTON, blob, e);
+            errorHandler(event, iButton, IInteractionType.BUTTON, blob, e);
         }
     }
 
     @Override
     public void onEntitySelectInteraction(@NotNull EntitySelectInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, InteractionType.SELECTION_ENTITY);
+            GuildOnly.interactionResponse(event, IInteractionType.SELECTION_ENTITY);
             return;
         }
 
@@ -193,14 +193,14 @@ public class InteractionListener extends ListenerAdapter {
         try {
             menu.execute(event, blob);
         } catch (Exception e) {
-            errorHandler(event, menu, InteractionType.SELECTION_ENTITY, blob, e);
+            errorHandler(event, menu, IInteractionType.SELECTION_ENTITY, blob, e);
         }
     }
 
     @Override
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, InteractionType.MODAL);
+            GuildOnly.interactionResponse(event, IInteractionType.MODAL);
             return;
         }
 
@@ -214,7 +214,7 @@ public class InteractionListener extends ListenerAdapter {
         try {
             modal.execute(event, blob);
         } catch (Exception e) {
-            MessageEmbed modalFailed = getFailedInteractionMessage(InteractionType.MODAL, blob);
+            MessageEmbed modalFailed = getFailedInteractionMessage(IInteractionType.MODAL, blob);
             logInteractionFailure(modal.getName(), blob, e);
             if (event.isAcknowledged()) {
                 event.getHook().sendMessageEmbeds(modalFailed).queue();
@@ -225,7 +225,7 @@ public class InteractionListener extends ListenerAdapter {
     @Override
     public void onStringSelectInteraction(@NotNull StringSelectInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, InteractionType.SELECTION_STRING);
+            GuildOnly.interactionResponse(event, IInteractionType.SELECTION_STRING);
             return;
         }
 
@@ -246,7 +246,7 @@ public class InteractionListener extends ListenerAdapter {
                 try {
                     menu.execute(event, blob);
                 } catch (Exception e) {
-                    errorHandler(event, menu, InteractionType.BUTTON, blob, e);
+                    errorHandler(event, menu, IInteractionType.BUTTON, blob, e);
                 }
             }
         }

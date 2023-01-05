@@ -2,7 +2,7 @@ package com.terransky.stuffnthings.utilities.general;
 
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 
-public enum InteractionType {
+public enum IInteractionType {
 
     UNKNOWN(-1, "UNKNOWN", 0), //For future interactions
     COMMAND_SLASH(0, "Slash Command", Commands.MAX_SLASH_COMMANDS, true),
@@ -18,15 +18,15 @@ public enum InteractionType {
     private final int maximum;
     private final boolean hasDedicatedManager;
 
-    InteractionType(int id, String name) {
+    IInteractionType(int id, String name) {
         this(id, name, Integer.MAX_VALUE, false);
     }
 
-    InteractionType(int id, String name, int maximum) {
+    IInteractionType(int id, String name, int maximum) {
         this(id, name, maximum, false);
     }
 
-    InteractionType(int id, String name, int maximum, boolean hasDedicatedManager) {
+    IInteractionType(int id, String name, int maximum, boolean hasDedicatedManager) {
         this.id = id;
         this.name = name;
         this.maximum = maximum;

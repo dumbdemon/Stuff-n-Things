@@ -2,7 +2,7 @@ package com.terransky.stuffnthings.interfaces.interactions;
 
 import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
-import com.terransky.stuffnthings.utilities.general.InteractionType;
+import com.terransky.stuffnthings.utilities.general.IInteractionType;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +19,7 @@ public interface ISelectMenuEntity extends IInteraction {
     void execute(@NotNull EntitySelectInteractionEvent event, @NotNull EventBlob blob) throws Exception;
 
     @Override
-    default InteractionType getInteractionType() {
-        return InteractionType.SELECTION_ENTITY;
+    default IInteractionType getInteractionType() {
+        return IInteractionType.SELECTION_ENTITY;
     }
 }

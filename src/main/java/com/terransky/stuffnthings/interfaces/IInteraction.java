@@ -1,6 +1,6 @@
 package com.terransky.stuffnthings.interfaces;
 
-import com.terransky.stuffnthings.utilities.general.InteractionType;
+import com.terransky.stuffnthings.utilities.general.IInteractionType;
 import org.jetbrains.annotations.NotNull;
 
 public interface IInteraction extends Comparable<IInteraction> {
@@ -15,9 +15,9 @@ public interface IInteraction extends Comparable<IInteraction> {
     /**
      * Get the interaction type.
      *
-     * @return An {@link InteractionType}.
+     * @return An {@link IInteractionType}.
      */
-    InteractionType getInteractionType();
+    IInteractionType getInteractionType();
 
     @Override
     default int compareTo(@NotNull IInteraction iInteraction) {
