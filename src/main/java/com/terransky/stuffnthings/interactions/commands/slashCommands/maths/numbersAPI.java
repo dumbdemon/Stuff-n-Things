@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormatSymbols;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -30,6 +31,7 @@ public class numbersAPI implements ICommandSlash {
 
     private final NavigableMap<Integer, Integer> dayLimits = new TreeMap<>();
     private final Logger log = LoggerFactory.getLogger(numbersAPI.class);
+    private final DecimalFormat intFormatter = new DecimalFormat("###");
 
     {
         dayLimits.put(1, 31);
@@ -99,10 +101,10 @@ public class numbersAPI implements ICommandSlash {
     }
 
     private void apiYear(@NotNull SlashCommandInteractionEvent event, String theUrl, EmbedBuilder eb) throws IOException {
-        Optional<Double> year = Optional.ofNullable(event.getOption("year", OptionMapping::getAsDouble));
+        Optional<Double> ifYear = Optional.ofNullable(event.getOption("year", OptionMapping::getAsDouble));
 
-        if (year.isPresent())
-            theUrl += (year.get() + "/year").replace(".0/", "/");
+        if (ifYear.isPresent())
+            theUrl += (intFormatter.format(ifYear.get()) + "/year");
         else
             theUrl += "random/year";
 
@@ -114,7 +116,7 @@ public class numbersAPI implements ICommandSlash {
         NumbersAPIData numbersAPIData = new ObjectMapper().readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
         String text = numbersAPIData.getText();
         String date = numbersAPIData.getDate();
-        Double actYear = year.orElse(numbersAPIData.getNumber());
+        double year = ifYear.orElse(numbersAPIData.getNumber());
 
         if (date == null) {
             date = "Year of";
@@ -123,14 +125,14 @@ public class numbersAPI implements ICommandSlash {
         }
 
         String yearStr;
-        if (actYear < 0d) {
-            yearStr = Math.abs(actYear) + " BC";
-        } else yearStr = String.valueOf(actYear);
+        if (year < 0.0) {
+            yearStr = intFormatter.format(Math.abs(year)) + " BC";
+        } else yearStr = intFormatter.format(year);
 
         event.getHook().sendMessageEmbeds(
             eb.setTitle("Random Year Fact")
                 .setDescription(text)
-                .addField("Date", "%s %s".formatted(date, yearStr).replace(".0", ""), false)
+                .addField("Date", "%s %s".formatted(date, yearStr), false)
                 .build()
         ).queue();
     }
@@ -184,24 +186,19 @@ public class numbersAPI implements ICommandSlash {
         numbersAPI.addRequestProperty("Content-Type", "application/json");
 
         NumbersAPIData numbersAPIData = new ObjectMapper().readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
-        String text = numbersAPIData.getText();
-        double year = numbersAPIData.getYear();
+        String text = numbersAPIData.getText(),
+            year = intFormatter.format(numbersAPIData.getYear());
 
         if (uMonth.isEmpty()) {
             String[] tempStr = text.split(" ");
             monthString = tempStr[0];
-            day = Integer.parseInt(tempStr[1]
-                .replace("st", "")
-                .replace("nd", "")
-                .replace("rd", "")
-                .replace("th", "")
-            );
+            day = Integer.parseInt(tempStr[1].replaceAll("st|nd|rd|th", ""));
         }
 
         event.getHook().sendMessageEmbeds(
             eb.setTitle("NumbersAPI Date Fact")
                 .setDescription(text)
-                .addField("Date", "%s %s, %s".formatted(monthString, day, year).replace(".0", ""), false)
+                .addField("Date", "%s %s, %s".formatted(monthString, day, year), false)
                 .build()
         ).queue();
     }
@@ -209,7 +206,7 @@ public class numbersAPI implements ICommandSlash {
     private void apiMath(@NotNull SlashCommandInteractionEvent event, String theUrl, EmbedBuilder eb) throws IOException {
         Optional<Double> ifNumber = Optional.ofNullable(event.getOption("m-number", OptionMapping::getAsDouble));
         if (ifNumber.isPresent())
-            theUrl += (ifNumber.get() + "/math").replace(".0/", "/");
+            theUrl += (intFormatter.format(ifNumber.get()) + "/math");
         else
             theUrl += "random/math";
 
@@ -219,13 +216,13 @@ public class numbersAPI implements ICommandSlash {
         numbersAPI.addRequestProperty("Content-Type", "application/json");
 
         NumbersAPIData numbersAPIData = new ObjectMapper().readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
-        String text = numbersAPIData.getText();
-        double actNumber = numbersAPIData.getNumber();
+        String text = numbersAPIData.getText(),
+            actNumber = intFormatter.format(numbersAPIData.getNumber());
 
         event.getHook().sendMessageEmbeds(
             eb.setTitle("NumbersAPI Math Fact")
                 .setDescription(text)
-                .addField("Number", String.valueOf(actNumber).replace(".0", ""), false)
+                .addField("Number", actNumber, false)
                 .build()
         ).queue();
     }
@@ -234,7 +231,7 @@ public class numbersAPI implements ICommandSlash {
         Optional<Double> number = Optional.ofNullable(event.getOption("n-number", OptionMapping::getAsDouble));
 
         if (number.isPresent())
-            theUrl += String.valueOf(number.get()).replace(".0", "");
+            theUrl += intFormatter.format(number.get());
         else
             theUrl += "random";
 
@@ -244,13 +241,13 @@ public class numbersAPI implements ICommandSlash {
         numbersAPI.addRequestProperty("Content-Type", "application/json");
 
         NumbersAPIData numbersAPIData = new ObjectMapper().readValue(numbersAPI.getInputStream(), NumbersAPIData.class);
-        String text = numbersAPIData.getText();
-        double actNumber = numbersAPIData.getNumber();
+        String text = numbersAPIData.getText(),
+            actNumber = intFormatter.format(numbersAPIData.getNumber());
 
         event.getHook().sendMessageEmbeds(
             eb.setTitle("NumbersAPI Number Fact")
                 .setDescription(text)
-                .addField("Number", String.valueOf(actNumber).replace(".0", ""), false)
+                .addField("Number", actNumber, false)
                 .build()
         ).queue();
     }
