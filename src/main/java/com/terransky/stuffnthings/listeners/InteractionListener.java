@@ -78,7 +78,18 @@ public class InteractionListener extends ListenerAdapter {
         String typeName = type.getName();
         event.replyEmbeds(new EmbedBuilder()
             .setTitle(String.format("%s is Owner Only", typeName))
-            .setDescription(String.format("This %s can only be ran by the only only.", typeName))
+            .setDescription(String.format("This %s can only be ran by the Owner.", typeName))
+            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+            .build()
+        ).setEphemeral(true).queue();
+    }
+
+    private void commandIsDevsOnly(@NotNull GenericCommandInteractionEvent event, @NotNull EventBlob blob,
+                                   @NotNull IInteractionType type) {
+        String typeName = type.getName();
+        event.replyEmbeds(new EmbedBuilder()
+            .setTitle(String.format("%s is for De Only", typeName))
+            .setDescription(String.format("This %s can only be ran by Developers.", typeName))
             .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build()
         ).setEphemeral(true).queue();
@@ -117,6 +128,11 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
+        if (slash.isDeveloperCommand() && !blob.getMemberId().equals(Config.getOwnerId())) {
+            commandIsDevsOnly(event, blob, IInteractionType.COMMAND_SLASH);
+            return;
+        }
+
         try {
             slash.execute(event, blob);
         } catch (Exception e) {
@@ -146,6 +162,11 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
+        if (commandMessage.isDeveloperCommand() && !blob.getMemberId().equals(Config.getOwnerId())) {
+            commandIsDevsOnly(event, blob, IInteractionType.COMMAND_MESSAGE);
+            return;
+        }
+
         try {
             commandMessage.execute(event, blob);
         } catch (Exception e) {
@@ -171,6 +192,11 @@ public class InteractionListener extends ListenerAdapter {
 
         if (commandUser.isOwnerOnly() && !blob.getMember().isOwner()) {
             commandIsOwnerOnly(event, blob, IInteractionType.COMMAND_USER);
+            return;
+        }
+
+        if (commandUser.isDeveloperCommand() && !blob.getMemberId().equals(Config.getOwnerId())) {
+            commandIsDevsOnly(event, blob, IInteractionType.COMMAND_USER);
             return;
         }
 

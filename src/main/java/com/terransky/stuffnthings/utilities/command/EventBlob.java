@@ -2,6 +2,7 @@ package com.terransky.stuffnthings.utilities.command;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 
 import java.util.Objects;
 
@@ -73,8 +74,18 @@ public class EventBlob {
         return getMember().getEffectiveAvatarUrl();
     }
 
+    /**
+     * @see User#getAsTag()
+     */
     public String getMemberAsTag() {
         return getMember().getUser().getAsTag();
+    }
+
+    /**
+     * @see Member#getId()
+     */
+    public String getMemberId() {
+        return getMember().getId();
     }
 
     @Override
