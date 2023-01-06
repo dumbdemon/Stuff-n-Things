@@ -38,11 +38,15 @@ public interface ICommand extends IInteraction {
     }
 
     /**
-     * Whether this command can only be run by the Owner or by anyone.
+     * Whether this command can only be run by the Server's Owner or by anyone.
      *
      * @return False unless otherwise.
      */
     default boolean isOwnerOnly() {
+        return false;
+    }
+
+    default boolean isDeveloperCommand() {
         return false;
     }
 

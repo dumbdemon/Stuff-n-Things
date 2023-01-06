@@ -7,6 +7,7 @@ import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.chec
 import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.configCmd;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.devs.getInvite;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.devs.test;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.devs.tinyURL;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.devs.userInfo;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.*;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.general.about;
@@ -58,6 +59,7 @@ public class ManagersManager {
         //Dev commands
         new getInvite(),
         new test(),
+        new tinyURL(),
         new userInfo()
     );
 

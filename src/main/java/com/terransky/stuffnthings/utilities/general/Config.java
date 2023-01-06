@@ -11,23 +11,23 @@ public class Config {
 
     //Main Stuff
     public static String getToken() {
-        return config.get("TOKEN");
+        return config.get("TOKEN", "");
     }
 
     public static boolean isTestingMode() {
-        return config.get("TESTING_MODE").equals("true");
+        return config.get("TESTING_MODE", "false").equals("true");
     }
 
     public static boolean isDatabaseEnabled() {
-        return config.get("ENABLE_DATABASE").equals("true");
+        return config.get("ENABLE_DATABASE", "false").equals("true");
     }
 
     public static String getOwnerId() {
-        return config.get("OWNER_ID");
+        return config.get("OWNER_ID", "000000000000000000");
     }
 
     public static String getSupportGuildId() {
-        return config.get("SUPPORT_GUILD_ID");
+        return config.get("SUPPORT_GUILD_ID", "0000000000000000000");
     }
 
     public static long getSupportGuildIdLong() {
@@ -35,44 +35,52 @@ public class Config {
     }
 
     public static String getSupportGuildInvite() {
-        return config.get("SUPPORT_GUILD_INVITE");
+        return config.get("SUPPORT_GUILD_INVITE", "");
     }
 
     public static String getErrorReportingURL() {
-        return config.get("BOT_ERROR_REPORT");
+        return config.get("BOT_ERROR_REPORT", "");
     }
 
     public static String getBotLogoURL() {
-        return config.get("BOT_LOGO");
+        return config.get("BOT_LOGO", "");
     }
 
     public static String getBotUserAgent() {
-        return config.get("BOT_USER_AGENT");
+        return config.get("BOT_USER_AGENT", "");
     }
 
     public static String getRepositoryURL() {
-        return config.get("REPO_LINK");
+        return config.get("REPO_LINK", "");
     }
 
     public static String getRequestWebhookURL() {
-        return config.get("REQUEST_WEBHOOK");
+        return config.get("REQUEST_WEBHOOK", "");
     }
 
     //Database credentials
     public static String getDBUsername() {
-        return config.get("DB_USERNAME");
+        return config.get("DB_USERNAME", "username");
     }
 
     public static String getDBPassword() {
-        return config.get("DB_PASSWORD");
+        return config.get("DB_PASSWORD", "?123456789");
     }
 
     //Other Tokens
     public static String getOxfordId() {
-        return config.get("OXFORD_ID");
+        return config.get("OXFORD_ID", "");
     }
 
     public static String getOxfordKey() {
-        return config.get("OXFORD_KEY");
+        return config.get("OXFORD_KEY", "");
+    }
+
+    public static String getTinyURLToken() {
+        return config.get("TINY_URL_TOKEN", "");
+    }
+
+    public static String getTinyURlDomain() {
+        return config.get("TINY_URL_DOMAIN", "");
     }
 }
