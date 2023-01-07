@@ -20,9 +20,9 @@ import java.util.List;
 public class TinyURLNoData {
 
     @JsonProperty("code")
-    private int code;
+    int code;
     @JsonProperty("errors")
-    private List<String> errors = new ArrayList<>();
+    List<String> errors = new ArrayList<>();
 
     @JsonProperty("code")
     public int getCode() {

@@ -1,16 +1,14 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.devs;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.stuffnthings.dataSources.tinyURL.Data;
 import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLData;
-import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLNoData;
 import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLRequestBuilder;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
+import com.terransky.stuffnthings.utilities.general.TinyURLHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -19,27 +17,16 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.text.ParseException;
-import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class tinyURL implements ICommandSlash {
     private static void oops(@NotNull SlashCommandInteractionEvent event, String url, String requestData,
-                             EmbedBuilder builder, @NotNull HttpResponse<String> response) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
+                             EmbedBuilder builder, @NotNull TinyURLData shortURLData) {
         StringBuilder stringBuilder = new StringBuilder();
-        TinyURLNoData shortURLNoData = mapper.readValue(response.body(), TinyURLNoData.class);
-        List<String> errors = shortURLNoData.getErrors();
+        List<String> errors = shortURLData.getErrors();
         for (String error : errors) {
             stringBuilder.append(errors.indexOf(error) + 1)
                 .append(" >> ")
@@ -92,59 +79,26 @@ public class tinyURL implements ICommandSlash {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+        event.deferReply().queue();
         Optional<String> ifUrl = Optional.ofNullable(event.getOption("url", OptionMapping::getAsString)),
             alias = Optional.ofNullable(event.getOption("alias", OptionMapping::getAsString));
-        String url = ifUrl.orElseThrow(DiscordAPIException::new),
-            requestData;
-        ObjectMapper mapper = new ObjectMapper();
+        String url = ifUrl.orElseThrow(DiscordAPIException::new);
         EmbedBuilder builder = new EmbedBuilder()
             .setTitle(getNameReadable())
-            .setColor(EmbedColors.getError())
+            .setColor(EmbedColors.getDefault())
             .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
 
-        try {
-            var requestDataBuilder = new TinyURLRequestBuilder(url)
-                .withDomain(TinyURLRequestBuilder.Domains.ONE)
-                .withTags("");
-            alias.ifPresent(requestDataBuilder::withAlias);
-            requestData = requestDataBuilder.build();
-        } catch (MalformedURLException | URISyntaxException ignored) {
-            event.replyEmbeds(builder
-                .setDescription("You have entered an invalid URL. Please verify what was given and try again.")
-                .addField("Given", url, false)
-                .setColor(EmbedColors.getError())
-                .build()
-            ).setEphemeral(true).queue();
+        TinyURLRequestBuilder requestBuilder = new TinyURLRequestBuilder(url);
+        alias.ifPresent(requestBuilder::withAlias);
+
+        TinyURLHandler tinyURLHandler = new TinyURLHandler(requestBuilder);
+        TinyURLData shortURLData = tinyURLHandler.sendRequest();
+        String requestData = tinyURLHandler.getRequestBody();
+
+        if (shortURLData.getCode() != 0) {
+            oops(event, url, requestData, builder, shortURLData);
             return;
         }
-
-        event.deferReply().queue();
-
-        ExecutorService service = Executors.newSingleThreadExecutor();
-        HttpClient client = HttpClient.newBuilder()
-            .followRedirects(HttpClient.Redirect.ALWAYS)
-            .connectTimeout(Duration.ofSeconds(5))
-            .executor(service)
-            .build();
-        HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("https://api.tinyurl.com/create?api_token=" + Config.getTinyURLToken()))
-            .setHeader("accept", "application/json")
-            .setHeader("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(requestData))
-            .build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        TinyURLData shortURLData = null;
-
-        try {
-            shortURLData = mapper.readValue(response.body(), TinyURLData.class);
-        } catch (Exception ignored) {
-            oops(event, url, requestData, builder, response);
-        } finally {
-            service.shutdownNow();
-            System.gc();
-        }
-        if (shortURLData == null) return;
 
         Data urlData = shortURLData.getData();
         String shortenURL = urlData.getTinyUrl();
