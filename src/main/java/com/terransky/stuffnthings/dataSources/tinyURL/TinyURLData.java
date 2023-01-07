@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.annotation.Generated;
-import java.util.ArrayList;
-import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -15,14 +13,10 @@ import java.util.List;
     "errors"
 })
 @Generated("jsonschema2pojo")
-public class TinyURLData {
+public class TinyURLData extends TinyURLNoData {
 
     @JsonProperty("data")
     private Data data;
-    @JsonProperty("code")
-    private int code;
-    @JsonProperty("errors")
-    private List<String> errors = new ArrayList<>();
 
     @JsonProperty("data")
     public Data getData() {
@@ -32,25 +26,5 @@ public class TinyURLData {
     @JsonProperty("data")
     public void setData(Data data) {
         this.data = data;
-    }
-
-    @JsonProperty("code")
-    public int getCode() {
-        return code;
-    }
-
-    @JsonProperty("code")
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    @JsonProperty("errors")
-    public List<String> getErrors() {
-        return errors;
-    }
-
-    @JsonProperty("errors")
-    public void setErrors(List<String> errors) {
-        this.errors = errors;
     }
 }
