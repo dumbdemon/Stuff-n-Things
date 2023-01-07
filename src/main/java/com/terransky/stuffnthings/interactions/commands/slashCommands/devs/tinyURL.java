@@ -64,18 +64,13 @@ public class tinyURL implements ICommandSlash {
         return "tinyurl";
     }
 
-    @Override
-    public boolean isWorking() {
-        return Config.isTestingMode();
-    }
-
     /**
      * Production bot requires that the devs have <a href="https://tinyurl.com/app/pricing">TinyURL Pro</a> for this command due
      * to potentially hitting the API limit of 600 per month.
      */
     @Override
     public boolean isDeveloperCommand() {
-        return false;
+        return true;
     }
 
     @Override
