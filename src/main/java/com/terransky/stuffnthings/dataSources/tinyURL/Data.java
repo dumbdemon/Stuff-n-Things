@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.annotation.Generated;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -14,8 +15,10 @@ import java.util.List;
     "alias",
     "deleted",
     "archived",
-    "tags",
     "analytics",
+    "tags",
+    "created_at",
+    "expires_at",
     "tiny_url",
     "url"
 })
@@ -31,9 +34,13 @@ public class Data {
     @JsonProperty("archived")
     private boolean archived;
     @JsonProperty("tags")
-    private List<String> tags = new ArrayList<String>();
+    private List<String> tags = new ArrayList<>();
+    @JsonProperty("created_at")
+    private Date createdAt;
+    @JsonProperty("expires_at")
+    private Date expiresAt;
     @JsonProperty("analytics")
-    private List<Analytic> analytics = new ArrayList<Analytic>();
+    private Analytic analytic;
     @JsonProperty("tiny_url")
     private String tinyUrl;
     @JsonProperty("url")
@@ -90,13 +97,13 @@ public class Data {
     }
 
     @JsonProperty("analytics")
-    public List<Analytic> getAnalytics() {
-        return analytics;
+    public Analytic getAnalytics() {
+        return analytic;
     }
 
     @JsonProperty("analytics")
-    public void setAnalytics(List<Analytic> analytics) {
-        this.analytics = analytics;
+    public void setAnalytics(Analytic analytic) {
+        this.analytic = analytic;
     }
 
     @JsonProperty("tiny_url")
@@ -117,5 +124,25 @@ public class Data {
     @JsonProperty("url")
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    @JsonProperty("created_at")
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    @JsonProperty("created_at")
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @JsonProperty("expires_at")
+    public Date getExpiresAt() {
+        return expiresAt;
+    }
+
+    @JsonProperty("expires_at")
+    public void setExpiresAt(Date expiresAt) {
+        this.expiresAt = expiresAt;
     }
 }
