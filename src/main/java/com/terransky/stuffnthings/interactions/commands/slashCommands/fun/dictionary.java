@@ -30,25 +30,23 @@ import java.util.*;
 public class dictionary implements ICommandSlash {
     private static final int MAX_FIELDS = 25;
     private final Logger log = LoggerFactory.getLogger(dictionary.class);
-    private final NavigableMap<String, Locale> langCodes = new TreeMap<>();
-    private final List<Command.Choice> langChoices = new ArrayList<>();
-
-    {
-        langCodes.put("US English", Locale.forLanguageTag("en-us"));
-        langCodes.put("UK English", Locale.forLanguageTag("en-gb"));
-        langCodes.put("French", Locale.forLanguageTag("fr"));
-        langCodes.put("Gujarati", Locale.forLanguageTag("gu"));
-        langCodes.put("Hindi", Locale.forLanguageTag("hi"));
-        langCodes.put("Latvian", Locale.forLanguageTag("lv"));
-        langCodes.put("Romanian", Locale.forLanguageTag("ro"));
-        langCodes.put("Spanish", Locale.forLanguageTag("es"));
-        langCodes.put("Swahili", Locale.forLanguageTag("sw"));
-        langCodes.put("Tamil", Locale.forLanguageTag("ta"));
-
+    private final NavigableMap<String, Locale> langCodes = new TreeMap<>() {{
+        put("US English", Locale.forLanguageTag("en-us"));
+        put("UK English", Locale.forLanguageTag("en-gb"));
+        put("French", Locale.forLanguageTag("fr"));
+        put("Gujarati", Locale.forLanguageTag("gu"));
+        put("Hindi", Locale.forLanguageTag("hi"));
+        put("Latvian", Locale.forLanguageTag("lv"));
+        put("Romanian", Locale.forLanguageTag("ro"));
+        put("Spanish", Locale.forLanguageTag("es"));
+        put("Swahili", Locale.forLanguageTag("sw"));
+        put("Tamil", Locale.forLanguageTag("ta"));
+    }};
+    private final List<Command.Choice> langChoices = new ArrayList<>() {{
         for (String lang : langCodes.keySet()) {
-            langChoices.add(new Command.Choice(lang, lang));
+            add(new Command.Choice(lang, lang));
         }
-    }
+    }};
 
     private static void run200(@NotNull SlashCommandInteractionEvent event, EmbedBuilder embedBuilder, Locale language, String word,
                                @NotNull HttpURLConnection oxfordConnection, @NotNull ObjectMapper om) throws IOException {

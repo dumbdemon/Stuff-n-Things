@@ -7,6 +7,7 @@ import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -22,31 +23,32 @@ import java.net.URL;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
 
 public class numbersAPI implements ICommandSlash {
 
-    private final NavigableMap<Integer, Integer> dayLimits = new TreeMap<>();
+    private final NavigableMap<Integer, Integer> dayLimits = new TreeMap<>() {{
+        put(1, 31);
+        put(2, 29);
+        put(3, 31);
+        put(4, 30);
+        put(5, 31);
+        put(6, 30);
+        put(7, 31);
+        put(8, 31);
+        put(9, 30);
+        put(10, 31);
+        put(11, 30);
+        put(12, 31);
+    }};
     private final Logger log = LoggerFactory.getLogger(numbersAPI.class);
     private final DecimalFormat intFormatter = new DecimalFormat("###");
-
-    {
-        dayLimits.put(1, 31);
-        dayLimits.put(2, 29);
-        dayLimits.put(3, 31);
-        dayLimits.put(4, 30);
-        dayLimits.put(5, 31);
-        dayLimits.put(6, 30);
-        dayLimits.put(7, 31);
-        dayLimits.put(8, 31);
-        dayLimits.put(9, 30);
-        dayLimits.put(10, 31);
-        dayLimits.put(11, 30);
-        dayLimits.put(12, 31);
-    }
+    private final List<Command.Choice> monthChoices = new ArrayList<>() {{
+        String[] months = new DateFormatSymbols().getMonths();
+        for (int i = 0; i < 12; i++) {
+            add(new Command.Choice(String.format("[%s] %s", (i + 1), months[i]), (i + 1)));
+        }
+    }};
 
     @Override
     public String getName() {
@@ -72,8 +74,8 @@ public class numbersAPI implements ICommandSlash {
                     .addOption(OptionType.NUMBER, "m-number", "A number"),
                 new SubcommandData("date", "A random historical fact on a particular month and day.")
                     .addOptions(
-                        new OptionData(OptionType.INTEGER, "month", "The month.")
-                            .setRequiredRange(1, 12),
+                        new OptionData(OptionType.STRING, "month", "The month.")
+                            .addChoices(monthChoices),
                         new OptionData(OptionType.INTEGER, "day", "The day.")
                             .setRequiredRange(1, 31)
                     ),

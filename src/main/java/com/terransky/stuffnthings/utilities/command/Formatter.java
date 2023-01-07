@@ -6,22 +6,20 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 
 public class Formatter {
-    private static final NavigableMap<Float, String> suffixes = new TreeMap<>();
-
-    static {
-        suffixes.put(1e3f, " Thousand");
-        suffixes.put(1e6f, " Million");
-        suffixes.put(1e9f, " Billion");
-        suffixes.put(1e12f, " Trillion");
-        suffixes.put(1e15f, " Quadrillion");
-        suffixes.put(1e18f, " Quintillion");
-        suffixes.put(1e21f, " Sextillion");
-        suffixes.put(1e24f, " Septillion");
-        suffixes.put(1e27f, " Octillion");
-        suffixes.put(1e30f, " Nonillion");
-        suffixes.put(1e33f, " Decillion");
-        suffixes.put(1e36f, " Undecillion");
-    }
+    private static final NavigableMap<Float, String> suffixes = new TreeMap<>() {{
+        put(1e3f, " Thousand");
+        put(1e6f, " Million");
+        put(1e9f, " Billion");
+        put(1e12f, " Trillion");
+        put(1e15f, " Quadrillion");
+        put(1e18f, " Quintillion");
+        put(1e21f, " Sextillion");
+        put(1e24f, " Septillion");
+        put(1e27f, " Octillion");
+        put(1e30f, " Nonillion");
+        put(1e33f, " Decillion");
+        put(1e36f, " Undecillion");
+    }};
 
     /**
      * Makes extra large numbers look nice~ <br />
