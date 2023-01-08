@@ -2,7 +2,7 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.devs;
 
 import com.terransky.stuffnthings.dataSources.tinyURL.Data;
 import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLData;
-import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLRequestBuilder;
+import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLRequestData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
@@ -74,8 +74,8 @@ public class tinyURL implements ICommandSlash {
             .addOptions(
                 new OptionData(OptionType.STRING, "url", "A URL to shorten.", true),
                 new OptionData(OptionType.STRING, "alias", "Customize the link.")
-                    .setRequiredLength(TinyURLRequestBuilder.Lengths.ALIAS.getMin(),
-                        TinyURLRequestBuilder.Lengths.ALIAS.getMax())
+                    .setRequiredLength(TinyURLHandler.Lengths.ALIAS.getMin(),
+                        TinyURLHandler.Lengths.ALIAS.getMax())
             );
     }
 
@@ -90,9 +90,9 @@ public class tinyURL implements ICommandSlash {
             .setColor(EmbedColors.getDefault())
             .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
 
-        TinyURLRequestBuilder requestBuilder;
+        TinyURLHandler tinyURLHandler;
         try {
-            requestBuilder = new TinyURLRequestBuilder(url);
+            tinyURLHandler = new TinyURLHandler(url);
         } catch (MalformedURLException | URISyntaxException ignored) {
             event.getHook().sendMessageEmbeds(
                 builder.setDescription("""
@@ -106,9 +106,8 @@ public class tinyURL implements ICommandSlash {
             ).queue();
             return;
         }
-        alias.ifPresent(requestBuilder::withAlias);
-
-        TinyURLHandler tinyURLHandler = new TinyURLHandler(requestBuilder);
+        tinyURLHandler.withDomain(TinyURLRequestData.Domains.ONE);
+        alias.ifPresent(tinyURLHandler::withAlias);
         TinyURLData shortURLData = tinyURLHandler.sendRequest();
         String requestData = tinyURLHandler.getRequestBody();
 
@@ -118,7 +117,6 @@ public class tinyURL implements ICommandSlash {
         }
 
         Data urlData = shortURLData.getData();
-        String shortenURL = urlData.getTinyUrl();
         Date createdAt = urlData.getCreatedAt();
         Date expiresAt = urlData.getExpiresAt();
 
@@ -127,10 +125,10 @@ public class tinyURL implements ICommandSlash {
 
         event.getHook().sendMessageEmbeds(
             builder.addField("Long URL", url, false)
-                .addField("Shorten URL", shortenURL, false)
+                .addField("Shorten URL", urlData.getTinyUrl(), false)
                 .addField("Created", Timestamp.getDateAsTimestamp(createdAt, Timestamp.LONG_DATE_W_SHORT_TIME), false)
-                .addField("Expires", expiresAt != null ? Timestamp.getDateAsTimestamp(expiresAt, Timestamp.LONG_DATE_W_SHORT_TIME) :
-                    "Never", false)
+                .addField("Expires", expiresAt != null ?
+                    Timestamp.getDateAsTimestamp(expiresAt, Timestamp.LONG_DATE_W_SHORT_TIME) : "Never", false)
                 .build()
         ).queue();
     }

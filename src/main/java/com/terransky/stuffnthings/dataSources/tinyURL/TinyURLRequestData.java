@@ -3,8 +3,6 @@ package com.terransky.stuffnthings.dataSources.tinyURL;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.terransky.stuffnthings.utilities.general.Config;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +22,7 @@ import java.util.Date;
     "expires_at"
 })
 @Generated("jsonschema2pojo")
-public class TinyURLRequestBuilder {
+public class TinyURLRequestData {
 
     @JsonProperty("url")
     private String url;
@@ -44,7 +42,7 @@ public class TinyURLRequestBuilder {
      * @throws MalformedURLException Thrown when the URL is not valid.
      * @throws URISyntaxException    Thrown when the URL is not valid.
      */
-    public TinyURLRequestBuilder(String url) throws MalformedURLException, URISyntaxException {
+    public TinyURLRequestData(String url) throws MalformedURLException, URISyntaxException {
         this.url = new URL(url).toURI().toString();
     }
 
@@ -72,7 +70,7 @@ public class TinyURLRequestBuilder {
         setDomain(domain.getDomain());
     }
 
-    public TinyURLRequestBuilder withDomain(@NotNull Domains domain) {
+    public TinyURLRequestData withDomain(@NotNull Domains domain) {
         setDomain(domain.getDomain());
         return this;
     }
@@ -87,7 +85,7 @@ public class TinyURLRequestBuilder {
         this.alias = alias;
     }
 
-    public TinyURLRequestBuilder withAlias(String alias) {
+    public TinyURLRequestData withAlias(String alias) {
         this.alias = alias;
         return this;
     }
@@ -102,7 +100,7 @@ public class TinyURLRequestBuilder {
         this.tags = tags;
     }
 
-    public TinyURLRequestBuilder withTags(String tags) {
+    public TinyURLRequestData withTags(String tags) {
         this.tags = tags;
         return this;
     }
@@ -125,22 +123,9 @@ public class TinyURLRequestBuilder {
         return new SimpleDateFormat(pattern).format(expiresAt);
     }
 
-    public TinyURLRequestBuilder withExpiresAt(Date expiresAt) {
+    public TinyURLRequestData withExpiresAt(Date expiresAt) {
         this.expiresAt = expiresAt;
         return this;
-    }
-
-    public String build() {
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode rootNode = mapper.createObjectNode();
-
-        rootNode.put("url", getUrl());
-        rootNode.put("domain", getDomain());
-        rootNode.put("alias", getAlias());
-        rootNode.put("tags", getTags());
-        rootNode.put("expires_at", getExpiresAt() != null ? getExpiresAtAsString() : null);
-
-        return rootNode.toPrettyString();
     }
 
     @NotNull

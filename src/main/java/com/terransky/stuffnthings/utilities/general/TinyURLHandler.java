@@ -1,13 +1,15 @@
 package com.terransky.stuffnthings.utilities.general;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLData;
 import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLNoData;
-import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLRequestBuilder;
-import org.jetbrains.annotations.NotNull;
+import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLRequestData;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -15,16 +17,19 @@ import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class TinyURLHandler {
+public class TinyURLHandler extends TinyURLRequestData {
 
-    private final String requestBody;
+    private final ObjectMapper MAPPER = new ObjectMapper();
 
-    public TinyURLHandler(@NotNull TinyURLRequestBuilder builder) {
-        this(builder.build());
-    }
-
-    public TinyURLHandler(String requestBody) {
-        this.requestBody = requestBody;
+    /**
+     * Builder for <a href="https://tinyurl.com/app/">TinyURLs</a> API request packet
+     *
+     * @param url A Url.
+     * @throws MalformedURLException Thrown when the URL is not valid.
+     * @throws URISyntaxException    Thrown when the URL is not valid.
+     */
+    public TinyURLHandler(String url) throws MalformedURLException, URISyntaxException {
+        super(url);
     }
 
     public TinyURLData sendRequest() {
@@ -38,17 +43,17 @@ public class TinyURLHandler {
             .uri(URI.create("https://api.tinyurl.com/create?api_token=" + Config.getTinyURLToken()))
             .setHeader("accept", "application/json")
             .setHeader("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+            .POST(HttpRequest.BodyPublishers.ofString(getRequestBody()))
             .build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            TinyURLNoData data = new ObjectMapper().readValue(response.body(), TinyURLNoData.class);
-            if (data.getCode() == 0)
-                return new ObjectMapper().readValue(response.body(), TinyURLData.class);
+            TinyURLNoData data = MAPPER.readValue(response.body(), TinyURLNoData.class);
+            if (data.getCode() != 0)
+                return new TinyURLData().withCode(data.getCode())
+                    .withErrors(data.getErrors());
 
-            return new TinyURLData().withCode(data.getCode())
-                .withErrors(data.getErrors());
+            return MAPPER.readValue(response.body(), TinyURLData.class);
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         } finally {
@@ -58,6 +63,14 @@ public class TinyURLHandler {
     }
 
     public String getRequestBody() {
-        return requestBody;
+        ObjectNode rootNode = MAPPER.createObjectNode();
+
+        rootNode.put("url", getUrl());
+        rootNode.put("domain", getDomain());
+        rootNode.put("alias", getAlias());
+        rootNode.put("tags", getTags());
+        rootNode.put("expires_at", getExpiresAt() != null ? getExpiresAtAsString() : null);
+
+        return rootNode.toPrettyString();
     }
 }
