@@ -17,6 +17,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -88,7 +90,22 @@ public class tinyURL implements ICommandSlash {
             .setColor(EmbedColors.getDefault())
             .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
 
-        TinyURLRequestBuilder requestBuilder = new TinyURLRequestBuilder(url);
+        TinyURLRequestBuilder requestBuilder;
+        try {
+            requestBuilder = new TinyURLRequestBuilder(url);
+        } catch (MalformedURLException | URISyntaxException ignored) {
+            event.getHook().sendMessageEmbeds(
+                builder.setDescription("""
+                        URL is not valid.
+                        Please verify that the URL is correct and try again.
+                                            
+                        Note: Valid URls start with `http://` or `https://` and must end with a domain such as `.com`, `.gov`, `.xyz`, etc.
+                        """)
+                    .addField("URL Given", String.format("```\n%s\n```", url), false)
+                    .build()
+            ).queue();
+            return;
+        }
         alias.ifPresent(requestBuilder::withAlias);
 
         TinyURLHandler tinyURLHandler = new TinyURLHandler(requestBuilder);
