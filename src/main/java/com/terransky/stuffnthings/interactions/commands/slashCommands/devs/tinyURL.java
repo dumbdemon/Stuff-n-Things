@@ -2,7 +2,7 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.devs;
 
 import com.terransky.stuffnthings.dataSources.tinyURL.Data;
 import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLData;
-import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLRequestData;
+import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLLimits;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class tinyURL implements ICommandSlash {
-    private static void oops(@NotNull SlashCommandInteractionEvent event, String url, String requestData,
-                             EmbedBuilder builder, @NotNull TinyURLData shortURLData) {
+    private static void validationFailed(@NotNull SlashCommandInteractionEvent event, String url, EmbedBuilder builder,
+                                         @NotNull TinyURLData shortURLData) {
         StringBuilder stringBuilder = new StringBuilder();
         List<String> errors = shortURLData.getErrors();
         for (String error : errors) {
@@ -35,8 +35,6 @@ public class tinyURL implements ICommandSlash {
                 .append(error)
                 .append("\n");
         }
-        if (Config.isTestingMode())
-            builder.setDescription(String.format("Sent Packet: ```json\n%s\n```\n", requestData));
         event.getHook().sendMessageEmbeds(
             builder
                 .appendDescription(String.format("Unable to shorten [URL](%s) for the following reason%s:\n```%s```",
@@ -59,7 +57,7 @@ public class tinyURL implements ICommandSlash {
      */
     @Override
     public boolean isDeveloperCommand() {
-        return true;
+        return !Config.getTinyURlDomain().equals("");
     }
 
     @Override
@@ -74,8 +72,10 @@ public class tinyURL implements ICommandSlash {
             .addOptions(
                 new OptionData(OptionType.STRING, "url", "A URL to shorten.", true),
                 new OptionData(OptionType.STRING, "alias", "Customize the link.")
-                    .setRequiredLength(TinyURLHandler.Lengths.ALIAS.getMin(),
-                        TinyURLHandler.Lengths.ALIAS.getMax())
+                    .setRequiredLength(TinyURLLimits.Lengths.ALIAS.getMin(),
+                        TinyURLLimits.Lengths.ALIAS.getMax()),
+                new OptionData(OptionType.STRING, "domain", "Choose a custom Domain")
+                    .addChoices(TinyURLLimits.Domain.getDomainsAsChoices())
             );
     }
 
@@ -84,18 +84,65 @@ public class tinyURL implements ICommandSlash {
         event.deferReply().queue();
         Optional<String> ifUrl = Optional.ofNullable(event.getOption("url", OptionMapping::getAsString)),
             alias = Optional.ofNullable(event.getOption("alias", OptionMapping::getAsString));
+        TinyURLLimits.Domain domain = TinyURLLimits.Domain.getDomainByKey(event.getOption("domain", 0, OptionMapping::getAsInt));
+
         String url = ifUrl.orElseThrow(DiscordAPIException::new);
-        EmbedBuilder builder = new EmbedBuilder()
+        EmbedBuilder embedBuilder = new EmbedBuilder()
             .setTitle(getNameReadable())
             .setColor(EmbedColors.getDefault())
             .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
 
-        TinyURLHandler tinyURLHandler;
         try {
-            tinyURLHandler = new TinyURLHandler(url);
+            TinyURLHandler tinyURLHandler = new TinyURLHandler(url);
+            tinyURLHandler.withDomain(domain);
+            alias.ifPresent(tinyURLHandler::withAlias);
+            TinyURLData shortURLData = tinyURLHandler.sendRequest();
+            String requestData = tinyURLHandler.getRequestBody(),
+                reportingURL = Config.getErrorReportingURL();
+
+            if (Config.isTestingMode())
+                embedBuilder.setDescription(String.format("Data Packet Sent\n```json\n%s\n```", requestData));
+
+            switch (shortURLData.getCode()) {
+                case 0 -> {
+                    Data urlData = shortURLData.getData();
+                    Date createdAt = urlData.getCreatedAt();
+                    Date expiresAt = urlData.getExpiresAt();
+
+                    event.getHook().sendMessageEmbeds(
+                        embedBuilder.addField("Long URL", url, false)
+                            .addField("Shorten URL", urlData.getTinyUrl(), false)
+                            .addField("Created", Timestamp.getDateAsTimestamp(createdAt, Timestamp.LONG_DATE_W_SHORT_TIME), false)
+                            .addField("Expires", expiresAt != null ?
+                                Timestamp.getDateAsTimestamp(expiresAt, Timestamp.LONG_DATE_W_SHORT_TIME) : "Never", false)
+                            .build()
+                    ).queue();
+                }
+                case 1, 4, 7 -> event.getHook().sendMessageEmbeds(
+                    embedBuilder.appendDescription(String.format("An error occurred during %s.",
+                            shortURLData.getCode() == 7 ? "server operations. Please try again in a few moments" :
+                                String.format("authorization. Please report it [here](%s)", reportingURL)))
+                        .setColor(EmbedColors.getError())
+                        .build()
+                ).queue();
+                case 3 -> event.getHook().sendMessageEmbeds(
+                    embedBuilder.appendDescription(
+                            String.format("Unable to access TinyURL servers. If this continues, please report this [here](%s).",
+                                reportingURL))
+                        .setColor(EmbedColors.getError())
+                        .build()
+                ).queue();
+                case 5 -> validationFailed(event, url, embedBuilder, shortURLData);
+                default -> event.getHook().sendMessageEmbeds(
+                    embedBuilder.appendDescription(String.format("An unknown operation occurred on bot side. Please report it [here](%s).",
+                            reportingURL))
+                        .setColor(EmbedColors.getError())
+                        .build()
+                ).queue();
+            }
         } catch (MalformedURLException | URISyntaxException ignored) {
             event.getHook().sendMessageEmbeds(
-                builder.setDescription("""
+                embedBuilder.setDescription("""
                         URL is not valid.
                         Please verify that the URL is correct and try again.
                                             
@@ -104,32 +151,6 @@ public class tinyURL implements ICommandSlash {
                     .addField("URL Given", String.format("```\n%s\n```", url), false)
                     .build()
             ).queue();
-            return;
         }
-        tinyURLHandler.withDomain(TinyURLRequestData.Domains.ONE);
-        alias.ifPresent(tinyURLHandler::withAlias);
-        TinyURLData shortURLData = tinyURLHandler.sendRequest();
-        String requestData = tinyURLHandler.getRequestBody();
-
-        if (shortURLData.getCode() != 0) {
-            oops(event, url, requestData, builder, shortURLData);
-            return;
-        }
-
-        Data urlData = shortURLData.getData();
-        Date createdAt = urlData.getCreatedAt();
-        Date expiresAt = urlData.getExpiresAt();
-
-        if (Config.isTestingMode())
-            builder.setDescription(String.format("Data Packet Sent\n```json\n%s\n```", requestData));
-
-        event.getHook().sendMessageEmbeds(
-            builder.addField("Long URL", url, false)
-                .addField("Shorten URL", urlData.getTinyUrl(), false)
-                .addField("Created", Timestamp.getDateAsTimestamp(createdAt, Timestamp.LONG_DATE_W_SHORT_TIME), false)
-                .addField("Expires", expiresAt != null ?
-                    Timestamp.getDateAsTimestamp(expiresAt, Timestamp.LONG_DATE_W_SHORT_TIME) : "Never", false)
-                .build()
-        ).queue();
     }
 }

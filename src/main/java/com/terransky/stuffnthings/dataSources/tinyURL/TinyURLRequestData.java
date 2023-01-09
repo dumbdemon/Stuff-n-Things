@@ -3,7 +3,6 @@ package com.terransky.stuffnthings.dataSources.tinyURL;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.terransky.stuffnthings.utilities.general.Config;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Generated;
@@ -58,7 +57,7 @@ public class TinyURLRequestData {
 
     @JsonProperty("domain")
     public String getDomain() {
-        return getEffectiveString(domain, Lengths.DOMAIN);
+        return TinyURLLimits.getEffectiveString(domain, TinyURLLimits.Lengths.DOMAIN);
     }
 
     @JsonProperty("domain")
@@ -66,18 +65,18 @@ public class TinyURLRequestData {
         this.domain = domain;
     }
 
-    public void setDomain(@NotNull Domains domain) {
+    public void setDomain(@NotNull TinyURLLimits.Domain domain) {
         setDomain(domain.getDomain());
     }
 
-    public TinyURLRequestData withDomain(@NotNull Domains domain) {
+    public TinyURLRequestData withDomain(@NotNull TinyURLLimits.Domain domain) {
         setDomain(domain.getDomain());
         return this;
     }
 
     @JsonProperty("alias")
     public String getAlias() {
-        return getEffectiveString(alias, Lengths.ALIAS);
+        return TinyURLLimits.getEffectiveString(alias, TinyURLLimits.Lengths.ALIAS);
     }
 
     @JsonProperty("alias")
@@ -92,7 +91,7 @@ public class TinyURLRequestData {
 
     @JsonProperty("tags")
     public String getTags() {
-        return getEffectiveString(tags, Lengths.TAGS);
+        return TinyURLLimits.getEffectiveString(tags, TinyURLLimits.Lengths.TAGS);
     }
 
     @JsonProperty("tags")
@@ -126,66 +125,5 @@ public class TinyURLRequestData {
     public TinyURLRequestData withExpiresAt(Date expiresAt) {
         this.expiresAt = expiresAt;
         return this;
-    }
-
-    @NotNull
-    private String getEffectiveString(String s, Lengths lengths) {
-        if ("".equals(s) || s == null) return "";
-
-        if (s.length() < lengths.getMin()) {
-            String temp = "";
-            for (int i = 0; i < (lengths.getMin() - s.length()); i++) {
-                temp += "_";
-            }
-            return temp + s;
-        }
-
-        if (s.length() > lengths.getMax())
-            return s.substring(0, lengths.getMax());
-
-        return s;
-    }
-
-    public enum Lengths {
-        DOMAIN(Integer.MAX_VALUE),
-        ALIAS(5, 30),
-        TAGS(45);
-
-        private final int min;
-        private final int max;
-
-        Lengths(int max) {
-            this(0, max);
-        }
-
-        Lengths(int min, int max) {
-            this.min = min;
-            this.max = max;
-        }
-
-        public int getMin() {
-            return min;
-        }
-
-        public int getMax() {
-            return max;
-        }
-    }
-
-    public enum Domains {
-        DEFAULT("tinyurl.com"),
-        LOL("rotf.lol"),
-        ONE("tiny.one"),
-        CUSTOM(Config.getTinyURlDomain());
-
-        private final String domain;
-
-        Domains(String domain) {
-            this.domain = domain;
-        }
-
-        public String getDomain() {
-            return domain;
-        }
     }
 }
