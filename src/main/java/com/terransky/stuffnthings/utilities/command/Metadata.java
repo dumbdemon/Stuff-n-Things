@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.text.WordUtils;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -200,6 +201,25 @@ public class Metadata implements Comparable<Metadata> {
         return longDescription;
     }
 
+    @NotNull
+    @Contract(" -> new")
+    private int[] getCounts() {
+        int subcommandCount = subcommands.size(),
+            optionCount = options.size();
+        for (SubcommandGroupData subcommandGroup : subcommandGroups) {
+            List<SubcommandData> subData = subcommandGroup.getSubcommands();
+            subcommandCount += subData.size();
+            for (SubcommandData subcommandData : subData) {
+                optionCount += subcommandData.getOptions().size();
+            }
+        }
+        return new int[]{
+            subcommandGroups.size(),
+            subcommandCount,
+            optionCount
+        };
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -221,36 +241,44 @@ public class Metadata implements Comparable<Metadata> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCommandName(),
+        return Objects.hash(getDefaultPerms(),
+            getSubcommandGroups(),
+            getSubcommands(),
+            getOptions(),
+            getCommandName(),
             getShortDescription(),
             getLongDescription(),
             getMastermind(),
+            getModule(),
             getImplementationDate(),
             getLastUpdated(),
-            getDefaultPerms(),
-            getSubcommandGroups(),
-            getSubcommands(),
-            getOptions());
+            isNsfw());
     }
 
     @Override
     public String toString() {
+        int[] countz = getCounts();
+        var dateFormat = getFastDateFormat();
         return "Metadata{" +
-            "commandName='" + commandName + '\'' +
+            "defaultPerms=" + Permission.getRaw(defaultPerms) +
+            ", subcommandGroups=" + countz[0] +
+            ", subcommands=" + countz[1] +
+            ", options=" + countz[2] +
+            ", commandName='" + commandName + '\'' +
             ", shortDescription='" + shortDescription + '\'' +
             ", longDescription='" + longDescription + '\'' +
-            ", mastermind=" + mastermind +
-            ", implementationDate=" + implementationDate +
-            ", lastUpdated=" + lastUpdated +
-            ", minPerms=" + defaultPerms +
-            ", subcommandGroups=" + subcommandGroups +
-            ", subcommands=" + subcommands +
-            ", options=" + options +
+            ", mastermind=" + mastermind.toString() +
+            ", module=" + module.toString() +
+            ", implementationDate=" + dateFormat.format(implementationDate) +
+            ", lastUpdated=" + dateFormat.format(lastUpdated) +
+            ", isNsfw=" + isNsfw +
             '}';
     }
 
     @Override
     public int compareTo(@NotNull Metadata metadata) {
-        return String.CASE_INSENSITIVE_ORDER.compare(this.commandName, metadata.commandName);
+        return String.CASE_INSENSITIVE_ORDER.compare(getCommandName(), metadata.getCommandName()) |
+            String.CASE_INSENSITIVE_ORDER.compare(getShortDescription(), metadata.getShortDescription()) |
+            String.CASE_INSENSITIVE_ORDER.compare(getLongDescription(), metadata.getLongDescription());
     }
 }
