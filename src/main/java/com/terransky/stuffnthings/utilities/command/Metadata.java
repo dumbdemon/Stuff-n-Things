@@ -189,6 +189,10 @@ public class Metadata implements Comparable<Metadata> {
         return this;
     }
 
+    public String getImplementedAsTimestamp() {
+        return Timestamp.getDateAsTimestamp(getImplementationDate());
+    }
+
     public String getImplementedAsTimestamp(@NotNull Timestamp timestamp) {
         return Timestamp.getDateAsTimestamp(getImplementationDate(), timestamp);
     }
@@ -200,6 +204,10 @@ public class Metadata implements Comparable<Metadata> {
     public Metadata setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
         return this;
+    }
+
+    public String getLastUpdatedAsTimestamp() {
+        return Timestamp.getDateAsTimestamp(getLastUpdated());
     }
 
     public String getLastUpdatedAsTimestamp(@NotNull Timestamp timestamp) {

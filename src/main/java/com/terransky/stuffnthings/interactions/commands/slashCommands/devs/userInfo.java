@@ -80,7 +80,7 @@ public class userInfo implements ICommandSlash {
             """, Mastermind.DEFAULT,
             SlashModule.DEVS,
             format.parse("24-08-2022_11:10"),
-            format.parse("29-12-2022_10:14")
+            format.parse("11-1-2023_13:03")
         )
             .addOptions(
                 new OptionData(OptionType.USER, "user", "Who you want to know about.")
@@ -107,14 +107,14 @@ public class userInfo implements ICommandSlash {
             .addField("Total Roles", "%d Role%s".formatted(roleCount, roleCount > 1 ? "s" : ""), true)
             .addField("Top Role", topRole.getAsMention(), true)
             .addField("Server Permissions", "```%s```".formatted(userPerms), false)
-            .addField("Joined Server on", Timestamp.getDateAsTimestamp(member.getTimeJoined(), Timestamp.LONG_DATE_W_DoW_SHORT_TIME), true)
-            .addField("Joined Discord on", Timestamp.getDateAsTimestamp(member.getUser().getTimeCreated(), Timestamp.LONG_DATE_W_DoW_SHORT_TIME), true)
+            .addField("Joined Server on", Timestamp.getDateAsTimestamp(member.getTimeJoined()), true)
+            .addField("Joined Discord on", Timestamp.getDateAsTimestamp(member.getUser().getTimeCreated()), true)
             .setFooter("Requested by " + blob.getMemberAsTag() + " | " + event.getUser().getId(), blob.getMemberEffectiveAvatarUrl());
 
         if (!member.getUser().isBot()) {
-            String boostedText =
-                (member.getTimeBoosted() != null) ? ":gem: <t:%d:F> (<t:%d:R>)".formatted(member.getTimeBoosted().toEpochSecond(), member.getTimeBoosted().toEpochSecond()) :
-                    ":x: Not Boosting.";
+            String boostedText = (member.getTimeBoosted() != null) ?
+                String.format(":gem: %s (%s)", Timestamp.getDateAsTimestamp(member.getTimeBoosted()),
+                    Timestamp.getDateAsTimestamp(member.getTimeBoosted(), Timestamp.RELATIVE)) : ":x: Not Boosting.";
             eb.addField("Boosting Since", boostedText, false);
         }
 

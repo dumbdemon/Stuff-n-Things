@@ -7,19 +7,44 @@ import java.util.Date;
 
 @SuppressWarnings("unused")
 public enum Timestamp {
-    LONG_DATE_W_DoW_SHORT_TIME(0, 'F'),
-    LONG_DATE_W_SHORT_TIME(1, 'f'),
-    LONG_DATE(2, 'D'),
-    SHORT_DATE(3, 'd'),
-    LONG_TIME(4, 'T'),
-    SHORT_TIME(5, 't'),
-    RELATIVE(6, 'R');
+    /**
+     * <b>EX:</b> {@literal <}t:1673461755:F{@literal >}<br/>
+     * <b>On Discord:</b> Wednesday, January 11, 2023 at 12:29 PM
+     */
+    LONG_DATE_W_DoW_SHORT_TIME('F'),
+    /**
+     * <b>EX:</b> {@literal <}t:1673461755:f{@literal >}<br/>
+     * <b>On Discord:</b> January 11, 2023 at 12:29 PM
+     */
+    LONG_DATE_W_SHORT_TIME('f'),
+    /**
+     * <b>EX:</b> {@literal <}t:1673461755:D{@literal >}<br/>
+     * <b>On Discord:</b> January 11, 2023
+     */
+    LONG_DATE('D'),
+    /**
+     * <b>EX:</b> {@literal <}t:1673461755:d{@literal >}<br/>
+     * <b>On Discord:</b> 01/11/2023
+     */
+    SHORT_DATE('d'),
+    /**
+     * <b>EX:</b> {@literal <}t:1673461755:t{@literal >}<br/>
+     * <b>On Discord:</b> 12:29 PM
+     */
+    LONG_TIME('T'),
+    /**
+     * <b>EX:</b> {@literal <}t:1673461755:T{@literal >}<br/>
+     * <b>On Discord:</b> 12:29:15 PM
+     */
+    SHORT_TIME('t'),
+    /**
+     * Will show the difference between the current time and the markdown time
+     */
+    RELATIVE('R');
 
-    private final int id;
     private final Character code;
 
-    Timestamp(int id, Character code) {
-        this.id = id;
+    Timestamp(Character code) {
         this.code = code;
     }
 
@@ -35,6 +60,17 @@ public enum Timestamp {
     }
 
     /**
+     * Get a timestamp Markdown code using an {@link OffsetDateTime}.<br/>
+     * This will use the enum {@link Timestamp#LONG_DATE_W_DoW_SHORT_TIME} for the markdown.
+     *
+     * @param offsetDateTime An {@link OffsetDateTime}.
+     * @return A formatted Markdown for a timestamp.
+     */
+    public static String getDateAsTimestamp(@NotNull OffsetDateTime offsetDateTime) {
+        return getDateAsTimestamp(offsetDateTime.toEpochSecond());
+    }
+
+    /**
      * Get a timestamp Markdown code for a specific date.
      *
      * @param date      A {@link Date} to parse.
@@ -43,6 +79,17 @@ public enum Timestamp {
      */
     public static String getDateAsTimestamp(@NotNull Date date, @NotNull Timestamp timestamp) {
         return getDateAsTimestamp(date.toInstant().getEpochSecond(), timestamp);
+    }
+
+    /**
+     * Get a timestamp Markdown code for a specific date.<br/>
+     * This will use the enum {@link Timestamp#LONG_DATE_W_DoW_SHORT_TIME} for the markdown.
+     *
+     * @param date A {@link Date} to parse.
+     * @return A formatted Markdown for a timestamp.
+     */
+    public static String getDateAsTimestamp(@NotNull Date date) {
+        return getDateAsTimestamp(date.toInstant().getEpochSecond());
     }
 
     /**
@@ -56,8 +103,15 @@ public enum Timestamp {
         return "<t:%d:%s>".formatted(epochSeconds, timestamp.getCode());
     }
 
-    public int getId() {
-        return id;
+    /**
+     * Get a timestamp Markdown code using epoch seconds.<br/>
+     * This will use the enum {@link Timestamp#LONG_DATE_W_DoW_SHORT_TIME} for the markdown.
+     *
+     * @param epochSeconds Epoch seconds. NOTE: this <b>must</b> be in seconds.
+     * @return A formatted Markdown for a timestamp.
+     */
+    public static String getDateAsTimestamp(long epochSeconds) {
+        return getDateAsTimestamp(epochSeconds, LONG_DATE_W_DoW_SHORT_TIME);
     }
 
     public Character getCode() {

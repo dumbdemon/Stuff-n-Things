@@ -55,7 +55,7 @@ public class about implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             SlashModule.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("29-12-2022_19:52")
+            format.parse("11-1-2023_13:03")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "command", "Get more info on a Command.")
@@ -75,7 +75,6 @@ public class about implements ICommandSlash {
 
         RuntimeMXBean mxBean = ManagementFactory.getRuntimeMXBean();
         String uptime = getUptime(mxBean);
-        Date startTime = new Date(mxBean.getStartTime());
 
         SlashIManager manager = new ManagersManager().getSlashManager();
         int commandCnt = manager.getSlashCommandCount();
@@ -101,7 +100,7 @@ public class about implements ICommandSlash {
                 .addField("Servers", "%d servers".formatted(guildCount), true)
                 .addField("Users", "%s users".formatted(Formatter.largeNumberFormat(userCount)).replace(".0 ", " "), true)
                 .addField("Your Shard", event.getJDA().getShardInfo().getShardString(), true)
-                .addField("Start Time", Timestamp.getDateAsTimestamp(startTime, Timestamp.LONG_DATE_W_DoW_SHORT_TIME), false)
+                .addField("Start Time", Timestamp.getDateAsTimestamp(new Date(mxBean.getStartTime())), false)
                 .addField("Uptime", uptime, false)
                 .addField("Total Commands", "%s on %s\n%s of which are guild commands"
                     .formatted(
@@ -131,10 +130,10 @@ public class about implements ICommandSlash {
         }
 
         String[] timestamps = {
-            metadata.getImplementedAsTimestamp(Timestamp.LONG_DATE_W_DoW_SHORT_TIME),
+            metadata.getImplementedAsTimestamp(),
             metadata.getImplementedAsTimestamp(Timestamp.RELATIVE),
-            metadata.getLastEditedAsTimestamp(Timestamp.LONG_DATE_W_DoW_SHORT_TIME),
-            metadata.getLastEditedAsTimestamp(Timestamp.RELATIVE)
+            metadata.getLastUpdatedAsTimestamp(),
+            metadata.getLastUpdatedAsTimestamp(Timestamp.RELATIVE)
         };
 
         event.getHook().sendMessageEmbeds(
