@@ -77,18 +77,17 @@ public class CommandIManager<T extends ICommand> extends IManager<T> {
     private List<CommandData> getCommands(@NotNull List<T> effectiveCommands) {
         if (effectiveCommands.isEmpty()) return new ArrayList<>();
 
-        final List<CommandData> commandData = new ArrayList<>();
-        for (T command : getEffectiveCounts(effectiveCommands, effectiveCommands.get(0).getInteractionType())) {
-            try {
-                commandData.add(command.getCommandData());
-            } catch (ParseException e) {
-                String commandName = command instanceof ICommandSlash ?
-                    ((ICommandSlash) command).getNameReadable() : command.getName();
-                log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(commandName.toUpperCase()));
+        return new ArrayList<>() {{
+            for (T command : getEffectiveCounts(effectiveCommands, effectiveCommands.get(0).getInteractionType())) {
+                try {
+                    add(command.getCommandData());
+                } catch (ParseException e) {
+                    String commandName = command instanceof ICommandSlash ?
+                        ((ICommandSlash) command).getNameReadable() : command.getName();
+                    log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(commandName.toUpperCase()));
+                }
             }
-        }
-
-        return commandData;
+        }};
     }
 
     /**

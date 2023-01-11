@@ -99,37 +99,38 @@ public class dictionary implements ICommandSlash {
 
     @NotNull
     private static List<MessageEmbed.Field> getDefinitionFields(@NotNull List<Result> results) {
-        List<MessageEmbed.Field> fields = new ArrayList<>();
-        results.forEach(result -> {
-                String returnedWord = result.getWord();
-                result.getLexicalEntries().forEach(lexicalEntry ->
-                    lexicalEntry.getEntries().forEach(entry ->
-                        entry.getSenses().forEach(sense -> {
-                                final String[] fieldTitle = {""};
-                                sense.getDefinitions().forEach(definition -> {
-                                    fieldTitle[0] = "%s — *%s*.".formatted(WordUtils.capitalize(returnedWord), lexicalEntry.getLexicalCategory().getText());
-                                    fields.add(getField(fieldTitle[0], definition));
-                                    sense.getSubsenses().forEach(subsense ->
-                                        subsense.getDefinitions()
-                                            .forEach(subDefinition -> {
-                                                fieldTitle[0] = "˪ %s — *%s*."
-                                                    .formatted(WordUtils.capitalize(returnedWord), lexicalEntry.getLexicalCategory().getText());
-                                                fields.add(getField(fieldTitle[0], subDefinition));
-                                            })
-                                    );
-                                });
-                            }
-                        )
-                    )
-                );
-            }
-        );
-        return fields;
+        String baseString = "%s — *%s*.";
+        return new ArrayList<>() {{
+            results.forEach(result -> {
+                    String returnedWord = result.getWord();
+                    result.getLexicalEntries().forEach(lexicalEntry -> {
+                            String lexicalCategory = lexicalEntry.getLexicalCategory().getText();
+                            lexicalEntry.getEntries().forEach(entry ->
+                                entry.getSenses().forEach(sense -> sense.getDefinitions().forEach(definition -> {
+                                        add(getField(baseString, returnedWord, lexicalCategory, definition));
+                                        sense.getSubsenses().forEach(subsense ->
+                                            subsense.getDefinitions()
+                                                .forEach(subDefinition ->
+                                                    add(getField(("˪ " + baseString), returnedWord, lexicalCategory, subDefinition))
+                                                )
+                                        );
+                                    })
+                                )
+                            );
+                        }
+                    );
+                }
+            );
+        }};
     }
 
     @NotNull
-    private static MessageEmbed.Field getField(String fieldTitle, String definition) {
-        return new MessageEmbed.Field(fieldTitle, "```%s```".formatted(definition), false);
+    private static MessageEmbed.Field getField(String baseString, String word, String lexicalCategory, String definition) {
+        return new MessageEmbed.Field(
+            String.format(baseString, WordUtils.capitalize(word), lexicalCategory),
+            "```%s```".formatted(definition),
+            false
+        );
     }
 
     @Override

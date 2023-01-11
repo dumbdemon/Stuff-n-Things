@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.apache.commons.lang3.time.FastDateFormat;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
@@ -23,21 +24,22 @@ import java.util.Optional;
 
 public class checkPerms implements ICommandSlash {
 
-    public static @NotNull List<Permission> getRequiredPerms() {
-        List<Permission> permissionList = new ArrayList<>();
-        //For funsies
-        permissionList.add(Permission.MESSAGE_SEND);
-        permissionList.add(Permission.MESSAGE_ADD_REACTION);
-        permissionList.add(Permission.MESSAGE_EMBED_LINKS);
-        permissionList.add(Permission.MESSAGE_EXT_EMOJI);
-        permissionList.add(Permission.MESSAGE_EXT_STICKER);
-        permissionList.add(Permission.VIEW_CHANNEL);
+    @NotNull
+    @Contract(" -> new")
+    public static List<Permission> getRequiredPerms() {
+        return new ArrayList<>() {{
+            //For funsies
+            add(Permission.MESSAGE_SEND);
+            add(Permission.MESSAGE_ADD_REACTION);
+            add(Permission.MESSAGE_EMBED_LINKS);
+            add(Permission.MESSAGE_EXT_EMOJI);
+            add(Permission.MESSAGE_EXT_STICKER);
+            add(Permission.VIEW_CHANNEL);
 
-        //Moderation
-        permissionList.add(Permission.MANAGE_CHANNEL);
-        permissionList.add(Permission.ADMINISTRATOR);
-
-        return permissionList;
+            //Moderation
+            add(Permission.MANAGE_CHANNEL);
+            add(Permission.ADMINISTRATOR);
+        }};
     }
 
     @Override

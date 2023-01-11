@@ -43,15 +43,15 @@ public class whatsInStandard implements ICommandSlash {
 
     @NotNull
     private List<String> getSetCodesOfCurrent(@NotNull List<MtGSet> mtgSets) {
-        List<String> setCodes = new ArrayList<>();
-        for (MtGSet mtgSet : mtgSets.stream().filter(set ->
-            set.getCode() != null &&
-                set.getEnterDate().getExact().compareTo(new Date()) <= 0 &&
-                (set.getExitDate().getExact() == null || set.getExitDate().getExact().compareTo(new Date()) >= 0)
-        ).toList()) {
-            setCodes.add(mtgSet.getCode());
-        }
-        return setCodes;
+        return new ArrayList<>() {{
+            for (MtGSet mtgSet : mtgSets.stream().filter(set ->
+                set.getCode() != null &&
+                    set.getEnterDate().getExact().compareTo(new Date()) <= 0 &&
+                    (set.getExitDate().getExact() == null || set.getExitDate().getExact().compareTo(new Date()) >= 0)
+            ).toList()) {
+                add(mtgSet.getCode());
+            }
+        }};
     }
 
     private @NotNull String getBans(@NotNull List<Ban> banList, @NotNull List<MtGSet> mtgSets, boolean withReason) {

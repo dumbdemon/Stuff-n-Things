@@ -24,13 +24,15 @@ public class killSuggest implements IModal {
     public void execute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         Random rando = new Random(new Date().getTime());
         event.deferReply().queue();
-        List<String> victims = new ArrayList<>();
         Optional<ModalMapping> ifSuggestion = Optional.ofNullable(event.getValue(kill.MODAL_NAME));
         String suggestion = ifSuggestion.orElseThrow(DiscordAPIException::new).getAsString();
 
-        blob.getGuild().getMembers().stream()
-            .filter(member -> !member.getUser().isBot() || member.getUser().equals(event.getJDA().getSelfUser()))
-            .forEach(member -> victims.add(member.getAsMention()));
+        List<String> victims = new ArrayList<>() {{
+            blob.getGuild().getMembers().stream()
+                .filter(member -> !member.getUser().isBot() ||
+                    member.getUser().equals(event.getJDA().getSelfUser())
+                ).forEach(member -> add(member.getAsMention()));
+        }};
 
         var ignored = new DiscordWebhook("Kill_Suggestion")
             .sendMessage(new EmbedBuilder()

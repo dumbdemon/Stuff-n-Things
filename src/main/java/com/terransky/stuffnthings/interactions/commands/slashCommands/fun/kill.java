@@ -80,15 +80,17 @@ public class kill implements ICommandSlash {
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 
         Random random = new Random(new Date().getTime());
-        List<String> victims = new ArrayList<>();
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(EmbedColors.getDefault())
             .setTitle(blob.getMember().getEffectiveName())
             .setFooter("Requested by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
 
-        blob.getGuild().getMembers().stream()
-            .filter(member -> !member.getUser().isBot() || member.getUser().equals(event.getJDA().getSelfUser()))
-            .forEach(member -> victims.add(member.getAsMention()));
+        List<String> victims = new ArrayList<>() {{
+            blob.getGuild().getMembers().stream()
+                .filter(member -> !member.getUser().isBot() ||
+                    member.getUser().equals(event.getJDA().getSelfUser())
+                ).forEach(member -> add(member.getAsMention()));
+        }};
 
         switch (subcommand) {
             case "random" -> {

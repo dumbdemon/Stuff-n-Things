@@ -285,10 +285,11 @@ public class InteractionListener extends ListenerAdapter {
         }
 
         var selectMenuManager = manager.getStringSelectMenuManager();
-        List<Optional<ISelectMenuString>> ifMenus = new ArrayList<>();
-        for (String id : event.getInteraction().getValues()) {
-            ifMenus.add(selectMenuManager.getInteraction(id));
-        }
+        List<Optional<ISelectMenuString>> ifMenus = new ArrayList<>() {{
+            for (String id : event.getInteraction().getValues()) {
+                add(selectMenuManager.getInteraction(id));
+            }
+        }};
 
         String componentId = event.getComponentId();
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
