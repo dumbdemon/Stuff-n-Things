@@ -92,6 +92,11 @@ public class Metadata implements Comparable<Metadata> {
         return shortDescription;
     }
 
+    public Metadata setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
+        return this;
+    }
+
     public boolean isNsfw() {
         return isNsfw;
     }
@@ -157,6 +162,11 @@ public class Metadata implements Comparable<Metadata> {
         return commandName;
     }
 
+    public Metadata setCommandName(String commandName) {
+        this.commandName = commandName;
+        return this;
+    }
+
     public String getCommandNameReadable() {
         return WordUtils.capitalize(getCommandName().replaceAll("-", " "));
     }
@@ -174,6 +184,11 @@ public class Metadata implements Comparable<Metadata> {
         return implementationDate;
     }
 
+    public Metadata setImplementationDate(Date implementationDate) {
+        this.implementationDate = implementationDate;
+        return this;
+    }
+
     public String getImplementedAsTimestamp(@NotNull Timestamp timestamp) {
         return Timestamp.getDateAsTimestamp(getImplementationDate(), timestamp);
     }
@@ -182,7 +197,12 @@ public class Metadata implements Comparable<Metadata> {
         return lastUpdated;
     }
 
-    public String getLastEditedAsTimestamp(@NotNull Timestamp timestamp) {
+    public Metadata setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
+        return this;
+    }
+
+    public String getLastUpdatedAsTimestamp(@NotNull Timestamp timestamp) {
         return Timestamp.getDateAsTimestamp(getLastUpdated(), timestamp);
     }
 
@@ -192,6 +212,16 @@ public class Metadata implements Comparable<Metadata> {
      * @return The long description or it's truncated variant if it has more characters than {@link MessageEmbed#DESCRIPTION_MAX_LENGTH}.
      */
     public String getLongDescription() {
+        return getEffectiveDescription(longDescription);
+    }
+
+    public Metadata setLongDescription(@NotNull String longDescription) {
+        this.longDescription = getEffectiveDescription(longDescription);
+        return this;
+    }
+
+    @NotNull
+    private String getEffectiveDescription(@NotNull String longDescription) {
         int descriptionMaxLength = MessageEmbed.DESCRIPTION_MAX_LENGTH;
 
         if (longDescription.length() > descriptionMaxLength) {
