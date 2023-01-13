@@ -29,7 +29,7 @@ public class solveQuadratic implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             SlashModule.MATHS,
             format.parse("19-11-2022_13:09"),
-            format.parse("29-12-2022_20:35")
+            format.parse("12-1-2023_20:52")
         )
             .addOptions(
                 new OptionData(OptionType.NUMBER, "value-a", "A value of Quadratic Formula"),
@@ -45,14 +45,14 @@ public class solveQuadratic implements ICommandSlash {
             .setColor(EmbedColors.getDefault());
         DecimalFormat prettyNum = new DecimalFormat("#.##");
 
-        double a = event.getOption("value-a", 1d, OptionMapping::getAsDouble);
-        double b = event.getOption("value-b", 1d, OptionMapping::getAsDouble);
-        double c = event.getOption("value-c", 0d, OptionMapping::getAsDouble);
+        double a = event.getOption("value-a", 1.0, OptionMapping::getAsDouble);
+        double b = event.getOption("value-b", 1.0, OptionMapping::getAsDouble);
+        double c = event.getOption("value-c", 0.0, OptionMapping::getAsDouble);
         double d = b * b - 4.0 * a * c;
         double r1, r2;
         if (d > 0.0) {
-            r1 = (-b + Math.pow(d, 0.5)) / (2.0 * a);
-            r2 = (-b - Math.pow(d, 0.5)) / (2.0 * a);
+            r1 = (-b + Math.sqrt(d)) / (2.0 * a);
+            r2 = (-b - Math.sqrt(d)) / (2.0 * a);
 
             event.replyEmbeds(eb.setDescription("""
                     Given:
