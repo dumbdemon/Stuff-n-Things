@@ -41,13 +41,10 @@ public class SlashIManager extends CommandIManager<ICommandSlash> {
      *                        is given an invalid date string.
      */
     public Optional<Metadata> getMetadata(@NotNull String search) throws ParseException {
-        String toSearch = search.toLowerCase();
+        Optional<ICommandSlash> commandSlash = getInteraction(search);
 
-        for (ICommandSlash slash : interactions) {
-            if (slash.getName().equals(toSearch)) {
-                return Optional.of(slash.getMetadata());
-            }
-        }
+        if (commandSlash.isPresent())
+            return Optional.of(commandSlash.get().getMetadata());
         return Optional.empty();
     }
 

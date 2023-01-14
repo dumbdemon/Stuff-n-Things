@@ -56,13 +56,9 @@ public class IManager<T extends IInteraction> {
      * @return Get an {@link Optional} of an {@link IInteraction}
      */
     public Optional<T> getInteraction(@NotNull String search) {
-        for (T interaction : interactions) {
-            if (interaction.getName().equalsIgnoreCase(search)) {
-                return Optional.of(interaction);
-            }
-        }
-
-        return Optional.empty();
+        return interactions.stream()
+            .filter(interaction -> interaction.getName().equalsIgnoreCase(search))
+            .findFirst();
     }
 
     /**
