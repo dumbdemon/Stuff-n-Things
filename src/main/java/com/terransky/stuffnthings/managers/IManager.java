@@ -26,7 +26,7 @@ public class IManager<T extends IInteraction> {
      * Add an {@link IInteraction} to the list.
      *
      * @param interaction An {@link IInteraction}
-     * @throws IllegalArgumentException Either the {@link IInteraction} already exists in the index or if the interaction type has a dedicated manager.
+     * @throws IllegalArgumentException Thrown if the {@link IInteraction} type has a dedicated manager.
      */
     void addInteraction(@NotNull T interaction) {
         if (interaction.getInteractionType().hasDedicatedManager())

@@ -19,7 +19,7 @@ public enum IInteractionType {
     private final boolean hasDedicatedManager;
 
     IInteractionType(int id, String name) {
-        this(id, name, Integer.MAX_VALUE, false);
+        this(id, name, Integer.MAX_VALUE);
     }
 
     IInteractionType(int id, String name, int maximum) {

@@ -22,7 +22,7 @@ public class ping implements ICommandSlash {
         return new Metadata(this.getName(), "Get the ping of the bot.", """
             Pong! Get the ping of the bot.
             """, Mastermind.DEFAULT,
-            SlashModule.GENERAL,
+            CommandCategory.GENERAL,
             format.parse("24-08-2022_11:10"),
             format.parse("29-12-2022_10:14")
         );

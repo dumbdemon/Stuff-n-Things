@@ -53,9 +53,9 @@ public class about implements ICommandSlash {
         return new Metadata(this.getName(), "What am I? Who am I?", """
             The about command. What else did you expect?
             """, Mastermind.DEVELOPER,
-            SlashModule.GENERAL,
+            CommandCategory.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("11-1-2023_13:03")
+            format.parse("15-1-2023_17:12")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "command", "Get more info on a Command.")
@@ -130,8 +130,8 @@ public class about implements ICommandSlash {
         }
 
         String[] timestamps = {
-            metadata.getImplementedAsTimestamp(),
-            metadata.getImplementedAsTimestamp(Timestamp.RELATIVE),
+            metadata.getCreatedAsTimestamp(),
+            metadata.getCreatedAsTimestamp(Timestamp.RELATIVE),
             metadata.getLastUpdatedAsTimestamp(),
             metadata.getLastUpdatedAsTimestamp(Timestamp.RELATIVE)
         };
@@ -143,7 +143,7 @@ public class about implements ICommandSlash {
                 .setColor(EmbedColors.getDefault())
                 .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
                 .addField("Mastermind", metadata.getMastermind().getWho(), true)
-                .addField("Module", metadata.getModule().getName(), true)
+                .addField("Module", metadata.getCategory().getName(), true)
                 .addField("Implementation Date", "%s (%s)".formatted(timestamps[0], timestamps[1]), false)
                 .addField("Last Edited", "%s (%s)".formatted(timestamps[2], timestamps[3]), false)
                 .build()

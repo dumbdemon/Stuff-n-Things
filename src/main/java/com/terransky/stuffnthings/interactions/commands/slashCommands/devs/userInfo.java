@@ -78,7 +78,7 @@ public class userInfo implements ICommandSlash {
             • Discord Joined Date
             • Boosting Status (if user)
             """, Mastermind.DEFAULT,
-            SlashModule.DEVS,
+            CommandCategory.DEVS,
             format.parse("24-08-2022_11:10"),
             format.parse("11-1-2023_13:03")
         )

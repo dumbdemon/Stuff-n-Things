@@ -28,7 +28,7 @@ public class calculateRats implements ICommandSlash {
             Returns an amount of 1/1 black Rat creature tokens after X triggers created by the interaction between [Marrow-Gnawer](%s) equipped with [Thornbite Staff](%s).
             """.formatted("https://scryfall.com/card/chk/124/marrow-gnawer", "https://scryfall.com/card/mor/145/thornbite-staff"),
             Mastermind.DEVELOPER,
-            SlashModule.MTG,
+            CommandCategory.MTG,
             format.parse("5-10-2022_11:48"),
             format.parse("29-12-2022_10:14")
         )

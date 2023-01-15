@@ -147,7 +147,7 @@ public class dictionary implements ICommandSlash {
             WARNING: depending on the word it may return no definitions. Try a different variation of that word if it happens.
             """.formatted(langCodes.size()),
             Mastermind.DEVELOPER,
-            SlashModule.FUN,
+            CommandCategory.FUN,
             format.parse("27-10-2022_12:46"),
             format.parse("3-1-2022_18:31")
         )

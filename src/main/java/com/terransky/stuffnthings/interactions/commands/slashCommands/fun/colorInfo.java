@@ -22,7 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class colorInfo implements ICommandSlash {
-    private final String HEX_TRIPLET_PATTERN = "^#(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$";
+    private final String HEX_TRIPLET_PATTERN = "^#?(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$";
     private final Pattern pHexTriplet = Pattern.compile(HEX_TRIPLET_PATTERN);
 
     @NotNull
@@ -113,14 +113,14 @@ public class colorInfo implements ICommandSlash {
         return new Metadata(this.getName(), "Get more info on a color.", """
             Given a hex triplet, RGB, or CMYK code, it will return the other values and give a link to more info.
             """, Mastermind.DEVELOPER,
-            SlashModule.FUN,
+            CommandCategory.FUN,
             format.parse("20-9-2022_12:10"),
             format.parse("29-12-2022_10:14")
         )
             .addSubcommands(
                 new SubcommandData("hex-triplet", "Get more info on a hex triplet. EX: #663366")
                     .addOptions(
-                        new OptionData(OptionType.STRING, "triplet", "Enter the Hex Triplet including the \"#\".", true)
+                        new OptionData(OptionType.STRING, "triplet", "Enter a Hex Triplet.", true)
                             .setRequiredLength(4, 7)
                     ),
                 new SubcommandData("rgb", "Get more info on an RGB code. EX: R 102, G 51, B 102")

@@ -41,7 +41,7 @@ public class configCmd implements ICommandSlash {
             Sets certain constant values of specific commands.
             """,
             Mastermind.DEVELOPER,
-            SlashModule.ADMIN,
+            CommandCategory.ADMIN,
             format.parse("28-08-2022_21:46"),
             format.parse("29-12-2022_10:14")
         )

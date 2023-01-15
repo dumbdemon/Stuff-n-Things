@@ -1,10 +1,10 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
+import com.terransky.stuffnthings.utilities.command.CommandCategory;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.Mastermind;
 import com.terransky.stuffnthings.utilities.command.Metadata;
-import com.terransky.stuffnthings.utilities.command.SlashModule;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -28,7 +28,7 @@ public class lmgtfy implements ICommandSlash {
         return new Metadata(this.getName(), "Let me Google that for you!", """
             When a person is too lazy to search it up themselves, call this on 'em.
             """, Mastermind.DEVELOPER,
-            SlashModule.FUN,
+            CommandCategory.FUN,
             format.parse("24-08-2022_11:10"),
             format.parse("21-12-2022_20:00")
         )

@@ -33,8 +33,8 @@ public class channelUnLock implements ICommandSlash {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
-        String description = "Lock or unlock a channel for everyone or from a specific role to see.";
-        return new Metadata(this.getName(), description, description, Mastermind.DEVELOPER, SlashModule.ADMIN,
+        return new Metadata(this.getName(), "Lock or unlock a channel for everyone or from a specific role to see.",
+            Mastermind.DEVELOPER, CommandCategory.ADMIN,
             format.parse("23-11-2022_18:34"),
             format.parse("29-12-2022_10:14")
         )

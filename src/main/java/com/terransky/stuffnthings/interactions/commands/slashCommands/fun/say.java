@@ -28,7 +28,7 @@ public class say implements ICommandSlash {
                         
             ~~Subject to your server's rules and [Discord Community Guidelines](https://discord.com/guidelines).~~
             """, Mastermind.DEVELOPER,
-            SlashModule.FUN,
+            CommandCategory.FUN,
             format.parse("24-08-2022_11:10"),
             format.parse("21-12-2022_20:03")
         )

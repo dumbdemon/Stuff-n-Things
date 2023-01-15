@@ -22,10 +22,9 @@ public class getInvite implements ICommandSlash {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
-        return new Metadata(this.getName(), "Get an invite for the bot.", """
-            Returns the invite of the bot.
-            """, Mastermind.DEFAULT,
-            SlashModule.DEVS,
+        return new Metadata(this.getName(), "Get an invite for the bot."
+            , Mastermind.DEFAULT,
+            CommandCategory.DEVS,
             format.parse("24-08-2022_11:10"),
             format.parse("21-12-2022_12:16")
         );

@@ -29,7 +29,7 @@ public class robFailChance implements ICommandSlash {
         return new Metadata(this.getName(), "Calculate the fail chance to rob a member for the UnbelievaBoat bot!", """
             Returns the chance of failure of the `/rob` command of the bot UnbelievaBoat. If you don't have the bot, you can ask your admins to invite it [here](%s).
             """.formatted(uBoatInvite), Mastermind.DEVELOPER,
-            SlashModule.FUN,
+            CommandCategory.FUN,
             format.parse("24-08-2022_11:10"),
             format.parse("21-12-2022_20:02")
         )

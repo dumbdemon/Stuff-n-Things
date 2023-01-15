@@ -21,15 +21,17 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class whatsInStandard implements ICommandSlash {
+
+    private final Predicate<MtGSet> IS_VALID_SET = (set) -> set.getCode() != null &&
+        set.getEnterDate().getExact().compareTo(new Date()) <= 0 &&
+        (set.getExitDate().getExact() == null || set.getExitDate().getExact().compareTo(new Date()) >= 0);
+
     private @NotNull String getSets(@NotNull List<MtGSet> mtgSets) {
         StringBuilder theSets = new StringBuilder();
-        for (MtGSet mtgSet : mtgSets.stream().filter(set ->
-            set.getCode() != null &&
-                set.getEnterDate().getExact().compareTo(new Date()) <= 0 &&
-                (set.getExitDate().getExact() == null || set.getExitDate().getExact().compareTo(new Date()) >= 0)
-        ).toList()) {
+        for (MtGSet mtgSet : mtgSets.stream().filter(IS_VALID_SET).toList()) {
             theSets.append("```%s (%s) || Leaves: %s```"
                 .formatted(
                     mtgSet.getName(),
@@ -44,11 +46,7 @@ public class whatsInStandard implements ICommandSlash {
     @NotNull
     private List<String> getSetCodesOfCurrent(@NotNull List<MtGSet> mtgSets) {
         return new ArrayList<>() {{
-            for (MtGSet mtgSet : mtgSets.stream().filter(set ->
-                set.getCode() != null &&
-                    set.getEnterDate().getExact().compareTo(new Date()) <= 0 &&
-                    (set.getExitDate().getExact() == null || set.getExitDate().getExact().compareTo(new Date()) >= 0)
-            ).toList()) {
+            for (MtGSet mtgSet : mtgSets.stream().filter(IS_VALID_SET).toList()) {
                 add(mtgSet.getCode());
             }
         }};
@@ -84,9 +82,9 @@ public class whatsInStandard implements ICommandSlash {
             Information the bot uses is provided by [WhatsInStandard.com](https://whatsinstandard.com).
             """,
             Mastermind.DEVELOPER,
-            SlashModule.MTG,
+            CommandCategory.MTG,
             format.parse("27-10-2022_12:46"),
-            format.parse("21-12-2022_20:05")
+            format.parse("15-12-2023_17:35")
         )
             .addSubcommands(
                 new SubcommandData("all", "Get all info about the standard format."),

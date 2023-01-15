@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-@SuppressWarnings({"unused", "SpellCheckingInspection"})
+@SuppressWarnings("SpellCheckingInspection")
 public class Metadata implements Comparable<Metadata> {
     private final List<Permission> defaultPerms = new ArrayList<>();
     private final List<SubcommandGroupData> subcommandGroups = new ArrayList<>();
@@ -28,8 +28,8 @@ public class Metadata implements Comparable<Metadata> {
     private String shortDescription;
     private String longDescription;
     private Mastermind mastermind;
-    private SlashModule module;
-    private Date implementationDate;
+    private CommandCategory category;
+    private Date createdDate;
     private Date lastUpdated;
     private boolean isNsfw = false;
 
@@ -49,24 +49,44 @@ public class Metadata implements Comparable<Metadata> {
      * type used in the {@link ICommandSlash#getCommandData()}. Hierarchy (from highest to lowest) goes as follows: none,
      * {@link SubcommandGroupData}, {@link SubcommandData}, {@link OptionData}.
      *
-     * @param commandName        The name of the command. Cannot be no than {@value CommandData#MAX_NAME_LENGTH} characters.
-     * @param shortDescription   The description of the command. Cannot be no longer than
-     *                           {@value MessageEmbed#DESCRIPTION_MAX_LENGTH} characters.
-     * @param longDescription    The description of the command used in {@link com.terransky.stuffnthings.interactions.commands.slashCommands.general.about
-     *                           /about [command]}. It will be truncated if it has more than {@value MessageEmbed#DESCRIPTION_MAX_LENGTH} characters.
-     * @param mastermind         The {@link Mastermind}.
-     * @param module             The {@link SlashModule}.
-     * @param implementationDate The {@link Date} when the command was first created.
-     * @param lastUpdated        The {@link Date} when the last time the command was edited.
+     * @param commandName The name of the command. Cannot be no than {@value CommandData#MAX_NAME_LENGTH} characters.
+     * @param description The description of the command. Cannot be no longer than
+     *                    {@value MessageEmbed#DESCRIPTION_MAX_LENGTH} characters.
+     * @param mastermind  The {@link Mastermind}.
+     * @param category    The {@link CommandCategory}.
+     * @param createdDate The {@link Date} when the command was first created.
+     * @param lastUpdated The {@link Date} when the last time the command was edited.
      */
-    public Metadata(String commandName, String shortDescription, String longDescription, Mastermind mastermind,
-                    SlashModule module, Date implementationDate, Date lastUpdated) {
+    public Metadata(String commandName, String description, Mastermind mastermind, CommandCategory category,
+                    Date createdDate, Date lastUpdated) {
+        this(commandName, description, description, mastermind, category, createdDate, lastUpdated);
+    }
+
+    /**
+     * Extended details for an {@link com.terransky.stuffnthings.interfaces.interactions.ICommandSlash ICommandSlash}.
+     * <p>
+     * It is recommended that when constructing a Metadata Object for {@link CommandData}, that you use the top level
+     * type used in the {@link ICommandSlash#getCommandData()}. Hierarchy (from highest to lowest) goes as follows: none,
+     * {@link SubcommandGroupData}, {@link SubcommandData}, {@link OptionData}.
+     *
+     * @param commandName      The name of the command. Cannot be no than {@value CommandData#MAX_NAME_LENGTH} characters.
+     * @param shortDescription The description of the command. Cannot be no longer than
+     *                         {@value MessageEmbed#DESCRIPTION_MAX_LENGTH} characters.
+     * @param longDescription  The description of the command used in {@link com.terransky.stuffnthings.interactions.commands.slashCommands.general.about
+     *                         /about [command]}. It will be truncated if it has more than {@value MessageEmbed#DESCRIPTION_MAX_LENGTH} characters.
+     * @param mastermind       The {@link Mastermind}.
+     * @param category         The {@link CommandCategory}.
+     * @param createdDate      The {@link Date} when the command was first created.
+     * @param lastUpdated      The {@link Date} when the last time the command was edited.
+     */
+    public Metadata(String commandName, String shortDescription, String longDescription, Mastermind mastermind, CommandCategory category,
+                    Date createdDate, Date lastUpdated) {
         this.commandName = commandName;
         this.shortDescription = shortDescription;
         this.longDescription = longDescription;
         this.mastermind = mastermind;
-        this.module = module;
-        this.implementationDate = implementationDate;
+        this.category = category;
+        this.createdDate = createdDate;
         this.lastUpdated = lastUpdated;
     }
 
@@ -79,13 +99,30 @@ public class Metadata implements Comparable<Metadata> {
         return FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
     }
 
-    public SlashModule getModule() {
-        return module;
+    @NotNull
+    public static Metadata getEmptyMetadata() {
+        return new Metadata()
+            .setCommandName("")
+            .setDescripstions("")
+            .setCreatedDate(new Date())
+            .setLastUpdated(new Date())
+            .setMastermind(Mastermind.DEVELOPER)
+            .setCategory(CommandCategory.TEST)
+            .setNsfw(false);
     }
 
-    public Metadata setModule(SlashModule module) {
-        this.module = module;
+    public CommandCategory getCategory() {
+        return category;
+    }
+
+    public Metadata setCategory(CommandCategory category) {
+        this.category = category;
         return this;
+    }
+
+    public Metadata setDescripstions(String description) {
+        return setShortDescription(description)
+            .setLongDescription(description);
     }
 
     public String getShortDescription() {
@@ -180,21 +217,21 @@ public class Metadata implements Comparable<Metadata> {
         return this;
     }
 
-    public Date getImplementationDate() {
-        return implementationDate;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public Metadata setImplementationDate(Date implementationDate) {
-        this.implementationDate = implementationDate;
+    public Metadata setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
         return this;
     }
 
-    public String getImplementedAsTimestamp() {
-        return Timestamp.getDateAsTimestamp(getImplementationDate());
+    public String getCreatedAsTimestamp() {
+        return Timestamp.getDateAsTimestamp(getCreatedDate());
     }
 
-    public String getImplementedAsTimestamp(@NotNull Timestamp timestamp) {
-        return Timestamp.getDateAsTimestamp(getImplementationDate(), timestamp);
+    public String getCreatedAsTimestamp(@NotNull Timestamp timestamp) {
+        return Timestamp.getDateAsTimestamp(getCreatedDate(), timestamp);
     }
 
     public Date getLastUpdated() {
@@ -229,14 +266,14 @@ public class Metadata implements Comparable<Metadata> {
     }
 
     @NotNull
-    private String getEffectiveDescription(@NotNull String longDescription) {
+    private String getEffectiveDescription(@NotNull String description) {
         int descriptionMaxLength = MessageEmbed.DESCRIPTION_MAX_LENGTH;
 
-        if (longDescription.length() > descriptionMaxLength) {
-            return longDescription.substring(0, descriptionMaxLength);
+        if (description.length() > descriptionMaxLength) {
+            return description.substring(0, descriptionMaxLength);
         }
 
-        return longDescription;
+        return description;
     }
 
     @NotNull
@@ -272,8 +309,8 @@ public class Metadata implements Comparable<Metadata> {
             getShortDescription().equals(metadata.getShortDescription()) &&
             getLongDescription().equals(metadata.getLongDescription()) &&
             getMastermind() == metadata.getMastermind() &&
-            getModule() == metadata.getModule() &&
-            getImplementationDate().equals(metadata.getImplementationDate()) &&
+            getCategory() == metadata.getCategory() &&
+            getCreatedDate().equals(metadata.getCreatedDate()) &&
             getLastUpdated().equals(metadata.getLastUpdated());
     }
 
@@ -287,8 +324,8 @@ public class Metadata implements Comparable<Metadata> {
             getShortDescription(),
             getLongDescription(),
             getMastermind(),
-            getModule(),
-            getImplementationDate(),
+            getCategory(),
+            getCreatedDate(),
             getLastUpdated(),
             isNsfw());
     }
@@ -306,8 +343,8 @@ public class Metadata implements Comparable<Metadata> {
             ", shortDescription='" + shortDescription + '\'' +
             ", longDescription='" + longDescription + '\'' +
             ", mastermind=" + mastermind.toString() +
-            ", module=" + module.toString() +
-            ", implementationDate=" + dateFormat.format(implementationDate) +
+            ", module=" + category.toString() +
+            ", implementationDate=" + dateFormat.format(createdDate) +
             ", lastUpdated=" + dateFormat.format(lastUpdated) +
             ", isNsfw=" + isNsfw +
             '}';
@@ -317,6 +354,7 @@ public class Metadata implements Comparable<Metadata> {
     public int compareTo(@NotNull Metadata metadata) {
         return String.CASE_INSENSITIVE_ORDER.compare(getCommandName(), metadata.getCommandName()) |
             String.CASE_INSENSITIVE_ORDER.compare(getShortDescription(), metadata.getShortDescription()) |
-            String.CASE_INSENSITIVE_ORDER.compare(getLongDescription(), metadata.getLongDescription());
+            String.CASE_INSENSITIVE_ORDER.compare(getLongDescription(), metadata.getLongDescription()) |
+            createdDate.compareTo(metadata.createdDate);
     }
 }

@@ -63,7 +63,7 @@ public class checkPerms implements ICommandSlash {
             %s```
             """.formatted(permString.substring(0, permString.length() - 2)),
             Mastermind.DEVELOPER,
-            SlashModule.ADMIN,
+            CommandCategory.ADMIN,
             format.parse("30-08-2022_16:14"),
             format.parse("29-12-2022_10:14")
         )

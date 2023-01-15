@@ -63,11 +63,10 @@ public class tinyURL implements ICommandSlash {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
-        return new Metadata(getName(), "Create short URLs with TinyURL", """
-            Create short URLs with TinyURL.
-            """, Mastermind.DEVELOPER, SlashModule.DEVS,
+        return new Metadata(getName(), "Create short URLs with TinyURL",
+            Mastermind.DEVELOPER, CommandCategory.DEVS,
             format.parse("6-1-2023_16:04"),
-            new Date()
+            format.parse("15-1-2023_17:37")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "url", "A URL to shorten.", true),

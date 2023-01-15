@@ -35,7 +35,7 @@ public class fibonacciSequence implements ICommandSlash {
                         
             This command returns the nth value in the *Fibonacci Sequence* or its whole sequence up to the nth value. Although the *Fibonacci Sequence* can go into infinity, this command has been limited to return up to the 186th value. Any higher and the command will return ∞ (infinity). This is due to the limitation of the Java data type Float. You can read more [here](https://www.w3schools.com/java/ref_keyword_float.asp).
             """, Mastermind.DEVELOPER,
-            SlashModule.MATHS,
+            CommandCategory.MATHS,
             format.parse("11-11-2022_20:50"),
             format.parse("29-12-2022_10:14")
         )

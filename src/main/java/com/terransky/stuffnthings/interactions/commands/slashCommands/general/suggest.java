@@ -26,7 +26,7 @@ public class suggest implements ICommandSlash {
         return new Metadata(this.getName(), "Have something you want the bot to do? Suggest here!", """
             Have a command that you would like the bot to have? Suggest it with this command!
             """, Mastermind.DEVELOPER,
-            SlashModule.GENERAL,
+            CommandCategory.GENERAL,
             format.parse("24-08-2022_11:10"),
             format.parse("1-1-2022_18:23")
         )

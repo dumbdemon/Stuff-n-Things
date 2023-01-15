@@ -63,7 +63,7 @@ public class numbersAPI implements ICommandSlash {
             Random facts about numbers! How nerdy/geeky can you get? Leaving any option empty will return a random fact of that category.
             Facts are provided by [NumbersAPI](http://numbersapi.com).
             """, Mastermind.DEVELOPER,
-            SlashModule.MATHS,
+            CommandCategory.MATHS,
             format.parse("10-11-2022_20:45"),
             format.parse("29-12-2022_10:14")
         )

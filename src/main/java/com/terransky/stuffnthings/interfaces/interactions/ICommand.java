@@ -14,7 +14,7 @@ public interface ICommand extends IInteraction {
      * Get this commands {@link CommandData}.
      *
      * @return A {@link CommandData} object.
-     * @throws ParseException If the pattern used in {@link Metadata#getImplementationDate()} or {@link Metadata#getLastUpdated()} in a slash command class
+     * @throws ParseException If the pattern used in {@link Metadata#getCreatedDate()} or {@link Metadata#getLastUpdated()} in a slash command class
      *                        is given an invalid date string.
      */
     CommandData getCommandData() throws ParseException;

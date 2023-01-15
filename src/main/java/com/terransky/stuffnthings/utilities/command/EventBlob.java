@@ -13,12 +13,6 @@ public class EventBlob {
 
     /**
      * An object containing checked non-null {@link Guild} object and {@link Member} object.
-     */
-    public EventBlob() {
-    }
-
-    /**
-     * An object containing checked non-null {@link Guild} object and {@link Member} object.
      *
      * @param guild  A {@link Guild} from an event.
      * @param member A {@link Member} from an event.

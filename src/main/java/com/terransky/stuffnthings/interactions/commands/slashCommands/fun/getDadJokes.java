@@ -35,7 +35,7 @@ public class getDadJokes implements ICommandSlash {
         return new Metadata(this.getName(), "Why was 6 afraid of 7? Because 7 was a registered 6 offender.", """
             An unoriginal or unfunny joke of a type supposedly told by middle-aged or older men.
             """, Mastermind.USER,
-            SlashModule.FUN,
+            CommandCategory.FUN,
             format.parse("25-8-2022_20:53"),
             format.parse("29-12-2022_10:14")
         );

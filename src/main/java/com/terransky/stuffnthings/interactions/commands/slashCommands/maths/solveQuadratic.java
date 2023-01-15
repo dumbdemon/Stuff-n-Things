@@ -25,9 +25,9 @@ public class solveQuadratic implements ICommandSlash {
         FastDateFormat format = Metadata.getFastDateFormat();
 
         return new Metadata(this.getName(), "Solve a Quadratic Equation.", """
-            Given a, b, and c, solve for when the parabola intersects the x-axis.
+            Given a, b, and/or c, solve for when the parabola intersects the x-axis.
             """, Mastermind.DEVELOPER,
-            SlashModule.MATHS,
+            CommandCategory.MATHS,
             format.parse("19-11-2022_13:09"),
             format.parse("12-1-2023_20:52")
         )
