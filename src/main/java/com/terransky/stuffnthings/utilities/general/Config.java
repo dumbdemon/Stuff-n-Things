@@ -83,4 +83,9 @@ public class Config {
     public static String getTinyURlDomain() {
         return config.get("TINY_URL_DOMAIN", "");
     }
+
+    @SuppressWarnings("SpellCheckingInspection")
+    public static String getKitsuToken() {
+        return config.get("KITSU_TOKEN", "");
+    }
 }

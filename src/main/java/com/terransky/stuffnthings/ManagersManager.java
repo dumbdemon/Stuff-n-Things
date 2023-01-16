@@ -5,10 +5,7 @@ import com.terransky.stuffnthings.interactions.buttons.getMoreDadJokes;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.channelUnLock;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.checkPerms;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.configCmd;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.devs.getInvite;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.devs.test;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.devs.tinyURL;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.devs.userInfo;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.devs.*;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.*;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.general.about;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.general.ping;
@@ -46,6 +43,8 @@ public class ManagersManager {
         new dictionary(),
         new getDadJokes(),
         new kill(),
+        new kitsu.anime(),
+        new kitsu.manga(),
         new lmgtfy(),
         new meme(),
         new robFailChance(),
@@ -58,6 +57,7 @@ public class ManagersManager {
 
         //Dev commands
         new getInvite(),
+        new getKitsuToken(),
         new test(),
         new tinyURL(),
         new userInfo()
