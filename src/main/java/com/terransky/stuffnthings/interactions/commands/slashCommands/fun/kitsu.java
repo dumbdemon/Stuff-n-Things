@@ -43,8 +43,7 @@ public class kitsu {
         public Metadata getMetadata() throws ParseException {
             return getStandard(getName())
                 .setLastUpdated(new Date())
-                .setShortDescription("")
-                .setLongDescription("");
+                .setDescripstions("Search for an anime using Kitsu.io");
         }
 
         @Override
@@ -67,8 +66,7 @@ public class kitsu {
         public Metadata getMetadata() throws ParseException {
             return getStandard(getName())
                 .setLastUpdated(new Date())
-                .setShortDescription("")
-                .setLongDescription("");
+                .setDescripstions("Search for a manga using Kitsu.io");
         }
 
         @Override
