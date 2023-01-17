@@ -149,7 +149,7 @@ public class dictionary implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.FUN,
             format.parse("27-10-2022_12:46"),
-            format.parse("3-1-2022_18:31")
+            format.parse("17-1-2022_11:15")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "word", "The word to look up.", true),
@@ -162,6 +162,7 @@ public class dictionary implements ICommandSlash {
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
         event.deferReply().queue();
         String[] userWords = event.getOption("word", "", OptionMapping::getAsString).split(" ");
+        Config.Credentials credentials = Config.Credentials.OXFORD;
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle(getNameReadable())
             .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
@@ -183,8 +184,8 @@ public class dictionary implements ICommandSlash {
             .formatted(language.getValue().toLanguageTag().toLowerCase(), toLookUp));
         HttpURLConnection oxfordConnection = (HttpURLConnection) dictionary.openConnection();
         oxfordConnection.addRequestProperty("Accept", "application/json");
-        oxfordConnection.addRequestProperty("app_id", Config.getOxfordId());
-        oxfordConnection.addRequestProperty("app_key", Config.getOxfordKey());
+        oxfordConnection.addRequestProperty("app_id", credentials.getUsername());
+        oxfordConnection.addRequestProperty("app_key", credentials.getPassword());
         int responseCode = oxfordConnection.getResponseCode();
         ObjectMapper om = new ObjectMapper();
 
@@ -262,5 +263,10 @@ public class dictionary implements ICommandSlash {
         }
 
         oxfordConnection.disconnect();
+    }
+
+    @Override
+    public boolean isWorking() {
+        return !Config.Credentials.OXFORD.isDefault();
     }
 }

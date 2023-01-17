@@ -18,10 +18,16 @@ import java.util.Date;
 import java.util.Random;
 
 public class StuffNThings {
-    public static void main(String[] args) throws SQLException {
-        if (Config.isDatabaseEnabled()) SQLiteDataSource.getConnection();
 
-        DefaultShardManagerBuilder shards = DefaultShardManagerBuilder.createDefault(Config.getToken())
+    private static final Config.Credentials TOKEN = Config.Credentials.DISCORD;
+
+    public static void main(String[] args) throws SQLException {
+        if (Config.isDatabaseEnabled())
+            SQLiteDataSource.getConnection();
+        if (TOKEN.isDefault())
+            throw new IllegalArgumentException("Unable to start bot. No bot token was set.");
+
+        DefaultShardManagerBuilder shards = DefaultShardManagerBuilder.createDefault(TOKEN.getPassword())
             .enableIntents(
                 GatewayIntent.GUILD_MEMBERS,
                 GatewayIntent.GUILD_PRESENCES

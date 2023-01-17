@@ -57,7 +57,7 @@ public class ManagersManager {
 
         //Dev commands
         new getInvite(),
-        new getKitsuToken(),
+        new upsertKitsuToken(),
         new test(),
         new tinyURL(),
         new userInfo()

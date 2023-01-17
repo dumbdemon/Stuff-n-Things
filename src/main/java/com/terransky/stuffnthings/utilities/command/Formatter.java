@@ -1,5 +1,9 @@
 package com.terransky.stuffnthings.utilities.command;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -20,6 +24,7 @@ public class Formatter {
         put(1e33f, " Decillion");
         put(1e36f, " Undecillion");
     }};
+    private static final String ENCODING = "UTF-8";
 
     /**
      * Makes extra large numbers look nice~ <br />
@@ -41,5 +46,27 @@ public class Formatter {
         float truncated = value / (divideBy / 10);
         boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
         return hasDecimal ? simpleNum.format(truncated / 10d) + suffix : simpleNum.format(truncated / 10) + suffix;
+    }
+
+    @NotNull
+    public static String percentEncode(String s) {
+        return percentEncode(s, ENCODING);
+    }
+
+    @NotNull
+    public static String percentEncode(String s, String encoding) {
+        if (s == null) {
+            return "";
+        }
+        try {
+            return URLEncoder.encode(s, encoding)
+                .replaceAll("\\[", "%5B")
+                .replaceAll("]", "%5D")
+                .replaceAll("\\+", "%20")
+                .replaceAll("\\*", "%2A")
+                .replaceAll("%7E", "~");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 }

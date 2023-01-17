@@ -20,6 +20,7 @@ public class SQLiteDataSource { //todo: Set up MongoDB
     private static final HikariConfig config = new HikariConfig();
     private static final HikariDataSource ds;
     private static final HikariPoolMXBean poolBean;
+    private static final Config.Credentials dbLogin = Config.Credentials.DATABASE;
 
     static {
         try {
@@ -39,8 +40,10 @@ public class SQLiteDataSource { //todo: Set up MongoDB
 
         config.setJdbcUrl("jdbc:sqlite:database.sqlite");
         config.setConnectionTestQuery("SELECT 1");
-        config.setUsername(Config.getDBUsername());
-        config.setPassword(Config.getDBPassword());
+        if (dbLogin.isDefault())
+            throw new IllegalArgumentException("Cannot initialize database without credentials.");
+        config.setUsername(dbLogin.getUsername());
+        config.setPassword(dbLogin.getPassword());
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");

@@ -128,7 +128,7 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        if (slash.isDeveloperCommand() && !blob.getMemberId().equals(Config.getOwnerId())) {
+        if (slash.isDeveloperCommand() && !blob.getMemberId().equals(Config.getDeveloperId())) {
             commandIsDevsOnly(event, blob, IInteractionType.COMMAND_SLASH);
             return;
         }
@@ -162,7 +162,7 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        if (commandMessage.isDeveloperCommand() && !blob.getMemberId().equals(Config.getOwnerId())) {
+        if (commandMessage.isDeveloperCommand() && !blob.getMemberId().equals(Config.getDeveloperId())) {
             commandIsDevsOnly(event, blob, IInteractionType.COMMAND_MESSAGE);
             return;
         }
@@ -195,7 +195,7 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        if (commandUser.isDeveloperCommand() && !blob.getMemberId().equals(Config.getOwnerId())) {
+        if (commandUser.isDeveloperCommand() && !blob.getMemberId().equals(Config.getDeveloperId())) {
             commandIsDevsOnly(event, blob, IInteractionType.COMMAND_USER);
             return;
         }

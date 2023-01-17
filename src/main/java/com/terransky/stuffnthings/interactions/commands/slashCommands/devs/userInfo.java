@@ -54,7 +54,7 @@ public class userInfo implements ICommandSlash {
             }
         } else permText.append("Member");
 
-        if (member.getId().equals(Config.getOwnerId())) {
+        if (member.getId().equals(Config.getDeveloperId())) {
             permText.append(", Developer");
         }
         return permText.toString();

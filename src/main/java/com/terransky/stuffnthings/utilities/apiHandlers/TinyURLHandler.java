@@ -41,7 +41,7 @@ public class TinyURLHandler extends TinyURLRequestData {
             .executor(service)
             .build();
         HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("https://api.tinyurl.com/create?api_token=" + Config.getTinyURLToken()))
+            .uri(URI.create("https://api.tinyurl.com/create?api_token=" + Config.Credentials.TINYURL.getPassword()))
             .setHeader("accept", "application/json")
             .setHeader("Content-Type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(getRequestBody()))
