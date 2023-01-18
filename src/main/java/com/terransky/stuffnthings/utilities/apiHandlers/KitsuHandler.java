@@ -2,10 +2,7 @@ package com.terransky.stuffnthings.utilities.apiHandlers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.terransky.stuffnthings.dataSources.kitsu.AnimeKitsuData;
-import com.terransky.stuffnthings.dataSources.kitsu.KitsuAuth;
-import com.terransky.stuffnthings.dataSources.kitsu.KitsuAuthError;
-import com.terransky.stuffnthings.dataSources.kitsu.MangaKitsuData;
+import com.terransky.stuffnthings.dataSources.kitsu.*;
 import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.LogList;
 import org.jetbrains.annotations.NotNull;
@@ -63,7 +60,7 @@ public class KitsuHandler {
 
             if (KITSU_AUTH.exists()) {
                 KitsuAuth auth = MAPPER.readValue(KITSU_AUTH, KitsuAuth.class);
-                if (auth.getExpiresAt().compareTo(auth.getCreatedAt()) < 0) {
+                if (auth.getExpiresAt().compareTo(new Date()) > 0) {
                     log.warn(String.format("Kitsu.io token is still valid for %s days.",
                         (int) ChronoUnit.DAYS.between(new Date().toInstant(), auth.getExpiresAt().toInstant())));
                     return false;
@@ -90,6 +87,9 @@ public class KitsuHandler {
                 KitsuAuthError authError = MAPPER.readValue(response.body(), KitsuAuthError.class);
                 log.error(String.format("%s: %s", authError.getError(), authError.getErrorDescription()));
                 return false;
+            } else if (response.statusCode() - 500 >= 0) {
+                log.error("Server error on Kitsi.io side.");
+                return false;
             }
 
             KitsuAuth auth = MAPPER.readValue(response.body(), KitsuAuth.class);
@@ -101,6 +101,9 @@ public class KitsuHandler {
             log.error(String.format("%s; %s", e.getClass().getName(), e.getMessage()));
             LogList.error(Arrays.asList(e.getStackTrace()), log);
             return false;
+        } finally {
+            service.shutdownNow();
+            System.gc();
         }
         return true;
     }
@@ -113,6 +116,10 @@ public class KitsuHandler {
     public AnimeKitsuData getAnime(@NotNull String search) throws IOException {
         URL anime = new URL(BASE_URL + "anime?filter%5Btext%5D=" + search.toLowerCase().replaceAll(" ", "%20"));
         return MAPPER.readValue(getInputStreamOf(anime), AnimeKitsuData.class);
+    }
+
+    public KitsuGenres getGenres(URL url) throws IOException {
+        return MAPPER.readValue(getInputStreamOf(url), KitsuGenres.class);
     }
 
     /**

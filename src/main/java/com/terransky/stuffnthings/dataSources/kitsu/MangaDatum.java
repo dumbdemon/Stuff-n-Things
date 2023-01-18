@@ -15,7 +15,7 @@ import javax.annotation.Generated;
     "relationships"
 })
 @Generated("jsonschema2pojo")
-public class MangaDatum extends Datum {
+public class MangaDatum extends EntryDatum {
 
     @JsonProperty("attributes")
     private MangaAttributes attributes;

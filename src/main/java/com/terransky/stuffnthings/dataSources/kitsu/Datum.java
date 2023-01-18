@@ -3,36 +3,32 @@ package com.terransky.stuffnthings.dataSources.kitsu;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Generated;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "id",
-    "type",
-    "links",
-    "attributes",
-    "relationships"
+    "type"
 })
 @Generated("jsonschema2pojo")
-public class Datum {
+public class Datum implements Comparable<Datum> {
 
     @JsonProperty("id")
-    String id;
+    int id;
     @JsonProperty("type")
     String type;
     @JsonProperty("links")
     Links links;
-    @JsonProperty("relationships")
-    Relationships relationships;
 
     @JsonProperty("id")
-    public String getId() {
+    public int getId() {
         return id;
     }
 
     @JsonProperty("id")
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -56,14 +52,8 @@ public class Datum {
         this.links = links;
     }
 
-    @JsonProperty("relationships")
-    public Relationships getRelationships() {
-        return relationships;
+    @Override
+    public int compareTo(@NotNull Datum datum) {
+        return Integer.compare(id, datum.getId());
     }
-
-    @JsonProperty("relationships")
-    public void setRelationships(Relationships relationships) {
-        this.relationships = relationships;
-    }
-
 }

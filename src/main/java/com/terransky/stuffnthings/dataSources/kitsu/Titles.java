@@ -3,7 +3,6 @@ package com.terransky.stuffnthings.dataSources.kitsu;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Generated;
 
@@ -11,6 +10,7 @@ import javax.annotation.Generated;
 @JsonPropertyOrder({
     "en",
     "en_jp",
+    "en_us",
     "ja_jp"
 })
 @Generated("jsonschema2pojo")
@@ -20,11 +20,12 @@ public class Titles {
     private String englishTitle;
     @JsonProperty("en_jp")
     private String romanizedTitle;
+    @JsonProperty("en_us")
+    private String usEnglishTitle;
     @JsonProperty("ja_jp")
     private String japaneseTitle;
 
     @JsonProperty("en")
-    @Nullable
     public String getEnglishTitle() {
         return englishTitle;
     }
@@ -44,6 +45,16 @@ public class Titles {
         this.romanizedTitle = romanizedTitle;
     }
 
+    @JsonProperty("en_us")
+    public String getUsEnglishTitle() {
+        return usEnglishTitle;
+    }
+
+    @JsonProperty("en_us")
+    public void setUsEnglishTitle(String usEnglishTitle) {
+        this.usEnglishTitle = usEnglishTitle;
+    }
+
     @JsonProperty("ja_jp")
     public String getJapaneseTitle() {
         return japaneseTitle;
@@ -53,5 +64,4 @@ public class Titles {
     public void setJapaneseTitle(String japaneseTitle) {
         this.japaneseTitle = japaneseTitle;
     }
-
 }

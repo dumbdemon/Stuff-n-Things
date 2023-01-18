@@ -11,22 +11,21 @@ import javax.annotation.Generated;
     "id",
     "type",
     "links",
-    "attributes",
-    "relationships"
+    "attributes"
 })
 @Generated("jsonschema2pojo")
-public class AnimeDatum extends EntryDatum {
+public class GenreDatum extends Datum {
 
     @JsonProperty("attributes")
-    private AnimeAttributes attributes;
+    private GenreAttributes attributes;
 
     @JsonProperty("attributes")
-    public AnimeAttributes getAttributes() {
+    public GenreAttributes getAttributes() {
         return attributes;
     }
 
     @JsonProperty("attributes")
-    public void setAttributes(AnimeAttributes attributes) {
+    public void setAttributes(GenreAttributes attributes) {
         this.attributes = attributes;
     }
 }

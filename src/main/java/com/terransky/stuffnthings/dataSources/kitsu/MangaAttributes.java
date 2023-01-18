@@ -39,7 +39,7 @@ import javax.annotation.Generated;
 })
 @Generated("jsonschema2pojo")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MangaAttributes extends Attributes {
+public class MangaAttributes extends EntryAttributes {
 
     @JsonProperty("chapterCount")
     private Long chapterCount;

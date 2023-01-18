@@ -40,7 +40,7 @@ import javax.annotation.Generated;
 })
 @Generated("jsonschema2pojo")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AnimeAttributes extends Attributes {
+public class AnimeAttributes extends EntryAttributes {
 
     @JsonProperty("episodeCount")
     private Long episodeCount;
