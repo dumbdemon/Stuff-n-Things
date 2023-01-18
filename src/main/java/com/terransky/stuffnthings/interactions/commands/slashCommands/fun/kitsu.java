@@ -26,7 +26,7 @@ public class kitsu {
     private static final FastDateFormat FORMAT = Metadata.getFastDateFormat();
 
     private static long getGlobalLastUpdated() throws ParseException {
-        return FORMAT.parse("18-1-2023_16:19").getTime();
+        return FORMAT.parse("18-1-2023_16:41").getTime();
     }
 
     private static Metadata getStandard(String name) throws ParseException {
@@ -47,7 +47,7 @@ public class kitsu {
     }
 
     @NotNull
-    private static <T extends EntryAttributes> MessageEmbed getResponseEmbed(@NotNull T attributes, @NotNull KitsuGenres genres,
+    private static <T extends EntryAttributes> MessageEmbed getResponseEmbed(@NotNull T attributes, @NotNull GenreKitsuData genres,
                                                                              @NotNull EventBlob blob) {
         EmbedBuilder builder = new EmbedBuilder()
             .setColor(EmbedColors.getDefault())
@@ -107,7 +107,7 @@ public class kitsu {
 
             KitsuHandler handler = new KitsuHandler();
             AnimeDatum animeDatum = handler.getAnime(query).getData().get(0);
-            KitsuGenres genres = handler.getGenres(new URL(animeDatum.getRelationships().getGenres().getLinks().getRelated()));
+            GenreKitsuData genres = handler.getGenres(new URL(animeDatum.getRelationships().getGenres().getLinks().getRelated()));
 
             event.replyEmbeds(getResponseEmbed(animeDatum.getAttributes(), genres, blob)).queue();
         }
@@ -139,7 +139,7 @@ public class kitsu {
 
             KitsuHandler handler = new KitsuHandler();
             MangaDatum mangaDatum = handler.getManga(query).getData().get(0);
-            KitsuGenres genres = handler.getGenres(new URL(mangaDatum.getRelationships().getGenres().getLinks().getRelated()));
+            GenreKitsuData genres = handler.getGenres(new URL(mangaDatum.getRelationships().getGenres().getLinks().getRelated()));
 
             event.replyEmbeds(getResponseEmbed(mangaDatum.getAttributes(), genres, blob)).queue();
         }

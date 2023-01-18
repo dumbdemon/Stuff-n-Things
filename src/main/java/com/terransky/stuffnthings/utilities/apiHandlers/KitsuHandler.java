@@ -118,8 +118,8 @@ public class KitsuHandler {
         return MAPPER.readValue(getInputStreamOf(anime), AnimeKitsuData.class);
     }
 
-    public KitsuGenres getGenres(URL url) throws IOException {
-        return MAPPER.readValue(getInputStreamOf(url), KitsuGenres.class);
+    public GenreKitsuData getGenres(URL url) throws IOException {
+        return MAPPER.readValue(getInputStreamOf(url), GenreKitsuData.class);
     }
 
     /**
