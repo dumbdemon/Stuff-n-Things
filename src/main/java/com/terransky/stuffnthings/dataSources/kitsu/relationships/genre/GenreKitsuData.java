@@ -1,8 +1,9 @@
-package com.terransky.stuffnthings.dataSources.kitsu;
+package com.terransky.stuffnthings.dataSources.kitsu.relationships.genre;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.terransky.stuffnthings.dataSources.kitsu.KitsuData;
 
 import javax.annotation.Generated;
 import java.util.ArrayList;

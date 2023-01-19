@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.dataSources.kitsu;
+package com.terransky.stuffnthings.dataSources.kitsu.entries;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

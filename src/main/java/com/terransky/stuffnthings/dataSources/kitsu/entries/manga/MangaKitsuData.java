@@ -1,8 +1,9 @@
-package com.terransky.stuffnthings.dataSources.kitsu;
+package com.terransky.stuffnthings.dataSources.kitsu.entries.manga;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.terransky.stuffnthings.dataSources.kitsu.KitsuData;
 
 import javax.annotation.Generated;
 import java.util.ArrayList;
@@ -18,18 +19,18 @@ import java.util.List;
     "links"
 })
 @Generated("jsonschema2pojo")
-public class AnimeKitsuData extends KitsuData {
+public class MangaKitsuData extends KitsuData {
 
     @JsonProperty("data")
-    private List<AnimeDatum> data = new ArrayList<>();
+    private List<MangaDatum> data = new ArrayList<>();
 
     @JsonProperty("data")
-    public List<AnimeDatum> getData() {
+    public List<MangaDatum> getData() {
         return data;
     }
 
     @JsonProperty("data")
-    public void setData(List<AnimeDatum> data) {
+    public void setData(List<MangaDatum> data) {
         this.data = data;
     }
 }

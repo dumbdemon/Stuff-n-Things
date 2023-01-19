@@ -8,3 +8,4 @@ gradle/
 /src/main/java/com/terransky/stuffnthings/interactions/commands/slashCommands/devs/test.java
 /logs/
 /Command Wiki
+/kitsuToken.json

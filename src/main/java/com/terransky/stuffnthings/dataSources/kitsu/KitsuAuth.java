@@ -8,7 +8,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Generated;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -54,8 +58,14 @@ public class KitsuAuth {
     }
 
     @JsonProperty("created_at")
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedAt(long createdAt) {
+        this.createdAt = new Date(TimeUnit.SECONDS.toMillis(createdAt));
+    }
+
+    public LocalDate getExpiredAtAsLocalDate() {
+        return getExpiresAt().toInstant()
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate();
     }
 
     /**
@@ -72,7 +82,15 @@ public class KitsuAuth {
     }
 
     public Date getExpiresAt() {
-        return new Date(getCreatedAt().getTime() + getExpiresIn());
+        return new Date(createdAt.getTime() + TimeUnit.SECONDS.toMillis(expiresIn));
+    }
+
+    public long getDaysUntilExpired() {
+        return LocalDate.now().until(getExpiredAtAsLocalDate(), ChronoUnit.DAYS);
+    }
+
+    public boolean isExpired() {
+        return getDaysUntilExpired() < 0;
     }
 
     /**
@@ -112,7 +130,7 @@ public class KitsuAuth {
         ObjectNode rootNode = mapper.createObjectNode();
 
         rootNode.put("access_token", accessToken);
-        rootNode.put("created_at", createdAt.getTime());
+        rootNode.put("created_at", TimeUnit.MILLISECONDS.toSeconds(createdAt.getTime()));
         rootNode.put("expires_in", expiresIn);
         rootNode.put("refresh_token", refreshToken);
         rootNode.put("scope", scope);

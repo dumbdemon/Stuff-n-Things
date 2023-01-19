@@ -1,8 +1,9 @@
-package com.terransky.stuffnthings.dataSources.kitsu;
+package com.terransky.stuffnthings.dataSources.kitsu.relationships;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.terransky.stuffnthings.dataSources.kitsu.Links;
 
 import javax.annotation.Generated;
 
@@ -12,7 +13,7 @@ import javax.annotation.Generated;
     "related"
 })
 @Generated("jsonschema2pojo")
-public class ExtendedLinks extends Links {
+public class RelatedLinks extends Links {
 
     @JsonProperty("related")
     private String related;
