@@ -14,7 +14,7 @@ import javax.annotation.Generated;
 public class Links {
 
     @JsonProperty("self")
-    String self;
+    private String self;
 
     @JsonProperty("self")
     public String getSelf() {

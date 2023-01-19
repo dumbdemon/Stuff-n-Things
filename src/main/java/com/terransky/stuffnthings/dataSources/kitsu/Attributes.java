@@ -11,9 +11,9 @@ import java.util.Date;
 public class Attributes {
 
     @JsonProperty("createdAt")
-    Date createdAt;
+    private Date createdAt;
     @JsonProperty("updatedAt")
-    Date updatedAt;
+    private Date updatedAt;
 
     @JsonProperty("createdAt")
     public Date getCreatedAt() {

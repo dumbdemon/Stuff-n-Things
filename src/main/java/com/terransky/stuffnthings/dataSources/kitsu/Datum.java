@@ -16,11 +16,11 @@ import javax.annotation.Generated;
 public class Datum implements Comparable<Datum> {
 
     @JsonProperty("id")
-    int id;
+    private int id;
     @JsonProperty("type")
-    String type;
+    private String type;
     @JsonProperty("links")
-    Links links;
+    private Links links;
 
     @JsonProperty("id")
     public int getId() {

@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.dataSources.kitsu;
+package com.terransky.stuffnthings.dataSources.kitsu.entries;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,15 +18,15 @@ import javax.annotation.Generated;
 public class CoverImage {
 
     @JsonProperty("tiny")
-    String tiny;
+    private String tiny;
     @JsonProperty("small")
-    String small;
+    private String small;
     @JsonProperty("large")
-    String large;
+    private String large;
     @JsonProperty("original")
-    String original;
+    private String original;
     @JsonProperty("meta")
-    ImageMeta meta;
+    private ImageMeta meta;
 
     @JsonProperty("tiny")
     public String getTiny() {

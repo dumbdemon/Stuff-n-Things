@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.dataSources.kitsu.enums;
+package com.terransky.stuffnthings.dataSources.kitsu.entries.enums;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,8 +1,9 @@
-package com.terransky.stuffnthings.dataSources.kitsu;
+package com.terransky.stuffnthings.dataSources.kitsu.entries.manga;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.terransky.stuffnthings.dataSources.kitsu.Datum;
 
 import javax.annotation.Generated;
 
@@ -15,10 +16,12 @@ import javax.annotation.Generated;
     "relationships"
 })
 @Generated("jsonschema2pojo")
-public class MangaDatum extends EntryDatum {
+public class MangaDatum extends Datum {
 
     @JsonProperty("attributes")
     private MangaAttributes attributes;
+    @JsonProperty("relationships")
+    private MangaRelationships relationships;
 
     @JsonProperty("attributes")
     public MangaAttributes getAttributes() {
@@ -28,5 +31,15 @@ public class MangaDatum extends EntryDatum {
     @JsonProperty("attributes")
     public void setAttributes(MangaAttributes attributes) {
         this.attributes = attributes;
+    }
+
+    @JsonProperty("relationships")
+    public MangaRelationships getRelationships() {
+        return relationships;
+    }
+
+    @JsonProperty("relationships")
+    public void setRelationships(MangaRelationships relationships) {
+        this.relationships = relationships;
     }
 }

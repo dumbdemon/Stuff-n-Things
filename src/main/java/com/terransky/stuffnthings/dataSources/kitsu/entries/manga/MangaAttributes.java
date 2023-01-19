@@ -1,9 +1,10 @@
-package com.terransky.stuffnthings.dataSources.kitsu;
+package com.terransky.stuffnthings.dataSources.kitsu.entries.manga;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.terransky.stuffnthings.dataSources.kitsu.entries.EntryAttributes;
 
 import javax.annotation.Generated;
 
@@ -47,6 +48,10 @@ public class MangaAttributes extends EntryAttributes {
     private Long volumeCount;
     @JsonProperty("serialization")
     private String serialization;
+
+    {
+        setBaseUrl("https://kitsu.io/manga/");
+    }
 
     @JsonProperty("chapterCount")
     public Long getChapterCount() {

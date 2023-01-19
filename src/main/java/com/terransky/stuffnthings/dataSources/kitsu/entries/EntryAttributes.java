@@ -1,10 +1,11 @@
-package com.terransky.stuffnthings.dataSources.kitsu;
+package com.terransky.stuffnthings.dataSources.kitsu.entries;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.terransky.stuffnthings.dataSources.kitsu.enums.AgeRating;
-import com.terransky.stuffnthings.dataSources.kitsu.enums.Subtype;
+import com.terransky.stuffnthings.dataSources.kitsu.Attributes;
+import com.terransky.stuffnthings.dataSources.kitsu.entries.enums.Status;
+import com.terransky.stuffnthings.dataSources.kitsu.entries.enums.Subtype;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Generated;
@@ -18,43 +19,44 @@ import java.util.List;
 public class EntryAttributes extends Attributes {
 
     @JsonProperty("slug")
-    String slug;
+    private String slug;
     @JsonProperty("synopsis")
-    String synopsis;
-    @JsonProperty("titles")
-    Titles titles;
+    private String synopsis;
+    @JsonProperty("description")
+    private String description;
     @JsonProperty("canonicalTitle")
-    String canonicalTitle;
+    private String canonicalTitle;
     @JsonProperty("abbreviatedTitles")
-    List<String> abbreviatedTitles = new ArrayList<>();
+    private List<String> abbreviatedTitles = new ArrayList<>();
     @JsonProperty("averageRating")
-    String averageRating;
+    private String averageRating;
     @JsonProperty("ratingFrequencies")
-    RatingFrequencies ratingFrequencies;
+    private RatingFrequencies ratingFrequencies;
     @JsonProperty("userCount")
-    long userCount;
+    private long userCount;
     @JsonProperty("favoritesCount")
-    long favoritesCount;
+    private long favoritesCount;
     @JsonProperty("startDate")
-    Date startDate;
+    private Date startDate;
     @JsonProperty("endDate")
-    Date endDate;
+    private Date endDate;
+    @JsonProperty("nextRelease")
+    private Date nextRelease;
     @JsonProperty("popularityRank")
-    long popularityRank;
+    private long popularityRank;
     @JsonProperty("ratingRank")
-    long ratingRank;
-    @JsonProperty("ageRating")
-    AgeRating ageRating;
+    private long ratingRank;
     @JsonProperty("ageRatingGuide")
-    String ageRatingGuide;
+    private String ageRatingGuide;
     @JsonProperty("subtype")
-    Subtype subtype;
+    private Subtype subtype;
     @JsonProperty("status")
-    String status;
+    private Status status;
     @JsonProperty("posterImage")
-    PosterImage posterImage;
+    private PosterImage posterImage;
     @JsonProperty("coverImage")
-    CoverImage coverImage;
+    private CoverImage coverImage;
+    private String baseUrl;
 
     @JsonProperty("slug")
     public String getSlug() {
@@ -76,14 +78,14 @@ public class EntryAttributes extends Attributes {
         this.synopsis = synopsis;
     }
 
-    @JsonProperty("titles")
-    public Titles getTitles() {
-        return titles;
+    @JsonProperty("description")
+    public String getDescription() {
+        return description;
     }
 
-    @JsonProperty("titles")
-    public void setTitles(Titles titles) {
-        this.titles = titles;
+    @JsonProperty("description")
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @JsonProperty("canonicalTitle")
@@ -167,6 +169,16 @@ public class EntryAttributes extends Attributes {
         this.endDate = endDate;
     }
 
+    @JsonProperty("nextRelease")
+    public Date getNextRelease() {
+        return nextRelease;
+    }
+
+    @JsonProperty("nextRelease")
+    public void setNextRelease(Date nextRelease) {
+        this.nextRelease = nextRelease;
+    }
+
     @JsonProperty("popularityRank")
     public long getPopularityRank() {
         return popularityRank;
@@ -187,16 +199,6 @@ public class EntryAttributes extends Attributes {
         this.ratingRank = ratingRank;
     }
 
-    @JsonProperty("ageRating")
-    public AgeRating getAgeRating() {
-        return ageRating;
-    }
-
-    @JsonProperty("ageRating")
-    public void setAgeRating(String ageRating) {
-        this.ageRating = AgeRating.getAgeRatingByCode(ageRating);
-    }
-
     @JsonProperty("ageRatingGuide")
     public String getAgeRatingGuide() {
         return ageRatingGuide;
@@ -208,13 +210,17 @@ public class EntryAttributes extends Attributes {
     }
 
     @JsonProperty("status")
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
     @JsonProperty("status")
     public void setStatus(String status) {
-        this.status = status;
+        if (status == null) {
+            this.status = Status.UNKNOWN;
+            return;
+        }
+        this.status = Status.getStatusByState(status);
     }
 
     public Subtype getSubtype() {
@@ -222,6 +228,10 @@ public class EntryAttributes extends Attributes {
     }
 
     public void setSubtype(String subtype) {
+        if (subtype == null) {
+            this.subtype = Subtype.UNKNOWN;
+            return;
+        }
         this.subtype = Subtype.getSubtypeByCode(subtype);
     }
 
@@ -243,5 +253,13 @@ public class EntryAttributes extends Attributes {
     @JsonProperty("coverImage")
     public void setCoverImage(CoverImage coverImage) {
         this.coverImage = coverImage;
+    }
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 }

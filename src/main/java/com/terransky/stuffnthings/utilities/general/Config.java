@@ -86,7 +86,7 @@ public class Config {
         DATABASE(config.get("DB_USERNAME", DEFAULT_USERNAME), config.get("DB_PASSWORD", DEFAULT_PASSWORD)),
         /**
          * Credentials for the Oxford Dictionary API.<br />
-         * If this is not set, the {@link dictionary} command with be upserted.
+         * If this is not set, the {@link dictionary} command won't be upserted.
          */
         OXFORD(config.get("OXFORD_ID", DEFAULT_USERNAME), config.get("OXFORD_KEY", DEFAULT_PASSWORD)),
         /**
@@ -127,7 +127,7 @@ public class Config {
         /**
          * Checks if the credentials have been set.
          *
-         * @return True if credentials were set.
+         * @return True if credentials weren't set.
          */
         public boolean isDefault() {
             if (username == null)

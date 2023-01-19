@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.dataSources.kitsu;
+package com.terransky.stuffnthings.dataSources.kitsu.relationships;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,18 +11,18 @@ import javax.annotation.Generated;
     "links"
 })
 @Generated("jsonschema2pojo")
-public class MangaLinks {
+public class RelationshipLinks {
 
     @JsonProperty("links")
-    private ExtendedLinks links;
+    private RelatedLinks links;
 
     @JsonProperty("links")
-    public ExtendedLinks getLinks() {
+    public RelatedLinks getLinks() {
         return links;
     }
 
     @JsonProperty("links")
-    public void setLinks(ExtendedLinks links) {
+    public void setLinks(RelatedLinks links) {
         this.links = links;
     }
 
