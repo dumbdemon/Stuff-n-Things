@@ -5,9 +5,10 @@ import com.terransky.stuffnthings.dataSources.kitsu.entries.EntryAttributes;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.anime.AnimeAttributes;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.anime.AnimeDatum;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.enums.AgeRating;
+import com.terransky.stuffnthings.dataSources.kitsu.entries.enums.Subtype;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.manga.MangaAttributes;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.manga.MangaDatum;
-import com.terransky.stuffnthings.dataSources.kitsu.relationships.genre.GenreKitsuData;
+import com.terransky.stuffnthings.dataSources.kitsu.relationships.categories.CategoriesKitsuData;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.apiHandlers.KitsuHandler;
 import com.terransky.stuffnthings.utilities.command.*;
@@ -32,7 +33,7 @@ public class kitsu {
     private static final FastDateFormat FORMAT = Metadata.getFastDateFormat();
 
     private static long getGlobalLastUpdated() throws ParseException {
-        return FORMAT.parse("19-1-2023_12:51").getTime();
+        return FORMAT.parse("20-1-2023_16:07").getTime();
     }
 
     private static Metadata getStandard(String name) throws ParseException {
@@ -48,12 +49,18 @@ public class kitsu {
 
     private static String getDates(@NotNull EntryAttributes attributes) {
         FastDateFormat format = FastDateFormat.getInstance("yyy-MM-dd");
-        return String.format("from **%s** to **%s**", format.format(attributes.getStartDate()),
-            attributes.getEndDate() == null ? "current" : format.format(attributes.getEndDate()));
+
+        if (attributes.getEndDate() == null)
+            return String.format("from **%s** to **?**", format.format(attributes.getStartDate()));
+
+        if (attributes.getStartDate().compareTo(attributes.getEndDate()) == 0)
+            return String.format("on **%s**", format.format(attributes.getStartDate()));
+
+        return String.format("from **%s** to **%s**", format.format(attributes.getStartDate()), format.format(attributes.getEndDate()));
     }
 
     @NotNull
-    private static <T extends EntryAttributes> MessageEmbed getResponseEmbed(@NotNull T attributes, @NotNull GenreKitsuData genres,
+    private static <T extends EntryAttributes> MessageEmbed getResponseEmbed(@NotNull T attributes, @NotNull CategoriesKitsuData categories,
                                                                              @NotNull EventBlob blob) {
         EmbedBuilder builder = new EmbedBuilder()
             .setColor(EmbedColors.getDefault())
@@ -61,35 +68,40 @@ public class kitsu {
             .setTitle(attributes.getCanonicalTitle(), attributes.getBaseUrl() + attributes.getSlug())
             .setDescription(attributes.getSynopsis())
             .setThumbnail(attributes.getPosterImage().getOriginal())
-            .addField("Status", attributes.getStatus().getState(), true)
-            .addField("Type", attributes.getSubtype().getCode(), true);
+            .addField(":hourglass_flowing_sand: Status", attributes.getStatus().getState(), true)
+            .addField(":dividers: Type", attributes.getSubtype().getCode(), true);
 
         if (attributes instanceof AnimeAttributes animeAttributes) {
             AgeRating ageRating = animeAttributes.getAgeRating();
-            builder.addField("Rating", String.format("%s [%s]", ageRating.getCode(), ageRating.getCodename()), true);
+            builder.addField(":lock: Rating", String.format("%s [%s]", ageRating.getCode(), ageRating.getCodename()), true);
         }
 
-        builder.addField("Genres", genres.getGenreString(), false);
+        builder.addField(":arrow_right: Genres", categories.getCategoriesString(), false);
 
         if (attributes instanceof AnimeAttributes animeAttributes) {
-            builder.addField("Aired", getDates(attributes), false)
-                .addField("Total Episodes", String.valueOf(animeAttributes.getEpisodeCount()), true)
-                .addField("Duration", String.format("%s minutes", animeAttributes.getEpisodeLength()), true)
-                .addField("Trailer", String.format("[link](https://www.youtube.com/watch?v=%s)", animeAttributes.getYoutubeVideoId()), true);
+            builder.addField(":calendar_spiral: Aired", getDates(attributes), false)
+                .addField(":minidisc: Total Episodes", String.valueOf(animeAttributes.getEpisodeCount()), true)
+                .addField(":stopwatch: Duration", String.format("%s minutes", animeAttributes.getEpisodeLength()), true)
+                .addField("<:youtube:1066104323987230720> Trailer", String.format("[link](https://www.youtube.com/watch?v=%s)", animeAttributes.getYoutubeVideoId()), true);
         } else if (attributes instanceof MangaAttributes mangaAttributes) {
             String chapters = mangaAttributes.getChapterCount() == 0 ? "?" : String.valueOf(mangaAttributes.getChapterCount()),
                 volumes = mangaAttributes.getVolumeCount() == 0 ? "?" : String.valueOf(mangaAttributes.getVolumeCount());
 
-            builder.addField("Published", getDates(attributes), false)
-                .addField("Chapters", chapters, true)
-                .addField("Valumes", volumes, true)
-                .addField("Serialization", String.format("[%s](https://www.google.com/search?q=%s)",
+            builder.addField(":calendar_spiral: Published", getDates(attributes), false)
+                .addField(":newspaper: Chapters", chapters, true)
+                .addField(":books: Volumes", volumes, true);
+
+            if (mangaAttributes.getSubtype() != Subtype.OEL && mangaAttributes.getSerialization() != null)
+                builder.addField(":office: Serialization", String.format("[%s](https://www.google.com/search?q=%s)",
                     mangaAttributes.getSerialization(), URLEncoder.encode(mangaAttributes.getSerialization(), StandardCharsets.UTF_8)), true);
         } else
             throw new IllegalArgumentException(String.format("Root type '%s.class' cannot be used.", Attributes.class.getName()));
 
-        builder.addField("Average Rating", String.format("**%s/100**", attributes.getAverageRating()), true)
-            .addField("Ranking", String.format("**TOP %s**", attributes.getRatingRank()), true);
+        String averageRating = attributes.getAverageRating() == null ? "**Not Rated**" : String.format("**%s/100**", attributes.getAverageRating()),
+            ranking = attributes.getRatingRank() == 0 ? "**No Ranking**" : String.format("**TOP %s**", attributes.getRatingRank());
+
+        builder.addField(":star: Average Rating", averageRating, true)
+            .addField(":trophy: Ranking", ranking, true);
         return builder.build();
     }
 
@@ -120,9 +132,9 @@ public class kitsu {
 
             KitsuHandler handler = new KitsuHandler();
             AnimeDatum animeDatum = handler.getAnime(query).getData().get(0);
-            GenreKitsuData genres = handler.getGenres(animeDatum.getRelationships());
+            CategoriesKitsuData categories = handler.getCategories(animeDatum.getRelationships());
 
-            event.getHook().sendMessageEmbeds(getResponseEmbed(animeDatum.getAttributes(), genres, blob)).queue();
+            event.getHook().sendMessageEmbeds(getResponseEmbed(animeDatum.getAttributes(), categories, blob)).queue();
         }
     }
 
@@ -153,9 +165,9 @@ public class kitsu {
 
             KitsuHandler handler = new KitsuHandler();
             MangaDatum mangaDatum = handler.getManga(query).getData().get(0);
-            GenreKitsuData genres = handler.getGenres(mangaDatum.getRelationships());
+            CategoriesKitsuData categories = handler.getCategories(mangaDatum.getRelationships());
 
-            event.getHook().sendMessageEmbeds(getResponseEmbed(mangaDatum.getAttributes(), genres, blob)).queue();
+            event.getHook().sendMessageEmbeds(getResponseEmbed(mangaDatum.getAttributes(), categories, blob)).queue();
         }
     }
 }

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.terransky.stuffnthings.dataSources.kitsu.Attributes;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.enums.Status;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.enums.Subtype;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Generated;
@@ -29,7 +31,7 @@ public class EntryAttributes extends Attributes {
     @JsonProperty("abbreviatedTitles")
     private List<String> abbreviatedTitles = new ArrayList<>();
     @JsonProperty("averageRating")
-    private String averageRating;
+    private Float averageRating;
     @JsonProperty("ratingFrequencies")
     private RatingFrequencies ratingFrequencies;
     @JsonProperty("userCount")
@@ -58,6 +60,13 @@ public class EntryAttributes extends Attributes {
     private CoverImage coverImage;
     private String baseUrl;
 
+    @NotNull
+    private String getEffectiveString(@NotNull String s, int limit) {
+        if (s.length() > limit)
+            return s.substring(0, limit - 1) + "…";
+        return s;
+    }
+
     @JsonProperty("slug")
     public String getSlug() {
         return slug;
@@ -70,7 +79,7 @@ public class EntryAttributes extends Attributes {
 
     @JsonProperty("synopsis")
     public String getSynopsis() {
-        return synopsis;
+        return getEffectiveString(synopsis, MessageEmbed.DESCRIPTION_MAX_LENGTH);
     }
 
     @JsonProperty("synopsis")
@@ -80,7 +89,7 @@ public class EntryAttributes extends Attributes {
 
     @JsonProperty("description")
     public String getDescription() {
-        return description;
+        return getEffectiveString(description, MessageEmbed.DESCRIPTION_MAX_LENGTH);
     }
 
     @JsonProperty("description")
@@ -90,7 +99,7 @@ public class EntryAttributes extends Attributes {
 
     @JsonProperty("canonicalTitle")
     public String getCanonicalTitle() {
-        return canonicalTitle;
+        return getEffectiveString(canonicalTitle, MessageEmbed.TITLE_MAX_LENGTH);
     }
 
     @JsonProperty("canonicalTitle")
@@ -100,7 +109,11 @@ public class EntryAttributes extends Attributes {
 
     @JsonProperty("abbreviatedTitles")
     public List<String> getAbbreviatedTitles() {
-        return abbreviatedTitles;
+        return new ArrayList<>() {{
+            for (String abbreviatedTitle : abbreviatedTitles) {
+                add(getEffectiveString(abbreviatedTitle, MessageEmbed.TITLE_MAX_LENGTH));
+            }
+        }};
     }
 
     @JsonProperty("abbreviatedTitles")
@@ -109,12 +122,12 @@ public class EntryAttributes extends Attributes {
     }
 
     @JsonProperty("averageRating")
-    public String getAverageRating() {
+    public Float getAverageRating() {
         return averageRating;
     }
 
     @JsonProperty("averageRating")
-    public void setAverageRating(String averageRating) {
+    public void setAverageRating(Float averageRating) {
         this.averageRating = averageRating;
     }
 

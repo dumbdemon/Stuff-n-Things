@@ -62,7 +62,7 @@ public class Formatter {
             return URLEncoder.encode(s, encoding)
                 .replaceAll("\\[", "%5B")
                 .replaceAll("]", "%5D")
-                .replaceAll("\\+", "%20")
+                .replaceAll("\\+|\\s", "%20")
                 .replaceAll("\\*", "%2A")
                 .replaceAll("%7E", "~");
         } catch (UnsupportedEncodingException e) {

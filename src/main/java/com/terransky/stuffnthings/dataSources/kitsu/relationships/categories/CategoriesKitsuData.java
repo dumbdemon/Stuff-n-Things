@@ -1,4 +1,4 @@
-package com.terransky.stuffnthings.dataSources.kitsu.relationships.genre;
+package com.terransky.stuffnthings.dataSources.kitsu.relationships.categories;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,32 +16,32 @@ import java.util.List;
     "links"
 })
 @Generated("jsonschema2pojo")
-public class GenreKitsuData extends KitsuData {
+public class CategoriesKitsuData extends KitsuData {
 
     @JsonProperty("data")
-    private List<GenreDatum> data = new ArrayList<>();
+    private List<CategoriesDatum> data = new ArrayList<>();
 
     @JsonProperty("data")
-    public List<GenreDatum> getData() {
+    public List<CategoriesDatum> getData() {
         return data;
     }
 
     @JsonProperty("data")
-    public void setData(List<GenreDatum> data) {
+    public void setData(List<CategoriesDatum> data) {
         this.data = data;
     }
 
-    public List<String> getGenreList() {
+    public List<String> getCategoriesList() {
         return new ArrayList<>() {{
-            for (GenreDatum datum : data.stream().sorted().toList()) {
-                add(datum.getAttributes().getName());
+            for (CategoriesDatum datum : data.stream().sorted().toList()) {
+                add(datum.getAttributes().getTitle());
             }
         }};
     }
 
-    public String getGenreString() {
+    public String getCategoriesString() {
         StringBuilder builder = new StringBuilder();
-        for (String genre : getGenreList()) {
+        for (String genre : getCategoriesList()) {
             builder.append(genre).append(", ");
         }
         return builder.substring(0, builder.length() - 2);

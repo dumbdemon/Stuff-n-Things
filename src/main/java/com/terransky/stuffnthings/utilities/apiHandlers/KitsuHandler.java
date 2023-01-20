@@ -7,7 +7,7 @@ import com.terransky.stuffnthings.dataSources.kitsu.KitsuAuthError;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.anime.AnimeKitsuData;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.manga.MangaKitsuData;
 import com.terransky.stuffnthings.dataSources.kitsu.relationships.Relationships;
-import com.terransky.stuffnthings.dataSources.kitsu.relationships.genre.GenreKitsuData;
+import com.terransky.stuffnthings.dataSources.kitsu.relationships.categories.CategoriesKitsuData;
 import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.LogList;
 import org.jetbrains.annotations.NotNull;
@@ -131,9 +131,9 @@ public class KitsuHandler {
         return MAPPER.readValue(getInputStreamOf(anime), AnimeKitsuData.class);
     }
 
-    public GenreKitsuData getGenres(@NotNull Relationships relationships) throws IOException, LoginException {
-        URL genres = new URL(relationships.getGenres().getLinks().getRelated());
-        return MAPPER.readValue(getInputStreamOf(genres), GenreKitsuData.class);
+    public CategoriesKitsuData getCategories(@NotNull Relationships relationships) throws IOException, LoginException {
+        URL genres = new URL(relationships.getCategories().getLinks().getRelated());
+        return MAPPER.readValue(getInputStreamOf(genres), CategoriesKitsuData.class);
     }
 
     /**
