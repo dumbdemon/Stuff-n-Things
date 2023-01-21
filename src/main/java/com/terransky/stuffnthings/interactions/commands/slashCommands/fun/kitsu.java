@@ -12,7 +12,6 @@ import com.terransky.stuffnthings.dataSources.kitsu.relationships.categories.Cat
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.apiHandlers.KitsuHandler;
 import com.terransky.stuffnthings.utilities.command.*;
-import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -113,11 +112,6 @@ public class kitsu {
         }
 
         @Override
-        public boolean isWorking() {
-            return Config.isTestingMode();
-        }
-
-        @Override
         public Metadata getMetadata() throws ParseException {
             long animeLastUpdated = FORMAT.parse("18-1-2023_16:19").getTime();
             return getStandard(getName())
@@ -143,11 +137,6 @@ public class kitsu {
         @Override
         public String getName() {
             return "manga";
-        }
-
-        @Override
-        public boolean isWorking() {
-            return Config.isTestingMode();
         }
 
         @Override
