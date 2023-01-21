@@ -36,7 +36,7 @@ public class channelUnLock implements ICommandSlash {
         return new Metadata(this.getName(), "Lock or unlock a channel for everyone or from a specific role to see.",
             Mastermind.DEVELOPER, CommandCategory.ADMIN,
             format.parse("23-11-2022_18:34"),
-            format.parse("29-12-2022_10:14")
+            format.parse("21-1-2023_16:05")
         )
             .addDefaultPerms(Permission.MANAGE_CHANNEL)
             .addSubcommands(
@@ -108,7 +108,7 @@ public class channelUnLock implements ICommandSlash {
                 }
             }
         } catch (Exception e) {
-            LoggerFactory.getLogger(channelUnLock.class).debug("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
+            LoggerFactory.getLogger(channelUnLock.class).debug("{}: {}", e.getClass().getName(), e.getMessage());
             LogList.error(Arrays.asList(e.getStackTrace()), channelUnLock.class);
             event.replyEmbeds(
                 response

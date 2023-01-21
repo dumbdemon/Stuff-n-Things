@@ -39,7 +39,7 @@ public class meme implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("25-12-2022_20:38")
+            format.parse("21-1-2023_16:05")
         )
             .addSubcommands(
                 new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, or from r/me_irl.")
@@ -109,7 +109,7 @@ public class meme implements ICommandSlash {
                     .setColor(EmbedColors.getError())
                     .build()
             ).queue();
-            log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
+            log.error("{}: {}", e.getClass().getName(), e.getMessage());
             LogList.error(Arrays.asList(e.getStackTrace()), meme.class);
         }
     }

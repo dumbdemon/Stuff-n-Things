@@ -71,10 +71,9 @@ public class IManager<T extends IInteraction> {
     @NotNull
     List<T> getEffectiveCounts(@NotNull List<T> interactions, @NotNull IInteractionType type) {
         int max = type.getMaximum();
-        log.info("Checking quantity of %ss against maximum of %d...".formatted(type.getName(), max));
+        log.info("Checking quantity of {}s against maximum of {}...", type.getName(), max);
         if (interactions.size() > max) {
-            log.warn("There are too many %ss (there's %d)! Truncating to %d..."
-                .formatted(type.getName(), interactions.size(), max));
+            log.warn("There are too many {}s (there's {})! Truncating to {}...", type.getName(), interactions.size(), max);
             return interactions.subList(0, max);
         }
         return interactions;

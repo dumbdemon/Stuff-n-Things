@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.listeners;
 
 import com.terransky.stuffnthings.ManagersManager;
-import com.terransky.stuffnthings.database.SQLiteDataSource;
+import com.terransky.stuffnthings.database.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.interfaces.interactions.*;
 import com.terransky.stuffnthings.utilities.cannedAgenda.GuildOnly;
@@ -27,8 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,8 +48,8 @@ public class InteractionListener extends ListenerAdapter {
     }
 
     private void logInteractionFailure(String interactionName, @NotNull EventBlob blob, @NotNull Exception e) {
-        log.debug("%s failed to execute on guild id %s".formatted(interactionName, blob.getGuildId()));
-        log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
+        log.debug("{} failed to execute on guild id {}", interactionName, blob.getGuildId());
+        log.error("{}: {}", e.getClass().getName(), e.getMessage());
         LogList.error(Arrays.asList(e.getStackTrace()), log);
     }
 
@@ -109,19 +107,10 @@ public class InteractionListener extends ListenerAdapter {
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
         //Add user to database or ignore if exists
-        if (Config.isDatabaseEnabled()) {
-            try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                .prepareStatement("INSERT OR IGNORE INTO users_" + blob.getGuildId() + "(user_id) VALUES(?)")) {
-                stmt.setString(1, event.getUser().getId());
-                stmt.execute();
-            } catch (SQLException e) {
-                log.error("%s: %s".formatted(e.getClass().getName(), e.getMessage()));
-                LogList.error(Arrays.asList(e.getStackTrace()), log);
-            }
-        }
+        if (Config.isDatabaseEnabled()) DatabaseManager.INSTANCE.addUser(blob);
 
         ICommandSlash slash = ifSlash.get();
-        log.debug("Command " + slash.getName().toUpperCase() + " called on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
+        log.debug("Command {} called on {} [{}]", slash.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
 
         if (slash.isOwnerOnly() && !blob.getMember().isOwner()) {
             commandIsOwnerOnly(event, blob, IInteractionType.COMMAND_SLASH);
@@ -136,7 +125,7 @@ public class InteractionListener extends ListenerAdapter {
         try {
             slash.execute(event, blob);
         } catch (Exception e) {
-            log.debug("Full command path that triggered error :: [" + event.getFullCommandName() + "]");
+            log.debug("Full command path that triggered error :: [{}]", event.getFullCommandName());
             errorHandler(event, slash, IInteractionType.COMMAND_SLASH, blob, e);
         }
     }
@@ -155,7 +144,7 @@ public class InteractionListener extends ListenerAdapter {
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
         ICommandMessage commandMessage = ifMenu.get();
-        log.debug("Command \"" + commandMessage.getName().toUpperCase() + "\" called on %s [%d]".formatted(blob.getGuild().getName(), blob.getGuildIdLong()));
+        log.debug("Command \"{}\" called on {} [{}]", commandMessage.getName().toUpperCase(), blob.getGuild().getName(), blob.getGuildIdLong());
 
         if (commandMessage.isOwnerOnly() && !blob.getMember().isOwner()) {
             commandIsOwnerOnly(event, blob, IInteractionType.COMMAND_MESSAGE);
@@ -188,7 +177,7 @@ public class InteractionListener extends ListenerAdapter {
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
         ICommandUser commandUser = ifMenu.get();
-        log.debug("Command \"" + commandUser.getName().toUpperCase() + "\" called on %s [%d]".formatted(blob.getGuildName(), blob.getGuildIdLong()));
+        log.debug("Command \"{}\" called on {} [{}]", commandUser.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
 
         if (commandUser.isOwnerOnly() && !blob.getMember().isOwner()) {
             commandIsOwnerOnly(event, blob, IInteractionType.COMMAND_USER);
@@ -222,7 +211,7 @@ public class InteractionListener extends ListenerAdapter {
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
         IButton iButton = ifButton.get();
-        log.debug("Button %s called on %s [%d]".formatted(iButton.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong()));
+        log.debug("Button {} called on {} [{}]", iButton.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
         try {
             iButton.execute(event, blob);
         } catch (Exception e) {
@@ -244,7 +233,7 @@ public class InteractionListener extends ListenerAdapter {
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
         ISelectMenuEntity menu = ifMenu.get();
-        log.debug("Select Menu %s called on %s [%d]".formatted(menu.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong()));
+        log.debug("Select Menu {} called on {} [{}]", menu.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
         try {
             menu.execute(event, blob);
         } catch (Exception e) {
@@ -265,7 +254,7 @@ public class InteractionListener extends ListenerAdapter {
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
         IModal modal = ifModal.get();
-        log.debug("Modal %s called on %s [%d]".formatted(modal.getName().toUpperCase(), blob.getGuild().getName(), blob.getGuildIdLong()));
+        log.debug("Modal {} called on {} [{}]", modal.getName().toUpperCase(), blob.getGuild().getName(), blob.getGuildIdLong());
         try {
             modal.execute(event, blob);
         } catch (Exception e) {
@@ -298,7 +287,7 @@ public class InteractionListener extends ListenerAdapter {
             if (ifMenu.isPresent()) {
                 ISelectMenuString menu = ifMenu.get();
                 String interactionName = "%s[%s]".formatted(componentId.toUpperCase(), menu.getName().toUpperCase());
-                log.debug("Select Menu %s called on %s [%d]".formatted(interactionName, blob.getGuildName(), blob.getGuildIdLong()));
+                log.debug("Select Menu {} called on {} [{}]", interactionName, blob.getGuildName(), blob.getGuildIdLong());
                 try {
                     menu.execute(event, blob);
                 } catch (Exception e) {

@@ -149,7 +149,7 @@ public class dictionary implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.FUN,
             format.parse("27-10-2022_12:46"),
-            format.parse("17-1-2022_11:15")
+            format.parse("21-1-2023_16:05")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "word", "The word to look up.", true),
@@ -202,7 +202,7 @@ public class dictionary implements ICommandSlash {
                 ).queue();
 
                 String message = om.readValue(oxfordConnection.getInputStream(), OxfordError.class).getError();
-                log.error("400 Bad Request: %s".formatted(message));
+                log.error("400 Bad Request: {}", message);
             }
             case 403 -> {
                 event.getHook().sendMessageEmbeds(
@@ -212,7 +212,7 @@ public class dictionary implements ICommandSlash {
                 ).queue();
 
                 String message = om.readValue(oxfordConnection.getInputStream(), OxfordError.class).getError();
-                log.error("403 Authentication failed: %s".formatted(message));
+                log.error("403 Authentication failed: {}", message);
             }
             case 404 -> event.getHook().sendMessageEmbeds(
                 eb.setTitle("Definition - %s".formatted(toLookUp.toUpperCase(language.getValue())))
@@ -230,7 +230,7 @@ public class dictionary implements ICommandSlash {
                 ).queue();
 
                 String message = om.readValue(oxfordConnection.getInputStream(), OxfordError.class).getError();
-                log.error("500 Internal Server Error: %s".formatted(message));
+                log.error("500 Internal Server Error: {}", message);
             }
             case 414 -> event.getHook().sendMessageEmbeds(
                 eb.setDescription("Your word can be at most 128 characters. Please look up a different word.")
@@ -245,7 +245,7 @@ public class dictionary implements ICommandSlash {
                 ).queue();
 
                 String message = om.readValue(oxfordConnection.getInputStream(), OxfordError.class).getError();
-                log.error("502 Bad Gateway: %s".formatted(message));
+                log.error("502 Bad Gateway: {}", message);
             }
             case 503, 504 -> {
                 boolean isIt503 = responseCode == 503;
@@ -258,7 +258,7 @@ public class dictionary implements ICommandSlash {
                 ).queue();
 
                 String message = om.readValue(oxfordConnection.getInputStream(), OxfordError.class).getError();
-                log.error("%s %s: %s".formatted(responseCode, isIt503 ? "Service Unavailable" : "Gateway timeout", message));
+                log.error("{} {}: {}", responseCode, isIt503 ? "Service Unavailable" : "Gateway timeout", message);
             }
         }
 

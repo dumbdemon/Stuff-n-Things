@@ -1,14 +1,14 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.admin;
 
-import com.terransky.stuffnthings.database.SQLiteDataSource;
+import com.terransky.stuffnthings.database.DatabaseManager;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
+import com.terransky.stuffnthings.utilities.general.DBProperty;
 import com.terransky.stuffnthings.utilities.general.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -20,11 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 public class configCmd implements ICommandSlash {
     private final Logger log = LoggerFactory.getLogger(configCmd.class);
@@ -43,7 +42,7 @@ public class configCmd implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.ADMIN,
             format.parse("28-08-2022_21:46"),
-            format.parse("29-12-2022_10:14")
+            format.parse("21-1-2023_11:09")
         )
             .addDefaultPerms(Permission.MANAGE_SERVER)
             .addSubcommandGroups(
@@ -95,108 +94,60 @@ public class configCmd implements ICommandSlash {
 
     private void updateKillTimeout(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder eb) {
         event.deferReply(true).queue();
-        final int toMillis = 60000;
-        int newTimeout = event.getOption("set-timeout", 0, OptionMapping::getAsInt) * toMillis,
-            oldTimeout = 0;
+        Optional<Integer> ifNewTimeout = Optional.ofNullable(event.getOption("set-timeout", OptionMapping::getAsInt));
+        int oldTimeout = DatabaseManager.INSTANCE.getFromDBInt(blob, DBProperty.KILLS_TIMEOUT).orElse(300000);
+        long oldTimeoutMinutes = TimeUnit.MILLISECONDS.toMinutes(oldTimeout);
 
-        if (newTimeout == 0) {
-            try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                .prepareStatement("SELECT killcmd_timeout FROM guilds WHERE guild_id = ?")) {
-                stmt.setString(1, blob.getGuildId());
-                try (final ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        log.debug("Retrieved timeout for %s".formatted(blob.getGuildId()));
-                        event.getHook().sendMessageEmbeds(eb.setTitle("Kill Config")
-                            .addField("Timeout", "%d minutes".formatted(rs.getInt("killcmd_timeout") / toMillis), false)
-                            .build()
-                        ).queue();
-                    }
-                }
-            } catch (SQLException e) {
-                event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
-            }
+
+        if (ifNewTimeout.isEmpty()) {
+            event.getHook().sendMessageEmbeds(eb.setTitle("Kill Config")
+                .addField("Timeout", String.format("%d minutes", oldTimeoutMinutes), false)
+                .build()
+            ).queue();
             return;
         }
+        int newTimeoutMinutes = ifNewTimeout.get(),
+            newTimeoutMillis = (int) TimeUnit.MINUTES.toMillis(newTimeoutMinutes);
 
-        try (final PreparedStatement stmt1 = SQLiteDataSource.getConnection()
-            .prepareStatement("SELECT killcmd_timeout FROM guilds WHERE guild_id = ?")) {
-            stmt1.setString(1, blob.getGuildId());
-            try (final ResultSet rs = stmt1.executeQuery()) {
-                if (rs.next()) {
-                    oldTimeout = rs.getInt("killcmd_timeout");
-                    log.debug("Old timeout for %s is %dms (%d mins)".formatted(blob.getGuildId(), oldTimeout, oldTimeout / toMillis));
-                }
-            }
-        } catch (SQLException e) {
-            event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
-            return;
-        }
-
-        if (newTimeout == oldTimeout) {
-            log.debug("No change for %s".formatted(blob.getGuildId()));
+        if (newTimeoutMillis == oldTimeout) {
+            log.debug("No change for {}", blob.getGuildId());
             event.getHook().sendMessageEmbeds(eb.setTitle("Config not Updated")
-                .setDescription("Currently set Timeout is requested amount: `%d minutes`.".formatted(newTimeout / toMillis))
+                .setDescription(String.format("Currently set Timeout is requested amount: `%d minutes`.", oldTimeoutMinutes))
                 .build()
             ).queue();
             return;
         }
 
-        try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-            .prepareStatement("UPDATE guilds SET killcmd_timeout = ? WHERE guild_id = ?")) {
-            stmt.setInt(1, newTimeout);
-            stmt.setString(2, blob.getGuildId());
-            stmt.execute();
-            log.debug("[%s] Updated timeout from %dms (%d mins) to %dms (%d mins)".formatted(blob.getGuildId(), oldTimeout, oldTimeout / toMillis, newTimeout, newTimeout / toMillis));
-        } catch (SQLException e) {
-            event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
-            return;
+        try {
+            DatabaseManager.INSTANCE.updateProperty(blob, DBProperty.KILLS_TIMEOUT, newTimeoutMillis);
+        } catch (Exception e) {
+            log.error("{}: {}", e.getClass().getName(), e.getMessage());
+            LogList.error(Arrays.asList(e.getStackTrace()), log);
         }
 
         eb.setTitle("Config Updated")
             .addField("Old Timeout", String.valueOf(oldTimeout), true)
-            .addField("New Timeout", String.valueOf(newTimeout), true);
+            .addField("New Timeout", String.valueOf(newTimeoutMinutes), true);
 
         event.getHook().sendMessageEmbeds(eb.build()).queue();
     }
 
     private void updateKillMaxKills(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder eb) {
         event.deferReply(true).queue();
-        int newMax = event.getOption("set-max", 0, OptionMapping::getAsInt),
-            oldMax;
+        Optional<Integer> ifNewMax = Optional.ofNullable(event.getOption("set-max", OptionMapping::getAsInt));
+        int oldMax = DatabaseManager.INSTANCE.getFromDBInt(blob, DBProperty.KILLS_MAX).orElse(5);
 
-        if (newMax == 0) {
-            try (final PreparedStatement stmt = SQLiteDataSource.getConnection()
-                .prepareStatement("SELECT killcmd_max FROM guilds WHERE guild_id = ?")) {
-                stmt.setString(1, blob.getGuildId());
-                try (final ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        log.debug("Retrieved max kills for %s".formatted(blob.getGuildId()));
-                        event.getHook().sendMessageEmbeds(eb.setTitle("Kill Config")
-                            .addField("Max Kills", String.valueOf(rs.getInt("killcmd_max")), false)
-                            .build()
-                        ).queue();
-                    }
-                }
-            } catch (SQLException e) {
-                event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
-            }
+        if (ifNewMax.isEmpty()) {
+            event.getHook().sendMessageEmbeds(eb.setTitle("Kill Config")
+                .addField("Max Kills", String.valueOf(oldMax), false)
+                .build()
+            ).queue();
             return;
         }
-
-        try (final PreparedStatement stmt1 = SQLiteDataSource.getConnection()
-            .prepareStatement("SELECT killcmd_max FROM guilds WHERE guild_id = ?")) {
-            stmt1.setString(1, blob.getGuildId());
-            try (final ResultSet rs1 = stmt1.executeQuery()) {
-                oldMax = rs1.getInt("killcmd_max");
-                log.debug("Old max kills for %s is %d".formatted(blob.getGuildId(), oldMax));
-            }
-        } catch (SQLException e) {
-            event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
-            return;
-        }
+        int newMax = ifNewMax.get();
 
         if (newMax == oldMax) {
-            log.debug("No change for %s".formatted(blob.getGuildId()));
+            log.debug("No change for {}", blob.getGuildId());
             event.getHook().sendMessageEmbeds(eb.setTitle("Config not Updated")
                 .setDescription("Currently set Max Kills is requested amount: `%d Max Kills`.".formatted(newMax))
                 .build()
@@ -204,15 +155,11 @@ public class configCmd implements ICommandSlash {
             return;
         }
 
-        try (final PreparedStatement stmt2 = SQLiteDataSource.getConnection()
-            .prepareStatement("UPDATE guilds SET killcmd_max = ? WHERE guild_id = ?")) {
-            stmt2.setInt(1, newMax);
-            stmt2.setString(2, blob.getGuildId());
-            stmt2.execute();
-            log.debug("[%s] Updated max kills from %d to %d".formatted(blob.getGuildId(), oldMax, newMax));
-        } catch (SQLException e) {
-            event.getHook().sendMessageEmbeds(anErrorOccurred(e)).queue();
-            return;
+        try {
+            DatabaseManager.INSTANCE.updateProperty(blob, DBProperty.KILLS_MAX, newMax);
+        } catch (Exception e) {
+            log.error("{}: {}", e.getClass().getName(), e.getMessage());
+            LogList.error(Arrays.asList(e.getStackTrace()), log);
         }
 
         eb.setTitle("Config Updated")
@@ -220,15 +167,5 @@ public class configCmd implements ICommandSlash {
             .addField("New Max", String.valueOf(newMax), true);
 
         event.getHook().sendMessageEmbeds(eb.build()).queue();
-    }
-
-    protected MessageEmbed anErrorOccurred(@NotNull SQLException e) {
-        EmbedBuilder eb = new EmbedBuilder().setColor(EmbedColors.getError());
-        log.error("%s : %s".formatted(e.getClass().getName(), e.getMessage()));
-        LogList.error(Arrays.asList(e.getStackTrace()), configCmd.class);
-        SQLiteDataSource.killIdleConnections();
-        eb.setTitle("Uh-oh")
-            .setDescription("An error occurred while executing the command!\n Try again in a moment!");
-        return eb.build();
     }
 }

@@ -68,7 +68,7 @@ public class KitsuHandler {
                 log.info("Auth found: reading file");
                 KitsuAuth auth = MAPPER.readValue(KITSU_AUTH, KitsuAuth.class);
                 if (!auth.isExpired()) {
-                    log.warn(String.format("Auth is still valid for %s days: skipping request", auth.getDaysUntilExpired()));
+                    log.warn("Auth is still valid for {} days: skipping request", auth.getDaysUntilExpired());
                     return true;
                 }
                 log.info("Auth is invalid: requesting new auth");
@@ -97,7 +97,7 @@ public class KitsuHandler {
             int code = response.statusCode();
             if (code != 200 && code - 500 < 0) {
                 KitsuAuthError authError = MAPPER.readValue(response.body(), KitsuAuthError.class);
-                log.error(String.format("Auth request failed: [%s] %s", authError.getError(), authError.getErrorDescription()));
+                log.error("Auth request failed: [{}] {}", authError.getError(), authError.getErrorDescription());
                 return false;
             } else if (code - 500 >= 0) {
                 log.error("Auth request failed: server error");
@@ -109,9 +109,9 @@ public class KitsuHandler {
             BufferedWriter writer = new BufferedWriter(new FileWriter(KITSU_AUTH));
             writer.append(auth.getPrettyString(MAPPER));
             writer.close();
-            log.info("Auth request successful: absolute path of new auth is %s".formatted(KITSU_AUTH.getAbsolutePath()));
+            log.info("Auth request successful: absolute path of new auth is {}", KITSU_AUTH.getAbsolutePath());
         } catch (IOException | InterruptedException e) {
-            log.error(String.format("%s; %s", e.getClass().getName(), e.getMessage()));
+            log.error("{}; {}", e.getClass().getName(), e.getMessage());
             LogList.error(Arrays.asList(e.getStackTrace()), log);
             return false;
         } finally {

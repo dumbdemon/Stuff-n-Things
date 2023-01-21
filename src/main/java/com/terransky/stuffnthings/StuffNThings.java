@@ -1,6 +1,5 @@
 package com.terransky.stuffnthings;
 
-import com.terransky.stuffnthings.database.SQLiteDataSource;
 import com.terransky.stuffnthings.listeners.InteractionListener;
 import com.terransky.stuffnthings.listeners.ListeningForEvents;
 import com.terransky.stuffnthings.utilities.general.Config;
@@ -13,7 +12,6 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.Random;
 
@@ -21,9 +19,7 @@ public class StuffNThings {
 
     private static final Config.Credentials TOKEN = Config.Credentials.DISCORD;
 
-    public static void main(String[] args) throws SQLException {
-        if (Config.isDatabaseEnabled())
-            SQLiteDataSource.getConnection();
+    public static void main(String[] args) {
         if (TOKEN.isDefault())
             throw new IllegalArgumentException("Unable to start bot. No bot token was set.");
 

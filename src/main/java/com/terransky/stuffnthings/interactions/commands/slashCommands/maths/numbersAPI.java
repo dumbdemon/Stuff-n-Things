@@ -65,7 +65,7 @@ public class numbersAPI implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.MATHS,
             format.parse("10-11-2022_20:45"),
-            format.parse("29-12-2022_10:14")
+            format.parse("21-1-2023_16:05")
         )
             .addSubcommands(
                 new SubcommandData("number", "A fact about a number.")
@@ -110,7 +110,7 @@ public class numbersAPI implements ICommandSlash {
         else
             theUrl += "random/year";
 
-        log.debug("The url is %s.".formatted(theUrl));
+        log.debug("The url is {}.", theUrl);
         URL request = new URL(theUrl);
         HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
         numbersAPI.addRequestProperty("Content-Type", "application/json");
@@ -182,7 +182,7 @@ public class numbersAPI implements ICommandSlash {
             theUrl += "%s/%s/date".formatted(month, day);
         }
 
-        log.debug("The url is %s.".formatted(theUrl));
+        log.debug("The url is {}.", theUrl);
         URL request = new URL(theUrl);
         HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
         numbersAPI.addRequestProperty("Content-Type", "application/json");
@@ -212,7 +212,7 @@ public class numbersAPI implements ICommandSlash {
         else
             theUrl += "random/math";
 
-        log.debug("The url is %s.".formatted(theUrl));
+        log.debug("The url is {}.", theUrl);
         URL request = new URL(theUrl);
         HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
         numbersAPI.addRequestProperty("Content-Type", "application/json");
@@ -237,7 +237,7 @@ public class numbersAPI implements ICommandSlash {
         else
             theUrl += "random";
 
-        log.debug("The url is %s.".formatted(theUrl));
+        log.debug("The url is {}.", theUrl);
         URL request = new URL(theUrl);
         HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
         numbersAPI.addRequestProperty("Content-Type", "application/json");

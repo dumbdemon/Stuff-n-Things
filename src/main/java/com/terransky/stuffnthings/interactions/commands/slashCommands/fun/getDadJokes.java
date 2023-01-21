@@ -37,7 +37,7 @@ public class getDadJokes implements ICommandSlash {
             """, Mastermind.USER,
             CommandCategory.FUN,
             format.parse("25-8-2022_20:53"),
-            format.parse("29-12-2022_10:14")
+            format.parse("21-1-2023_16:05")
         );
     }
 
@@ -66,7 +66,7 @@ public class getDadJokes implements ICommandSlash {
                 )
                 .build();
             msg.editOriginal(editData).queueAfter(10, TimeUnit.MINUTES, msg2 ->
-                log.debug("Button on message [%s] on server with ID [%s] has expired.".formatted(msg2.getId(), msg2.getGuild().getId()))
+                log.debug("Button on message [{}] on server with ID [{}] has expired.", msg2.getId(), msg2.getGuild().getId())
             );
         });
     }
