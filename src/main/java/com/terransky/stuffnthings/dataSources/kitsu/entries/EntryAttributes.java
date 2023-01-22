@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.terransky.stuffnthings.dataSources.kitsu.Attributes;
+import com.terransky.stuffnthings.dataSources.kitsu.entries.enums.AgeRating;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.enums.Status;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.enums.Subtype;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Generated;
 import java.util.ArrayList;
@@ -39,15 +39,17 @@ public class EntryAttributes extends Attributes {
     @JsonProperty("favoritesCount")
     private long favoritesCount;
     @JsonProperty("startDate")
-    private Date startDate;
+    private String startDate;
     @JsonProperty("endDate")
-    private Date endDate;
+    private String endDate;
     @JsonProperty("nextRelease")
-    private Date nextRelease;
+    private String nextRelease;
     @JsonProperty("popularityRank")
     private long popularityRank;
     @JsonProperty("ratingRank")
     private long ratingRank;
+    @JsonProperty("ageRating")
+    private AgeRating ageRating;
     @JsonProperty("ageRatingGuide")
     private String ageRatingGuide;
     @JsonProperty("subtype")
@@ -121,6 +123,20 @@ public class EntryAttributes extends Attributes {
         this.abbreviatedTitles = abbreviatedTitles;
     }
 
+    @JsonProperty("ageRating")
+    public AgeRating getAgeRating() {
+        return ageRating;
+    }
+
+    @JsonProperty("ageRating")
+    public void setAgeRating(String ageRating) {
+        if (ageRating == null) {
+            this.ageRating = AgeRating.NR;
+            return;
+        }
+        this.ageRating = AgeRating.getAgeRatingByCode(ageRating);
+    }
+
     @JsonProperty("averageRating")
     public Float getAverageRating() {
         return averageRating;
@@ -163,32 +179,31 @@ public class EntryAttributes extends Attributes {
 
     @JsonProperty("startDate")
     public Date getStartDate() {
-        return startDate;
+        return formatDate(startDate);
     }
 
     @JsonProperty("startDate")
-    public void setStartDate(Date startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
     @JsonProperty("endDate")
-    @Nullable
     public Date getEndDate() {
-        return endDate;
+        return formatDate(endDate);
     }
 
     @JsonProperty("endDate")
-    public void setEndDate(Date endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 
     @JsonProperty("nextRelease")
     public Date getNextRelease() {
-        return nextRelease;
+        return formatDate(nextRelease);
     }
 
     @JsonProperty("nextRelease")
-    public void setNextRelease(Date nextRelease) {
+    public void setNextRelease(String nextRelease) {
         this.nextRelease = nextRelease;
     }
 

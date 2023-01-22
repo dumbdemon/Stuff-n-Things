@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.EntryAttributes;
-import com.terransky.stuffnthings.dataSources.kitsu.entries.enums.AgeRating;
 
 import javax.annotation.Generated;
 
@@ -45,8 +44,6 @@ import javax.annotation.Generated;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AnimeAttributes extends EntryAttributes {
 
-    @JsonProperty("ageRating")
-    private AgeRating ageRating;
     @JsonProperty("episodeCount")
     private Long episodeCount;
     @JsonProperty("episodeLength")
@@ -60,20 +57,6 @@ public class AnimeAttributes extends EntryAttributes {
 
     {
         setBaseUrl("https://kitsu.io/anime/");
-    }
-
-    @JsonProperty("ageRating")
-    public AgeRating getAgeRating() {
-        return ageRating;
-    }
-
-    @JsonProperty("ageRating")
-    public void setAgeRating(String ageRating) {
-        if (ageRating == null) {
-            this.ageRating = AgeRating.NR;
-            return;
-        }
-        this.ageRating = AgeRating.getAgeRatingByCode(ageRating);
     }
 
     @JsonProperty("episodeCount")

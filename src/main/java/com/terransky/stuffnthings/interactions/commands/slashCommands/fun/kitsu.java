@@ -32,7 +32,7 @@ public class kitsu {
     private static final FastDateFormat FORMAT = Metadata.getFastDateFormat();
 
     private static long getGlobalLastUpdated() throws ParseException {
-        return FORMAT.parse("20-1-2023_16:07").getTime();
+        return FORMAT.parse("21-1-2023_18:35").getTime();
     }
 
     private static Metadata getStandard(String name) throws ParseException {
@@ -47,20 +47,22 @@ public class kitsu {
     }
 
     private static String getDates(@NotNull EntryAttributes attributes) {
-        FastDateFormat format = FastDateFormat.getInstance("yyy-MM-dd");
+        Date startDate = attributes.getStartDate(),
+            endDate = attributes.getEndDate();
 
-        if (attributes.getEndDate() == null)
-            return String.format("from **%s** to **?**", format.format(attributes.getStartDate()));
+        if (endDate.compareTo(Attributes.NULL_DATE) == 0)
+            return String.format("from **%s** to **?**", Attributes.formatDate(startDate));
 
-        if (attributes.getStartDate().compareTo(attributes.getEndDate()) == 0)
-            return String.format("on **%s**", format.format(attributes.getStartDate()));
+        if (startDate.compareTo(endDate) == 0)
+            return String.format("on **%s**", Attributes.formatDate(startDate));
 
-        return String.format("from **%s** to **%s**", format.format(attributes.getStartDate()), format.format(attributes.getEndDate()));
+        return String.format("from **%s** to **%s**", Attributes.formatDate(startDate), Attributes.formatDate(attributes.getEndDate()));
     }
 
     @NotNull
     private static <T extends EntryAttributes> MessageEmbed getResponseEmbed(@NotNull T attributes, @NotNull CategoriesKitsuData categories,
                                                                              @NotNull EventBlob blob) {
+        AgeRating ageRating = attributes.getAgeRating();
         EmbedBuilder builder = new EmbedBuilder()
             .setColor(EmbedColors.getDefault())
             .setFooter("Requested by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
@@ -68,14 +70,9 @@ public class kitsu {
             .setDescription(attributes.getSynopsis())
             .setThumbnail(attributes.getPosterImage().getOriginal())
             .addField(":hourglass_flowing_sand: Status", attributes.getStatus().getState(), true)
-            .addField(":dividers: Type", attributes.getSubtype().getCode(), true);
-
-        if (attributes instanceof AnimeAttributes animeAttributes) {
-            AgeRating ageRating = animeAttributes.getAgeRating();
-            builder.addField(":lock: Rating", String.format("%s [%s]", ageRating.getCode(), ageRating.getCodename()), true);
-        }
-
-        builder.addField(":arrow_right: Genres", categories.getCategoriesString(), false);
+            .addField(":dividers: Type", attributes.getSubtype().getCode(), true)
+            .addField(":lock: Rating", String.format("%s [%s]", ageRating.getCode(), ageRating.getCodename()), true)
+            .addField(":arrow_right: Genres", categories.getCategoriesString(), false);
 
         if (attributes instanceof AnimeAttributes animeAttributes) {
             builder.addField(":calendar_spiral: Aired", getDates(attributes), false)
@@ -104,6 +101,16 @@ public class kitsu {
         return builder.build();
     }
 
+    @NotNull
+    private static MessageEmbed getNSFWMessage(@NotNull EventBlob blob, String keyword) {
+        return new EmbedBuilder()
+            .setColor(EmbedColors.getDefault())
+            .setFooter("Requested by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+            .setTitle(String.format("%s Search", keyword))
+            .setDescription(String.format("%S recieved was rated for abults and this channel is not NSFW. Verify with your admins that this is correct.", keyword))
+            .build();
+    }
+
     public static class anime implements ICommandSlash {
 
         @Override
@@ -127,8 +134,14 @@ public class kitsu {
             KitsuHandler handler = new KitsuHandler();
             AnimeDatum animeDatum = handler.getAnime(query).getData().get(0);
             CategoriesKitsuData categories = handler.getCategories(animeDatum.getRelationships());
+            AnimeAttributes attributes = animeDatum.getAttributes();
+            MessageEmbed message;
 
-            event.getHook().sendMessageEmbeds(getResponseEmbed(animeDatum.getAttributes(), categories, blob)).queue();
+            if ((attributes.getAgeRating() == AgeRating.R || attributes.getAgeRating() == AgeRating.R18) && !event.getChannel().asTextChannel().isNSFW())
+                message = getNSFWMessage(blob, "Anime");
+            else message = getResponseEmbed(attributes, categories, blob);
+
+            event.getHook().sendMessageEmbeds(message).queue();
         }
     }
 
@@ -155,8 +168,14 @@ public class kitsu {
             KitsuHandler handler = new KitsuHandler();
             MangaDatum mangaDatum = handler.getManga(query).getData().get(0);
             CategoriesKitsuData categories = handler.getCategories(mangaDatum.getRelationships());
+            MangaAttributes attributes = mangaDatum.getAttributes();
+            MessageEmbed message;
 
-            event.getHook().sendMessageEmbeds(getResponseEmbed(mangaDatum.getAttributes(), categories, blob)).queue();
+            if ((attributes.getAgeRating() == AgeRating.R || attributes.getAgeRating() == AgeRating.R18) && !event.getChannel().asTextChannel().isNSFW())
+                message = getNSFWMessage(blob, "Manga");
+            else message = getResponseEmbed(attributes, categories, blob);
+
+            event.getHook().sendMessageEmbeds(message).queue();
         }
     }
 }
