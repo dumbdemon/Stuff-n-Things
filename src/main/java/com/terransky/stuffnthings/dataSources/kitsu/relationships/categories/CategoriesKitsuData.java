@@ -40,6 +40,8 @@ public class CategoriesKitsuData extends KitsuData {
     }
 
     public String getCategoriesString() {
+        if (getCategoriesList().isEmpty())
+            return "**No Genres**";
         StringBuilder builder = new StringBuilder();
         for (String genre : getCategoriesList()) {
             builder.append(genre).append(", ");

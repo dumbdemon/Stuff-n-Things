@@ -45,4 +45,10 @@ public enum AgeRating {
     public String getCodename() {
         return codename;
     }
+
+    public static boolean checkIfAdult(AgeRating ageRating) {
+        return ageRating == R ||
+            ageRating == R18 ||
+            ageRating == NR;
+    }
 }

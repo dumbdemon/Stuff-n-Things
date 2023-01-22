@@ -25,6 +25,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class kitsu {
@@ -107,7 +108,17 @@ public class kitsu {
             .setColor(EmbedColors.getDefault())
             .setFooter("Requested by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
             .setTitle(String.format("%s Search", keyword))
-            .setDescription(String.format("%S recieved was rated for abults and this channel is not NSFW. Verify with your admins that this is correct.", keyword))
+            .setDescription(String.format("%s recieved was rated for abults and this channel is not NSFW. Verify with your admins that this is correct.", keyword))
+            .build();
+    }
+
+    @NotNull
+    private static MessageEmbed getNoResultsMessage(@NotNull EventBlob blob, String keyword) {
+        return new EmbedBuilder()
+            .setColor(EmbedColors.getError())
+            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+            .setTitle(String.format("%s Search", keyword))
+            .setDescription("Your search returned nothing. Try searching something else?")
             .build();
     }
 
@@ -132,12 +143,17 @@ public class kitsu {
             String query = event.getOption("search", "dragon maid", OptionMapping::getAsString);
 
             KitsuHandler handler = new KitsuHandler();
-            AnimeDatum animeDatum = handler.getAnime(query).getData().get(0);
+            List<AnimeDatum> animeData = handler.getAnime(query).getData();
+            if (animeData.isEmpty()) {
+                event.getHook().sendMessageEmbeds(getNoResultsMessage(blob, "Anime")).queue();
+                return;
+            }
+            AnimeDatum animeDatum = animeData.get(0);
             CategoriesKitsuData categories = handler.getCategories(animeDatum.getRelationships());
             AnimeAttributes attributes = animeDatum.getAttributes();
             MessageEmbed message;
 
-            if ((attributes.getAgeRating() == AgeRating.R || attributes.getAgeRating() == AgeRating.R18) && !event.getChannel().asTextChannel().isNSFW())
+            if (attributes.getNsfw() && !event.getChannel().asTextChannel().isNSFW())
                 message = getNSFWMessage(blob, "Anime");
             else message = getResponseEmbed(attributes, categories, blob);
 
@@ -166,12 +182,17 @@ public class kitsu {
             String query = event.getOption("search", "dragon maid", OptionMapping::getAsString);
 
             KitsuHandler handler = new KitsuHandler();
-            MangaDatum mangaDatum = handler.getManga(query).getData().get(0);
+            List<MangaDatum> mangaData = handler.getManga(query).getData();
+            if (mangaData.isEmpty()) {
+                event.getHook().sendMessageEmbeds(getNoResultsMessage(blob, "Manga")).queue();
+                return;
+            }
+            MangaDatum mangaDatum = mangaData.get(0);
             CategoriesKitsuData categories = handler.getCategories(mangaDatum.getRelationships());
             MangaAttributes attributes = mangaDatum.getAttributes();
             MessageEmbed message;
 
-            if ((attributes.getAgeRating() == AgeRating.R || attributes.getAgeRating() == AgeRating.R18) && !event.getChannel().asTextChannel().isNSFW())
+            if (AgeRating.checkIfAdult(attributes.getAgeRating()) && !event.getChannel().asTextChannel().isNSFW())
                 message = getNSFWMessage(blob, "Manga");
             else message = getResponseEmbed(attributes, categories, blob);
 
