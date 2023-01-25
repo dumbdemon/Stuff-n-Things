@@ -27,20 +27,20 @@ public class colorInfo implements ICommandSlash {
 
     @NotNull
     @Contract(pure = true)
-    private static int[] cmykToRgb(int c, int m, int y, int k) {
-        double r = 255 * (1 - (double) c / 100) * (1 - (double) k / 100);
-        double g = 255 * (1 - (double) m / 100) * (1 - (double) k / 100);
-        double b = 255 * (1 - (double) y / 100) * (1 - (double) k / 100);
+    private static int[] cmykToRgb(@NotNull int[] cmyk) {
+        double r = 255 * (1 - (double) cmyk[0] / 100) * (1 - (double) cmyk[3] / 100);
+        double g = 255 * (1 - (double) cmyk[1] / 100) * (1 - (double) cmyk[3] / 100);
+        double b = 255 * (1 - (double) cmyk[2] / 100) * (1 - (double) cmyk[3] / 100);
 
         return new int[]{(int) r, (int) g, (int) b};
     }
 
     @NotNull
     @Contract(pure = true)
-    private static int[] rgbToCmyk(int r, int g, int b) {
-        double percentageR = r / 255.0 * 100;
-        double percentageG = g / 255.0 * 100;
-        double percentageB = b / 255.0 * 100;
+    private static int[] rgbToCmyk(@NotNull int[] rgb) {
+        double percentageR = rgb[0] / 255.0 * 100;
+        double percentageG = rgb[1] / 255.0 * 100;
+        double percentageB = rgb[2] / 255.0 * 100;
 
         double k = 100 - Math.max(Math.max(percentageR, percentageG), percentageB);
 
@@ -56,23 +56,21 @@ public class colorInfo implements ICommandSlash {
     }
 
     private static void runCMYK(@NotNull SlashCommandInteractionEvent event, @NotNull DecimalFormat hsb, @NotNull EmbedBuilder eb) {
-        int c = event.getOption("cyan", 0, OptionMapping::getAsInt),
-            m = event.getOption("magenta", 50, OptionMapping::getAsInt),
-            y = event.getOption("yellow", 0, OptionMapping::getAsInt),
-            k = event.getOption("black", 60, OptionMapping::getAsInt);
-        int[] rgb = cmykToRgb(c, m, y, k);
-        int r = rgb[0],
-            g = rgb[1],
-            b = rgb[2];
+        int[] cmyk = {
+            event.getOption("cyan", 0, OptionMapping::getAsInt),
+            event.getOption("magenta", 50, OptionMapping::getAsInt),
+            event.getOption("yellow", 0, OptionMapping::getAsInt),
+            event.getOption("black", 60, OptionMapping::getAsInt)
+        };
         event.replyEmbeds(
-            runResponse(hsb, eb, c, m, y, k, r, g, b)
+            runResponse(hsb, eb, cmyk, cmykToRgb(cmyk))
         ).queue();
     }
 
     @NotNull
-    private static MessageEmbed runResponse(@NotNull DecimalFormat hsb, @NotNull EmbedBuilder eb,
-                                            int c, int m, int y, int k,
-                                            int r, int g, int b) {
+    private static MessageEmbed runResponse(@NotNull DecimalFormat hsb, @NotNull EmbedBuilder eb, int[] cmyk, int[] rgb) {
+        int r = rgb[0], g = rgb[1], b = rgb[2],
+            c = cmyk[0], m = cmyk[1], y = cmyk[2], k = cmyk[3];
         float[] hsv = Color.RGBtoHSB(r, g, b, null);
         String h = hsb.format(hsv[0]).replace("%", "°"),
             s = hsb.format(hsv[1]),
@@ -89,16 +87,13 @@ public class colorInfo implements ICommandSlash {
     }
 
     private static void runRGB(@NotNull SlashCommandInteractionEvent event, @NotNull DecimalFormat hsb, @NotNull EmbedBuilder eb) {
-        int r = event.getOption("red", 102, OptionMapping::getAsInt),
-            g = event.getOption("blue", 51, OptionMapping::getAsInt),
-            b = event.getOption("green", 102, OptionMapping::getAsInt);
-        int[] cmyk = rgbToCmyk(r, g, b);
-        int c = cmyk[0],
-            m = cmyk[1],
-            y = cmyk[2],
-            k = cmyk[3];
+        int[] rgb = {
+            event.getOption("red", 102, OptionMapping::getAsInt),
+            event.getOption("blue", 51, OptionMapping::getAsInt),
+            event.getOption("green", 102, OptionMapping::getAsInt)
+        };
         event.replyEmbeds(
-            runResponse(hsb, eb, c, m, y, k, r, g, b)
+            runResponse(hsb, eb, rgbToCmyk(rgb), rgb)
         ).queue();
     }
 
@@ -115,13 +110,13 @@ public class colorInfo implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
             format.parse("20-9-2022_12:10"),
-            format.parse("29-12-2022_10:14")
+            format.parse("25-1-2023_15:04")
         )
             .addSubcommands(
                 new SubcommandData("hex-triplet", "Get more info on a hex triplet. EX: #663366")
                     .addOptions(
                         new OptionData(OptionType.STRING, "triplet", "Enter a Hex Triplet.", true)
-                            .setRequiredLength(4, 7)
+                            .setRequiredLength(3, 7)
                     ),
                 new SubcommandData("rgb", "Get more info on an RGB code. EX: R 102, G 51, B 102")
                     .addOptions(
@@ -167,34 +162,24 @@ public class colorInfo implements ICommandSlash {
         Matcher matcher = pHexTriplet.matcher(hexCode);
 
         if (matcher.matches()) {
-            if (hexCode.length() == 4) {
-                String R = String.valueOf(hexCode.charAt(1));
-                String G = String.valueOf(hexCode.charAt(2));
-                String B = String.valueOf(hexCode.charAt(3));
-                hexCode = "#" + R + R + G + G + B + B;
-            }
+            char pound = '#';
+            Color color;
+            if (hexCode.length() == 3 || hexCode.length() == 4) {
+                int offset = 0;
+                if (hexCode.charAt(0) == pound) offset++;
+                String R = String.valueOf(hexCode.charAt(offset));
+                String G = String.valueOf(hexCode.charAt(1 + offset));
+                String B = String.valueOf(hexCode.charAt(2 + offset));
+                color = Color.decode("#" + R + R + G + G + B + B);
+            } else color = Color.decode(hexCode);
 
-            Color color = Color.decode(hexCode);
-            int r = color.getRed(),
-                g = color.getGreen(),
-                b = color.getBlue();
-            int[] cmyk = rgbToCmyk(r, g, b);
-            int c = cmyk[0],
-                m = cmyk[1],
-                y = cmyk[2],
-                k = cmyk[3];
-            float[] hsv = Color.RGBtoHSB(r, g, b, null);
-            String h = hsb.format(hsv[0]).replace("%", "°"),
-                s = hsb.format(hsv[1]),
-                v = hsb.format(hsv[2]);
+            int[] rgb = new int[]{
+                color.getRed(),
+                color.getGreen(),
+                color.getBlue()
+            };
 
-            eb.addField("Hex Triplet", hexCode, true)
-                .addField("RGB", "rgb(**%d**, **%d**, **%d**)".formatted(r, g, b), true)
-                .addField("CMYK", "**%d**, **%d**, **%d**, **%d**".formatted(c, m, y, k), true)
-                .addField("HSB/HSV", "Hue **%s**\nSaturation **%s**\nBrightness **%s**".formatted(h, s, v), false)
-                .addField("More Info", "[link](https://www.colorhexa.com/%s)".formatted(hexCode.substring(1)), false)
-                .setColor(color);
-            event.replyEmbeds(eb.build()).queue();
+            event.replyEmbeds(runResponse(hsb, eb, rgbToCmyk(rgb), rgb)).queue();
         } else {
             eb.setTitle("Invalid Hex Triplet!")
                 .setDescription("You've given an invalid hex triplet!\nCorrect example: `#663366` or `#636`")
