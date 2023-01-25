@@ -24,6 +24,7 @@ import java.util.Random;
 public class kill implements ICommandSlash {
 
     public static final String MODAL_NAME = "kill-suggestion";
+    //todo: migrate string to DB
     private final String[] randomStrings = {
         "was in their chem lab with %s trying to kill them with a 20 gauge shotgun!",
         "proctored the duel between Red [%s] and Blue [%s]. Blue won by a landslide!",
@@ -124,6 +125,7 @@ public class kill implements ICommandSlash {
                 event.replyModal(modal).queue();
             }
 
+            //todo: set up access to DB
             case "target" -> {
                 String target = event.getOption("target", event.getJDA().getSelfUser(), OptionMapping::getAsUser).getAsMention();
                 if (target.equals(event.getJDA().getSelfUser().getAsMention())) {

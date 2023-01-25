@@ -1,11 +1,11 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.admin;
 
 import com.terransky.stuffnthings.database.DatabaseManager;
+import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
-import com.terransky.stuffnthings.utilities.general.DBProperty;
 import com.terransky.stuffnthings.utilities.general.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -42,7 +42,7 @@ public class configCmd implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.ADMIN,
             format.parse("28-08-2022_21:46"),
-            format.parse("21-1-2023_11:09")
+            format.parse("25-1-2023_12:55")
         )
             .addDefaultPerms(Permission.MANAGE_SERVER)
             .addSubcommandGroups(
@@ -95,7 +95,9 @@ public class configCmd implements ICommandSlash {
     private void updateKillTimeout(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder eb) {
         event.deferReply(true).queue();
         Optional<Integer> ifNewTimeout = Optional.ofNullable(event.getOption("set-timeout", OptionMapping::getAsInt));
-        int oldTimeout = DatabaseManager.INSTANCE.getFromDBInt(blob, DBProperty.KILLS_TIMEOUT).orElse(300000);
+        long oldTimeout = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILLS_TIMEOUT)
+            .map(o -> (long) o)
+            .orElseGet(() -> TimeUnit.MINUTES.toMillis(10));
         long oldTimeoutMinutes = TimeUnit.MILLISECONDS.toMinutes(oldTimeout);
 
 
@@ -119,7 +121,7 @@ public class configCmd implements ICommandSlash {
         }
 
         try {
-            DatabaseManager.INSTANCE.updateProperty(blob, DBProperty.KILLS_TIMEOUT, newTimeoutMillis);
+            DatabaseManager.INSTANCE.updateProperty(blob, Property.KILLS_TIMEOUT, newTimeoutMillis);
         } catch (Exception e) {
             log.error("{}: {}", e.getClass().getName(), e.getMessage());
             LogList.error(Arrays.asList(e.getStackTrace()), log);
@@ -134,8 +136,10 @@ public class configCmd implements ICommandSlash {
 
     private void updateKillMaxKills(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder eb) {
         event.deferReply(true).queue();
-        Optional<Integer> ifNewMax = Optional.ofNullable(event.getOption("set-max", OptionMapping::getAsInt));
-        int oldMax = DatabaseManager.INSTANCE.getFromDBInt(blob, DBProperty.KILLS_MAX).orElse(5);
+        Optional<Long> ifNewMax = Optional.ofNullable(event.getOption("set-max", OptionMapping::getAsLong));
+        long oldMax = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILLS_MAX)
+            .map(o -> (Long) o)
+            .orElse(5L);
 
         if (ifNewMax.isEmpty()) {
             event.getHook().sendMessageEmbeds(eb.setTitle("Kill Config")
@@ -144,7 +148,7 @@ public class configCmd implements ICommandSlash {
             ).queue();
             return;
         }
-        int newMax = ifNewMax.get();
+        long newMax = ifNewMax.get();
 
         if (newMax == oldMax) {
             log.debug("No change for {}", blob.getGuildId());
@@ -156,7 +160,7 @@ public class configCmd implements ICommandSlash {
         }
 
         try {
-            DatabaseManager.INSTANCE.updateProperty(blob, DBProperty.KILLS_MAX, newMax);
+            DatabaseManager.INSTANCE.updateProperty(blob, Property.KILLS_MAX, newMax);
         } catch (Exception e) {
             log.error("{}: {}", e.getClass().getName(), e.getMessage());
             LogList.error(Arrays.asList(e.getStackTrace()), log);

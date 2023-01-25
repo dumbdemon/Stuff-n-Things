@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.general;
 
 import com.terransky.stuffnthings.ManagersManager;
+import com.terransky.stuffnthings.database.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.managers.SlashIManager;
 import com.terransky.stuffnthings.utilities.command.*;
@@ -55,7 +56,7 @@ public class about implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("15-1-2023_17:12")
+            format.parse("25-1-2023_12:51")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "command", "Get more info on a Command.")
@@ -80,10 +81,19 @@ public class about implements ICommandSlash {
         int commandCnt = manager.getSlashCommandCount();
         int guildCommandCnt = manager.getSlashCommandCount(blob.getGuildIdLong());
         commandCnt += guildCommandCnt;
+        long guildCount;
+        long userCount;
+        String serviced;
 
-        //todo: Replace with database calls when fully implemented.
-        long guildCount = event.getJDA().getGuildCache().stream().distinct().count();
-        long userCount = event.getJDA().getUserCache().stream().distinct().filter(user -> !user.isBot()).count();
+        if (Config.isDatabaseEnabled()) {
+            guildCount = DatabaseManager.INSTANCE.getGuildsCount();
+            userCount = DatabaseManager.INSTANCE.getUserCount();
+            serviced = " Serviced";
+        } else {
+            guildCount = event.getJDA().getGuildCache().stream().distinct().count();
+            userCount = event.getJDA().getUserCache().stream().distinct().filter(user -> !user.isBot()).count();
+            serviced = "";
+        }
 
         event.getHook().sendMessageEmbeds(
             new EmbedBuilder()
@@ -93,12 +103,13 @@ public class about implements ICommandSlash {
                     I am %s
                     > *What am I?*
                     An entertainment bot.
-                    > [*I think I need help...*](%s)
+                    > *I think I need help...*
+                    [Then get some](%s)
                     """.formatted(event.getJDA().getSelfUser().getAsMention(), Config.getSupportGuildInvite()))
                 .setTitle(event.getJDA().getSelfUser().getName(), Config.getRepositoryURL())
                 .setThumbnail(Config.getBotLogoURL())
-                .addField("Servers", "%d servers".formatted(guildCount), true)
-                .addField("Users", "%s users".formatted(Formatter.largeNumberFormat(userCount)).replace(".0 ", " "), true)
+                .addField("Servers", String.format("%d servers", guildCount), true)
+                .addField("Users" + serviced, String.format("%s user%s", userCount, userCount > 1 ? "s" : ""), true)
                 .addField("Your Shard", event.getJDA().getShardInfo().getShardString(), true)
                 .addField("Start Time", Timestamp.getDateAsTimestamp(new Date(mxBean.getStartTime())), false)
                 .addField("Uptime", uptime, false)

@@ -68,6 +68,19 @@ public class Config {
         return config.get("TINY_URL_DOMAIN", DEFAULT_VALUE);
     }
 
+    //MongoDB
+    public static String getApplicationName() {
+        return config.get("APPLICATION_NAME", DEFAULT_VALUE);
+    }
+
+    public static String getDatabaseName() {
+        return config.get("DB_NAME", DEFAULT_VALUE);
+    }
+
+    public static String getMongoHostname() {
+        return config.get("MONGO_HOSTNAME", DEFAULT_VALUE);
+    }
+
     /**
      * All usernames, passwords, and tokens are stored here.<br />
      * <b>NOTE:</b> If it is just a token, call {@link #getPassword()} to retrieve it.
