@@ -5,15 +5,20 @@ import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.kill;
 import com.terransky.stuffnthings.interfaces.interactions.IModal;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
-import com.terransky.stuffnthings.utilities.general.DiscordWebhook;
+import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 public class killSuggest implements IModal {
+
+    public static final String ACCEPT_BUTTON = "accept-kill";
+    public static final String DENY_BUTTON = "deny-kill";
 
     @Override
     public String getName() {
@@ -34,14 +39,16 @@ public class killSuggest implements IModal {
                 ).forEach(member -> add(member.getAsMention()));
         }};
 
-        new DiscordWebhook("Kill_Suggestion")
-            .sendMessage(new EmbedBuilder()
-                .setTitle("Kill-string Suggestion")
-                .setDescription(suggestion)
-                .addField("From", "@%s".formatted(event.getUser().getAsTag()), false)
-                .setColor(EmbedColors.getSecondary())
-                .build()
-            );
+        TextChannel requestChannel = event.getJDA().getTextChannelById(Config.getRequestChannelID());
+
+        if (requestChannel == null)
+            throw new DiscordAPIException("Either the channel channel does not exist or I could not obtain the channel.");
+
+        requestChannel.sendMessage(suggestion)
+            .addActionRow(
+                Button.success(ACCEPT_BUTTON, "Accept"),
+                Button.danger(DENY_BUTTON, "Deny")
+            ).queue();
 
         String testKillString = suggestion.formatted(
             victims.get(rando.nextInt(victims.size())),

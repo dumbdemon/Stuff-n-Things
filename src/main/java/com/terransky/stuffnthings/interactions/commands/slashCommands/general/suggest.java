@@ -44,7 +44,7 @@ public class suggest implements ICommandSlash {
         EmbedBuilder callReply = new EmbedBuilder().setColor(EmbedColors.getDefault());
         String description = "```\n" + suggestion + "\n```";
 
-        var ignored = new DiscordWebhook("Suggestion")
+        new DiscordWebhook("Suggestion")
             .sendMessage(new EmbedBuilder(callReply)
                 .setTitle("Command Suggestion")
                 .setDescription(description)

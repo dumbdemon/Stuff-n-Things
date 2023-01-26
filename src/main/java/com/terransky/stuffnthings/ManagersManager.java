@@ -1,5 +1,7 @@
 package com.terransky.stuffnthings;
 
+import com.terransky.stuffnthings.interactions.buttons.acceptKill;
+import com.terransky.stuffnthings.interactions.buttons.denyKill;
 import com.terransky.stuffnthings.interactions.buttons.expiredButton;
 import com.terransky.stuffnthings.interactions.buttons.getMoreDadJokes;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.channelUnLock;
@@ -64,6 +66,8 @@ public class ManagersManager {
     );
 
     private final IManager<IButton> buttonIManager = new IManager<>(
+        new acceptKill(),
+        new denyKill(),
         new expiredButton(),
         new getMoreDadJokes()
     );

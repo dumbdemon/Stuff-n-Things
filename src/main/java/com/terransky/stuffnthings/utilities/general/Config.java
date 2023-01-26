@@ -64,6 +64,10 @@ public class Config {
         return config.get("REQUEST_WEBHOOK", DEFAULT_VALUE);
     }
 
+    public static String getRequestChannelID() {
+        return config.get("REQUEST_CHANNEL_ID", DEFAULT_GUILD_ID);
+    }
+
     public static String getTinyURlDomain() {
         return config.get("TINY_URL_DOMAIN", DEFAULT_VALUE);
     }
@@ -78,7 +82,7 @@ public class Config {
     }
 
     public static String getMongoHostname() {
-        return config.get("MONGO_HOSTNAME", DEFAULT_VALUE);
+        return config.get("DB_HOSTNAME", DEFAULT_VALUE);
     }
 
     /**

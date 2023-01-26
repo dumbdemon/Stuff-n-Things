@@ -38,17 +38,17 @@ public enum AgeRating {
         }
     }
 
+    public static boolean checkIfAdult(AgeRating ageRating) {
+        return ageRating == R ||
+            ageRating == R18 ||
+            ageRating == NR;
+    }
+
     public String getCode() {
         return code;
     }
 
     public String getCodename() {
         return codename;
-    }
-
-    public static boolean checkIfAdult(AgeRating ageRating) {
-        return ageRating == R ||
-            ageRating == R18 ||
-            ageRating == NR;
     }
 }
