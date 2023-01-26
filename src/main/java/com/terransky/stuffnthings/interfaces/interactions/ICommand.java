@@ -46,6 +46,11 @@ public interface ICommand extends IInteraction {
         return false;
     }
 
+    /**
+     * If this is a reserved developer command.
+     *
+     * @return False unless otherwise.
+     */
     default boolean isDeveloperCommand() {
         return false;
     }
