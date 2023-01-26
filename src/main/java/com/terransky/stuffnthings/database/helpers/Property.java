@@ -59,7 +59,7 @@ public enum Property {
         KILL,
         ;
 
-        public String getTarget(EventBlob blob, Property property) {
+        public String getTarget(EventBlob blob) {
             switch (this) {
                 case USER -> {
                     return blob.getMemberId();
@@ -71,7 +71,7 @@ public enum Property {
                     return "0";
                 }
                 default ->
-                    throw new IllegalArgumentException(String.format("The property %s is used for identification purposes only", property));
+                    throw new IllegalArgumentException(String.format("%S properties are intended to be used for identification purposes only", this));
             }
         }
     }

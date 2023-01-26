@@ -147,7 +147,7 @@ public class MongoDBDataSource implements DatabaseManager {
     public Optional<Object> getFromDatabase(@NotNull EventBlob blob, @NotNull Property property) {
         try (MongoClient client = getConstructedClient()) {
             MongoCollection<?> collection = getCollection(property, client);
-            String target = property.getTable().getTarget(blob, property);
+            String target = property.getTable().getTarget(blob);
 
             var subscriber = new ObjectSubscriber<>();
             collection.find(Filters.eq(ID_REFERENCE.getPropertyName(property.getTable()), target)).subscribe(subscriber);
@@ -215,7 +215,7 @@ public class MongoDBDataSource implements DatabaseManager {
     public <T> void updateProperty(@NotNull EventBlob blob, @NotNull Property property, T newValue) {
         try (MongoClient client = getConstructedClient()) {
             MongoCollection<?> collection = getCollection(property, client);
-            String target = property.getTable().getTarget(blob, property);
+            String target = property.getTable().getTarget(blob);
             Bson search = Filters.eq(ID_REFERENCE.getPropertyName(property.getTable()), target);
 
             var updater = new ObjectSubscriber<UpdateResult>();
