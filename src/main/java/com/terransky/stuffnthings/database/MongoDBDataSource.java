@@ -230,6 +230,10 @@ public class MongoDBDataSource implements DatabaseManager {
                     collection = getGuilds(client);
                     target = blob.getGuildId();
                 }
+                case KILL -> {
+                    collection = getKills(client);
+                    target = "0";
+                }
                 default ->
                     throw new IllegalArgumentException(String.format("The property %s is used for identification purposes only", property));
             }
