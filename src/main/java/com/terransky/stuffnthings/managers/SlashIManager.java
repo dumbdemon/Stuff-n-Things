@@ -25,11 +25,12 @@ public class SlashIManager extends CommandIManager<ICommandSlash> {
      * @return A {@link List} of {@link Command.Choice Choises}.
      */
     public List<Command.Choice> getCommandsAsChoices() {
-        List<Command.Choice> choices = new ArrayList<>();
-        for (ICommandSlash command : interactions.stream().filter(super::checkIfGlobal).sorted().toList()) {
-            choices.add(new Command.Choice(command.getNameReadable(), command.getName()));
-        }
-        return choices;
+        List<ICommandSlash> slashes = interactions.stream().filter(super::checkIfGlobal).sorted().toList();
+        return new ArrayList<>() {{
+            for (ICommandSlash command : slashes) {
+                add(new Command.Choice(command.getNameReadable(), command.getName()));
+            }
+        }};
     }
 
     /**
