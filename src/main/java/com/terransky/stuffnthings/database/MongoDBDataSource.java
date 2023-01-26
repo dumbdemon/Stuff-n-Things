@@ -16,6 +16,7 @@ import com.mongodb.reactivestreams.client.MongoDatabase;
 import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.database.helpers.entry.GuildEntry;
 import com.terransky.stuffnthings.database.helpers.entry.KillLock;
+import com.terransky.stuffnthings.database.helpers.entry.KillStrings;
 import com.terransky.stuffnthings.database.helpers.entry.UserEntry;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.Config;
@@ -80,6 +81,12 @@ public class MongoDBDataSource implements DatabaseManager {
     }
 
     @NotNull
+    private MongoCollection<KillStrings> getKills(@NotNull MongoClient client) {
+        MongoDatabase database = client.getDatabase(Config.getDatabaseName());
+        return database.getCollection("sources", KillStrings.class).withCodecRegistry(codecRegistry);
+    }
+
+    @NotNull
     private MongoClient getConstructedClient() {
         MongoClientSettings settings = MongoClientSettings.builder()
             .applicationName(Config.getApplicationName() + (Config.isTestingMode() ? "_TEST" : ""))
@@ -95,7 +102,49 @@ public class MongoDBDataSource implements DatabaseManager {
     }
 
     @Override
-    public Optional<?> getFromDatabase(@NotNull EventBlob blob, @NotNull Property property) {
+    public boolean addKillString(Property property, String string, String idReference) {
+        if (property != KILL_RANDOM && property != KILL_TARGET) return false;
+        Bson filter = Filters.eq(ID_REFERENCE.getPropertyName(Table.KILL), idReference);
+
+        try (MongoClient client = getConstructedClient()) {
+            var strings = getKills(client);
+            var finder = new ObjectSubscriber<KillStrings>();
+            var updater = new ObjectSubscriber<UpdateResult>();
+            strings.find(filter).subscribe(finder);
+
+            if (finder.await().getError() != null) throw finder.getError();
+
+            if (finder.first() == null) {
+                var insert = new ObjectSubscriber<InsertOneResult>();
+
+                strings.insertOne(new KillStrings(idReference))
+                    .subscribe(insert);
+
+                if (insert.await().getError() != null) throw insert.getError();
+
+                finder = new ObjectSubscriber<>();
+                strings.find(filter).subscribe(finder);
+                if (finder.await().getError() != null) throw finder.getError();
+            }
+
+            KillStrings killStrings = finder.first();
+            List<String> killStringsList;
+            if (property == KILL_RANDOM) {
+                killStringsList = killStrings.getKillRandoms();
+            } else {
+                killStringsList = killStrings.getKillTargets();
+            }
+            killStringsList.add(string);
+
+            strings.updateOne(Filters.and(filter), Updates.set(property.getPropertyName(), killStringsList))
+                .subscribe(updater);
+
+            return updater.await().getError() == null;
+        }
+    }
+
+    @Override
+    public Optional<Object> getFromDatabase(@NotNull EventBlob blob, @NotNull Property property) {
         try (MongoClient client = getConstructedClient()) {
             MongoCollection<?> collection;
             String target;
@@ -108,6 +157,10 @@ public class MongoDBDataSource implements DatabaseManager {
                 case GUILD -> {
                     collection = getGuilds(client);
                     target = blob.getGuildId();
+                }
+                case KILL -> {
+                    collection = getKills(client);
+                    target = "0";
                 }
                 default ->
                     throw new IllegalArgumentException(String.format("The property %s is used for identification purposes only", property));
@@ -142,12 +195,19 @@ public class MongoDBDataSource implements DatabaseManager {
                 }
                 case KILLS_MAX -> {
                     GuildEntry guild = (GuildEntry) subscriber.first();
-                    log.debug(guild.toString());
                     return Optional.ofNullable(guild.getKillMaximum());
                 }
                 case KILLS_TIMEOUT -> {
                     GuildEntry guild = (GuildEntry) subscriber.first();
                     return Optional.ofNullable(guild.getKillTimeout());
+                }
+                case KILL_RANDOM -> {
+                    KillStrings killStrings = (KillStrings) subscriber.first();
+                    return Optional.ofNullable(killStrings.getKillRandoms());
+                }
+                case KILL_TARGET -> {
+                    KillStrings killStrings = (KillStrings) subscriber.first();
+                    return Optional.ofNullable(killStrings.getKillTargets());
                 }
                 default ->
                     throw new IllegalArgumentException(String.format("Cannot retrieve property of %s from database", property));

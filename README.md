@@ -19,9 +19,7 @@ Command info moved to [GitHub Wiki](https://github.com/dumbdemon/Stuff-n-Things/
   the [ManagersManager](https://github.com/dumbdemon/Stuff-n-Things/blob/master/src/main/java/com/terransky/stuffnthings/ManagersManager.java)
   class.
 * The `/rob-fail-chance` was built for the Discord™ bot [UnbelievaBoat](https://unbelievaboat.com/)'s rob command.
-* Database uses [SQLite](https://www.sqlite.org/index.html) [WIP].
-* The way I'm currently implementing `/kill random`'s source data is bad and the database table for it has not been set
-  up yet.
+* Database uses [MongoDB](https://www.mongodb.com/).
 * `secretsAndLies()` class referenced in the main
   class [[StuffNThings](https://github.com/dumbdemon/Stuff-n-Things/blob/e3659163b3e1cb0dbf95680e325d2a2fecc2e886/src/main/java/com/terransky/stuffnthings/StuffNThings.java#L33)]
   and listener

@@ -9,7 +9,10 @@ public enum Property {
     KILLS_TIMEOUT("killTimeout", Table.GUILD),
     KILL_LOCK("killLocks", Table.USER),
     KILL_ATTEMPTS("killAttempts", Table.USER),
-    KILL_TIMEOUT("killUnderTo", Table.USER);
+    KILL_TIMEOUT("killUnderTo", Table.USER),
+    KILL_TARGET("killTargets", Table.KILL),
+    KILL_RANDOM("killRandoms", Table.KILL),
+    ;
 
     private final String propertyName;
     private final Table table;
@@ -34,7 +37,7 @@ public enum Property {
             case USER -> {
                 return "userId";
             }
-            case GUILD -> {
+            case GUILD, KILL -> {
                 return "guildId";
             }
             default -> {
@@ -51,6 +54,7 @@ public enum Property {
 
         ROOT,
         GUILD,
-        USER
+        USER,
+        KILL,
     }
 }

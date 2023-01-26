@@ -16,9 +16,9 @@ public interface DatabaseManager {
      *
      * @param blob     An {@link EventBlob}
      * @param property A {@link Property}
-     * @return An object associated with the property
+     * @return An {@link Optional} object associated with the property
      */
-    Optional<?> getFromDatabase(@NotNull EventBlob blob, @NotNull Property property);
+    Optional<Object> getFromDatabase(@NotNull EventBlob blob, @NotNull Property property);
 
     /**
      * Update a property in the database
@@ -28,6 +28,8 @@ public interface DatabaseManager {
      * @param newValue The new value of the property.
      */
     <T> void updateProperty(@NotNull EventBlob blob, @NotNull Property property, T newValue);
+
+    boolean addKillString(Property property, String string, String idReference);
 
     /**
      * Add the guild to the database and create a user table.
