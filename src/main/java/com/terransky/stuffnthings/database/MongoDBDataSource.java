@@ -18,6 +18,7 @@ import com.terransky.stuffnthings.database.helpers.entry.GuildEntry;
 import com.terransky.stuffnthings.database.helpers.entry.KillLock;
 import com.terransky.stuffnthings.database.helpers.entry.KillStrings;
 import com.terransky.stuffnthings.database.helpers.entry.UserEntry;
+import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.entities.Guild;

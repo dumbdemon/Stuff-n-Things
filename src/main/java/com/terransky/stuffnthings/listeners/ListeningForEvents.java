@@ -1,8 +1,8 @@
 package com.terransky.stuffnthings.listeners;
 
 import com.terransky.stuffnthings.ManagersManager;
-import com.terransky.stuffnthings.database.DatabaseManager;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
+import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandMessage;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandUser;
 import com.terransky.stuffnthings.managers.CommandIManager;

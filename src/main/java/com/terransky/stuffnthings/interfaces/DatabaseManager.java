@@ -1,5 +1,6 @@
-package com.terransky.stuffnthings.database;
+package com.terransky.stuffnthings.interfaces;
 
+import com.terransky.stuffnthings.database.MongoDBDataSource;
 import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import net.dv8tion.jda.api.entities.Guild;
@@ -60,7 +61,17 @@ public interface DatabaseManager {
      */
     void removeUser(String userId, Guild guild);
 
+    /**
+     * Get count of users serviced
+     *
+     * @return A long containing the user count
+     */
     long getUserCount();
 
+    /**
+     * Get count of all guilds the not is in
+     *
+     * @return A long containing the guild count
+     */
     long getGuildsCount();
 }

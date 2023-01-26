@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.listeners;
 
 import com.terransky.stuffnthings.ManagersManager;
-import com.terransky.stuffnthings.database.DatabaseManager;
+import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.interfaces.interactions.*;
 import com.terransky.stuffnthings.utilities.cannedAgenda.GuildOnly;
@@ -103,9 +103,8 @@ public class InteractionListener extends ListenerAdapter {
         var slashManager = manager.getSlashManager();
         Optional<ICommandSlash> ifSlash = slashManager.getInteraction(event.getName());
         if (ifSlash.isEmpty()) return;
-        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
 
-        //Add user to database or ignore if exists
+        EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
         if (Config.isDatabaseEnabled()) DatabaseManager.INSTANCE.addUser(blob);
 
         ICommandSlash slash = ifSlash.get();
@@ -141,6 +140,7 @@ public class InteractionListener extends ListenerAdapter {
         if (ifMenu.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
+        if (Config.isDatabaseEnabled()) DatabaseManager.INSTANCE.addUser(blob);
 
         ICommandMessage commandMessage = ifMenu.get();
         log.debug("Command \"{}\" called on {} [{}]", commandMessage.getName().toUpperCase(), blob.getGuild().getName(), blob.getGuildIdLong());
@@ -174,6 +174,7 @@ public class InteractionListener extends ListenerAdapter {
         if (ifMenu.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember());
+        if (Config.isDatabaseEnabled()) DatabaseManager.INSTANCE.addUser(blob);
 
         ICommandUser commandUser = ifMenu.get();
         log.debug("Command \"{}\" called on {} [{}]", commandUser.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());

@@ -1,8 +1,8 @@
 package com.terransky.stuffnthings.interactions.buttons;
 
-import com.terransky.stuffnthings.database.DatabaseManager;
 import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.interactions.modals.killSuggest;
+import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.IButton;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
 import com.terransky.stuffnthings.utilities.command.EventBlob;

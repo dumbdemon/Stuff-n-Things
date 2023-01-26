@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.general;
 
 import com.terransky.stuffnthings.ManagersManager;
-import com.terransky.stuffnthings.database.DatabaseManager;
+import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.managers.SlashIManager;
 import com.terransky.stuffnthings.utilities.command.*;

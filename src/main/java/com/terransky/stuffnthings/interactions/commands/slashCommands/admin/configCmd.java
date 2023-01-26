@@ -1,8 +1,8 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.admin;
 
-import com.terransky.stuffnthings.database.DatabaseManager;
 import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
+import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
