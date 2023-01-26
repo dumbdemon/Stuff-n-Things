@@ -34,7 +34,7 @@ public class killSuggest implements IModal {
                 ).forEach(member -> add(member.getAsMention()));
         }};
 
-        var ignored = new DiscordWebhook("Kill_Suggestion")
+        new DiscordWebhook("Kill_Suggestion")
             .sendMessage(new EmbedBuilder()
                 .setTitle("Kill-string Suggestion")
                 .setDescription(suggestion)

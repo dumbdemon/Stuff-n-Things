@@ -43,13 +43,12 @@ public class DiscordWebhook {
         );
     }
 
-    public DiscordWebhook sendMessage(@NotNull MessageEmbed webhookEmbed) {
+    public void sendMessage(@NotNull MessageEmbed webhookEmbed) {
         try (WebhookClient client = clientBuilder.build()) {
             client.send(WebhookEmbedBuilder
                 .fromJDA(webhookEmbed)
                 .build()
             );
         }
-        return this;
     }
 }
