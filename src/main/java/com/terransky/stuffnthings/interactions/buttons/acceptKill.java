@@ -20,10 +20,12 @@ import java.util.ArrayList;
 
 public class acceptKill implements IButton {
 
+    private static final String NAME_READABLE = WordUtils.capitalize(killSuggest.ACCEPT_BUTTON.toLowerCase().replaceAll("-", " "));
+
     @NotNull
     public static MessageEmbed youAreNotAllowed(@NotNull GenericInteractionCreateEvent event, @NotNull EventBlob blob) {
         return new EmbedBuilder()
-            .setTitle(WordUtils.capitalize(killSuggest.ACCEPT_BUTTON.toLowerCase().replaceAll("-", " ")))
+            .setTitle(NAME_READABLE)
             .setDescription(String.format("You're not allowed to do that, %s", event.getUser().getAsMention()))
             .setImage("https://media.tenor.com/KkRrym9X09EAAAAd/i-dont-think-thats-allowed-ryan-bailey.gif")
             .setColor(EmbedColors.getError())
@@ -43,7 +45,17 @@ public class acceptKill implements IButton {
             return;
         }
 
-        DatabaseManager.INSTANCE.addKillString(Property.KILL_RANDOM, event.getMessage().getContentRaw(), "0");
+        if (!DatabaseManager.INSTANCE.addKillString(Property.KILL_RANDOM, event.getMessage().getContentRaw(), "0")) {
+            event.replyEmbeds(
+                new EmbedBuilder()
+                    .setTitle(NAME_READABLE)
+                    .setDescription("Unable to upload suggestion to Database. Please check logs.")
+                    .setColor(EmbedColors.getError())
+                    .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+                    .build()
+            ).setEphemeral(true).queue();
+            return;
+        }
 
         MessageEditData messageEditData = new MessageEditBuilder()
             .setContent("Kill Suggestion was accepted.")
