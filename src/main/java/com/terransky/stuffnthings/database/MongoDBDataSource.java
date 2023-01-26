@@ -146,25 +146,8 @@ public class MongoDBDataSource implements DatabaseManager {
     @Override
     public Optional<Object> getFromDatabase(@NotNull EventBlob blob, @NotNull Property property) {
         try (MongoClient client = getConstructedClient()) {
-            MongoCollection<?> collection;
-            String target;
-
-            switch (property.getTable()) {
-                case USER -> {
-                    collection = getUsers(client);
-                    target = blob.getMemberId();
-                }
-                case GUILD -> {
-                    collection = getGuilds(client);
-                    target = blob.getGuildId();
-                }
-                case KILL -> {
-                    collection = getKills(client);
-                    target = "0";
-                }
-                default ->
-                    throw new IllegalArgumentException(String.format("The property %s is used for identification purposes only", property));
-            }
+            MongoCollection<?> collection = getCollection(property, client);
+            String target = property.getTable().getTarget(blob, property);
 
             var subscriber = new ObjectSubscriber<>();
             collection.find(Filters.eq(ID_REFERENCE.getPropertyName(property.getTable()), target)).subscribe(subscriber);
@@ -215,28 +198,24 @@ public class MongoDBDataSource implements DatabaseManager {
         }
     }
 
+    @NotNull
+    private MongoCollection<?> getCollection(@NotNull Property property, MongoClient client) {
+        MongoCollection<?> collection;
+        switch (property.getTable()) {
+            case USER -> collection = getUsers(client);
+            case GUILD -> collection = getGuilds(client);
+            case KILL -> collection = getKills(client);
+            default ->
+                throw new IllegalArgumentException(String.format("The property %s is used for identification purposes only", property));
+        }
+        return collection;
+    }
+
     @Override
     public <T> void updateProperty(@NotNull EventBlob blob, @NotNull Property property, T newValue) {
         try (MongoClient client = getConstructedClient()) {
-            MongoCollection<?> collection;
-            String target;
-
-            switch (property.getTable()) {
-                case USER -> {
-                    collection = getUsers(client);
-                    target = blob.getMemberId();
-                }
-                case GUILD -> {
-                    collection = getGuilds(client);
-                    target = blob.getGuildId();
-                }
-                case KILL -> {
-                    collection = getKills(client);
-                    target = "0";
-                }
-                default ->
-                    throw new IllegalArgumentException(String.format("The property %s is used for identification purposes only", property));
-            }
+            MongoCollection<?> collection = getCollection(property, client);
+            String target = property.getTable().getTarget(blob, property);
             Bson search = Filters.eq(ID_REFERENCE.getPropertyName(property.getTable()), target);
 
             var updater = new ObjectSubscriber<UpdateResult>();

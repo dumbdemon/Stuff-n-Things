@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.database.helpers;
 
+import com.terransky.stuffnthings.utilities.command.EventBlob;
 import org.jetbrains.annotations.NotNull;
 
 public enum Property {
@@ -56,5 +57,22 @@ public enum Property {
         GUILD,
         USER,
         KILL,
+        ;
+
+        public String getTarget(EventBlob blob, Property property) {
+            switch (this) {
+                case USER -> {
+                    return blob.getMemberId();
+                }
+                case GUILD -> {
+                    return blob.getGuildId();
+                }
+                case KILL -> {
+                    return "0";
+                }
+                default ->
+                    throw new IllegalArgumentException(String.format("The property %s is used for identification purposes only", property));
+            }
+        }
     }
 }
