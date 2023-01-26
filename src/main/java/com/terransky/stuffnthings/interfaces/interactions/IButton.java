@@ -2,7 +2,6 @@ package com.terransky.stuffnthings.interfaces.interactions;
 
 import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
-import com.terransky.stuffnthings.utilities.general.IInteractionType;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +18,7 @@ public interface IButton extends IInteraction {
     void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws Exception;
 
     @Override
-    default IInteractionType getInteractionType() {
-        return IInteractionType.BUTTON;
+    default Type getInteractionType() {
+        return Type.BUTTON;
     }
 }

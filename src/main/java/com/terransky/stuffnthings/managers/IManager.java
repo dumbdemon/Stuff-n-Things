@@ -1,7 +1,6 @@
 package com.terransky.stuffnthings.managers;
 
 import com.terransky.stuffnthings.interfaces.IInteraction;
-import com.terransky.stuffnthings.utilities.general.IInteractionType;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,11 +64,11 @@ public class IManager<T extends IInteraction> {
      * Get the effective amount of {@link IInteraction}.
      *
      * @param interactions A {@link List} of {@link IInteraction}s.
-     * @param type         An {@link IInteractionType}.
+     * @param type         An {@link IInteraction.Type}.
      * @return A {@link List} of {@link IInteraction}s that does not exceed their maximum count.
      */
     @NotNull
-    List<T> getEffectiveCounts(@NotNull List<T> interactions, @NotNull IInteractionType type) {
+    List<T> getEffectiveCounts(@NotNull List<T> interactions, @NotNull IInteraction.Type type) {
         int max = type.getMaximum();
         log.info("Checking quantity of {}s against maximum of {}...", type.getName(), max);
         if (interactions.size() > max) {

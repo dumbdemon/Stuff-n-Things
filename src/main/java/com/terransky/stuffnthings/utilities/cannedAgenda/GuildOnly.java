@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.utilities.cannedAgenda;
 
+import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
-import com.terransky.stuffnthings.utilities.general.IInteractionType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
@@ -17,26 +17,26 @@ public class GuildOnly {
     private GuildOnly() {
     }
 
-    public static <T extends GenericCommandInteractionEvent> void interactionResponse(@NotNull T event, IInteractionType IInteractionType) {
+    public static <T extends GenericCommandInteractionEvent> void interactionResponse(@NotNull T event, IInteraction.Type type) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
-                .setDescription(Responses.GUILD_ONLY.getMessage(IInteractionType))
+                .setDescription(Responses.GUILD_ONLY.getMessage(type))
                 .build()
         ).queue();
     }
 
-    public static <T extends GenericComponentInteractionCreateEvent> void interactionResponse(@NotNull T event, IInteractionType IInteractionType) {
+    public static <T extends GenericComponentInteractionCreateEvent> void interactionResponse(@NotNull T event, IInteraction.Type type) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
-                .setDescription(Responses.GUILD_ONLY.getMessage(IInteractionType))
+                .setDescription(Responses.GUILD_ONLY.getMessage(type))
                 .build()
         ).queue();
     }
 
-    public static void interactionResponse(@NotNull ModalInteractionEvent event, IInteractionType IInteractionType) {
+    public static void interactionResponse(@NotNull ModalInteractionEvent event, IInteraction.Type type) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
-                .setDescription(Responses.GUILD_ONLY.getMessage(IInteractionType))
+                .setDescription(Responses.GUILD_ONLY.getMessage(type))
                 .build()
         ).queue();
     }
