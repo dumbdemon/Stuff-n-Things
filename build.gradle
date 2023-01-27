@@ -1,7 +1,7 @@
 plugins {
-    id'java'
-    id'application'
-    id'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 mainClassName = 'com.terransky.stuffnthings.StuffNThings'
@@ -9,6 +9,11 @@ mainClassName = 'com.terransky.stuffnthings.StuffNThings'
 group 'com.terransky.stuffnthings'
 version '22'
 compileJava.options.encoding = 'UTF-8'
+
+shadowJar {
+    archiveBaseName.set('StuffNThings')
+    archiveClassifier.set('')
+}
 
 repositories {
     mavenCentral()
