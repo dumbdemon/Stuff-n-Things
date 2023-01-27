@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interfaces;
 
 import com.terransky.stuffnthings.database.MongoDBDataSource;
+import com.terransky.stuffnthings.database.helpers.KillStorage;
 import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import net.dv8tion.jda.api.entities.Guild;
@@ -10,6 +11,9 @@ import java.util.Optional;
 
 public interface DatabaseManager {
 
+    /**
+     * The main instance of the database.
+     */
     DatabaseManager INSTANCE = new MongoDBDataSource();
 
     /**
@@ -30,7 +34,15 @@ public interface DatabaseManager {
      */
     <T> void updateProperty(@NotNull EventBlob blob, @NotNull Property property, T newValue);
 
-    boolean addKillString(Property property, String string, String idReference);
+    /**
+     * Add a kill string to the database
+     *
+     * @param killStorage An enum containing the {@link Property} data.
+     * @param killString  The kill string te add
+     * @param idReference THe specific database object to store in
+     * @return True if up was successful
+     */
+    boolean addKillString(KillStorage killStorage, String killString, String idReference);
 
     /**
      * Add the guild to the database and create a user table.

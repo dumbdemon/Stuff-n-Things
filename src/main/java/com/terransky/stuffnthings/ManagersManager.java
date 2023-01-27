@@ -66,14 +66,16 @@ public class ManagersManager {
     );
 
     private final IManager<IButton> buttonIManager = new IManager<>(
-        new acceptKill(),
+        new acceptKill.random(),
+        new acceptKill.target(),
         new denyKill(),
         new expiredButton(),
         new getMoreDadJokes()
     );
 
     private final IManager<IModal> modalIManager = new IManager<>(
-        new killSuggest()
+        new killSuggest.random(),
+        new killSuggest.target()
     );
 
     private final CommandIManager<ICommandMessage> messageCommandIManager = new CommandIManager<>();

@@ -13,6 +13,7 @@ import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import com.mongodb.reactivestreams.client.MongoDatabase;
+import com.terransky.stuffnthings.database.helpers.KillStorage;
 import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.database.helpers.entry.GuildEntry;
 import com.terransky.stuffnthings.database.helpers.entry.KillLock;
@@ -103,8 +104,8 @@ public class MongoDBDataSource implements DatabaseManager {
     }
 
     @Override
-    public boolean addKillString(Property property, String string, String idReference) {
-        if (property != KILL_RANDOM && property != KILL_TARGET) return false;
+    public boolean addKillString(@NotNull KillStorage killStorage, String killString, String idReference) {
+        Property property = killStorage.getProperty();
         Bson filter = Filters.eq(ID_REFERENCE.getPropertyName(Table.KILL), idReference);
 
         try (MongoClient client = getConstructedClient()) {
@@ -135,7 +136,7 @@ public class MongoDBDataSource implements DatabaseManager {
             } else {
                 killStringsList = killStrings.getKillTargets();
             }
-            killStringsList.add(string);
+            killStringsList.add(killString);
 
             strings.updateOne(Filters.and(filter), Updates.set(property.getPropertyName(), killStringsList))
                 .subscribe(updater);
@@ -146,6 +147,7 @@ public class MongoDBDataSource implements DatabaseManager {
 
     @Override
     public Optional<Object> getFromDatabase(@NotNull EventBlob blob, @NotNull Property property) {
+        if (!Config.isDatabaseEnabled()) return Optional.empty();
         try (MongoClient client = getConstructedClient()) {
             MongoCollection<?> collection = getCollection(property, client);
             String target = property.getTable().getTarget(blob);

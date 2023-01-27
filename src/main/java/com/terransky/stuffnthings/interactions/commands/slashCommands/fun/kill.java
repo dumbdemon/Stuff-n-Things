@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
@@ -23,7 +24,9 @@ import java.util.*;
 
 public class kill implements ICommandSlash {
 
-    public static final String MODAL_NAME = "kill-suggestion";
+    public static final String RANDOM_MODAL_NAME = "random-kill-suggest";
+    public static final String TARGET_MODAL_NAME = "target-kill-suggest";
+    public static final String MODAL_TEXT_INPUT_NAME = "kill-suggestion";
 
     private void killRandom(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull Random random, EmbedBuilder eb) {
         List<?> randomStrings = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILL_RANDOM)
@@ -85,10 +88,14 @@ public class kill implements ICommandSlash {
             if (!isUnderTimeout)
                 performLockOut(blob, timeout);
         }
-
-        List<?> targetStrings = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILL_TARGET)
-            .map(o -> (List<?>) o)
-            .orElse(new ArrayList<>());
+        List<String> targetStrings = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILL_TARGET)
+            .map(o -> (List<String>) new ArrayList<String>() {{
+                    for (Object o1 : ((List<?>) o)) {
+                        add((String) o1);
+                    }
+                }}
+            )
+            .orElse(List.of("tried to kill %s but they couldn't because that's bad manners!"));
 
         eb.setDescription(String.format("… %s", targetStrings.get(random.nextInt(targetStrings.size()))).formatted(target));
         event.replyEmbeds(eb.build()).queue();
@@ -118,13 +125,16 @@ public class kill implements ICommandSlash {
             """, Mastermind.USER,
             CommandCategory.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("25-1-2023_18:34")
+            format.parse("27-1-2023_14:55")
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),
                 new SubcommandData("target", "Target someone for a kill.")
                     .addOption(OptionType.USER, "target", "Your target", true),
                 new SubcommandData("suggest", "Suggest a kill-string. Use \"%s\" to represent targets. Up to four can be in a kill-string.")
+                    .addOptions(
+                        new OptionData(OptionType.BOOLEAN, "is-random", "Random or target?", true)
+                    )
             );
     }
 
@@ -143,13 +153,17 @@ public class kill implements ICommandSlash {
             case "random" -> killRandom(event, blob, random, eb);
 
             case "suggest" -> {
-                TextInput suggestion = TextInput.create(MODAL_NAME, "Suggestion", TextInputStyle.PARAGRAPH)
+                boolean isRandom = event.getOption("is-random", true, OptionMapping::getAsBoolean);
+                String placeholder = isRandom ? "up to four targets! There could be more, but I don't wanna!" : "your target.";
+
+                TextInput suggestion = TextInput.create(MODAL_TEXT_INPUT_NAME, "Suggestion", TextInputStyle.PARAGRAPH)
                     .setRequired(true)
                     .setRequiredRange(10, MessageEmbed.DESCRIPTION_MAX_LENGTH / 4)
-                    .setPlaceholder("Use \"%s\" to represent up to four targets! There could be more, but I don't wanna!")
+                    .setPlaceholder("Use \"%s\" to represent " + placeholder)
                     .build();
 
-                Modal modal = Modal.create("kill-suggest", "Suggest Kill-String")
+
+                Modal modal = Modal.create(isRandom ? RANDOM_MODAL_NAME : TARGET_MODAL_NAME, "Suggest Kill-String")
                     .addActionRow(suggestion)
                     .build();
 

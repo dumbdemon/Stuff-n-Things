@@ -15,21 +15,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class killSuggest implements IModal {
+public class killSuggest {
 
-    public static final String ACCEPT_BUTTON = "accept-kill";
+    public static final String ACCEPT_RANDOM_BUTTON = "accept-random-kill";
+    public static final String ACCEPT_TARGET_BUTTON = "accept-target-kill";
     public static final String DENY_BUTTON = "deny-kill";
 
-    @Override
-    public String getName() {
-        return "kill-suggest";
-    }
-
-    @Override
-    public void execute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob) throws Exception {
-        Random rando = new Random(new Date().getTime());
+    private static void doExecute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob, boolean isRandom) throws Exception {
+        java.util.Random rando = new java.util.Random(new Date().getTime());
         event.deferReply().queue();
-        Optional<ModalMapping> ifSuggestion = Optional.ofNullable(event.getValue(kill.MODAL_NAME));
+        Optional<ModalMapping> ifSuggestion = Optional.ofNullable(event.getValue(kill.MODAL_TEXT_INPUT_NAME));
         String suggestion = ifSuggestion.orElseThrow(DiscordAPIException::new).getAsString();
 
         List<String> victims = new ArrayList<>() {{
@@ -46,7 +41,7 @@ public class killSuggest implements IModal {
 
         requestChannel.sendMessage(suggestion)
             .addActionRow(
-                Button.success(ACCEPT_BUTTON, "Accept"),
+                Button.success(isRandom ? ACCEPT_RANDOM_BUTTON : ACCEPT_TARGET_BUTTON, "Accept"),
                 Button.danger(DENY_BUTTON, "Deny")
             ).queue();
 
@@ -71,5 +66,29 @@ public class killSuggest implements IModal {
                 .setFooter("Suggestion by " + event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
                 .build()
         ).queue();
+    }
+
+    public static class random implements IModal {
+        @Override
+        public String getName() {
+            return kill.RANDOM_MODAL_NAME;
+        }
+
+        @Override
+        public void execute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+            doExecute(event, blob, true);
+        }
+    }
+
+    public static class target implements IModal {
+        @Override
+        public String getName() {
+            return kill.TARGET_MODAL_NAME;
+        }
+
+        @Override
+        public void execute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+            doExecute(event, blob, false);
+        }
     }
 }
