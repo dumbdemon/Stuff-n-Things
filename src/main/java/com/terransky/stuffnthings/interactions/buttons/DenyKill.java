@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interactions.buttons;
 
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interactions.modals.KillSuggest;
 import com.terransky.stuffnthings.interfaces.interactions.IButton;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
@@ -19,7 +20,7 @@ public class DenyKill implements IButton {
     }
 
     @Override
-    public void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         if (!event.getUser().getId().equals(Config.getDeveloperId())) {
             event.replyEmbeds(AcceptKill.youAreNotAllowed(event, blob)).setEphemeral(true).queue();
             return;

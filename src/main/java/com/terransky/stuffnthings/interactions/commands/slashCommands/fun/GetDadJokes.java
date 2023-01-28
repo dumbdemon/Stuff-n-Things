@@ -2,6 +2,7 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.stuffnthings.dataSources.icanhazdadjoke.IcanhazdadjokeData;
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
@@ -42,7 +43,7 @@ public class GetDadJokes implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         URL iCanHazDadJoke = new URL("https://icanhazdadjoke.com/");
         String iCanHazDadJokeLogo = "https://icanhazdadjoke.com/static/smile.svg";
         HttpURLConnection dadJoke = (HttpURLConnection) iCanHazDadJoke.openConnection();

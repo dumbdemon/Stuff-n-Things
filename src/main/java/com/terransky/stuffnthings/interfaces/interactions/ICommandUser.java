@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interfaces.interactions;
 
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -24,7 +25,7 @@ public interface ICommandUser extends ICommand {
      * @throws RuntimeException Any exception thrown that could prevent operation.
      * @throws IOException      Potentially could be thrown during network operations
      */
-    void execute(@NotNull UserContextInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException;
+    void execute(@NotNull UserContextInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException;
 
     @Override
     default Type getInteractionType() {

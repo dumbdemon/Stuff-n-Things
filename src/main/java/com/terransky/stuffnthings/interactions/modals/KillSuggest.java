@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interactions.modals;
 
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.Kill;
 import com.terransky.stuffnthings.interfaces.interactions.IModal;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
@@ -76,7 +77,7 @@ public class KillSuggest {
         }
 
         @Override
-        public void execute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+        public void execute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
             doExecute(event, blob, true);
         }
     }
@@ -88,7 +89,7 @@ public class KillSuggest {
         }
 
         @Override
-        public void execute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+        public void execute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
             doExecute(event, blob, false);
         }
     }

@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interactions.buttons;
 
 import com.terransky.stuffnthings.database.helpers.KillStorage;
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interactions.modals.KillSuggest;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.IButton;
@@ -71,7 +72,7 @@ public class AcceptKill {
         }
 
         @Override
-        public void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+        public void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
             doExecute(event, blob, true);
         }
     }
@@ -83,7 +84,7 @@ public class AcceptKill {
         }
 
         @Override
-        public void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+        public void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
             doExecute(event, blob, false);
         }
     }

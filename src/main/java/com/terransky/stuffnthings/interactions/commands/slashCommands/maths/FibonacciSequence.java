@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.maths;
 
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -55,7 +56,7 @@ public class FibonacciSequence implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 
@@ -69,7 +70,8 @@ public class FibonacciSequence implements ICommandSlash {
         fibonacciCache = new float[nth + 1];
         fibonacciCache[1] = 1;
         float nthValue = getFibonacciAt(nth);
-        String nthSuffix = nth % 10 == 2 ? "nd" : (nth % 10 == 3 ? "rd" : "th"), returnString;
+        String nthSuffix = nth % 10 == 2 ? "nd" : (nth % 10 == 3 ? "rd" : "th"),
+            returnString;
 
         event.replyEmbeds(
             eb.setDescription("Please wait. This may take a while...")

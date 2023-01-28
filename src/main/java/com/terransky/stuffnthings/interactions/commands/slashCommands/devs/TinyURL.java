@@ -4,6 +4,7 @@ import com.terransky.stuffnthings.dataSources.tinyURL.Data;
 import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLData;
 import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLLimits;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.apiHandlers.TinyURLHandler;
 import com.terransky.stuffnthings.utilities.command.*;
@@ -80,7 +81,7 @@ public class TinyURL implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         event.deferReply().queue();
         Optional<String> ifUrl = Optional.ofNullable(event.getOption("url", OptionMapping::getAsString)),
             alias = Optional.ofNullable(event.getOption("alias", OptionMapping::getAsString));

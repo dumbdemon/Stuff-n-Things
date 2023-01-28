@@ -9,6 +9,7 @@ import com.terransky.stuffnthings.dataSources.kitsu.entries.enums.Subtype;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.manga.MangaAttributes;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.manga.MangaDatum;
 import com.terransky.stuffnthings.dataSources.kitsu.relationships.categories.CategoriesKitsuData;
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.apiHandlers.KitsuHandler;
 import com.terransky.stuffnthings.utilities.command.*;
@@ -139,7 +140,7 @@ public class Kitsu {
         }
 
         @Override
-        public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+        public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
             event.deferReply().queue();
             String query = event.getOption("search", "dragon maid", OptionMapping::getAsString);
 
@@ -178,7 +179,7 @@ public class Kitsu {
         }
 
         @Override
-        public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+        public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
             event.deferReply().queue();
             String query = event.getOption("search", "dragon maid", OptionMapping::getAsString);
 

@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -41,7 +42,7 @@ public class Say implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(EmbedColors.getDefault());
 

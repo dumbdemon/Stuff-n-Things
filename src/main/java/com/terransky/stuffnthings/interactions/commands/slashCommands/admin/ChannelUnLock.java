@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.admin;
 
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
@@ -60,7 +61,7 @@ public class ChannelUnLock implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         Role targetRole = event.getOption("role", blob.getGuild().getPublicRole(), OptionMapping::getAsRole);
         GuildChannel targetChannel = event.getOption("target-channel", event.getGuildChannel(), OptionMapping::getAsChannel);
         String subcommand = event.getSubcommandName();

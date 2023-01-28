@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.general;
 
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -30,7 +31,7 @@ public class Ping implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         JDA jda = event.getJDA();
         jda.getRestPing().queue(ping -> event.replyEmbeds(
             new EmbedBuilder()

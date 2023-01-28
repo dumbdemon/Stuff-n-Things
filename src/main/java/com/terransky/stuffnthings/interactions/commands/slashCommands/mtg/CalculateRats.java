@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.mtg;
 
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -42,7 +43,7 @@ public class CalculateRats implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         event.deferReply().queue();
         float startCNT = event.getOption("start-count", 3, OptionMapping::getAsInt);
         float triggers = event.getOption("triggers", 100, OptionMapping::getAsInt);

@@ -3,6 +3,7 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.stuffnthings.dataSources.freshMemes.FreshMemeData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.LogList;
@@ -48,7 +49,7 @@ public class Meme implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
         event.deferReply().queue();

@@ -348,12 +348,9 @@ public class MongoDBDataSource implements DatabaseManager {
             users.updateOne(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId), Updates.set(KILL_LOCK.getPropertyName(), killLocks))
                 .subscribe(updater);
 
-            try {
-                ifAnErrorOccurs(String.format("User of ID %s was updated", userId),
-                    String.format("Unable to update User of ID %s", userId),
-                    insert.await(2, TimeUnit.MINUTES).getError());
-            } catch (Exception ignored) {
-            }
+            ifAnErrorOccurs(String.format("User of ID %s was updated", userId),
+                String.format("Unable to update User of ID %s", userId),
+                insert.await(2, TimeUnit.MINUTES).getError());
         }
     }
 

@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interfaces.interactions;
 
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -63,7 +64,7 @@ public interface ICommandSlash extends ICommand {
      * @throws RuntimeException Any exception thrown that could prevent operation.
      * @throws IOException      Potentially could be thrown during network operations
      */
-    void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException;
+    void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException;
 
     @Override
     default Type getInteractionType() {

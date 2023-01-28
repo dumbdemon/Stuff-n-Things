@@ -2,6 +2,7 @@ package com.terransky.stuffnthings.interactions.buttons;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.stuffnthings.dataSources.icanhazdadjoke.IcanhazdadjokeData;
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.IButton;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
@@ -24,7 +25,7 @@ public class GetMoreDadJokes implements IButton {
     }
 
     @Override
-    public void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         URL iCanHazDadJoke = new URL("https://icanhazdadjoke.com/");
         HttpURLConnection dadJoke = (HttpURLConnection) iCanHazDadJoke.openConnection();
         dadJoke.addRequestProperty("User-Agent", Config.getBotUserAgent()); //https://icanhazdadjoke.com/api#custom-user-agent

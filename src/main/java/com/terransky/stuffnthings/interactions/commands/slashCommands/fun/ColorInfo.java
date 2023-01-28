@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -148,7 +149,7 @@ public class ColorInfo implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         DecimalFormat hsb = new DecimalFormat("##.##%");
         String subcommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()

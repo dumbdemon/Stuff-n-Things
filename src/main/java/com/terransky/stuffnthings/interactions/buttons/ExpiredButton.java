@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interactions.buttons;
 
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.IButton;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
@@ -16,7 +17,7 @@ public class ExpiredButton implements IButton {
     }
 
     @Override
-    public void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         event.replyEmbeds(
             new EmbedBuilder()
                 .setTitle("Button Expired")

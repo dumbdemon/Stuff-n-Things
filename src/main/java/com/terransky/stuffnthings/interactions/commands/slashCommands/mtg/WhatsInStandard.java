@@ -5,6 +5,7 @@ import com.terransky.stuffnthings.dataSources.whatsInStandard.Ban;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.MtGSet;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.WhatsInStandardData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
@@ -97,7 +98,7 @@ public class WhatsInStandard implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         event.deferReply().queue();
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle("What's in standard?")

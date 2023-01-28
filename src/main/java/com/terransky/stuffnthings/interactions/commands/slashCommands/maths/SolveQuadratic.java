@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.maths;
 
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -40,7 +41,7 @@ public class SolveQuadratic implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle(WordUtils.capitalize(getName().replace("-", " ")))
             .setColor(EmbedColors.getDefault());
@@ -50,7 +51,8 @@ public class SolveQuadratic implements ICommandSlash {
         double b = event.getOption("value-b", 1.0, OptionMapping::getAsDouble);
         double c = event.getOption("value-c", 0.0, OptionMapping::getAsDouble);
         double d = b * b - 4.0 * a * c;
-        double r1, r2;
+        double r1,
+            r2;
         if (d > 0.0) {
             r1 = (-b + Math.sqrt(d)) / (2.0 * a);
             r2 = (-b - Math.sqrt(d)) / (2.0 * a);

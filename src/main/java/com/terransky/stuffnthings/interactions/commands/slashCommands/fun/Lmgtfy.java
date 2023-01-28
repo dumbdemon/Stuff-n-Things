@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.CommandCategory;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
@@ -48,7 +49,7 @@ public class Lmgtfy implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         String search = "https://lmgtfy.app/?q=" + event.getOption("search", "", OptionMapping::getAsString).replace(" ", "+") + ("images".equals(event.getSubcommandName()) ? "&t=i" : "");
         User victim = event.getOption("victim", OptionMapping::getAsUser);
 

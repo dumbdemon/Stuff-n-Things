@@ -5,6 +5,7 @@ import com.terransky.stuffnthings.dataSources.oxfordDictionary.OxfordData;
 import com.terransky.stuffnthings.dataSources.oxfordDictionary.OxfordError;
 import com.terransky.stuffnthings.dataSources.oxfordDictionary.Result;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
@@ -159,7 +160,7 @@ public class Dictionary implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         event.deferReply().queue();
         String[] userWords = event.getOption("word", "", OptionMapping::getAsString).split(" ");
         Config.Credentials credentials = Config.Credentials.OXFORD;

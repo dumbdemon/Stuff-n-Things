@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interfaces.interactions;
 
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -18,7 +19,7 @@ public interface IButton extends IInteraction {
      * @throws RuntimeException Any exception thrown that could prevent operation.
      * @throws IOException      Potentially could be thrown during network operations
      */
-    void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException;
+    void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException;
 
     @Override
     default Type getInteractionType() {

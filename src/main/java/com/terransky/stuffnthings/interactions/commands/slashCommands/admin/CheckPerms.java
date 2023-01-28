@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.admin;
 
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -80,7 +81,7 @@ public class CheckPerms implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         EnumSet<Permission> myPerms;
         GuildChannel toCheck = null;
         if (event.getSubcommandName() == null) throw new DiscordAPIException("No subcommand was given.");

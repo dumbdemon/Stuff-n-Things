@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.listeners;
 
 import com.terransky.stuffnthings.ManagersManager;
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.interfaces.interactions.*;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -122,7 +124,7 @@ public class InteractionListener extends ListenerAdapter {
 
         try {
             slash.execute(event, blob);
-        } catch (Exception e) {
+        } catch (FailedInteractionException | IOException e) {
             log.debug("Full command path that triggered error :: [{}]", event.getFullCommandName());
             errorHandler(event, slash, IInteraction.Type.COMMAND_SLASH, blob, e);
         }
@@ -157,7 +159,7 @@ public class InteractionListener extends ListenerAdapter {
 
         try {
             commandMessage.execute(event, blob);
-        } catch (Exception e) {
+        } catch (FailedInteractionException | IOException e) {
             errorHandler(event, commandMessage, IInteraction.Type.COMMAND_MESSAGE, blob, e);
         }
     }
@@ -191,7 +193,7 @@ public class InteractionListener extends ListenerAdapter {
 
         try {
             commandUser.execute(event, blob);
-        } catch (Exception e) {
+        } catch (FailedInteractionException | IOException e) {
             errorHandler(event, commandUser, IInteraction.Type.COMMAND_USER, blob, e);
         }
     }
@@ -214,7 +216,7 @@ public class InteractionListener extends ListenerAdapter {
         log.debug("Button {} called on {} [{}]", iButton.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
         try {
             iButton.execute(event, blob);
-        } catch (Exception e) {
+        } catch (FailedInteractionException | IOException e) {
             errorHandler(event, iButton, IInteraction.Type.BUTTON, blob, e);
         }
     }
@@ -236,7 +238,7 @@ public class InteractionListener extends ListenerAdapter {
         log.debug("Select Menu {} called on {} [{}]", menu.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
         try {
             menu.execute(event, blob);
-        } catch (Exception e) {
+        } catch (FailedInteractionException | IOException e) {
             errorHandler(event, menu, IInteraction.Type.SELECTION_ENTITY, blob, e);
         }
     }
@@ -257,7 +259,7 @@ public class InteractionListener extends ListenerAdapter {
         log.debug("Modal {} called on {} [{}]", modal.getName().toUpperCase(), blob.getGuild().getName(), blob.getGuildIdLong());
         try {
             modal.execute(event, blob);
-        } catch (Exception e) {
+        } catch (FailedInteractionException | IOException e) {
             MessageEmbed modalFailed = getFailedInteractionMessage(IInteraction.Type.MODAL, blob);
             logInteractionFailure(modal.getName(), blob, e);
             if (event.isAcknowledged()) {
@@ -290,7 +292,7 @@ public class InteractionListener extends ListenerAdapter {
                 log.debug("Select Menu {} called on {} [{}]", interactionName, blob.getGuildName(), blob.getGuildIdLong());
                 try {
                     menu.execute(event, blob);
-                } catch (Exception e) {
+                } catch (FailedInteractionException | IOException e) {
                     errorHandler(event, menu, IInteraction.Type.BUTTON, blob, e);
                 }
             }

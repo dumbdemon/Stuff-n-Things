@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.general;
 
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.DiscordWebhook;
@@ -39,7 +40,7 @@ public class Suggest implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         String suggestion = event.getOption("suggestion", OptionMapping::getAsString);
         int importance = event.getOption("importance", 50, OptionMapping::getAsInt);
         EmbedBuilder callReply = new EmbedBuilder().setColor(EmbedColors.getDefault());

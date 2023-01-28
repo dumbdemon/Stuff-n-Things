@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.general;
 
 import com.terransky.stuffnthings.ManagersManager;
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.managers.SlashIManager;
@@ -66,7 +67,7 @@ public class About implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         event.deferReply().queue();
         Optional<String> ifCommand = Optional.ofNullable(event.getOption("command", OptionMapping::getAsString));
 

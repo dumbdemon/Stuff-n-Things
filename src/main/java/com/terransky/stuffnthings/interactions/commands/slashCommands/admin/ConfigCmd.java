@@ -2,6 +2,7 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.admin;
 
 import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
@@ -69,7 +70,7 @@ public class ConfigCmd implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         String subCommandGroup = event.getSubcommandGroup();
         if (subCommandGroup == null) throw new DiscordAPIException("No subcommand group was given.");
 
