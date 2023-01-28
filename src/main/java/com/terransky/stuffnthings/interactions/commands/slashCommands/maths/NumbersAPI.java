@@ -25,7 +25,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.*;
 
-public class numbersAPI implements ICommandSlash {
+public class NumbersAPI implements ICommandSlash {
 
     private final NavigableMap<Integer, Integer> dayLimits = new TreeMap<>() {{
         put(1, 31);
@@ -41,7 +41,7 @@ public class numbersAPI implements ICommandSlash {
         put(11, 30);
         put(12, 31);
     }};
-    private final Logger log = LoggerFactory.getLogger(numbersAPI.class);
+    private final Logger log = LoggerFactory.getLogger(NumbersAPI.class);
     private final DecimalFormat intFormatter = new DecimalFormat("###");
     private final List<Command.Choice> monthChoices = new ArrayList<>() {{
         String[] months = new DateFormatSymbols().getMonths();
@@ -85,7 +85,7 @@ public class numbersAPI implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         event.deferReply().queue();
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given");

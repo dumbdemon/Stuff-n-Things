@@ -20,10 +20,11 @@ import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
 
-public class channelUnLock implements ICommandSlash {
+public class ChannelUnLock implements ICommandSlash {
 
     @Override
     public String getName() {
@@ -59,7 +60,7 @@ public class channelUnLock implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         Role targetRole = event.getOption("role", blob.getGuild().getPublicRole(), OptionMapping::getAsRole);
         GuildChannel targetChannel = event.getOption("target-channel", event.getGuildChannel(), OptionMapping::getAsChannel);
         String subcommand = event.getSubcommandName();
@@ -108,8 +109,8 @@ public class channelUnLock implements ICommandSlash {
                 }
             }
         } catch (Exception e) {
-            LoggerFactory.getLogger(channelUnLock.class).debug("{}: {}", e.getClass().getName(), e.getMessage());
-            LogList.error(Arrays.asList(e.getStackTrace()), channelUnLock.class);
+            LoggerFactory.getLogger(ChannelUnLock.class).debug("{}: {}", e.getClass().getName(), e.getMessage());
+            LogList.error(Arrays.asList(e.getStackTrace()), ChannelUnLock.class);
             event.replyEmbeds(
                 response
                     .setDescription(("Either I do not have access to modify the permissions for %s, or something else has happened and it should be reported." +

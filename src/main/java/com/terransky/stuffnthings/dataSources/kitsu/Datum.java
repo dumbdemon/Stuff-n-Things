@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Generated;
+import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -55,5 +56,18 @@ public class Datum implements Comparable<Datum> {
     @Override
     public int compareTo(@NotNull Datum datum) {
         return Integer.compare(id, datum.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Datum datum = (Datum) o;
+        return getId() == datum.getId();
     }
 }

@@ -19,10 +19,11 @@ import net.dv8tion.jda.api.interactions.modals.Modal;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
-public class kill implements ICommandSlash {
+public class Kill implements ICommandSlash {
 
     public static final String RANDOM_MODAL_NAME = "random-kill-suggest";
     public static final String TARGET_MODAL_NAME = "target-kill-suggest";
@@ -31,8 +32,8 @@ public class kill implements ICommandSlash {
     private void killRandom(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull Random random, EmbedBuilder eb) {
         List<String> randomStrings = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILL_RANDOM)
             .map(o -> (List<String>) new ArrayList<String>() {{
-                    for (Object o1 : ((List<?>) o)) {
-                        add((String) o1);
+                for (Object o1 : ((List<?>) o)) {
+                    add((String) o1);
                     }
                 }}
             )
@@ -143,7 +144,7 @@ public class kill implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 

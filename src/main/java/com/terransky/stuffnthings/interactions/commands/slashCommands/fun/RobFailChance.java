@@ -10,11 +10,12 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 
 @SuppressWarnings("SpellCheckingInspection")
-public class robFailChance implements ICommandSlash {
+public class RobFailChance implements ICommandSlash {
 
     private final String uBoatInvite = "https://discord.com/oauth2/authorize?client_id=292953664492929025&scope=bot%20applications.commands&permissions=829811966&response_type=code&redirect_uri=https://unbelievaboat.com/landing";
 
@@ -40,7 +41,7 @@ public class robFailChance implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(EmbedColors.getDefault());
         DecimalFormat largeNumber = new DecimalFormat("##,###");

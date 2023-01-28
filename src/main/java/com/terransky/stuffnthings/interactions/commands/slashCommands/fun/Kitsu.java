@@ -21,6 +21,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
@@ -28,7 +29,7 @@ import java.util.Date;
 import java.util.List;
 
 @SuppressWarnings("SpellCheckingInspection")
-public class kitsu {
+public class Kitsu {
 
     private static final FastDateFormat FORMAT = Metadata.getFastDateFormat();
 
@@ -122,7 +123,7 @@ public class kitsu {
             .build();
     }
 
-    public static class anime implements ICommandSlash {
+    public static class Anime implements ICommandSlash {
 
         @Override
         public String getName() {
@@ -138,7 +139,7 @@ public class kitsu {
         }
 
         @Override
-        public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+        public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
             event.deferReply().queue();
             String query = event.getOption("search", "dragon maid", OptionMapping::getAsString);
 
@@ -161,7 +162,7 @@ public class kitsu {
         }
     }
 
-    public static class manga implements ICommandSlash {
+    public static class Manga implements ICommandSlash {
 
         @Override
         public String getName() {
@@ -177,7 +178,7 @@ public class kitsu {
         }
 
         @Override
-        public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+        public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
             event.deferReply().queue();
             String query = event.getOption("search", "dragon maid", OptionMapping::getAsString);
 

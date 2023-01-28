@@ -14,9 +14,10 @@ import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.text.ParseException;
 
-public class fibonacciSequence implements ICommandSlash {
+public class FibonacciSequence implements ICommandSlash {
 
     private static float[] fibonacciCache;
 
@@ -54,7 +55,7 @@ public class fibonacciSequence implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 

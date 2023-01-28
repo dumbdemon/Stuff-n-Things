@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class whatsInStandard implements ICommandSlash {
+public class WhatsInStandard implements ICommandSlash {
 
     private final Predicate<MtGSet> IS_VALID_SET = (set) -> set.getCode() != null &&
         set.getEnterDate().getExact().compareTo(new Date()) <= 0 &&
@@ -96,7 +97,7 @@ public class whatsInStandard implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         event.deferReply().queue();
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle("What's in standard?")

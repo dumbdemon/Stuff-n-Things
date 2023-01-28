@@ -8,9 +8,10 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.text.ParseException;
 
-public class ping implements ICommandSlash {
+public class Ping implements ICommandSlash {
     @Override
     public String getName() {
         return "ping";
@@ -29,7 +30,7 @@ public class ping implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         JDA jda = event.getJDA();
         jda.getRestPing().queue(ping -> event.replyEmbeds(
             new EmbedBuilder()

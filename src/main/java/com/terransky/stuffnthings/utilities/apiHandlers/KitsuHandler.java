@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.security.auth.login.LoginException;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -121,17 +120,17 @@ public class KitsuHandler {
         return true;
     }
 
-    public MangaKitsuData getManga(@NotNull String search) throws IOException, LoginException {
+    public MangaKitsuData getManga(@NotNull String search) throws IOException {
         URL manga = new URL(BASE_URL + "manga?filter%5Btext%5D=" + search.toLowerCase().replaceAll(" ", "%20"));
         return MAPPER.readValue(getInputStreamOf(manga), MangaKitsuData.class);
     }
 
-    public AnimeKitsuData getAnime(@NotNull String search) throws IOException, LoginException {
+    public AnimeKitsuData getAnime(@NotNull String search) throws IOException {
         URL anime = new URL(BASE_URL + "anime?filter%5Btext%5D=" + search.toLowerCase().replaceAll(" ", "%20"));
         return MAPPER.readValue(getInputStreamOf(anime), AnimeKitsuData.class);
     }
 
-    public CategoriesKitsuData getCategories(@NotNull Relationships relationships) throws IOException, LoginException {
+    public CategoriesKitsuData getCategories(@NotNull Relationships relationships) throws IOException {
         URL genres = new URL(relationships.getCategories().getLinks().getRelated());
         return MAPPER.readValue(getInputStreamOf(genres), CategoriesKitsuData.class);
     }
@@ -141,11 +140,10 @@ public class KitsuHandler {
      *
      * @param url A Kitsu.io API endpoint URL
      * @return An {@link InputStream}
-     * @throws IOException    If the URL is bad or the {@link InputStream} could not obtained.
-     * @throws LoginException If the credentials are invalid or not provided. Or an err occured on server side.
+     * @throws IOException If the URL is bad or the {@link InputStream} could not obtained.
      */
     @NotNull
-    private InputStream getInputStreamOf(@NotNull URL url) throws IOException, LoginException {
+    private InputStream getInputStreamOf(@NotNull URL url) throws IOException {
         HttpURLConnection kitsuConnection = (HttpURLConnection) url.openConnection();
         kitsuConnection.addRequestProperty("Accept", "application/vnd.api+json");
         if (!credentials.isDefault())
@@ -155,10 +153,10 @@ public class KitsuHandler {
                 return kitsuConnection.getInputStream();
             }
             case 400 -> throw new IllegalArgumentException("Bad Request - malformed request");
-            case 401 -> throw new LoginException("Unauthorized - invalid or no authentication details provided");
+            case 401 -> throw new IOException("Unauthorized - invalid or no authentication details provided");
             case 404 -> throw new IOException("Not Found - resource does not exist");
             case 406 -> throw new IllegalArgumentException("Not Acceptable - invalid Accept header");
-            default -> throw new LoginException("Server Error");
+            default -> throw new IOException("Server Error");
         }
     }
 }

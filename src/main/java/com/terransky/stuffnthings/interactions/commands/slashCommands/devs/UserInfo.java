@@ -16,11 +16,12 @@ import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 
-public class userInfo implements ICommandSlash {
+public class UserInfo implements ICommandSlash {
     private static String setUserPerms(@NotNull Member member) {
         StringBuilder userPerms = new StringBuilder();
         String finalUserPerms;
@@ -90,7 +91,7 @@ public class userInfo implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         String memberId = event.getOption("user", blob.getMember(), OptionMapping::getAsMember).getId();
         Member member = blob.getGuild().retrieveMemberById(memberId).complete();
         List<Role> roles = member.getRoles().stream().sorted().toList();

@@ -16,12 +16,13 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class colorInfo implements ICommandSlash {
+public class ColorInfo implements ICommandSlash {
     private final String HEX_TRIPLET_PATTERN = "^#?(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$";
     private final Pattern pHexTriplet = Pattern.compile(HEX_TRIPLET_PATTERN);
 
@@ -68,9 +69,14 @@ public class colorInfo implements ICommandSlash {
     }
 
     @NotNull
-    private static MessageEmbed runResponse(@NotNull DecimalFormat hsb, @NotNull EmbedBuilder eb, int[] cmyk, int[] rgb) {
-        int r = rgb[0], g = rgb[1], b = rgb[2],
-            c = cmyk[0], m = cmyk[1], y = cmyk[2], k = cmyk[3];
+    private static MessageEmbed runResponse(@NotNull DecimalFormat hsb, @NotNull EmbedBuilder eb, @NotNull int[] cmyk, @NotNull int[] rgb) {
+        int r = rgb[0],
+            g = rgb[1],
+            b = rgb[2],
+            c = cmyk[0],
+            m = cmyk[1],
+            y = cmyk[2],
+            k = cmyk[3];
         float[] hsv = Color.RGBtoHSB(r, g, b, null);
         String h = hsb.format(hsv[0]).replace("%", "°"),
             s = hsb.format(hsv[1]),
@@ -142,7 +148,7 @@ public class colorInfo implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         DecimalFormat hsb = new DecimalFormat("##.##%");
         String subcommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()

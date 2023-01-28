@@ -164,20 +164,12 @@ public class MongoDBDataSource implements DatabaseManager {
                 case KILL_TIMEOUT -> {
                     UserEntry user = (UserEntry) subscriber.first();
                     List<KillLock> killLocks = user.getKillLocks().stream().filter(isItThisOne).toList();
-                    try {
-                        return Optional.ofNullable(killLocks.get(0).isKillUnderTo());
-                    } catch (NullPointerException e) {
-                        return Optional.empty();
-                    }
+                    return Optional.ofNullable(killLocks.get(0).isKillUnderTo());
                 }
                 case KILL_ATTEMPTS -> {
                     UserEntry user = (UserEntry) subscriber.first();
                     List<KillLock> killLocks = user.getKillLocks().stream().filter(isItThisOne).toList();
-                    try {
-                        return Optional.ofNullable(killLocks.get(0).getKillAttempts());
-                    } catch (NullPointerException e) {
-                        return Optional.empty();
-                    }
+                    return Optional.ofNullable(killLocks.get(0).getKillAttempts());
                 }
                 case KILLS_MAX -> {
                     GuildEntry guild = (GuildEntry) subscriber.first();

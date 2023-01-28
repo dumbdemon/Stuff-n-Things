@@ -1,6 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.devs;
 
-import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.checkPerms;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.CheckPerms;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
@@ -10,10 +10,11 @@ import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
-public class getInvite implements ICommandSlash {
+public class GetInvite implements ICommandSlash {
     @Override
     public String getName() {
         return "get-invite";
@@ -41,11 +42,11 @@ public class getInvite implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         event.replyEmbeds(
             new EmbedBuilder()
                 .setColor(EmbedColors.getDefault())
-                .setTitle("You can't even use this.", event.getJDA().getInviteUrl(checkPerms.getRequiredPerms()))
+                .setTitle("You can't even use this.", event.getJDA().getInviteUrl(CheckPerms.getRequiredPerms()))
                 .build()
         ).queue();
     }

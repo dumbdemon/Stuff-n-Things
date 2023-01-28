@@ -11,10 +11,11 @@ import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 
-public class solveQuadratic implements ICommandSlash {
+public class SolveQuadratic implements ICommandSlash {
     @Override
     public String getName() {
         return "solve-quadratic";
@@ -39,7 +40,7 @@ public class solveQuadratic implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         EmbedBuilder eb = new EmbedBuilder()
             .setTitle(WordUtils.capitalize(getName().replace("-", " ")))
             .setColor(EmbedColors.getDefault());

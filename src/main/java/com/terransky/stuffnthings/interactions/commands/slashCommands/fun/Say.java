@@ -12,9 +12,10 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.text.ParseException;
 
-public class say implements ICommandSlash {
+public class Say implements ICommandSlash {
     @Override
     public String getName() {
         return "say";
@@ -40,7 +41,7 @@ public class say implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(EmbedColors.getDefault());
 

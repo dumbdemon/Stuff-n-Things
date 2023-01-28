@@ -10,10 +10,11 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 
-public class calculateRats implements ICommandSlash {
+public class CalculateRats implements ICommandSlash {
 
     @Override
     public String getName() {
@@ -41,7 +42,7 @@ public class calculateRats implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         event.deferReply().queue();
         float startCNT = event.getOption("start-count", 3, OptionMapping::getAsInt);
         float triggers = event.getOption("triggers", 100, OptionMapping::getAsInt);

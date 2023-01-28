@@ -8,10 +8,11 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.text.ParseException;
 
 @SuppressWarnings("SpellCheckingInspection")
-public class upsertKitsuToken implements ICommandSlash {
+public class UpsertKitsuToken implements ICommandSlash {
 
     @Override
     public String getName() {
@@ -34,7 +35,7 @@ public class upsertKitsuToken implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         boolean isObtained = KitsuHandler.upsertAuthorizationToken();
         EmbedBuilder builder = new EmbedBuilder()
             .setTitle(getNameReadable())

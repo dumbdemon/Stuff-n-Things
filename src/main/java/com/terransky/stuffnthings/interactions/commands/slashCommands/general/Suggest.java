@@ -11,9 +11,10 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.text.ParseException;
 
-public class suggest implements ICommandSlash {
+public class Suggest implements ICommandSlash {
 
     @Override
     public String getName() {
@@ -38,7 +39,7 @@ public class suggest implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         String suggestion = event.getOption("suggestion", OptionMapping::getAsString);
         int importance = event.getOption("importance", 50, OptionMapping::getAsInt);
         EmbedBuilder callReply = new EmbedBuilder().setColor(EmbedColors.getDefault());

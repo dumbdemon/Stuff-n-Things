@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
@@ -24,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-public class tinyURL implements ICommandSlash {
+public class TinyURL implements ICommandSlash {
     private static void validationFailed(@NotNull SlashCommandInteractionEvent event, String url, EmbedBuilder builder,
                                          @NotNull TinyURLData shortURLData) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -79,7 +80,7 @@ public class tinyURL implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         event.deferReply().queue();
         Optional<String> ifUrl = Optional.ofNullable(event.getOption("url", OptionMapping::getAsString)),
             alias = Optional.ofNullable(event.getOption("alias", OptionMapping::getAsString));

@@ -16,13 +16,14 @@ import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
-public class checkPerms implements ICommandSlash {
+public class CheckPerms implements ICommandSlash {
 
     @NotNull
     @Contract(" -> new")
@@ -79,7 +80,7 @@ public class checkPerms implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         EnumSet<Permission> myPerms;
         GuildChannel toCheck = null;
         if (event.getSubcommandName() == null) throw new DiscordAPIException("No subcommand was given.");

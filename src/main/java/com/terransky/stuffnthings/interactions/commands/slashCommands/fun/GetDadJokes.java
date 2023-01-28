@@ -16,13 +16,13 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
-import java.util.concurrent.TimeUnit;
 
-public class getDadJokes implements ICommandSlash {
-    private final Logger log = LoggerFactory.getLogger(getDadJokes.class);
+public class GetDadJokes implements ICommandSlash {
+    private final Logger log = LoggerFactory.getLogger(GetDadJokes.class);
 
     @Override
     public String getName() {
@@ -42,7 +42,7 @@ public class getDadJokes implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         URL iCanHazDadJoke = new URL("https://icanhazdadjoke.com/");
         String iCanHazDadJokeLogo = "https://icanhazdadjoke.com/static/smile.svg";
         HttpURLConnection dadJoke = (HttpURLConnection) iCanHazDadJoke.openConnection();
@@ -65,7 +65,7 @@ public class getDadJokes implements ICommandSlash {
                     ActionRow.of(Button.danger("expired-button", "Get new Dad Joke!"))
                 )
                 .build();
-            msg.editOriginal(editData).queueAfter(10, TimeUnit.MINUTES, msg2 ->
+            msg.editOriginal(editData).queueAfter(10, java.util.concurrent.TimeUnit.MINUTES, msg2 ->
                 log.debug("Button on message [{}] on server with ID [{}] has expired.", msg2.getId(), msg2.getGuild().getId())
             );
         });

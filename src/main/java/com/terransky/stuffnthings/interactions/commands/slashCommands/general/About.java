@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.text.ParseException;
@@ -22,7 +23,7 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.Optional;
 
-public class about implements ICommandSlash {
+public class About implements ICommandSlash {
     @NotNull
     private static String getUptime(@NotNull RuntimeMXBean mxBean) {
         Duration duration = Duration.ofMillis(mxBean.getUptime());
@@ -65,12 +66,16 @@ public class about implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         event.deferReply().queue();
         Optional<String> ifCommand = Optional.ofNullable(event.getOption("command", OptionMapping::getAsString));
 
         if (ifCommand.isPresent()) {
-            getCommandInfo(event, blob, ifCommand.get());
+            try {
+                getCommandInfo(event, blob, ifCommand.get());
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
             return;
         }
 

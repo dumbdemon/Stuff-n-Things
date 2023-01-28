@@ -22,8 +22,8 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Arrays;
 
-public class meme implements ICommandSlash {
-    private final Logger log = LoggerFactory.getLogger(meme.class);
+public class Meme implements ICommandSlash {
+    private final Logger log = LoggerFactory.getLogger(Meme.class);
 
     @Override
     public String getName() {
@@ -48,7 +48,7 @@ public class meme implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
         event.deferReply().queue();
@@ -110,7 +110,7 @@ public class meme implements ICommandSlash {
                     .build()
             ).queue();
             log.error("{}: {}", e.getClass().getName(), e.getMessage());
-            LogList.error(Arrays.asList(e.getStackTrace()), meme.class);
+            LogList.error(Arrays.asList(e.getStackTrace()), Meme.class);
         }
     }
 }

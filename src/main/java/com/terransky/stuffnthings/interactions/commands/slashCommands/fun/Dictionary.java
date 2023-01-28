@@ -27,9 +27,9 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.*;
 
-public class dictionary implements ICommandSlash {
+public class Dictionary implements ICommandSlash {
     private static final int MAX_FIELDS = 25;
-    private final Logger log = LoggerFactory.getLogger(dictionary.class);
+    private final Logger log = LoggerFactory.getLogger(Dictionary.class);
     private final NavigableMap<String, Locale> langCodes = new TreeMap<>() {{
         put("US English", Locale.forLanguageTag("en-us"));
         put("UK English", Locale.forLanguageTag("en-gb"));
@@ -159,7 +159,7 @@ public class dictionary implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         event.deferReply().queue();
         String[] userWords = event.getOption("word", "", OptionMapping::getAsString).split(" ");
         Config.Credentials credentials = Config.Credentials.OXFORD;

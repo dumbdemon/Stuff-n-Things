@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.interactions.buttons;
 
 import com.terransky.stuffnthings.database.helpers.KillStorage;
-import com.terransky.stuffnthings.interactions.modals.killSuggest;
+import com.terransky.stuffnthings.interactions.modals.KillSuggest;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.IButton;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
@@ -16,14 +16,15 @@ import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class acceptKill {
+public class AcceptKill {
 
     private static final String RANDOM_NAME_READABLE =
-        WordUtils.capitalize(killSuggest.ACCEPT_RANDOM_BUTTON.toLowerCase().replaceAll("-", " "));
+        WordUtils.capitalize(KillSuggest.ACCEPT_RANDOM_BUTTON.toLowerCase().replaceAll("-", " "));
     private static final String TARGET_NAME_READABLE =
-        WordUtils.capitalize(killSuggest.ACCEPT_TARGET_BUTTON.toLowerCase().replaceAll("-", " "));
+        WordUtils.capitalize(KillSuggest.ACCEPT_TARGET_BUTTON.toLowerCase().replaceAll("-", " "));
 
     @NotNull
     public static MessageEmbed youAreNotAllowed(@NotNull GenericInteractionCreateEvent event, @NotNull EventBlob blob) {
@@ -62,27 +63,27 @@ public class acceptKill {
         event.getMessage().editMessage(messageEditData).queue();
     }
 
-    public static class random implements IButton {
+    public static class Random implements IButton {
 
         @Override
         public String getName() {
-            return killSuggest.ACCEPT_RANDOM_BUTTON;
+            return KillSuggest.ACCEPT_RANDOM_BUTTON;
         }
 
         @Override
-        public void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+        public void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
             doExecute(event, blob, true);
         }
     }
 
-    public static class target implements IButton {
+    public static class Target implements IButton {
         @Override
         public String getName() {
-            return killSuggest.ACCEPT_TARGET_BUTTON;
+            return KillSuggest.ACCEPT_TARGET_BUTTON;
         }
 
         @Override
-        public void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+        public void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
             doExecute(event, blob, false);
         }
     }

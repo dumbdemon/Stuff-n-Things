@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.interactions.modals;
 
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.kill;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.Kill;
 import com.terransky.stuffnthings.interfaces.interactions.IModal;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
@@ -13,18 +13,19 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.*;
 
-public class killSuggest {
+public class KillSuggest {
 
     public static final String ACCEPT_RANDOM_BUTTON = "accept-random-kill";
     public static final String ACCEPT_TARGET_BUTTON = "accept-target-kill";
     public static final String DENY_BUTTON = "deny-kill";
 
-    private static void doExecute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob, boolean isRandom) throws Exception {
+    private static void doExecute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob, boolean isRandom) throws RuntimeException, IOException {
         java.util.Random rando = new java.util.Random(new Date().getTime());
         event.deferReply().queue();
-        Optional<ModalMapping> ifSuggestion = Optional.ofNullable(event.getValue(kill.MODAL_TEXT_INPUT_NAME));
+        Optional<ModalMapping> ifSuggestion = Optional.ofNullable(event.getValue(Kill.MODAL_TEXT_INPUT_NAME));
         String suggestion = ifSuggestion.orElseThrow(DiscordAPIException::new).getAsString();
 
         List<String> victims = new ArrayList<>() {{
@@ -68,26 +69,26 @@ public class killSuggest {
         ).queue();
     }
 
-    public static class random implements IModal {
+    public static class Random implements IModal {
         @Override
         public String getName() {
-            return kill.RANDOM_MODAL_NAME;
+            return Kill.RANDOM_MODAL_NAME;
         }
 
         @Override
-        public void execute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+        public void execute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
             doExecute(event, blob, true);
         }
     }
 
-    public static class target implements IModal {
+    public static class Target implements IModal {
         @Override
         public String getName() {
-            return kill.TARGET_MODAL_NAME;
+            return Kill.TARGET_MODAL_NAME;
         }
 
         @Override
-        public void execute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+        public void execute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
             doExecute(event, blob, false);
         }
     }

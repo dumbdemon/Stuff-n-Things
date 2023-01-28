@@ -7,14 +7,16 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class expiredButton implements IButton {
+import java.io.IOException;
+
+public class ExpiredButton implements IButton {
     @Override
     public String getName() {
         return "expired-button";
     }
 
     @Override
-    public void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    public void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         event.replyEmbeds(
             new EmbedBuilder()
                 .setTitle("Button Expired")

@@ -1,10 +1,9 @@
 package com.terransky.stuffnthings.utilities.command;
 
-import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.general.About;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
@@ -36,7 +35,7 @@ public class Metadata implements Comparable<Metadata> {
     /**
      * Extended details for an {@link com.terransky.stuffnthings.interfaces.interactions.ICommandSlash ICommandSlash}.
      * <p>
-     * It is recommended that when constructing a Metadata Object for {@link CommandData}, that you use the top level type used in the {@code ISlashCommand.getCommandData()}.
+     * It is recommended that when constructing a Metadata Object for {@link net.dv8tion.jda.api.interactions.commands.build.CommandData}, that you use the top level type used in the {@code ISlashCommand.getCommandData()}.
      * Hierarchy (from highest to lowest) goes as follows: none, {@link SubcommandGroupData}, {@link SubcommandData}, {@link OptionData}.
      */
     public Metadata() {
@@ -45,11 +44,11 @@ public class Metadata implements Comparable<Metadata> {
     /**
      * Extended details for an {@link com.terransky.stuffnthings.interfaces.interactions.ICommandSlash ICommandSlash}.
      * <p>
-     * It is recommended that when constructing a Metadata Object for {@link CommandData}, that you use the top level
-     * type used in the {@link ICommandSlash#getCommandData()}. Hierarchy (from highest to lowest) goes as follows: none,
+     * It is recommended that when constructing a Metadata Object for {@link net.dv8tion.jda.api.interactions.commands.build.CommandData}, that you use the top level
+     * type used in the {@link com.terransky.stuffnthings.interfaces.interactions.ICommandSlash#getCommandData()}. Hierarchy (from highest to lowest) goes as follows: none,
      * {@link SubcommandGroupData}, {@link SubcommandData}, {@link OptionData}.
      *
-     * @param commandName The name of the command. Cannot be no than {@value CommandData#MAX_NAME_LENGTH} characters.
+     * @param commandName The name of the command. Cannot be no than {@value net.dv8tion.jda.api.interactions.commands.build.CommandData#MAX_NAME_LENGTH} characters.
      * @param description The description of the command. Cannot be no longer than
      *                    {@value MessageEmbed#DESCRIPTION_MAX_LENGTH} characters.
      * @param mastermind  The {@link Mastermind}.
@@ -65,14 +64,14 @@ public class Metadata implements Comparable<Metadata> {
     /**
      * Extended details for an {@link com.terransky.stuffnthings.interfaces.interactions.ICommandSlash ICommandSlash}.
      * <p>
-     * It is recommended that when constructing a Metadata Object for {@link CommandData}, that you use the top level
-     * type used in the {@link ICommandSlash#getCommandData()}. Hierarchy (from highest to lowest) goes as follows: none,
+     * It is recommended that when constructing a Metadata Object for {@link net.dv8tion.jda.api.interactions.commands.build.CommandData}, that you use the top level
+     * type used in the {@link com.terransky.stuffnthings.interfaces.interactions.ICommandSlash#getCommandData()}. Hierarchy (from highest to lowest) goes as follows: none,
      * {@link SubcommandGroupData}, {@link SubcommandData}, {@link OptionData}.
      *
-     * @param commandName      The name of the command. Cannot be no than {@value CommandData#MAX_NAME_LENGTH} characters.
+     * @param commandName      The name of the command. Cannot be no than {@value net.dv8tion.jda.api.interactions.commands.build.CommandData#MAX_NAME_LENGTH} characters.
      * @param shortDescription The description of the command. Cannot be no longer than
      *                         {@value MessageEmbed#DESCRIPTION_MAX_LENGTH} characters.
-     * @param longDescription  The description of the command used in {@link com.terransky.stuffnthings.interactions.commands.slashCommands.general.about
+     * @param longDescription  The description of the command used in {@link About
      *                         /about [command]}. It will be truncated if it has more than {@value MessageEmbed#DESCRIPTION_MAX_LENGTH} characters.
      * @param mastermind       The {@link Mastermind}.
      * @param category         The {@link CommandCategory}.

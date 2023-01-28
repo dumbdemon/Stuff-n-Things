@@ -16,10 +16,11 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Optional;
 
-public class addToWatchlist implements ICommandSlash {
+public class AddToWatchlist implements ICommandSlash {
     @Override
     public String getName() {
         return "add-to-watchlist";
@@ -50,7 +51,7 @@ public class addToWatchlist implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         Optional<String> eventOption = Optional.ofNullable(event.getOption("watch-this", OptionMapping::getAsString));
         String watchThis = eventOption.orElseThrow(DiscordAPIException::new);
         boolean success = DatabaseManager.INSTANCE.addKillString(KillStorage.RANDOM, "1", watchThis);

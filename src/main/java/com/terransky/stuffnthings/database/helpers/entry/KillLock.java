@@ -2,6 +2,8 @@ package com.terransky.stuffnthings.database.helpers.entry;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 @SuppressWarnings("unused")
 public class KillLock implements Comparable<KillLock> {
 
@@ -54,5 +56,18 @@ public class KillLock implements Comparable<KillLock> {
             ", killAttempts=" + killAttempts +
             ", killUnderTo=" + killUnderTo +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        KillLock killLock = (KillLock) o;
+        return getGuildReference().equals(killLock.getGuildReference());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getGuildReference());
     }
 }

@@ -14,9 +14,10 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.text.ParseException;
 
-public class lmgtfy implements ICommandSlash {
+public class Lmgtfy implements ICommandSlash {
     @Override
     public String getName() {
         return "lmgtfy";
@@ -47,7 +48,7 @@ public class lmgtfy implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         String search = "https://lmgtfy.app/?q=" + event.getOption("search", "", OptionMapping::getAsString).replace(" ", "+") + ("images".equals(event.getSubcommandName()) ? "&t=i" : "");
         User victim = event.getOption("victim", OptionMapping::getAsUser);
 

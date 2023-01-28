@@ -1,23 +1,23 @@
 package com.terransky.stuffnthings;
 
-import com.terransky.stuffnthings.interactions.buttons.acceptKill;
-import com.terransky.stuffnthings.interactions.buttons.denyKill;
-import com.terransky.stuffnthings.interactions.buttons.expiredButton;
-import com.terransky.stuffnthings.interactions.buttons.getMoreDadJokes;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.channelUnLock;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.checkPerms;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.configCmd;
+import com.terransky.stuffnthings.interactions.buttons.AcceptKill;
+import com.terransky.stuffnthings.interactions.buttons.DenyKill;
+import com.terransky.stuffnthings.interactions.buttons.ExpiredButton;
+import com.terransky.stuffnthings.interactions.buttons.GetMoreDadJokes;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.ChannelUnLock;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.CheckPerms;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.ConfigCmd;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.devs.*;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.*;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.general.about;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.general.ping;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.general.suggest;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.maths.fibonacciSequence;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.maths.numbersAPI;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.maths.solveQuadratic;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.calculateRats;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.whatsInStandard;
-import com.terransky.stuffnthings.interactions.modals.killSuggest;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.general.About;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.general.Ping;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.general.Suggest;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.maths.FibonacciSequence;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.maths.NumbersAPI;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.maths.SolveQuadratic;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.CalculateRats;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.WhatsInStandard;
+import com.terransky.stuffnthings.interactions.modals.KillSuggest;
 import com.terransky.stuffnthings.interfaces.interactions.*;
 import com.terransky.stuffnthings.managers.CommandIManager;
 import com.terransky.stuffnthings.managers.IManager;
@@ -27,56 +27,56 @@ public class ManagersManager {
 
     private final SlashIManager slashIManager = new SlashIManager(
         //Admin Commands
-        new channelUnLock(),
-        new checkPerms(),
-        new configCmd(),
+        new ChannelUnLock(),
+        new CheckPerms(),
+        new ConfigCmd(),
 
         //Math Commands
-        new fibonacciSequence(),
-        new numbersAPI(),
-        new solveQuadratic(),
+        new FibonacciSequence(),
+        new NumbersAPI(),
+        new SolveQuadratic(),
 
         //M:tG Commands
-        new calculateRats(),
-        new whatsInStandard(),
+        new CalculateRats(),
+        new WhatsInStandard(),
 
         //Fun Commands
-        new colorInfo(),
-        new dictionary(),
-        new getDadJokes(),
-        new kill(),
-        new kitsu.anime(),
-        new kitsu.manga(),
-        new lmgtfy(),
-        new meme(),
-        new robFailChance(),
-        new say(),
+        new ColorInfo(),
+        new Dictionary(),
+        new GetDadJokes(),
+        new Kill(),
+        new Kitsu.Anime(),
+        new Kitsu.Manga(),
+        new Lmgtfy(),
+        new Meme(),
+        new RobFailChance(),
+        new Say(),
 
         //General Commands
-        new about(),
-        new ping(),
-        new suggest(),
+        new About(),
+        new Ping(),
+        new Suggest(),
 
         //Dev commands
-        new addToWatchlist(),
-        new getInvite(),
-        new upsertKitsuToken(),
-        new test(),
-        new tinyURL(),
-        new userInfo()
+        new AddToWatchlist(),
+        new GetInvite(),
+        new UpsertKitsuToken(),
+        new Test(),
+        new TinyURL(),
+        new UserInfo()
     );
 
     private final IManager<IButton> buttonIManager = new IManager<>(
-        new acceptKill.random(),
-        new acceptKill.target(),
-        new denyKill(),
-        new expiredButton(),
-        new getMoreDadJokes()
+        new AcceptKill.Random(),
+        new AcceptKill.Target(),
+        new DenyKill(),
+        new ExpiredButton(),
+        new GetMoreDadJokes()
     );
 
     private final IManager<IModal> modalIManager = new IManager<>(
-        new killSuggest.random(),
-        new killSuggest.target()
+        new KillSuggest.Random(),
+        new KillSuggest.Target()
     );
 
     private final CommandIManager<ICommandMessage> messageCommandIManager = new CommandIManager<>();

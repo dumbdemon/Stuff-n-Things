@@ -20,13 +20,14 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-public class configCmd implements ICommandSlash {
-    private final Logger log = LoggerFactory.getLogger(configCmd.class);
+public class ConfigCmd implements ICommandSlash {
+    private final Logger log = LoggerFactory.getLogger(ConfigCmd.class);
 
     @Override
     public String getName() {
@@ -68,7 +69,7 @@ public class configCmd implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         String subCommandGroup = event.getSubcommandGroup();
         if (subCommandGroup == null) throw new DiscordAPIException("No subcommand group was given.");
 
@@ -77,7 +78,7 @@ public class configCmd implements ICommandSlash {
         }
     }
 
-    private void killConfig(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws Exception {
+    private void killConfig(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws RuntimeException, IOException {
         String subcommand = event.getSubcommandName();
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(EmbedColors.getDefault())
