@@ -7,7 +7,6 @@ import com.terransky.stuffnthings.interfaces.interactions.ICommandMessage;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandUser;
 import com.terransky.stuffnthings.managers.CommandIManager;
 import com.terransky.stuffnthings.managers.SlashIManager;
-import com.terransky.stuffnthings.secretsAndLies;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -28,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class ListeningForEvents extends ListenerAdapter {
     private final Logger log = LoggerFactory.getLogger(ListeningForEvents.class);
@@ -36,6 +36,7 @@ public class ListeningForEvents extends ListenerAdapter {
     private final List<CommandData> globalCommandData = slashManager.getCommandData();
     private final CommandIManager<ICommandMessage> messageManager = manager.getMessageContextManager();
     private final CommandIManager<ICommandUser> userManager = manager.getUserContextManager();
+    private final List<String> WATCHLIST = DatabaseManager.INSTANCE.getWatchList();
 
     {
         globalCommandData.addAll(messageManager.getCommandData());
@@ -54,16 +55,14 @@ public class ListeningForEvents extends ListenerAdapter {
             .queue(commands -> log.info("{} global commands loaded!", commands.size()),
                 DiscordAPIException::new);
 
-        long timerInMS = 600000;
+        long timer = TimeUnit.MINUTES.toMillis(10);
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             @SuppressWarnings("ConstantConditions")
             public void run() {
-                String[] watchList = secretsAndLies.whatAmIWatching;
-
-                event.getJDA().getShardManager().setActivity(Activity.playing(watchList[(new Random()).nextInt(watchList.length)]));
+                event.getJDA().getShardManager().setActivity(Activity.playing(WATCHLIST.get(new Random().nextInt(WATCHLIST.size()))));
             }
-        }, timerInMS, timerInMS);
+        }, timer, timer);
     }
 
     @Override

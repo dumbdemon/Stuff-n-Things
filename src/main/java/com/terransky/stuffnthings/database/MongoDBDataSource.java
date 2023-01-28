@@ -104,7 +104,7 @@ public class MongoDBDataSource implements DatabaseManager {
     }
 
     @Override
-    public boolean addKillString(@NotNull KillStorage killStorage, String killString, String idReference) {
+    public boolean addKillString(@NotNull KillStorage killStorage, String idReference, String killString) {
         Property property = killStorage.getProperty();
         Bson filter = Filters.eq(ID_REFERENCE.getPropertyName(Table.KILL), idReference);
 

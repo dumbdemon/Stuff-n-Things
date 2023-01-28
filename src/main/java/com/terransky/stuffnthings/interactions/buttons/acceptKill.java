@@ -42,7 +42,7 @@ public class acceptKill {
             return;
         }
 
-        if (!DatabaseManager.INSTANCE.addKillString(isRandom ? KillStorage.RANDOM : KillStorage.TARGET, event.getMessage().getContentRaw(), "0")) {
+        if (!DatabaseManager.INSTANCE.addKillString(isRandom ? KillStorage.RANDOM : KillStorage.TARGET, "0", event.getMessage().getContentRaw())) {
             event.replyEmbeds(
                 new EmbedBuilder()
                     .setTitle(isRandom ? RANDOM_NAME_READABLE : TARGET_NAME_READABLE)

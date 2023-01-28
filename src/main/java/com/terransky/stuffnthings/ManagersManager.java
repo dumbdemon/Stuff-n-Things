@@ -58,6 +58,7 @@ public class ManagersManager {
         new suggest(),
 
         //Dev commands
+        new addToWatchlist(),
         new getInvite(),
         new upsertKitsuToken(),
         new test(),

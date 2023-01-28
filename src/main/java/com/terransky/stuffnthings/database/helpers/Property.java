@@ -68,6 +68,8 @@ public enum Property {
                     return blob.getGuildId();
                 }
                 case KILL -> {
+                    if (blob.getGuild() == null && blob.getMember() == null)
+                        return "1";
                     return "0";
                 }
                 default ->

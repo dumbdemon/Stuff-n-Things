@@ -20,8 +20,3 @@ Command info moved to [GitHub Wiki](https://github.com/dumbdemon/Stuff-n-Things/
   class.
 * The `/rob-fail-chance` was built for the Discord™ bot [UnbelievaBoat](https://unbelievaboat.com/)'s rob command.
 * Database uses [MongoDB](https://www.mongodb.com/).
-* `secretsAndLies()` class referenced in the main
-  class [[StuffNThings](https://github.com/dumbdemon/Stuff-n-Things/blob/e3659163b3e1cb0dbf95680e325d2a2fecc2e886/src/main/java/com/terransky/stuffnthings/StuffNThings.java#L33)]
-  and listener
-  class [[ListeningForEvents](https://github.com/dumbdemon/Stuff-n-Things/blob/e3659163b3e1cb0dbf95680e325d2a2fecc2e886/src/main/java/com/terransky/stuffnthings/listeners/ListeningForEvents.java#L65)]
-  contains real names and has been removed to avoid doxxing.

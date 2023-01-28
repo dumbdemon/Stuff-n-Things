@@ -7,6 +7,8 @@ import com.terransky.stuffnthings.utilities.command.EventBlob;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public interface DatabaseManager {
@@ -38,11 +40,27 @@ public interface DatabaseManager {
      * Add a kill string to the database
      *
      * @param killStorage An enum containing the {@link Property} data.
-     * @param killString  The kill string te add
      * @param idReference THe specific database object to store in
+     * @param killString  The kill string te add
      * @return True if up was successful
      */
-    boolean addKillString(KillStorage killStorage, String killString, String idReference);
+    boolean addKillString(KillStorage killStorage, String idReference, String killString);
+
+    /**
+     * Get the watchlist from the database
+     *
+     * @return A watchlist
+     */
+    default List<String> getWatchList() {
+        return getFromDatabase(new EventBlob(null, null), Property.KILL_RANDOM)
+            .map(o -> (List<String>) new ArrayList<String>() {{
+                    for (Object o1 : ((List<?>) o)) {
+                        add((String) o1);
+                    }
+                }}
+            )
+            .orElse(List.of("you"));
+    }
 
     /**
      * Add the guild to the database and create a user table.

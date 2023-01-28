@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings;
 
+import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.listeners.InteractionListener;
 import com.terransky.stuffnthings.listeners.ListeningForEvents;
 import com.terransky.stuffnthings.utilities.general.Config;
@@ -13,6 +14,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 public class StuffNThings {
@@ -32,14 +34,14 @@ public class StuffNThings {
             .setMemberCachePolicy(MemberCachePolicy.ALL)
             .setChunkingFilter(ChunkingFilter.ALL);
 
-        String[] whatAmIWatching = secretsAndLies.whatAmIWatching;
+        List<String> whatAmIWatching = DatabaseManager.INSTANCE.getWatchList();
 
         if (Config.isTestingMode()) {
             shards.setStatus(OnlineStatus.INVISIBLE);
         } else {
             Random random = new Random(new Date().getTime());
             shards.setStatus(OnlineStatus.DO_NOT_DISTURB)
-                .setActivity(Activity.watching(whatAmIWatching[random.nextInt(whatAmIWatching.length)]));
+                .setActivity(Activity.watching(whatAmIWatching.get(random.nextInt(whatAmIWatching.size()))));
         }
         ShardManager shardManager = shards.build();
 
