@@ -73,6 +73,8 @@ public class userInfo implements ICommandSlash {
             The following info with be returned:
             • User ID
             • User Status
+            • Total Roles
+            • Top Tole
             • Server Permissions
             • Server Joined Date
             • Discord Joined Date
@@ -80,7 +82,7 @@ public class userInfo implements ICommandSlash {
             """, Mastermind.DEFAULT,
             CommandCategory.DEVS,
             format.parse("24-08-2022_11:10"),
-            format.parse("11-1-2023_13:03")
+            format.parse("27-1-2023_21:58")
         )
             .addOptions(
                 new OptionData(OptionType.USER, "user", "Who you want to know about.")
@@ -89,7 +91,7 @@ public class userInfo implements ICommandSlash {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
-        String memberId = event.getOption("user", event.getMember(), OptionMapping::getAsMember).getId();
+        String memberId = event.getOption("user", blob.getMember(), OptionMapping::getAsMember).getId();
         Member member = blob.getGuild().retrieveMemberById(memberId).complete();
         List<Role> roles = member.getRoles().stream().sorted().toList();
         int roleCount = roles.size() + 1;
@@ -100,16 +102,16 @@ public class userInfo implements ICommandSlash {
 
         EmbedBuilder eb = new EmbedBuilder()
             .setColor(EmbedColors.getDefault())
-            .setAuthor(WordUtils.capitalize(member.getEffectiveName()) + "'s Info")
+            .setTitle(WordUtils.capitalize(member.getEffectiveName()) + "'s Info")
             .setThumbnail(member.getEffectiveAvatarUrl())
             .addField("User ID", memberId, false)
             .addField("User Status", permissionStatus, false)
-            .addField("Total Roles", "%d Role%s".formatted(roleCount, roleCount > 1 ? "s" : ""), true)
+            .addField("Total Roles", "%d role%s".formatted(roleCount, roleCount > 1 ? "s" : ""), true)
             .addField("Top Role", topRole.getAsMention(), true)
             .addField("Server Permissions", "```%s```".formatted(userPerms), false)
-            .addField("Joined Server on", Timestamp.getDateAsTimestamp(member.getTimeJoined()), true)
             .addField("Joined Discord on", Timestamp.getDateAsTimestamp(member.getUser().getTimeCreated()), true)
-            .setFooter("Requested by " + blob.getMemberAsTag() + " | " + event.getUser().getId(), blob.getMemberEffectiveAvatarUrl());
+            .addField("Joined Server on", Timestamp.getDateAsTimestamp(member.getTimeJoined()), true)
+            .setFooter("Requested by " + blob.getMemberAsTag() + " | " + blob.getMemberId(), blob.getMemberEffectiveAvatarUrl());
 
         if (!member.getUser().isBot()) {
             String boostedText = (member.getTimeBoosted() != null) ?
