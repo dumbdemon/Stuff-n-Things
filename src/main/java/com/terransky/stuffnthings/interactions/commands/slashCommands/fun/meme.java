@@ -63,7 +63,7 @@ public class meme implements ICommandSlash {
         String subreddit = event.getOption("subreddit", "", OptionMapping::getAsString);
         String redditLogo = "https://cdn.discordapp.com/attachments/1004795281734377564/1005203741026299954/Reddit_Mark_OnDark.png";
         try {
-            URL memeURL = new URL("https://meme-api.herokuapp.com/gimme/" + subreddit);
+            URL memeURL = new URL("https://meme-api.com/gimme/" + subreddit);
             FreshMemeData memeData = new ObjectMapper().readValue(memeURL, FreshMemeData.class);
             eb.setFooter("Reddit | u/%s | r/%s".formatted(memeData.getAuthor(), memeData.getSubreddit()), redditLogo);
 
@@ -92,7 +92,7 @@ public class meme implements ICommandSlash {
                 .setImage(memeData.getUrl())
                 .addField("Author", "[" + memeData.getAuthor() + "](https://www.reddit.com/user/" + memeData.getAuthor() + ")", true)
                 .addField("Subreddit", "[" + memeData.getSubreddit() + "](https://www.reddit.com/r/" + memeData.getSubreddit() + ")", true)
-                .addField("Upvotes", largeNumber.format(memeData.getUps()), true);
+                .addField("<:reddit_upvote:1069025452250890330> Upvotes", largeNumber.format(memeData.getUps()), true);
 
             event.getHook().sendMessageEmbeds(eb.build()).queue();
         } catch (IOException e) {
