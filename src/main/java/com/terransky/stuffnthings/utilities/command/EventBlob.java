@@ -35,21 +35,25 @@ public class EventBlob {
      * @see Guild#getName()
      */
     public String getGuildName() {
-        return getGuild().getName();
+        return guild.getName();
     }
 
     /**
      * @see Guild#getId()
      */
     public String getGuildId() {
-        return getGuild().getId();
+        return guild.getId();
     }
 
     /**
      * @see Guild#getIdLong()
      */
     public long getGuildIdLong() {
-        return getGuild().getIdLong();
+        return guild.getIdLong();
+    }
+
+    public Member getSelfMember() {
+        return guild.getSelfMember();
     }
 
     public Member getMember() {
@@ -65,21 +69,21 @@ public class EventBlob {
      * @see Member#getEffectiveAvatarUrl()
      */
     public String getMemberEffectiveAvatarUrl() {
-        return getMember().getEffectiveAvatarUrl();
+        return member.getEffectiveAvatarUrl();
     }
 
     /**
      * @see User#getAsTag()
      */
     public String getMemberAsTag() {
-        return getMember().getUser().getAsTag();
+        return member.getUser().getAsTag();
     }
 
     /**
      * @see Member#getId()
      */
     public String getMemberId() {
-        return getMember().getId();
+        return member.getId();
     }
 
     @Override

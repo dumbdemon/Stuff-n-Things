@@ -42,7 +42,7 @@ public class InteractionListener extends ListenerAdapter {
             .setTitle("Oops!")
             .setDescription(Responses.INTERACTION_FAILED.getMessage(interaction))
             .setColor(EmbedColors.getError())
-            .setFooter(blob.getMember().getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
+            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();
     }
 

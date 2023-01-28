@@ -65,7 +65,7 @@ public class checkPerms implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.ADMIN,
             format.parse("30-08-2022_16:14"),
-            format.parse("29-12-2022_10:14")
+            format.parse("27-1-2023_21:38")
         )
             .addDefaultPerms(Permission.MANAGE_ROLES)
             .addSubcommands(
@@ -85,11 +85,11 @@ public class checkPerms implements ICommandSlash {
         if (event.getSubcommandName() == null) throw new DiscordAPIException("No subcommand was given.");
 
         if (event.getSubcommandName().equals("server")) {
-            myPerms = blob.getGuild().getSelfMember().getPermissions();
+            myPerms = blob.getSelfMember().getPermissions();
         } else {
             Optional<GuildChannel> ifToCheck = Optional.ofNullable(event.getOption("check-channel", OptionMapping::getAsChannel));
             toCheck = ifToCheck.orElseThrow(DiscordAPIException::new);
-            myPerms = blob.getGuild().getSelfMember().getPermissions(toCheck);
+            myPerms = blob.getSelfMember().getPermissions(toCheck);
         }
 
         List<Permission> doNotHaveThis = new ArrayList<>(getRequiredPerms().stream().filter(permission -> !myPerms.contains(permission)).toList());

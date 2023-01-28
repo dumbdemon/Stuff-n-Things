@@ -29,24 +29,28 @@ public class kill implements ICommandSlash {
     public static final String MODAL_TEXT_INPUT_NAME = "kill-suggestion";
 
     private void killRandom(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull Random random, EmbedBuilder eb) {
-        List<?> randomStrings = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILL_RANDOM)
-            .map(o -> (List<?>) o)
-            .orElse(new ArrayList<>());
+        List<String> randomStrings = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILL_RANDOM)
+            .map(o -> (List<String>) new ArrayList<String>() {{
+                    for (Object o1 : ((List<?>) o)) {
+                        add((String) o1);
+                    }
+                }}
+            )
+            .orElse(List.of("… just dies by %s's hands."));
         List<String> victims = new ArrayList<>() {{
             blob.getGuild().getMembers().stream()
-                .filter(member -> !member.getUser().isBot() ||
-                    member.getUser().equals(event.getJDA().getSelfUser())
-                ).forEach(member -> add(member.getAsMention()));
+                .filter(member -> !member.getUser().isBot() || member.getUser().equals(event.getJDA().getSelfUser()))
+                .forEach(member -> add(member.getAsMention()));
         }};
 
-        String message = ((String) randomStrings.get(random.nextInt(randomStrings.size()))).formatted(
+        String message = randomStrings.get(random.nextInt(randomStrings.size())).formatted(
             victims.get(random.nextInt(victims.size())),
             victims.get(random.nextInt(victims.size())),
             victims.get(random.nextInt(victims.size())),
             victims.get(random.nextInt(victims.size()))
         );
 
-        if (message.contains(blob.getGuild().getSelfMember().getAsMention()))
+        if (message.contains(blob.getSelfMember().getAsMention()))
             message += " :O";
 
         eb.setColor(EmbedColors.getDefault())
@@ -125,7 +129,7 @@ public class kill implements ICommandSlash {
             """, Mastermind.USER,
             CommandCategory.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("27-1-2023_14:55")
+            format.parse("27-1-2023_21:38")
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),
