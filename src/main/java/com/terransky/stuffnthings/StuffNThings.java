@@ -36,13 +36,9 @@ public class StuffNThings {
 
         List<String> whatAmIWatching = DatabaseManager.INSTANCE.getWatchList();
 
-        if (Config.isTestingMode()) {
-            shards.setStatus(OnlineStatus.INVISIBLE);
-        } else {
-            Random random = new Random(new Date().getTime());
-            shards.setStatus(OnlineStatus.DO_NOT_DISTURB)
-                .setActivity(Activity.watching(whatAmIWatching.get(random.nextInt(whatAmIWatching.size()))));
-        }
+        Random random = new Random(new Date().getTime());
+        shards.setStatus(OnlineStatus.DO_NOT_DISTURB)
+            .setActivity(Activity.watching(whatAmIWatching.get(random.nextInt(whatAmIWatching.size()))));
         ShardManager shardManager = shards.build();
 
         shardManager.addEventListener(

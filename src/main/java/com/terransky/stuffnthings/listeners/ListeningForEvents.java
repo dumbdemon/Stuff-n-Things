@@ -60,7 +60,8 @@ public class ListeningForEvents extends ListenerAdapter {
             @Override
             @SuppressWarnings("ConstantConditions")
             public void run() {
-                event.getJDA().getShardManager().setActivity(Activity.playing(WATCHLIST.get(new Random().nextInt(WATCHLIST.size()))));
+                Random random = new Random(new Date().getTime());
+                event.getJDA().getShardManager().setActivity(Activity.playing(WATCHLIST.get(random.nextInt(WATCHLIST.size()))));
             }
         }, timer, timer);
     }
