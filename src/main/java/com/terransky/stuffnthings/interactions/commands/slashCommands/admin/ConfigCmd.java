@@ -11,6 +11,7 @@ import com.terransky.stuffnthings.utilities.general.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Icon;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -78,6 +79,7 @@ public class ConfigCmd implements ICommandSlash {
                         new SubcommandData("reporting-response", "Set, change, or view the response the bot gives when reporting.")
                             .addOptions(
                                 new OptionData(OptionType.STRING, "report-message", "The message the bot gives when a user reports.")
+                                    .setRequiredLength(10, MessageEmbed.DESCRIPTION_MAX_LENGTH / 4)
                             )
                     )
             );
