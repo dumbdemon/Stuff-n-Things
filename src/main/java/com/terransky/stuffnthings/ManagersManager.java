@@ -60,9 +60,9 @@ public class ManagersManager {
         //Dev commands
         new AddToWatchlist(),
         new GetInvite(),
-        new UpsertKitsuToken(),
         new Test(),
         new TinyURL(),
+        new UpsertKitsuToken(),
         new UserInfo()
     );
 
