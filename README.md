@@ -1,4 +1,5 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/dumbdemon/stuff-n-things/badge)](https://www.codefactor.io/repository/github/dumbdemon/stuff-n-things)
+[![DeepSource](https://deepsource.io/gh/dumbdemon/Stuff-n-Things.svg/?label=active+issues&show_trend=true&token=p8geN842seYBf9QPzbISgyan)](https://deepsource.io/gh/dumbdemon/Stuff-n-Things/?ref=repository-badge)
 
 # Stuff'n'Things Source Code
 
