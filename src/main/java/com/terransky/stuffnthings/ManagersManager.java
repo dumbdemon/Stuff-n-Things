@@ -25,93 +25,91 @@ import com.terransky.stuffnthings.managers.SlashIManager;
 
 public class ManagersManager {
 
-    private final SlashIManager slashIManager = new SlashIManager(
-        //Admin Commands
-        new ChannelUnLock(),
-        new CheckPerms(),
-        new ConfigCmd(),
+  private final SlashIManager slashIManager =
+      new SlashIManager(
+          // Admin Commands
+          new ChannelUnLock(),
+          new CheckPerms(),
+          new ConfigCmd(),
 
-        //Math Commands
-        new FibonacciSequence(),
-        new NumbersAPI(),
-        new SolveQuadratic(),
+          // Math Commands
+          new FibonacciSequence(),
+          new NumbersAPI(),
+          new SolveQuadratic(),
 
-        //M:tG Commands
-        new CalculateRats(),
-        new WhatsInStandard(),
+          // M:tG Commands
+          new CalculateRats(),
+          new WhatsInStandard(),
 
-        //Fun Commands
-        new ColorInfo(),
-        new Dictionary(),
-        new GetDadJokes(),
-        new Kill(),
-        new Kitsu.Anime(),
-        new Kitsu.Manga(),
-        new Lmgtfy(),
-        new Meme(),
-        new RobFailChance(),
-        new Say(),
+          // Fun Commands
+          new ColorInfo(),
+          new Dictionary(),
+          new GetDadJokes(),
+          new Kill(),
+          new Kitsu.Anime(),
+          new Kitsu.Manga(),
+          new Lmgtfy(),
+          new Meme(),
+          new RobFailChance(),
+          new Say(),
 
-        //General Commands
-        new About(),
-        new Ping(),
-        new Suggest(),
+          // General Commands
+          new About(),
+          new Ping(),
+          new Suggest(),
 
-        //Dev commands
-        new AddToWatchlist(),
-        new GetInvite(),
-        new Test(),
-        new TinyURL(),
-        new UpsertKitsuToken(),
-        new UserInfo()
-    );
+          // Dev commands
+          new AddToWatchlist(),
+          new GetInvite(),
+          new Test(),
+          new TinyURL(),
+          new UpsertKitsuToken(),
+          new UserInfo());
 
-    private final IManager<IButton> buttonIManager = new IManager<>(
-        new AcceptKill.Random(),
-        new AcceptKill.Target(),
-        new DenyKill(),
-        new ExpiredButton(),
-        new GetMoreDadJokes()
-    );
+  private final IManager<IButton> buttonIManager =
+      new IManager<>(
+          new AcceptKill.Random(),
+          new AcceptKill.Target(),
+          new DenyKill(),
+          new ExpiredButton(),
+          new GetMoreDadJokes());
 
-    private final IManager<IModal> modalIManager = new IManager<>(
-        new KillSuggest.Random(),
-        new KillSuggest.Target()
-    );
+  private final IManager<IModal> modalIManager =
+      new IManager<>(new KillSuggest.Random(), new KillSuggest.Target());
 
-    private final CommandIManager<ICommandMessage> messageCommandIManager = new CommandIManager<>();
+  private final CommandIManager<ICommandMessage> messageCommandIManager = new CommandIManager<>();
 
-    private final CommandIManager<ICommandUser> userCommandIManager = new CommandIManager<>();
+  private final CommandIManager<ICommandUser> userCommandIManager = new CommandIManager<>();
 
-    private final IManager<ISelectMenuEntity> entitySelectMenuIManager = new IManager<>();
+  private final IManager<ISelectMenuEntity> entitySelectMenuIManager = new IManager<>();
 
-    private final IManager<ISelectMenuString> stringSelectMenuIManager = new IManager<>();
+  private final IManager<ISelectMenuString> stringSelectMenuIManager = new IManager<>();
 
-    public SlashIManager getSlashManager() {
-        return slashIManager;
-    }
+  public SlashIManager getSlashManager() {
+    return slashIManager;
+  }
 
-    public IManager<IButton> getButtonManager() {
-        return buttonIManager;
-    }
+  public IManager<IButton> getButtonManager() {
+    return buttonIManager;
+  }
 
-    public CommandIManager<ICommandMessage> getMessageContextManager() {
-        return messageCommandIManager;
-    }
+  public CommandIManager<ICommandMessage> getMessageContextManager() {
+    return messageCommandIManager;
+  }
 
-    public CommandIManager<ICommandUser> getUserContextManager() {
-        return userCommandIManager;
-    }
+  public CommandIManager<ICommandUser> getUserContextManager() {
+    return userCommandIManager;
+  }
 
-    public IManager<IModal> getModalManager() {
-        return modalIManager;
-    }
+  public IManager<IModal> getModalManager() {
+    return modalIManager;
+  }
 
-    public IManager<ISelectMenuEntity> getEntitySelectMenuManager() {
-        return entitySelectMenuIManager;
-    }
+  public IManager<ISelectMenuEntity> getEntitySelectMenuManager() {
+    return entitySelectMenuIManager;
+  }
 
-    public IManager<ISelectMenuString> getStringSelectMenuManager() {
-        return stringSelectMenuIManager;
-    }
+  public IManager<ISelectMenuString> getStringSelectMenuManager() {
+    return stringSelectMenuIManager;
+  }
 }
