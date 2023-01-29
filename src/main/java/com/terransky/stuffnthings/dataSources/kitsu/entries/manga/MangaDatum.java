@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.terransky.stuffnthings.dataSources.kitsu.Datum;
 
 import javax.annotation.Generated;
+import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -41,5 +42,19 @@ public class MangaDatum extends Datum {
     @JsonProperty("relationships")
     public void setRelationships(MangaRelationships relationships) {
         this.relationships = relationships;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        MangaDatum that = (MangaDatum) o;
+        return getAttributes().equals(that.getAttributes()) && getRelationships().equals(that.getRelationships());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getAttributes(), getRelationships());
     }
 }
