@@ -33,8 +33,8 @@ public class Kill implements ICommandSlash {
     private void killRandom(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull Random random, EmbedBuilder eb) {
         List<String> randomStrings = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILL_RANDOM)
             .map(o -> (List<String>) new ArrayList<String>() {{
-                for (Object o1 : ((List<?>) o)) {
-                    add((String) o1);
+                    for (Object o1 : ((List<?>) o)) {
+                        add((String) o1);
                     }
                 }}
             )

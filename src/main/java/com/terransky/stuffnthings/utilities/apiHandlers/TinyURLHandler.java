@@ -59,7 +59,6 @@ public class TinyURLHandler extends TinyURLRequestData {
             throw new RuntimeException(e);
         } finally {
             service.shutdownNow();
-            System.gc();
         }
     }
 

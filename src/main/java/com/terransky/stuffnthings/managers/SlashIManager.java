@@ -1,6 +1,5 @@
 package com.terransky.stuffnthings.managers;
 
-import com.terransky.stuffnthings.interactions.commands.slashCommands.general.About;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -21,7 +20,8 @@ public class SlashIManager extends CommandIManager<ICommandSlash> {
     }
 
     /**
-     * Get all command names as {@link Command.Choice Choises} for the {@link About about} command.
+     * Get all command names as {@link Command.Choice Choises} for the
+     * {@link com.terransky.stuffnthings.interactions.commands.slashCommands.general.About about} command.
      *
      * @return A {@link List} of {@link Command.Choice Choises}.
      */

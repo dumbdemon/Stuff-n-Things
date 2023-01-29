@@ -1,6 +1,5 @@
 package com.terransky.stuffnthings.utilities.general;
 
-import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.Dictionary;
 import com.terransky.stuffnthings.utilities.command.Formatter;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.jetbrains.annotations.Nullable;
@@ -103,7 +102,7 @@ public class Config {
         DATABASE(config.get("DB_USERNAME", DEFAULT_USERNAME), config.get("DB_PASSWORD", DEFAULT_PASSWORD)),
         /**
          * Credentials for the Oxford Dictionary API.<br />
-         * If this is not set, the {@link Dictionary} command won't be upserted.
+         * If this is not set, the {@link com.terransky.stuffnthings.interactions.commands.slashCommands.fun.Dictionary} command won't be upserted.
          */
         OXFORD(config.get("OXFORD_ID", DEFAULT_USERNAME), config.get("OXFORD_KEY", DEFAULT_PASSWORD)),
         /**

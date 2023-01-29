@@ -39,7 +39,7 @@ public class TinyURL implements ICommandSlash {
         }
         event.getHook().sendMessageEmbeds(
             builder
-                .appendDescription(String.format("Unable to shorten [URL](%s) for the following reason%s:\n```%s```",
+                .appendDescription(String.format("Unable to shorten [URL](%s) for the following reason%s:%n```%s```",
                     url,
                     errors.size() > 1 ? "s" : "",
                     stringBuilder))
@@ -102,7 +102,7 @@ public class TinyURL implements ICommandSlash {
                 reportingURL = Config.getErrorReportingURL();
 
             if (Config.isTestingMode())
-                embedBuilder.setDescription(String.format("Data Packet Sent\n```json\n%s\n```", requestData));
+                embedBuilder.setDescription(String.format("Data Packet Sent%n```json%n%s%n```", requestData));
 
             switch (shortURLData.getCode()) {
                 case 0 -> {
@@ -149,7 +149,7 @@ public class TinyURL implements ICommandSlash {
                                             
                         Note: Valid URls start with `http://` or `https://` and must end with a domain such as `.com`, `.gov`, `.xyz`, etc.
                         """)
-                    .addField("URL Given", String.format("```\n%s\n```", url), false)
+                    .addField("URL Given", String.format("```%n%s%n```", url), false)
                     .build()
             ).queue();
         }

@@ -115,7 +115,6 @@ public class KitsuHandler {
             return false;
         } finally {
             service.shutdownNow();
-            System.gc();
         }
         return true;
     }

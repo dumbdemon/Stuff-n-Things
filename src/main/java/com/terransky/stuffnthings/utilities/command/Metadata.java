@@ -1,6 +1,5 @@
 package com.terransky.stuffnthings.utilities.command;
 
-import com.terransky.stuffnthings.interactions.commands.slashCommands.general.About;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -71,7 +70,7 @@ public class Metadata implements Comparable<Metadata> {
      * @param commandName      The name of the command. Cannot be no than {@value net.dv8tion.jda.api.interactions.commands.build.CommandData#MAX_NAME_LENGTH} characters.
      * @param shortDescription The description of the command. Cannot be no longer than
      *                         {@value MessageEmbed#DESCRIPTION_MAX_LENGTH} characters.
-     * @param longDescription  The description of the command used in {@link About
+     * @param longDescription  The description of the command used in {@link com.terransky.stuffnthings.interactions.commands.slashCommands.general.About
      *                         /about [command]}. It will be truncated if it has more than {@value MessageEmbed#DESCRIPTION_MAX_LENGTH} characters.
      * @param mastermind       The {@link Mastermind}.
      * @param category         The {@link CommandCategory}.
