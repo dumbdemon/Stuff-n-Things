@@ -111,11 +111,21 @@ public class ConfigCmd implements ICommandSlash {
         Optional<GuildChannelUnion> channel = Optional.ofNullable(event.getOption("channel", OptionMapping::getAsChannel));
         eb.setTitle(getNameReadable() + " - Reporting Channel");
 
-        if (channel.isEmpty()) {
-            Optional<Webhook> ifWebhook = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.REPORT_WEBHOOK)
-                .map(hook -> (Webhook) hook);
+        if (!blob.getSelfMember().hasPermission(Permission.MANAGE_WEBHOOKS)) {
+            event.getHook().sendMessageEmbeds(
+                eb.setColor(EmbedColors.getError())
+                    .setDescription("Unable to proceed. Missing permission to manage webhooks.")
+                    .build()
+            ).queue();
+            return;
+        }
 
-            if (ifWebhook.isEmpty()) {
+        if (channel.isEmpty()) {
+            String webhookId = (String) DatabaseManager.INSTANCE.getFromDatabase(blob, Property.REPORT_WEBHOOK).orElse(null);
+            List<Webhook> webhooks = blob.getGuild().retrieveWebhooks().complete();
+            Optional<Webhook> webhook = webhooks.stream().filter(hook -> hook.getId().equals(webhookId)).findFirst();
+
+            if (webhook.isEmpty()) {
                 event.getHook().sendMessageEmbeds(
                     eb.setDescription("Reporting has not been set up yet.")
                         .setColor(EmbedColors.getError())
@@ -125,23 +135,13 @@ public class ConfigCmd implements ICommandSlash {
             }
 
             event.getHook().sendMessageEmbeds(
-                eb.setDescription(String.format("Reporting to %s.", ifWebhook.get().getChannel().getAsMention()))
-                    .build()
-            ).queue();
-            return;
-        }
-        GuildChannelUnion channelUnion = channel.get();
-
-        if (!blob.getSelfMember().hasPermission(channelUnion.asStandardGuildChannel(), Permission.MANAGE_WEBHOOKS)) {
-            event.getHook().sendMessageEmbeds(
-                eb.setColor(EmbedColors.getError())
-                    .setDescription(String.format("Unable to proceed. Missing permission to manage webhooks in %s.", channelUnion.getAsMention()))
+                eb.setDescription(String.format("Reporting to %s.", webhook.get().getChannel().getAsMention()))
                     .build()
             ).queue();
             return;
         }
 
-        TextChannel textChannel = channelUnion.asTextChannel();
+        TextChannel textChannel = channel.get().asTextChannel();
         List<Webhook> webhooks = textChannel.retrieveWebhooks().complete();
         webhooks.stream().filter(hook -> blob.getSelfMember().equals(hook.getOwner()))
             .findFirst()
