@@ -1,7 +1,10 @@
 package com.terransky.stuffnthings.database.helpers.entry;
 
+import com.terransky.stuffnthings.database.helpers.Property;
 import org.bson.codecs.pojo.annotations.BsonProperty;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("unused")
@@ -57,10 +60,10 @@ public class GuildEntry {
 
     @Override
     public String toString() {
-        return "Guilds{" +
+        return "GuildEntry{" +
             "guildId=" + idReference +
-            ", killsMaximum=" + killMaximum +
-            ", killsTimeout=" + killTimeout +
+            ", killMaximum=" + killMaximum +
+            ", killTimeout=" + killTimeout +
             '}';
     }
 }

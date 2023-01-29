@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
 
 import static com.mongodb.reactivestreams.client.MongoClients.getDefaultCodecRegistry;
 import static com.terransky.stuffnthings.database.helpers.Property.*;
@@ -158,34 +157,18 @@ public class MongoDBDataSource implements DatabaseManager {
             if (subscriber.await().getError() != null)
                 return Optional.empty();
 
-            Predicate<KillLock> isItThisOne = lock -> lock.getGuildReference().equals(blob.getGuildId());
-
-            switch (property) {
-                case KILL_TIMEOUT -> {
-                    UserEntry user = (UserEntry) subscriber.first();
-                    List<KillLock> killLocks = user.getKillLocks().stream().filter(isItThisOne).toList();
-                    return Optional.ofNullable(killLocks.get(0).isKillUnderTo());
+            switch (property.getTable()) {
+                case GUILD -> {
+                    GuildEntry guildEntry = (GuildEntry) subscriber.first();
+                    return guildEntry.getProperty(property);
                 }
-                case KILL_ATTEMPTS -> {
-                    UserEntry user = (UserEntry) subscriber.first();
-                    List<KillLock> killLocks = user.getKillLocks().stream().filter(isItThisOne).toList();
-                    return Optional.ofNullable(killLocks.get(0).getKillAttempts());
+                case USER -> {
+                    UserEntry userEntry = (UserEntry) subscriber.first();
+                    return userEntry.getProperty(property, blob.getGuildId());
                 }
-                case KILLS_MAX -> {
-                    GuildEntry guild = (GuildEntry) subscriber.first();
-                    return Optional.ofNullable(guild.getKillMaximum());
-                }
-                case KILLS_TIMEOUT -> {
-                    GuildEntry guild = (GuildEntry) subscriber.first();
-                    return Optional.ofNullable(guild.getKillTimeout());
-                }
-                case KILL_RANDOM -> {
+                case KILL -> {
                     KillStrings killStrings = (KillStrings) subscriber.first();
-                    return Optional.ofNullable(killStrings.getKillRandoms());
-                }
-                case KILL_TARGET -> {
-                    KillStrings killStrings = (KillStrings) subscriber.first();
-                    return Optional.ofNullable(killStrings.getKillTargets());
+                    return killStrings.getProperty(property);
                 }
                 default ->
                     throw new IllegalArgumentException(String.format("Cannot retrieve property of %s from database", property));
