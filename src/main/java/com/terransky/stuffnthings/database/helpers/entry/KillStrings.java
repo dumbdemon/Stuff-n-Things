@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.database.helpers.entry;
 
 import com.terransky.stuffnthings.database.helpers.Property;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,6 +58,7 @@ public class KillStrings {
         this.killRandoms = killRandoms;
     }
 
+    @BsonIgnore
     public Optional<Object> getProperty(@NotNull Property property) {
         switch (property) {
             case KILL_RANDOM -> {

@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.database.helpers.entry;
 
 import com.terransky.stuffnthings.database.helpers.Property;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,6 +46,7 @@ public class UserEntry {
         this.killLocks = killLocks;
     }
 
+    @BsonIgnore
     public Optional<Object> getProperty(@NotNull Property property, String idReference) {
         Predicate<KillLock> isItThisOne = lock -> lock.getGuildReference().equals(idReference);
         switch (property) {
@@ -56,8 +58,7 @@ public class UserEntry {
                 return killLocks.stream().filter(isItThisOne).findFirst()
                     .map(KillLock::getKillAttempts);
             }
-            case KILL_LOCK ->
-                throw new IllegalArgumentException(String.format("%S is not intended to be called.", property));
+            case KILL_LOCK -> throw new IllegalArgumentException(String.format("%S is not intended to be called.", property));
             default -> throw new IllegalArgumentException(String.format("%S is not a guild property.", property));
         }
     }
