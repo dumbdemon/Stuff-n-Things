@@ -322,7 +322,6 @@ public class MongoDBDataSource implements DatabaseManager {
             MongoCollection<UserEntry> users = getUsers(client);
 
             var finder = new ObjectSubscriber<UserEntry>();
-            var insert = new ObjectSubscriber<InsertOneResult>();
 
             users.find(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), blob.getMemberId())).subscribe(finder);
 
@@ -332,7 +331,10 @@ public class MongoDBDataSource implements DatabaseManager {
             }
 
             if (finder.getObjects().isEmpty()) {
-                users.insertOne(new UserEntry(blob.getMemberId()))
+                var insert = new ObjectSubscriber<InsertOneResult>();
+                UserEntry userEntry = new UserEntry(blob.getMemberId());
+                userEntry.setKillLocks(List.of(new KillLock(guildId)));
+                users.insertOne(userEntry)
                     .subscribe(insert);
 
                 ifAnErrorOccurs(String.format("User of ID %s was added to the database", userId),
@@ -342,8 +344,14 @@ public class MongoDBDataSource implements DatabaseManager {
             }
 
             UserEntry user = finder.first();
-            var updater = new ObjectSubscriber<UpdateResult>();
             List<KillLock> killLocks = new ArrayList<>(user.getKillLocks());
+
+            if (killLocks.stream().anyMatch(lock -> lock.getGuildReference().equals(guildId))) {
+                log.info("User [{}] already has KillLock for server ID [{}]", userId, guildId);
+                return;
+            }
+
+            var updater = new ObjectSubscriber<UpdateResult>();
             killLocks.add(new KillLock(guildId));
             users.updateOne(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId), Updates.set(KILL_LOCK.getPropertyName(), killLocks))
                 .subscribe(updater);
