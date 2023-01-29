@@ -28,7 +28,9 @@ public class StuffNThings {
         DefaultShardManagerBuilder shards = DefaultShardManagerBuilder.createDefault(TOKEN.getPassword())
             .enableIntents(
                 GatewayIntent.GUILD_MEMBERS,
-                GatewayIntent.GUILD_PRESENCES
+                GatewayIntent.GUILD_PRESENCES,
+                GatewayIntent.MESSAGE_CONTENT,
+                GatewayIntent.GUILD_WEBHOOKS
             )
             .enableCache(CacheFlag.ONLINE_STATUS)
             .setMemberCachePolicy(MemberCachePolicy.ALL)

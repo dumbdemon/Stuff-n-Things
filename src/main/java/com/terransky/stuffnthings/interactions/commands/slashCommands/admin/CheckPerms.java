@@ -41,6 +41,7 @@ public class CheckPerms implements ICommandSlash {
             //Moderation
             add(Permission.MANAGE_CHANNEL);
             add(Permission.ADMINISTRATOR);
+            add(Permission.MANAGE_WEBHOOKS);
         }};
     }
 

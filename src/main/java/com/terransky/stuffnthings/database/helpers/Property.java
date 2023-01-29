@@ -8,6 +8,8 @@ public enum Property {
     ID_REFERENCE(Table.ROOT),
     KILLS_MAX("killMaximum", Table.GUILD),
     KILLS_TIMEOUT("killTimeout", Table.GUILD),
+    REPORT_WEBHOOK("reportWebhook", Table.GUILD),
+    REPORT_RESPONSE("reportResponse", Table.GUILD),
     KILL_LOCK("killLocks", Table.USER),
     KILL_ATTEMPTS("killAttempts", Table.USER),
     KILL_TIMEOUT("killUnderTo", Table.USER),

@@ -16,6 +16,10 @@ public class GuildEntry {
     private Long killMaximum;
     @BsonProperty("killTimeout")
     private Long killTimeout;
+    @BsonProperty("reportWebhook")
+    private String webhookId;
+    @BsonProperty("reportResponse")
+    private String reportResponse;
 
     public GuildEntry() {
     }
@@ -24,6 +28,7 @@ public class GuildEntry {
         this.idReference = idReference;
         this.killMaximum = 5L;
         this.killTimeout = TimeUnit.MINUTES.toMillis(10);
+        this.reportResponse = "Got it. Message has been reported.";
     }
 
     @BsonProperty("guildId")
@@ -58,12 +63,52 @@ public class GuildEntry {
         return this;
     }
 
+    @BsonProperty("reportWebhook")
+    public String getWebhookId() {
+        return webhookId;
+    }
+
+    @BsonProperty("reportWebhook")
+    public void setWebhookId(String webhookId) {
+        this.webhookId = webhookId;
+    }
+
+    @BsonProperty("reportResponse")
+    public String getReportResponse() {
+        return reportResponse;
+    }
+
+    @BsonProperty("reportResponse")
+    public void setReportResponse(String reportResponse) {
+        this.reportResponse = reportResponse;
+    }
+
+    public Optional<Object> getProperty(@NotNull Property property) {
+        switch (property) {
+            case KILLS_MAX -> {
+                return Optional.ofNullable(killMaximum);
+            }
+            case KILLS_TIMEOUT -> {
+                return Optional.ofNullable(killTimeout);
+            }
+            case REPORT_WEBHOOK -> {
+                return Optional.ofNullable(webhookId);
+            }
+            case REPORT_RESPONSE -> {
+                return Optional.ofNullable(reportResponse);
+            }
+            default -> throw new IllegalArgumentException(String.format("%S is not a guild property.", property));
+        }
+    }
+
     @Override
     public String toString() {
         return "GuildEntry{" +
-            "guildId=" + idReference +
+            "idReference='" + idReference + '\'' +
             ", killMaximum=" + killMaximum +
             ", killTimeout=" + killTimeout +
+            ", webhookId='" + webhookId + '\'' +
+            ", reportResponse='" + reportResponse + '\'' +
             '}';
     }
 }

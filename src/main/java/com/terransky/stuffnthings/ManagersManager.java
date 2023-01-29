@@ -4,6 +4,7 @@ import com.terransky.stuffnthings.interactions.buttons.AcceptKill;
 import com.terransky.stuffnthings.interactions.buttons.DenyKill;
 import com.terransky.stuffnthings.interactions.buttons.ExpiredButton;
 import com.terransky.stuffnthings.interactions.buttons.GetMoreDadJokes;
+import com.terransky.stuffnthings.interactions.commands.messageContextMenus.ReportMessage;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.ChannelUnLock;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.CheckPerms;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.ConfigCmd;
@@ -79,7 +80,9 @@ public class ManagersManager {
         new KillSuggest.Target()
     );
 
-    private final CommandIManager<ICommandMessage> messageCommandIManager = new CommandIManager<>();
+    private final CommandIManager<ICommandMessage> messageCommandIManager = new CommandIManager<>(
+        new ReportMessage()
+    );
 
     private final CommandIManager<ICommandUser> userCommandIManager = new CommandIManager<>();
 

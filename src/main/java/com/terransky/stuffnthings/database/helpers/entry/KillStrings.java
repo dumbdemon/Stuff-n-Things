@@ -1,9 +1,12 @@
 package com.terransky.stuffnthings.database.helpers.entry;
 
+import com.terransky.stuffnthings.database.helpers.Property;
 import org.bson.codecs.pojo.annotations.BsonProperty;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @SuppressWarnings("unused")
 public class KillStrings {
@@ -52,6 +55,18 @@ public class KillStrings {
     @BsonProperty("killRandoms")
     public void setKillRandoms(List<String> killRandoms) {
         this.killRandoms = killRandoms;
+    }
+
+    public Optional<Object> getProperty(@NotNull Property property) {
+        switch (property) {
+            case KILL_RANDOM -> {
+                return Optional.ofNullable(killRandoms);
+            }
+            case KILL_TARGET -> {
+                return Optional.ofNullable(killTargets);
+            }
+            default -> throw new IllegalArgumentException(String.format("%S is not a guild property.", property));
+        }
     }
 
     @Override
