@@ -159,7 +159,7 @@ public class ConfigCmd implements ICommandSlash {
     }
 
     private void updateReportingResponse(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull EmbedBuilder eb) {
-        event.deferReply(true).queue();
+        event.deferReply().queue();
         Optional<String> ifResponse = Optional.ofNullable(event.getOption("report-message", OptionMapping::getAsString));
         eb.setTitle(getNameReadable() + " - Reporting Message");
 
@@ -184,7 +184,7 @@ public class ConfigCmd implements ICommandSlash {
     }
 
     private void updateKillTimeout(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull EmbedBuilder eb) {
-        event.deferReply(true).queue();
+        event.deferReply().queue();
         Optional<Integer> ifNewTimeout = Optional.ofNullable(event.getOption("set-timeout", OptionMapping::getAsInt));
         long oldTimeout = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILLS_TIMEOUT)
             .map(o -> (long) o)
@@ -226,7 +226,7 @@ public class ConfigCmd implements ICommandSlash {
     }
 
     private void updateKillMaxKills(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull EmbedBuilder eb) {
-        event.deferReply(true).queue();
+        event.deferReply().queue();
         Optional<Long> ifNewMax = Optional.ofNullable(event.getOption("set-max", OptionMapping::getAsLong));
         long oldMax = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILLS_MAX)
             .map(o -> (Long) o)
