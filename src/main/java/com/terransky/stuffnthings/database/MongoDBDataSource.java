@@ -350,7 +350,7 @@ public class MongoDBDataSource implements DatabaseManager {
 
             ifAnErrorOccurs(String.format("User of ID %s was updated", userId),
                 String.format("Unable to update User of ID %s", userId),
-                finder.await(2, TimeUnit.MINUTES).getError());
+                updater.await(2, TimeUnit.MINUTES).getError());
         }
     }
 
