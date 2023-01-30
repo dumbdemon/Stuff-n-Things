@@ -26,7 +26,7 @@ public class ReportMessage implements ICommandMessage {
 
     @Override
     public boolean isWorking() {
-        return Config.isTestingMode();
+        return Config.isDatabaseEnabled();
     }
 
     @Override
