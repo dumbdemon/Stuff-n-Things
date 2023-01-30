@@ -1,6 +1,6 @@
 package com.terransky.stuffnthings.listeners;
 
-import com.terransky.stuffnthings.ManagersManager;
+import com.terransky.stuffnthings.Managers;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.interfaces.interactions.*;
@@ -35,13 +35,13 @@ import java.util.Optional;
 public class InteractionListener extends ListenerAdapter {
 
     private final Logger log = LoggerFactory.getLogger(InteractionListener.class);
-    private final ManagersManager manager = new ManagersManager();
+    private final Managers manager = Managers.getInstance();
 
     @NotNull
-    private MessageEmbed getFailedInteractionMessage(IInteraction.Type interaction, @NotNull EventBlob blob) {
+    private MessageEmbed getFailedInteractionMessage(IInteraction.Type type, @NotNull EventBlob blob) {
         return new EmbedBuilder()
             .setTitle("Oops!")
-            .setDescription(Responses.INTERACTION_FAILED.getMessage(interaction))
+            .setDescription(Responses.INTERACTION_FAILED.getMessage(type))
             .setColor(EmbedColors.getError())
             .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();
@@ -86,7 +86,7 @@ public class InteractionListener extends ListenerAdapter {
                                    @NotNull IInteraction.Type type) {
         String typeName = type.getName();
         event.replyEmbeds(new EmbedBuilder()
-            .setTitle(String.format("%s is for De Only", typeName))
+            .setTitle(String.format("%s is for Devs Only", typeName))
             .setDescription(String.format("This %s can only be ran by Developers.", typeName))
             .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build()
@@ -245,7 +245,7 @@ public class InteractionListener extends ListenerAdapter {
     @Override
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, IInteraction.Type.MODAL);
+            GuildOnly.interactionResponse(event);
             return;
         }
 

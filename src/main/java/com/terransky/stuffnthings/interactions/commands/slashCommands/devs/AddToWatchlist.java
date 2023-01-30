@@ -33,10 +33,10 @@ public class AddToWatchlist implements ICommandSlash {
         return new Metadata(getName(), "Add something to the watchlist",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
             format.parse("27-1-2023_22:35"),
-            format.parse("27-1-2023_22:35")
+            format.parse("30-1-2023_16:06")
         )
             .addOptions(
-                new OptionData(OptionType.STRING, "watch-this", "What to watch...")
+                new OptionData(OptionType.STRING, "watch-this", "What to watch...", true)
                     .setRequiredLength(1, 128)
             );
     }

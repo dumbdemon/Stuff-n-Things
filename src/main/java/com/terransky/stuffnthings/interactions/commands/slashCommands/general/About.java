@@ -1,6 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.general;
 
-import com.terransky.stuffnthings.ManagersManager;
+import com.terransky.stuffnthings.Managers;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
@@ -58,11 +58,11 @@ public class About implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("25-1-2023_12:51")
+            format.parse("30-1-2023_16:15")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "command", "Get more info on a Command.")
-                    .addChoices(new ManagersManager().getSlashManager().getCommandsAsChoices())
+                    .addChoices(Managers.getInstance().getSlashManager().getCommandsAsChoices())
             );
     }
 
@@ -83,7 +83,7 @@ public class About implements ICommandSlash {
         RuntimeMXBean mxBean = ManagementFactory.getRuntimeMXBean();
         String uptime = getUptime(mxBean);
 
-        SlashIManager manager = new ManagersManager().getSlashManager();
+        SlashIManager manager = Managers.getInstance().getSlashManager();
         int commandCnt = manager.getSlashCommandCount();
         int guildCommandCnt = manager.getSlashCommandCount(blob.getGuildIdLong());
         commandCnt += guildCommandCnt;
@@ -130,7 +130,7 @@ public class About implements ICommandSlash {
     }
 
     private void getCommandInfo(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, String command) throws ParseException {
-        Optional<Metadata> ifMetadata = new ManagersManager().getSlashManager().getMetadata(command);
+        Optional<Metadata> ifMetadata = new Managers().getSlashManager().getMetadata(command);
         Metadata metadata = ifMetadata.orElse(getMetadata());
         String commandName = metadata.getCommandNameReadable();
 

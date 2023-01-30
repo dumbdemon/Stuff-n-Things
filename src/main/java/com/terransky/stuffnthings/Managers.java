@@ -23,8 +23,10 @@ import com.terransky.stuffnthings.interfaces.interactions.*;
 import com.terransky.stuffnthings.managers.CommandIManager;
 import com.terransky.stuffnthings.managers.IManager;
 import com.terransky.stuffnthings.managers.SlashIManager;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-public class ManagersManager {
+public class Managers {
 
     private final SlashIManager slashIManager = new SlashIManager(
         //Admin Commands
@@ -89,6 +91,12 @@ public class ManagersManager {
     private final IManager<ISelectMenuEntity> entitySelectMenuIManager = new IManager<>();
 
     private final IManager<ISelectMenuString> stringSelectMenuIManager = new IManager<>();
+
+    @NotNull
+    @Contract(" -> new")
+    public static Managers getInstance() {
+        return new Managers();
+    }
 
     public SlashIManager getSlashManager() {
         return slashIManager;

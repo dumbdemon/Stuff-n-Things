@@ -1,6 +1,6 @@
 package com.terransky.stuffnthings.listeners;
 
-import com.terransky.stuffnthings.ManagersManager;
+import com.terransky.stuffnthings.Managers;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandMessage;
@@ -20,7 +20,6 @@ import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -31,17 +30,10 @@ import java.util.concurrent.TimeUnit;
 
 public class ListeningForEvents extends ListenerAdapter {
     private final Logger log = LoggerFactory.getLogger(ListeningForEvents.class);
-    private final ManagersManager manager = new ManagersManager();
-    private final SlashIManager slashManager = manager.getSlashManager();
-    private final List<CommandData> globalCommandData = slashManager.getCommandData();
-    private final CommandIManager<ICommandMessage> messageManager = manager.getMessageContextManager();
-    private final CommandIManager<ICommandUser> userManager = manager.getUserContextManager();
+    private final SlashIManager slashManager = Managers.getInstance().getSlashManager();
+    private final CommandIManager<ICommandMessage> messageManager = Managers.getInstance().getMessageContextManager();
+    private final CommandIManager<ICommandUser> userManager = Managers.getInstance().getUserContextManager();
     private final List<String> WATCHLIST = DatabaseManager.INSTANCE.getWatchList();
-
-    {
-        globalCommandData.addAll(messageManager.getCommandData());
-        globalCommandData.addAll(userManager.getCommandData());
-    }
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
@@ -51,9 +43,10 @@ public class ListeningForEvents extends ListenerAdapter {
         }
 
         event.getJDA().updateCommands()
-            .addCommands(globalCommandData)
-            .queue(commands -> log.info("{} global commands loaded!", commands.size()),
-                DiscordAPIException::new);
+            .addCommands(slashManager.getCommandData())
+            .addCommands(messageManager.getCommandData())
+            .addCommands(userManager.getCommandData())
+            .queue(commands -> log.info("{} global commands loaded!", commands.size()), DiscordAPIException::new);
 
         long timer = TimeUnit.MINUTES.toMillis(10);
         new Timer().scheduleAtFixedRate(new TimerTask() {
@@ -108,7 +101,7 @@ public class ListeningForEvents extends ListenerAdapter {
             .addCommands(userManager.getCommandData(guild));
 
         if (Config.isTestingMode()) {
-            updateAction.addCommands(globalCommandData)
+            updateAction.addCommands(slashManager.getCommandData())
                 .queue(commands -> log.info("{} global commands loaded as guild commands on {}[{}]", commands.size(), guild.getName(), guild.getId()),
                     DiscordAPIException::new);
             return;

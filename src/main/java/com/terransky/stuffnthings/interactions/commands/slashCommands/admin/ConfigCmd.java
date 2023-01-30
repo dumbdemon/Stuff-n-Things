@@ -52,7 +52,7 @@ public class ConfigCmd implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.ADMIN,
             format.parse("28-08-2022_21:46"),
-            format.parse("25-1-2023_12:55")
+            format.parse("30-1-2023_16:05")
         )
             .addDefaultPerms(Permission.MANAGE_SERVER)
             .addSubcommandGroups(
@@ -219,7 +219,7 @@ public class ConfigCmd implements ICommandSlash {
         }
 
         eb.setTitle("Config Updated")
-            .addField("Old Timeout", String.valueOf(oldTimeout), true)
+            .addField("Old Timeout", String.valueOf(oldTimeoutMinutes), true)
             .addField("New Timeout", String.valueOf(newTimeoutMinutes), true);
 
         event.getHook().sendMessageEmbeds(eb.build()).queue();

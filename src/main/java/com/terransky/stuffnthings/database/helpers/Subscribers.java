@@ -74,7 +74,7 @@ public class Subscribers {
 
         public T first() {
             List<T> objects = await().getObjects();
-            return objects.size() > 0 ? getObjects().get(0) : null;
+            return !objects.isEmpty() ? getObjects().get(0) : null;
         }
 
         public ObjectSubscriber<T> await() {

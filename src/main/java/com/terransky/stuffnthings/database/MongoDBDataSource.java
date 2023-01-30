@@ -60,8 +60,8 @@ public class MongoDBDataSource implements DatabaseManager {
         String username = URLEncoder.encode(credentials.getUsername(), StandardCharsets.UTF_8);
         String password = URLEncoder.encode(credentials.getPassword(), StandardCharsets.UTF_8);
 
-        CODEC_REGISTRY = fromRegistries(getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-        CLIENT = getConstructedClient(new ConnectionString("mongodb+srv://" + username + ":" + password + "@" + Config.getMongoHostname()));
+        this.CODEC_REGISTRY = fromRegistries(getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+        this.CLIENT = getConstructedClient(new ConnectionString("mongodb+srv://" + username + ":" + password + "@" + Config.getMongoHostname()));
     }
 
     private void ifAnErrorOccurs(String success, String failed, RuntimeException throwable) {
@@ -200,30 +200,28 @@ public class MongoDBDataSource implements DatabaseManager {
 
                 UserEntry user = (UserEntry) subscriber.first();
                 List<KillLock> killLocks = new ArrayList<>(user.getKillLocks());
-                for (KillLock lock : killLocks) {
-                    if (lock.getGuildReference().equals(blob.getGuildId())) {
-                        killLocks.remove(lock);
-                        lock.setKillUnderTo(!lock.isKillUnderTo());
-                        killLocks.add(lock);
-                        collection.updateOne(search, Updates.set(property.getPropertyName(), killLocks)).subscribe(updater);
-                        break;
-                    }
-                }
+                KillLock killLock = killLocks.stream().filter(lock -> lock.getGuildReference().equals(blob.getGuildId()))
+                    .findFirst()
+                    .orElse(new KillLock(blob.getGuildId()));
+
+                killLocks.remove(killLock);
+                killLock.setKillUnderTo((Boolean) newValue);
+                killLocks.add(killLock);
+                collection.updateOne(search, Updates.set(property.getPropertyName(), killLocks)).subscribe(updater);
             }
             case KILL_ATTEMPTS -> {
                 var subscriber = getSubscriber(collection, search);
 
                 UserEntry user = (UserEntry) subscriber.first();
                 List<KillLock> killLocks = new ArrayList<>(user.getKillLocks());
-                for (KillLock lock : killLocks) {
-                    if (lock.getGuildReference().equals(blob.getGuildId())) {
-                        killLocks.remove(lock);
-                        lock.setKillAttempts((Long) newValue);
-                        killLocks.add(lock);
-                        collection.updateOne(search, Updates.set(property.getPropertyName(), killLocks)).subscribe(updater);
-                        break;
-                    }
-                }
+                KillLock killLock = killLocks.stream().filter(lock -> lock.getGuildReference().equals(blob.getGuildId()))
+                    .findFirst()
+                    .orElse(new KillLock(blob.getGuildId()));
+
+                killLocks.remove(killLock);
+                killLock.setKillAttempts((Long) newValue);
+                killLocks.add(killLock);
+                collection.updateOne(search, Updates.set(property.getPropertyName(), killLocks)).subscribe(updater);
             }
             default ->
                 collection.updateOne(search, Updates.set(property.getPropertyName(), newValue)).subscribe(updater);

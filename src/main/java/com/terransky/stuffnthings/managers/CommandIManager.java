@@ -82,8 +82,7 @@ public class CommandIManager<T extends ICommand> extends IManager<T> {
                 try {
                     add(command.getCommandData());
                 } catch (ParseException e) {
-                    String commandName = command instanceof ICommandSlash slash ?
-                        slash.getNameReadable() : command.getName();
+                    String commandName = command instanceof ICommandSlash slash ? slash.getNameReadable() : command.getName();
                     log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(commandName.toUpperCase()));
                 }
             }

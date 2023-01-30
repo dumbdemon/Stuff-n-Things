@@ -17,7 +17,7 @@ public class GuildOnly {
     private GuildOnly() {
     }
 
-    public static <T extends GenericCommandInteractionEvent> void interactionResponse(@NotNull T event, IInteraction.Type type) {
+    public static void interactionResponse(@NotNull GenericCommandInteractionEvent event, IInteraction.Type type) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
                 .setDescription(Responses.GUILD_ONLY.getMessage(type))
@@ -25,7 +25,7 @@ public class GuildOnly {
         ).queue();
     }
 
-    public static <T extends GenericComponentInteractionCreateEvent> void interactionResponse(@NotNull T event, IInteraction.Type type) {
+    public static void interactionResponse(@NotNull GenericComponentInteractionCreateEvent event, IInteraction.Type type) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
                 .setDescription(Responses.GUILD_ONLY.getMessage(type))
@@ -33,10 +33,10 @@ public class GuildOnly {
         ).queue();
     }
 
-    public static void interactionResponse(@NotNull ModalInteractionEvent event, IInteraction.Type type) {
+    public static void interactionResponse(@NotNull ModalInteractionEvent event) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
-                .setDescription(Responses.GUILD_ONLY.getMessage(type))
+                .setDescription(Responses.GUILD_ONLY.getMessage(IInteraction.Type.MODAL))
                 .build()
         ).queue();
     }

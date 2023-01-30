@@ -130,16 +130,16 @@ public class WhatsInStandard implements ICommandSlash {
             case "what-is-standard" -> eb.setDescription("""
                 **What *is* Standard?**
                 [Standard](https://magic.wizards.com/en/formats/standard) is a tournament format containing several recent Magic: The Gathering sets. Most sets enter the format when they're released and drop out about twenty-one months later.
-                                
+
                 Generally the group contains 5–8 sets; when a ninth would be released, the eldest four are dropped. This is a rule of thumb and exceptions are frequently made. This command will always have current information.
-                                
+
                 A **Standard card** is a card from a set currently part of the legal pool. *Different versions of a card count as the same card.*
-                               
+
                 A **Standard deck** contains 60+ Standard cards and can optionally have a sideboard of up to 15 additional such cards. Apart from basic lands, the combined main deck and sideboard cannot have more than four copies of any card.
-                                
+
                 **Related sets and formats**
                 [Brawl](https://magic.wizards.com/en/formats/brawl) is a format based on Standard—all rotations listed here apply to Brawl as well—but Brawl has its own ban list.
-                                
+
                 Not all sets enter Standard upon release. For example, Masters sets and [Commander](https://magic.wizards.com/en/formats/commander) sets never enter the format.
                 """);
         }
