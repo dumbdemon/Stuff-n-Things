@@ -38,7 +38,7 @@ public class Kill implements ICommandSlash {
                     }
                 }}
             )
-            .orElse(List.of("… just dies by %s's hands."));
+            .orElse(List.of("just dies by %s's hands."));
         List<String> victims = new ArrayList<>() {{
             blob.getGuild().getMembers().stream()
                 .filter(member -> !member.getUser().isBot() || member.getUser().equals(event.getJDA().getSelfUser()))
@@ -63,8 +63,8 @@ public class Kill implements ICommandSlash {
 
     private void killTarget(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, Random random, EmbedBuilder eb) {
         String target = event.getOption("target", event.getJDA().getSelfUser(), OptionMapping::getAsUser).getAsMention();
-        if (target.equals(event.getJDA().getSelfUser().getAsMention())) {
-            target += " (hey wait a second...)";
+        if (target.equals(blob.getSelfMember().getAsMention())) {
+            target += " (hey wait a second…)";
         }
 
         if (!event.getUser().getId().equals(Config.getDeveloperId()) &&
