@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.terransky.stuffnthings.database.helpers.Property;
+import com.terransky.stuffnthings.database.helpers.entry.UserGuildEntry;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
@@ -69,18 +70,9 @@ public class Kill implements ICommandSlash {
 
         if (!event.getUser().getId().equals(Config.getDeveloperId()) &&
             !blob.getGuildId().equals(Config.getSupportGuildId())) {
-            long maxKills = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILLS_MAX)
-                .map(o -> (long) o)
-                .orElse(5L);
-            long attempts = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILL_ATTEMPTS)
-                .map(o -> (long) o)
-                .orElse(0L);
-            long timeout = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILLS_TIMEOUT)
-                .map(o -> (long) o)
-                .orElse(0L);
-            boolean isUnderTimeout = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILL_TIMEOUT)
-                .map(o -> (boolean) o)
-                .orElse(false);
+            UserGuildEntry entry = DatabaseManager.INSTANCE.getUserGuildEntry(blob.getMemberId(), blob.getGuildId());
+            long maxKills = entry.getMaxKills();
+            long attempts = entry.getKillAttempts();
 
             if (attempts >= maxKills) {
                 event.replyEmbeds(
@@ -91,8 +83,8 @@ public class Kill implements ICommandSlash {
             }
 
             DatabaseManager.INSTANCE.updateProperty(blob, Property.KILL_ATTEMPTS, attempts + 1);
-            if (!isUnderTimeout)
-                performLockOut(blob, timeout);
+            if (!entry.isUnderTimeout())
+                performLockOut(blob, entry.getTimeout());
         }
         List<String> targetStrings = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILL_TARGET)
             .map(o -> (List<String>) new ArrayList<String>() {{
@@ -109,13 +101,7 @@ public class Kill implements ICommandSlash {
 
     private void performLockOut(EventBlob blob, long timeout) {
         DatabaseManager.INSTANCE.updateProperty(blob, Property.KILL_TIMEOUT, true);
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                DatabaseManager.INSTANCE.updateProperty(blob, Property.KILL_ATTEMPTS, 0);
-                DatabaseManager.INSTANCE.updateProperty(blob, Property.KILL_TIMEOUT, false);
-            }
-        }, timeout);
+        new Timer().schedule(new ResetKillProperties(blob), timeout);
     }
 
     @Override
@@ -131,7 +117,7 @@ public class Kill implements ICommandSlash {
             """, Mastermind.USER,
             CommandCategory.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("27-1-2023_21:38")
+            format.parse("31-1-2023_12:03")
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),
@@ -177,6 +163,22 @@ public class Kill implements ICommandSlash {
             }
 
             case "target" -> killTarget(event, blob, random, eb);
+        }
+    }
+
+    static class ResetKillProperties extends TimerTask {
+
+        private final String userId;
+        private final String guildId;
+
+        protected ResetKillProperties(@NotNull EventBlob blob) {
+            this.userId = blob.getMemberId();
+            this.guildId = blob.getGuildId();
+        }
+
+        @Override
+        public void run() {
+            DatabaseManager.INSTANCE.resetUserKillProperties(userId, guildId);
         }
     }
 }

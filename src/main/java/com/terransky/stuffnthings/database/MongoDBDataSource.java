@@ -15,10 +15,7 @@ import com.mongodb.reactivestreams.client.MongoCollection;
 import com.mongodb.reactivestreams.client.MongoDatabase;
 import com.terransky.stuffnthings.database.helpers.KillStorage;
 import com.terransky.stuffnthings.database.helpers.Property;
-import com.terransky.stuffnthings.database.helpers.entry.GuildEntry;
-import com.terransky.stuffnthings.database.helpers.entry.KillLock;
-import com.terransky.stuffnthings.database.helpers.entry.KillStrings;
-import com.terransky.stuffnthings.database.helpers.entry.UserEntry;
+import com.terransky.stuffnthings.database.helpers.entry.*;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.Config;
@@ -170,6 +167,45 @@ public class MongoDBDataSource implements DatabaseManager {
             }
             default ->
                 throw new IllegalArgumentException(String.format("Cannot retrieve property of %s from database", property));
+        }
+    }
+
+    @Override
+    public UserGuildEntry getUserGuildEntry(@NotNull String userId, @NotNull String guildId) {
+        var guilds = getGuilds();
+        var users = getUsers();
+        var guildGetter = new ObjectSubscriber<GuildEntry>();
+        var userGetter = new ObjectSubscriber<UserEntry>();
+
+        guilds.find(Filters.eq(ID_REFERENCE.getPropertyName(Table.GUILD), guildId)).subscribe(guildGetter);
+        users.find(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId)).subscribe(userGetter);
+
+        GuildEntry guildEntry = guildGetter.await().first();
+
+        KillLock killLock = userGetter.await().first().getKillLocks().stream().filter(lock -> lock.getGuildReference().equals(guildId))
+            .findFirst().orElse(new KillLock(guildId));
+
+        return new UserGuildEntry(killLock)
+            .setMaxKills(guildEntry.getKillMaximum())
+            .setTimeout(guildEntry.getKillTimeout());
+    }
+
+    @Override
+    public void resetUserKillProperties(@NotNull String userId, @NotNull String guildId) {
+        var users = getUsers();
+        var userGetter = new ObjectSubscriber<UserEntry>();
+
+        users.find(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId)).subscribe(userGetter);
+
+        List<KillLock> killLocks = userGetter.await().first().getKillLocks();
+        for (KillLock killLock : killLocks) {
+            if (killLock.getGuildReference().equals(guildId)) {
+                killLocks.remove(killLock);
+                killLock.setKillAttempts(0L);
+                killLock.setKillUnderTo(false);
+                killLocks.add(killLock);
+                break;
+            }
         }
     }
 

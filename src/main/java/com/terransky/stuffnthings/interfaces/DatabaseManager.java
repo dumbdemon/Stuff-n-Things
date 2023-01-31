@@ -3,6 +3,7 @@ package com.terransky.stuffnthings.interfaces;
 import com.terransky.stuffnthings.database.MongoDBDataSource;
 import com.terransky.stuffnthings.database.helpers.KillStorage;
 import com.terransky.stuffnthings.database.helpers.Property;
+import com.terransky.stuffnthings.database.helpers.entry.UserGuildEntry;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,23 @@ public interface DatabaseManager {
      * @return An {@link Optional} object associated with the property
      */
     Optional<Object> getFromDatabase(@NotNull EventBlob blob, @NotNull Property property);
+
+    /**
+     * Get all properties form the database connected to a specific user.
+     *
+     * @param userId  A user id
+     * @param guildId A guild id
+     * @return A {@link UserGuildEntry}
+     */
+    UserGuildEntry getUserGuildEntry(@NotNull String userId, @NotNull String guildId);
+
+    /**
+     * Reset all user properties for the {@link com.terransky.stuffnthings.interactions.commands.slashCommands.fun.Kill /kill} command
+     *
+     * @param userId  The user id to reset
+     * @param guildId The guild id reference for the {@link com.terransky.stuffnthings.database.helpers.entry.KillLock KillLock}
+     */
+    void resetUserKillProperties(@NotNull String userId, @NotNull String guildId);
 
     /**
      * Update a property in the database
