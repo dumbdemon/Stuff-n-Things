@@ -11,13 +11,16 @@ Command info moved to [GitHub Wiki](https://github.com/dumbdemon/Stuff-n-Things/
 
 ## Things to Note
 
-* There is also a `/test` command that would be located in
-  the [dev commands folder](https://github.com/dumbdemon/Stuff-n-Things/tree/master/src/main/java/com/terransky/stuffnthings/interactions/commands/slashCommands/devs)
+* There is also a `/test` command that would be located in the
+  [dev commands folder](https://github.com/dumbdemon/Stuff-n-Things/tree/master/src/main/java/com/terransky/stuffnthings/interactions/commands/slashCommands/devs)
   is not included as it would contain hardcoded IDs that I do not wish to expose. If you would like the command for
-  yourself, please create one
-  implementing [ICommandSlash](https://github.com/dumbdemon/Stuff-n-Things/blob/master/src/main/java/com/terransky/stuffnthings/interfaces/interactions/ICommandSlash.java)
-  or delete/comment out the `new test(),` line in
-  the [ManagersManager](https://github.com/dumbdemon/Stuff-n-Things/blob/master/src/main/java/com/terransky/stuffnthings/ManagersManager.java)
+  yourself, please create one implementing
+  [ICommandSlash](https://github.com/dumbdemon/Stuff-n-Things/blob/master/src/main/java/com/terransky/stuffnthings/interfaces/interactions/ICommandSlash.java)
+  or delete/comment out the `new test(),` line in the
+  [Managers](https://github.com/dumbdemon/Stuff-n-Things/blob/master/src/main/java/com/terransky/stuffnthings/Managers.java)
   class.
 * The `/rob-fail-chance` was built for the Discord™ bot [UnbelievaBoat](https://unbelievaboat.com/)'s rob command.
-* Database uses [MongoDB](https://www.mongodb.com/).
+* Database uses [MongoDB](https://www.mongodb.com/). An alternate database can be created implementing
+  [DatabaseManager](https://github.com/dumbdemon/Stuff-n-Things/blob/master/src/main/java/com/terransky/stuffnthings/interfaces/DatabaseManager.java)
+  and changing
+  the `INSTANCE` variable within the interface.
