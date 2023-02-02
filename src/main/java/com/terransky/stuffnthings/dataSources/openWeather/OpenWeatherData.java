@@ -1,17 +1,12 @@
 package com.terransky.stuffnthings.dataSources.openWeather;
 
 import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.terransky.stuffnthings.interfaces.MapperObject;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Generated;
 import javax.validation.Valid;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Generated("jsonschema2pojo")
-public class OpenWeatherData {
+public class OpenWeatherData implements MapperObject {
 
     @JsonProperty("lat")
     private Float latitude;
@@ -127,12 +122,5 @@ public class OpenWeatherData {
     public OpenWeatherData setGeoData(OpenWeatherGeoData geoData) {
         this.geoData = geoData;
         return this;
-    }
-
-    @JsonIgnore
-    public String getAsJsonString(@NotNull ObjectMapper mapper) throws IOException {
-        File testFile = new File("test.json");
-        BufferedWriter writer = new BufferedWriter(new FileWriter(testFile));
-        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
     }
 }

@@ -3,6 +3,7 @@ package com.terransky.stuffnthings.dataSources.oxfordDictionary;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.terransky.stuffnthings.interfaces.MapperObject;
 
 import javax.annotation.Generated;
 
@@ -11,7 +12,7 @@ import javax.annotation.Generated;
     "error"
 })
 @Generated("jsonschema2pojo")
-public class OxfordError {
+public class OxfordError implements MapperObject {
 
     @JsonProperty("error")
     private String error;

@@ -245,7 +245,7 @@ public class ConfigCmd implements ICommandSlash {
         if (newMax == oldMax) {
             log.debug("No change for {}", blob.getGuildId());
             event.getHook().sendMessageEmbeds(
-                eb.setDescription("Currently set Max Kills is requested amount: `%d Max Kills`." .formatted(newMax))
+                eb.setDescription("Currently set Max Kills is requested amount: `%d Max Kills`.".formatted(newMax))
                     .build()
             ).queue();
             return;

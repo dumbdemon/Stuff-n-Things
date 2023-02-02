@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.terransky.stuffnthings.interfaces.MapperObject;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Generated;
@@ -24,7 +25,7 @@ import java.util.concurrent.TimeUnit;
     "token_type"
 })
 @Generated("jsonschema2pojo")
-public class KitsuAuth {
+public class KitsuAuth implements MapperObject {
 
     @JsonProperty("access_token")
     private String accessToken;

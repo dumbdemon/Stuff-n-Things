@@ -68,7 +68,7 @@ public class TinyURL implements ICommandSlash {
         return new Metadata(getName(), "Create short URLs with TinyURL",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
             format.parse("6-1-2023_16:04"),
-            format.parse("15-1-2023_17:37")
+            format.parse("1-2-2023_19:02")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "url", "A URL to shorten.", true),
@@ -98,7 +98,7 @@ public class TinyURL implements ICommandSlash {
             tinyURLHandler.withDomain(domain);
             alias.ifPresent(tinyURLHandler::withAlias);
             TinyURLData shortURLData = tinyURLHandler.sendRequest();
-            String requestData = tinyURLHandler.getRequestBody(),
+            String requestData = tinyURLHandler.getAsJsonString(),
                 reportingURL = Config.getErrorReportingURL();
 
             if (Config.isTestingMode())

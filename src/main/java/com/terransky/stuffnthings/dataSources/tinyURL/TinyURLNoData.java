@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.terransky.stuffnthings.interfaces.MapperObject;
 
 import javax.annotation.Generated;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.List;
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Generated("jsonschema2pojo")
-public class TinyURLNoData {
+public class TinyURLNoData implements MapperObject {
 
     @JsonProperty("code")
     int code;

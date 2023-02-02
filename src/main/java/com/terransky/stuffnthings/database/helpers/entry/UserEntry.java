@@ -58,7 +58,8 @@ public class UserEntry {
                 return killLocks.stream().filter(isItThisOne).findFirst()
                     .map(KillLock::getKillAttempts);
             }
-            case KILL_LOCK -> throw new IllegalArgumentException(String.format("%S is not intended to be called.", property));
+            case KILL_LOCK ->
+                throw new IllegalArgumentException(String.format("%S is not intended to be called.", property));
             default -> throw new IllegalArgumentException(String.format("%S is not a guild property.", property));
         }
     }

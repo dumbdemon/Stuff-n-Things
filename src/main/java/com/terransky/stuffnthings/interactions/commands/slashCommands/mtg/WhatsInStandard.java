@@ -28,8 +28,8 @@ import java.util.function.Predicate;
 public class WhatsInStandard implements ICommandSlash {
 
     private final Predicate<MtGSet> IS_VALID_SET = (set) -> set.getCode() != null &&
-        set.getEnterDate().getExact().compareTo(new Date()) <= 0 &&
-        (set.getExitDate().getExact() == null || set.getExitDate().getExact().compareTo(new Date()) >= 0);
+        (set.getEnterDate().getExactAsDate() != null && set.getEnterDate().getExactAsDate().before(new Date())) &&
+        (set.getExitDate().getExactAsDate() == null || set.getExitDate().getExactAsDate().after(new Date()));
 
     private @NotNull String getSets(@NotNull List<MtGSet> mtgSets) {
         StringBuilder theSets = new StringBuilder();
@@ -86,7 +86,7 @@ public class WhatsInStandard implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.MTG,
             format.parse("27-10-2022_12:46"),
-            format.parse("15-12-2023_17:35")
+            format.parse("1-2-2023_19:47")
         )
             .addSubcommands(
                 new SubcommandData("all", "Get all info about the standard format."),

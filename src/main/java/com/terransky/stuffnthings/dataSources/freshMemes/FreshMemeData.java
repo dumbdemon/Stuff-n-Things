@@ -3,6 +3,7 @@ package com.terransky.stuffnthings.dataSources.freshMemes;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.terransky.stuffnthings.interfaces.MapperObject;
 
 import javax.annotation.Generated;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.List;
     "preview"
 })
 @Generated("jsonschema2pojo")
-public class FreshMemeData {
+public class FreshMemeData implements MapperObject {
 
     @JsonProperty("postLink")
     private String postLink;

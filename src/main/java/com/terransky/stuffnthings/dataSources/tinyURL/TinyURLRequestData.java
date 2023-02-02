@@ -1,8 +1,10 @@
 package com.terransky.stuffnthings.dataSources.tinyURL;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.terransky.stuffnthings.interfaces.MapperObject;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Generated;
@@ -21,7 +23,7 @@ import java.util.Date;
     "expires_at"
 })
 @Generated("jsonschema2pojo")
-public class TinyURLRequestData {
+public class TinyURLRequestData implements MapperObject {
 
     @JsonProperty("url")
     private String url;
@@ -65,10 +67,12 @@ public class TinyURLRequestData {
         this.domain = domain;
     }
 
+    @JsonIgnore
     public void setDomain(@NotNull TinyURLLimits.Domain domain) {
         setDomain(domain.getDomain());
     }
 
+    @JsonIgnore
     public TinyURLRequestData withDomain(@NotNull TinyURLLimits.Domain domain) {
         setDomain(domain.getDomain());
         return this;
@@ -84,6 +88,7 @@ public class TinyURLRequestData {
         this.alias = alias;
     }
 
+    @JsonIgnore
     public TinyURLRequestData withAlias(String alias) {
         this.alias = alias;
         return this;
@@ -99,6 +104,7 @@ public class TinyURLRequestData {
         this.tags = tags;
     }
 
+    @JsonIgnore
     public TinyURLRequestData withTags(String tags) {
         this.tags = tags;
         return this;
@@ -114,14 +120,17 @@ public class TinyURLRequestData {
         this.expiresAt = expiresAt;
     }
 
+    @JsonIgnore
     public String getExpiresAtAsString() {
         return getExpiresAtAsString("yyyy-MM-dd hh:mm:ss");
     }
 
+    @JsonIgnore
     public String getExpiresAtAsString(String pattern) {
         return new SimpleDateFormat(pattern).format(expiresAt);
     }
 
+    @JsonIgnore
     public TinyURLRequestData withExpiresAt(Date expiresAt) {
         this.expiresAt = expiresAt;
         return this;

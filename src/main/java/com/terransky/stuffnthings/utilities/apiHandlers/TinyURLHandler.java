@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.utilities.apiHandlers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLData;
 import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLNoData;
 import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLRequestData;
@@ -20,6 +20,7 @@ import java.util.concurrent.Executors;
 
 public class TinyURLHandler extends TinyURLRequestData {
 
+    @JsonIgnore
     private final ObjectMapper MAPPER = new ObjectMapper();
 
     /**
@@ -33,6 +34,7 @@ public class TinyURLHandler extends TinyURLRequestData {
         super(url);
     }
 
+    @JsonIgnore
     public TinyURLData sendRequest() {
         ExecutorService service = Executors.newSingleThreadExecutor();
         HttpClient client = HttpClient.newBuilder()
@@ -40,13 +42,13 @@ public class TinyURLHandler extends TinyURLRequestData {
             .connectTimeout(Duration.ofSeconds(5))
             .executor(service)
             .build();
-        HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("https://api.tinyurl.com/create?api_token=" + Config.Credentials.TINYURL.getPassword()))
-            .setHeader("accept", "application/json")
-            .setHeader("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(getRequestBody()))
-            .build();
         try {
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.tinyurl.com/create?api_token=" + Config.Credentials.TINYURL.getPassword()))
+                .setHeader("accept", "application/json")
+                .setHeader("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(getAsJsonString()))
+                .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             TinyURLNoData data = MAPPER.readValue(response.body(), TinyURLNoData.class);
@@ -60,17 +62,5 @@ public class TinyURLHandler extends TinyURLRequestData {
         } finally {
             service.shutdownNow();
         }
-    }
-
-    public String getRequestBody() {
-        ObjectNode rootNode = MAPPER.createObjectNode();
-
-        rootNode.put("url", getUrl());
-        rootNode.put("domain", getDomain());
-        rootNode.put("alias", getAlias());
-        rootNode.put("tags", getTags());
-        rootNode.put("expires_at", getExpiresAt() != null ? getExpiresAtAsString() : null);
-
-        return rootNode.toPrettyString();
     }
 }

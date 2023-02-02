@@ -43,6 +43,8 @@ public class MtGSet {
 
     @JsonProperty("codename")
     public String getCodename() {
+        if (codename == null)
+            return "";
         return codename;
     }
 
@@ -53,6 +55,8 @@ public class MtGSet {
 
     @JsonProperty("code")
     public String getCode() {
+        if (code == null)
+            return "";
         return code;
     }
 
