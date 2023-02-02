@@ -18,6 +18,9 @@ import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * The handler for TinyURL's API
+ */
 public class TinyURLHandler extends TinyURLRequestData {
 
     @JsonIgnore
@@ -34,6 +37,11 @@ public class TinyURLHandler extends TinyURLRequestData {
         super(url);
     }
 
+    /**
+     * Get a shorten url
+     *
+     * @return A {@link TinyURLData}
+     */
     @JsonIgnore
     public TinyURLData sendRequest() {
         ExecutorService service = Executors.newSingleThreadExecutor();

@@ -14,6 +14,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The handler for OpenWeather's API
+ */
 public class OpenWeatherHandler {
 
     /**
@@ -69,11 +72,26 @@ public class OpenWeatherHandler {
         }};
     }
 
+    /**
+     * Get weather date from geo coordinates
+     *
+     * @param lat The latitude
+     * @param lon The longitude
+     * @return An {@link OpenWeatherData}
+     * @throws IOException If an i/o exception occurs
+     */
     public OpenWeatherData getWeatherData(double lat, double lon) throws IOException {
         URL request = new URL(String.format(BASE_URL, lat, lon));
         return MAPPER.readValue(request, OpenWeatherData.class);
     }
 
+    /**
+     * Get weather data from a US zipcode
+     *
+     * @param zipcode A US zipcode
+     * @return An {@link OpenWeatherData}
+     * @throws IOException If an i/o exception occurs
+     */
     public OpenWeatherData getWeatherData(int zipcode) throws IOException {
         String zicodeString = String.valueOf(zipcode);
         int difference = 5 - zicodeString.length();
@@ -82,6 +100,14 @@ public class OpenWeatherHandler {
         return getWeatherData(zicodeString, CountryCode.US);
     }
 
+    /**
+     * Get weather data using a zipcode of a country
+     *
+     * @param zipcode     A zipcode
+     * @param countryCode A {@link CountryCode} enum
+     * @return An {@link OpenWeatherData}
+     * @throws IOException If an i/o exception occurs
+     */
     public OpenWeatherData getWeatherData(String zipcode, @NotNull CountryCode countryCode) throws IOException {
         URL request = new URL(String.format("http://api.openweathermap.org/geo/1.0/zip?zip=%s,%s&appid=%s",
             zipcode,

@@ -1,9 +1,7 @@
 package com.terransky.stuffnthings.utilities.apiHandlers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.terransky.stuffnthings.dataSources.kitsu.KitsuAuth;
-import com.terransky.stuffnthings.dataSources.kitsu.KitsuAuthError;
+import com.terransky.stuffnthings.dataSources.kitsu.*;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.anime.AnimeKitsuData;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.manga.MangaKitsuData;
 import com.terransky.stuffnthings.dataSources.kitsu.relationships.Relationships;
@@ -28,6 +26,9 @@ import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Handler for Kitsu.io API requests
+ */
 @SuppressWarnings("SpellCheckingInspection")
 public class KitsuHandler {
 
@@ -63,8 +64,9 @@ public class KitsuHandler {
             .executor(service)
             .build();
         try {
-            ObjectNode rootNode = MAPPER.createObjectNode();
+            String requestBody;
 
+            //todo: replace if-else block with database call
             if (KITSU_AUTH.exists()) {
                 log.info("Auth found: reading file");
                 KitsuAuth auth = MAPPER.readValue(KITSU_AUTH, KitsuAuth.class);
@@ -74,8 +76,9 @@ public class KitsuHandler {
                 }
                 log.info("Auth is invalid: requesting new auth");
 
-                rootNode.put("grant_type", "refresh_token");
-                rootNode.put("refresh_token", auth.getRefreshToken());
+                requestBody = new RefreshKitsuAuthRequest()
+                    .setRefreshToken(auth.getRefreshToken())
+                    .getAsJsonString();
             } else {
                 log.info("Auth not found: creating file");
                 if (credentials.isDefault()) {
@@ -83,15 +86,16 @@ public class KitsuHandler {
                     return false;
                 }
 
-                rootNode.put("grant_type", "password");
-                rootNode.put("username", credentials.getUsername());
-                rootNode.put("password", credentials.getPassword());
+                requestBody = new PasswordKitsuAuthRequest()
+                    .setUsername(credentials.getUsername())
+                    .setPassword(credentials.getPassword())
+                    .getAsJsonString();
             }
 
             HttpRequest request = HttpRequest.newBuilder()
                 .setHeader("Content-Type", "application/json")
                 .uri(URI.create("https://kitsu.io/api/oauth/token"))
-                .POST(HttpRequest.BodyPublishers.ofString(rootNode.toPrettyString()))
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -107,7 +111,8 @@ public class KitsuHandler {
 
             KitsuAuth auth = MAPPER.readValue(response.body(), KitsuAuth.class);
 
-            auth.saveTestJson(FILE_NAME.replace(".json", ""));
+            //todo: create database call and change to save if testing mode
+            auth.saveAsJsonFile(KITSU_AUTH);
             log.info("Auth request successful: absolute path of new auth is {}", KITSU_AUTH.getAbsolutePath());
         } catch (IOException | InterruptedException e) {
             log.error("{}; {}", e.getClass().getName(), e.getMessage());
@@ -119,16 +124,37 @@ public class KitsuHandler {
         return true;
     }
 
+    /**
+     * Get manga from Kitsu.io
+     *
+     * @param search Query for search
+     * @return A {@link MangaKitsuData}
+     * @throws IOException If an i/o exception occurs
+     */
     public MangaKitsuData getManga(@NotNull String search) throws IOException {
         URL manga = new URL(BASE_URL + "manga?filter%5Btext%5D=" + search.toLowerCase().replaceAll(" ", "%20"));
         return MAPPER.readValue(getInputStreamOf(manga), MangaKitsuData.class);
     }
 
+    /**
+     * Get anime from Kitsu.io
+     *
+     * @param search Query for search
+     * @return A {@link AnimeKitsuData}
+     * @throws IOException If an i/o exception occurs
+     */
     public AnimeKitsuData getAnime(@NotNull String search) throws IOException {
         URL anime = new URL(BASE_URL + "anime?filter%5Btext%5D=" + search.toLowerCase().replaceAll(" ", "%20"));
         return MAPPER.readValue(getInputStreamOf(anime), AnimeKitsuData.class);
     }
 
+    /**
+     * Get the categories of an anime or manga
+     *
+     * @param relationships {@link Relationships} from a {@link Datum}
+     * @return A {@link CategoriesKitsuData}
+     * @throws IOException If an i/o exception occurs
+     */
     public CategoriesKitsuData getCategories(@NotNull Relationships relationships) throws IOException {
         URL genres = new URL(relationships.getCategories().getLinks().getRelated());
         return MAPPER.readValue(getInputStreamOf(genres), CategoriesKitsuData.class);
