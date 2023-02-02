@@ -47,6 +47,7 @@ public class Managers {
         new ColorInfo(),
         new Dictionary(),
         new GetDadJokes(),
+        new GetWeather(),
         new Kill(),
         new Kitsu.Anime(),
         new Kitsu.Manga(),

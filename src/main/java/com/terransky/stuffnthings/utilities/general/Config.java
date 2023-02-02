@@ -113,6 +113,7 @@ public class Config {
          * The token for the Kitsu.io API. Only required to show NSFW titles.
          */
         KITSU_IO(config.get("KITSU_USERNAME", DEFAULT_USERNAME), Formatter.percentEncode(config.get("KITSU_PASSWORD", DEFAULT_PASSWORD))),
+        OPEN_WEATHER(config.get("OPEN_WEATHER_KEY", DEFAULT_PASSWORD)),
         ;
 
         private final String username;

@@ -55,25 +55,39 @@ public class About implements ICommandSlash {
         FastDateFormat format = Metadata.getFastDateFormat();
         return new Metadata(this.getName(), "What am I? Who am I?", """
             The about command. What else did you expect?
+            ***NOTE:** If you choose from both, the command will prioritize `command-one`.
             """, Mastermind.DEVELOPER,
             CommandCategory.GENERAL,
             format.parse("24-08-2022_11:10"),
-            format.parse("30-1-2023_16:15")
+            format.parse("1-2-2023_17:12")
         )
             .addOptions(
-                new OptionData(OptionType.STRING, "command", "Get more info on a Command.")
-                    .addChoices(Managers.getInstance().getSlashManager().getCommandsAsChoices())
+                new OptionData(OptionType.STRING, "command-one", "Get more info on a Command.")
+                    .addChoices(Managers.getInstance().getSlashManager().getCommandsAsChoicesSetOne()),
+                new OptionData(OptionType.STRING, "command-two", "Get more info on a Command.")
+                    .addChoices(Managers.getInstance().getSlashManager().getCommandsAsChoicesSetTwo())
             );
     }
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         event.deferReply().queue();
-        Optional<String> ifCommand = Optional.ofNullable(event.getOption("command", OptionMapping::getAsString));
+        Optional<String> ifCommandOne = Optional.ofNullable(event.getOption("command-one", OptionMapping::getAsString));
+        Optional<String> ifCommandTwo = Optional.ofNullable(event.getOption("command-two", OptionMapping::getAsString));
+        Optional<String> ifCommandThree = Optional.ofNullable(event.getOption("command-three", OptionMapping::getAsString));
+        Optional<String> ifCommandFour = Optional.ofNullable(event.getOption("command-four", OptionMapping::getAsString));
 
-        if (ifCommand.isPresent()) {
+        if (ifCommandOne.isPresent() || ifCommandTwo.isPresent() || ifCommandThree.isPresent() || ifCommandFour.isPresent()) {
             try {
-                getCommandInfo(event, blob, ifCommand.get());
+                String command = ifCommandOne.orElse(
+                    ifCommandTwo.orElse(
+                        ifCommandThree.orElse(
+                            ifCommandFour.orElse(getName())
+                        )
+                    )
+                );
+
+                getCommandInfo(event, blob, command);
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }

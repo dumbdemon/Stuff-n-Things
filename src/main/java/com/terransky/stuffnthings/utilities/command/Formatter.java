@@ -28,7 +28,7 @@ public class Formatter {
 
     /**
      * Makes extra large numbers look nice~ <br />
-     * Code Courtesy of <a href="https://stackoverflow.com/questions/4753251/how-to-go-about-formatting-1200-to-1-2k-in-java">assylias's answer</a> on stackoverflow.
+     * Code Courtesy of <a href="https://stackoverflow.com/a/30661479">assylias's answer</a> on stackoverflow.
      *
      * @return {@link String} that contains a two-point decimal and the scale of value.
      */
