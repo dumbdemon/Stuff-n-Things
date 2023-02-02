@@ -85,23 +85,24 @@ public class Current {
 
     @JsonInclude
     public String getPrettyWindString(float windValue) {
-        float asMiles = (float) (windValue / 1_609.344);
-        int e = 0;
-        while (asMiles < 1.0) {
-            asMiles *= 10;
-            e++;
-        }
-        return String.format("**%s**m/s | **%s * 10^%s**mph", windValue, FORMAT.format(asMiles), -e);
+        double asMPH = windValue * 2.2369;
+        return String.format("**%s**m/s | **%s**mph", windValue, FORMAT.format(asMPH));
     }
 
     @JsonIgnore
     public String getPrettyTempretures(Float tempreture) {
-        return String.format(
-            "**%s**K | **%s**°C | **~%s**°F",
-            FORMAT.format(tempreture),
-            FORMAT.format(KelvinToCelsius(tempreture)),
-            FORMAT.format(KelvinToFerenheit(tempreture))
-        );
+        float celiusFloat = KelvinToCelsius(tempreture);
+        float ferenheitFloat = KelvinToFerenheit(tempreture);
+
+        int celsiusInt = celiusFloat < 0.0 ?
+            (int) Math.floor(celiusFloat) :
+            (int) Math.ceil(celiusFloat);
+
+        int ferenheitInt = ferenheitFloat < 0.0 ?
+            (int) Math.floor(ferenheitFloat) :
+            (int) Math.ceil(ferenheitFloat);
+
+        return String.format("**%s**K | **%s**°C | **%s**°F", FORMAT.format(tempreture), celsiusInt, ferenheitInt);
     }
 
     @JsonProperty("dt")
