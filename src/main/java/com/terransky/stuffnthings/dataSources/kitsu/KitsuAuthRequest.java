@@ -66,10 +66,18 @@ public class KitsuAuthRequest implements MapperObject {
 
         private final String type;
 
+        /**
+         * Contructor for not yet implented grant types
+         */
         GrantType() {
             this(null);
         }
 
+        /**
+         * Contructor for implented grant types
+         *
+         * @param type The grant type
+         */
         GrantType(String type) {
             this.type = type;
         }

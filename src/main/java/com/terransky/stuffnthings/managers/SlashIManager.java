@@ -13,6 +13,11 @@ import java.util.Optional;
 
 public class SlashIManager extends CommandIManager<ICommandSlash> {
 
+    /**
+     * Initializes an {@link IManager} for {@link ICommandSlash ICommandSlashes}
+     *
+     * @param interactions An array of {@link ICommandSlash ICommandSlashes}
+     */
     public SlashIManager(@NotNull ICommandSlash... interactions) {
         for (ICommandSlash iCommandSlash : interactions) {
             noTypeCheckAddInteraction(iCommandSlash);
