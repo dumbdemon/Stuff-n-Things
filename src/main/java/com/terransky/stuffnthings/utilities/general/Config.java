@@ -15,6 +15,9 @@ public class Config {
     private static final String DEFAULT_USER_ID = "000000000000000000";
     private static final String DEFAULT_GUILD_ID = "0000000000000000000";
 
+    /**
+     * The bot config for all per bot values
+     */
     private Config() {
     }
 

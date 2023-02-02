@@ -18,9 +18,17 @@ public class UserEntry {
     @BsonProperty("killLocks")
     private List<KillLock> killLocks;
 
+    /**
+     * No-args constructor for Mongo Driver
+     */
     public UserEntry() {
     }
 
+    /**
+     * Initializes a new UserEntry for new user
+     *
+     * @param idReference A {@link net.dv8tion.jda.api.entities.User user}'s id
+     */
     public UserEntry(String idReference) {
         this.idReference = idReference;
         this.killLocks = new ArrayList<>();
