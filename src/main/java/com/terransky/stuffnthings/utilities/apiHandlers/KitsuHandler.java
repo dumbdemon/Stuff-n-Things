@@ -14,7 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -105,9 +107,7 @@ public class KitsuHandler {
 
             KitsuAuth auth = MAPPER.readValue(response.body(), KitsuAuth.class);
 
-            BufferedWriter writer = new BufferedWriter(new FileWriter(KITSU_AUTH));
-            writer.append(auth.getPrettyString(MAPPER));
-            writer.close();
+            auth.saveTestJson(FILE_NAME.replace(".json", ""));
             log.info("Auth request successful: absolute path of new auth is {}", KITSU_AUTH.getAbsolutePath());
         } catch (IOException | InterruptedException e) {
             log.error("{}; {}", e.getClass().getName(), e.getMessage());

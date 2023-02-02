@@ -2,6 +2,7 @@ package com.terransky.stuffnthings.interfaces;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,11 +13,13 @@ import java.io.IOException;
 public interface MapperObject {
 
     @JsonIgnore
+    @BsonIgnore
     default void saveTestJson() throws IOException {
         saveTestJson("test");
     }
 
     @JsonIgnore
+    @BsonIgnore
     default void saveTestJson(String name) throws IOException {
         File testFile = new File(name + ".json");
         BufferedWriter writer = new BufferedWriter(new FileWriter(testFile));
@@ -25,6 +28,7 @@ public interface MapperObject {
     }
 
     @JsonIgnore
+    @BsonIgnore
     default String getAsJsonString() throws IOException {
         return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(this);
     }
