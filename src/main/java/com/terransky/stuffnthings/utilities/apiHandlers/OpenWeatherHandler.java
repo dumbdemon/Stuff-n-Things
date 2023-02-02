@@ -46,7 +46,7 @@ public class OpenWeatherHandler {
         CountryCode.MY,
         CountryCode.TH
     );
-    public static String VALID_TIME = "Q4 2022";
+    public static final String VALID_TIME = "Q4 2022";
     private final Config.Credentials CREDENTIALS = Config.Credentials.OPEN_WEATHER;
     private final String BASE_URL = String.format("https://api.openweathermap.org/data/3.0/onecall?lat={}&lon={}&exclude=minutely,hourly,daily&appid=%s",
         CREDENTIALS.getPassword()).replaceAll("\\{}", "%s");
