@@ -33,11 +33,6 @@ public class GetWeather implements ICommandSlash {
     }
 
     @Override
-    public boolean isWorking() {
-        return Config.isTestingMode();
-    }
-
-    @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
         return new Metadata(getName(), "Get the weather for a specific location.", String.format("""
