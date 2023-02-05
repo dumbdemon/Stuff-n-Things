@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.dataSources.kitsu.entries;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -49,7 +50,7 @@ public class EntryAttributes extends Attributes {
     @JsonProperty("ratingRank")
     private long ratingRank;
     @JsonProperty("ageRating")
-    private AgeRating ageRating;
+    private String ageRating;
     @JsonProperty("ageRatingGuide")
     private String ageRatingGuide;
     @JsonProperty("subtype")
@@ -62,6 +63,7 @@ public class EntryAttributes extends Attributes {
     private CoverImage coverImage;
     private String baseUrl;
 
+    @JsonIgnore
     @NotNull
     private String getEffectiveString(@NotNull String s, int limit) {
         if (s.length() > limit)
@@ -124,17 +126,18 @@ public class EntryAttributes extends Attributes {
     }
 
     @JsonProperty("ageRating")
-    public AgeRating getAgeRating() {
+    public String getAgeRating() {
         return ageRating;
     }
 
     @JsonProperty("ageRating")
     public void setAgeRating(String ageRating) {
-        if (ageRating == null) {
-            this.ageRating = AgeRating.NR;
-            return;
-        }
-        this.ageRating = AgeRating.getAgeRatingByCode(ageRating);
+        this.ageRating = ageRating;
+    }
+
+    @JsonIgnore
+    public AgeRating getAgeRatingEnum() {
+        return AgeRating.getAgeRatingByCode(ageRating);
     }
 
     @JsonProperty("averageRating")
@@ -251,10 +254,12 @@ public class EntryAttributes extends Attributes {
         this.status = Status.getStatusByState(status);
     }
 
+    @JsonIgnore
     public Subtype getSubtype() {
         return subtype;
     }
 
+    @JsonIgnore
     public void setSubtype(String subtype) {
         if (subtype == null) {
             this.subtype = Subtype.UNKNOWN;
@@ -283,10 +288,12 @@ public class EntryAttributes extends Attributes {
         this.coverImage = coverImage;
     }
 
+    @JsonIgnore
     public String getBaseUrl() {
         return baseUrl;
     }
 
+    @JsonIgnore
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
     }

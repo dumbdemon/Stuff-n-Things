@@ -1,7 +1,5 @@
 package com.terransky.stuffnthings.dataSources.kitsu.entries.enums;
 
-import org.jetbrains.annotations.NotNull;
-
 public enum AgeRating {
 
     NR("NR", "Not Rated"),
@@ -18,7 +16,9 @@ public enum AgeRating {
         this.codename = codename;
     }
 
-    public static AgeRating getAgeRatingByCode(@NotNull String code) {
+    public static AgeRating getAgeRatingByCode(String code) {
+        if (code == null)
+            return NR;
         switch (code) {
             case "G" -> {
                 return G;

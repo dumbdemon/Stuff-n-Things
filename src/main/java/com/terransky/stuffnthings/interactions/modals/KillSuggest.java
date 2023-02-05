@@ -39,7 +39,7 @@ public class KillSuggest {
         TextChannel requestChannel = event.getJDA().getTextChannelById(Config.getRequestChannelID());
 
         if (requestChannel == null)
-            throw new DiscordAPIException("Either the channel channel does not exist or I could not obtain the channel.");
+            throw new DiscordAPIException("Either the channel does not exist or I could not obtain the channel.");
 
         requestChannel.sendMessage(suggestion)
             .addActionRow(

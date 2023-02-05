@@ -25,7 +25,8 @@ public interface MapperObject {
     @BsonIgnore
     @SuppressWarnings("unused")
     default void saveAsJsonFile() throws IOException {
-        saveAsJsonFile(this.getClass().getName());
+        String[] className = this.getClass().getName().split("\\.");
+        saveAsJsonFile(className[className.length - 1]);
     }
 
     /**

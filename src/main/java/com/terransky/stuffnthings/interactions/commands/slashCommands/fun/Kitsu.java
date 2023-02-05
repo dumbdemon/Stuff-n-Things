@@ -43,7 +43,7 @@ public class Kitsu {
             .setCommandName(name)
             .setMastermind(Mastermind.DEVELOPER)
             .setCategory(CommandCategory.FUN)
-            .setCreatedDate(FORMAT.parse("17-1-2023_12:43"))
+            .setCreatedDate(FORMAT.parse("4-2-2023_21:58"))
             .addOptions(
                 new OptionData(OptionType.STRING, "search", "Queary for search", true)
             );
@@ -65,7 +65,7 @@ public class Kitsu {
     @NotNull
     private static <T extends EntryAttributes> MessageEmbed getResponseEmbed(@NotNull T attributes, @NotNull CategoriesKitsuData categories,
                                                                              @NotNull EventBlob blob) {
-        AgeRating ageRating = attributes.getAgeRating();
+        AgeRating ageRating = attributes.getAgeRatingEnum();
         EmbedBuilder builder = new EmbedBuilder()
             .setColor(EmbedColors.getDefault())
             .setFooter("Requested by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
@@ -194,7 +194,7 @@ public class Kitsu {
             MangaAttributes attributes = mangaDatum.getAttributes();
             MessageEmbed message;
 
-            if (AgeRating.checkIfAdult(attributes.getAgeRating()) && !event.getChannel().asTextChannel().isNSFW())
+            if (AgeRating.checkIfAdult(attributes.getAgeRatingEnum()) && !event.getChannel().asTextChannel().isNSFW())
                 message = getNSFWMessage(blob, "Manga");
             else message = getResponseEmbed(attributes, categories, blob);
 
