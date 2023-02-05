@@ -45,6 +45,7 @@ public class Managers {
 
         //Fun Commands
         new ColorInfo(),
+        new CypherCmd(),
         new Dictionary(),
         new GetDadJokes(),
         new GetWeather(),
