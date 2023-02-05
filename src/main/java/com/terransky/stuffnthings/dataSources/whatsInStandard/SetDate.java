@@ -26,8 +26,6 @@ public class SetDate {
 
     @JsonProperty("exact")
     public String getExact() {
-        if (exact == null)
-            return "0";
         return exact;
     }
 
@@ -39,9 +37,11 @@ public class SetDate {
     @JsonIgnore
     @Nullable
     public Date getExactAsDate() {
+        if (exact == null)
+            return null;
         FastDateFormat format = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSS");
         try {
-            return format.parse(getExact());
+            return format.parse(exact);
         } catch (ParseException e) {
             return null;
         }

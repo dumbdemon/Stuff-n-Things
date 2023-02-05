@@ -1,7 +1,5 @@
 package com.terransky.stuffnthings.dataSources.kitsu.entries.enums;
 
-import org.jetbrains.annotations.NotNull;
-
 public enum Status {
 
     UNKNOWN("UNKNOWN"),
@@ -17,7 +15,9 @@ public enum Status {
         this.state = state;
     }
 
-    public static Status getStatusByState(@NotNull String state) {
+    public static Status getStatusByState(String state) {
+        if (state == null)
+            return UNKNOWN;
         switch (state) {
             case "current" -> {
                 return CURRENT;

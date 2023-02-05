@@ -1,10 +1,12 @@
 package com.terransky.stuffnthings.dataSources.tinyURL;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.annotation.Generated;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,9 +38,9 @@ public class Data {
     @JsonProperty("tags")
     private List<String> tags = new ArrayList<>();
     @JsonProperty("created_at")
-    private Date createdAt;
+    private String createdAt;
     @JsonProperty("expires_at")
-    private Date expiresAt;
+    private String expiresAt;
     @JsonProperty("analytics")
     private Analytic analytic;
     @JsonProperty("tiny_url")
@@ -127,22 +129,34 @@ public class Data {
     }
 
     @JsonProperty("created_at")
-    public Date getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
     @JsonProperty("created_at")
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 
+    @JsonIgnore
+    public Date getCreatedAtAsDate() {
+        return Date.from(OffsetDateTime.parse(createdAt).toInstant());
+    }
+
     @JsonProperty("expires_at")
-    public Date getExpiresAt() {
+    public String getExpiresAt() {
         return expiresAt;
     }
 
     @JsonProperty("expires_at")
-    public void setExpiresAt(Date expiresAt) {
+    public void setExpiresAt(String expiresAt) {
         this.expiresAt = expiresAt;
+    }
+
+    @JsonIgnore
+    public Date getExpiresAtAsDate() {
+        if (expiresAt == null)
+            return null;
+        return Date.from(OffsetDateTime.parse(expiresAt).toInstant());
     }
 }

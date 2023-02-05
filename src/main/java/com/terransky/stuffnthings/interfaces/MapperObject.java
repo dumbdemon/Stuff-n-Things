@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -51,7 +53,8 @@ public interface MapperObject {
      */
     @JsonIgnore
     @BsonIgnore
-    default void saveAsJsonFile(final File file) throws IOException {
+    default void saveAsJsonFile(@NotNull final File file) throws IOException {
+        LoggerFactory.getLogger(MapperObject.class).info("Saving to -> \"{}\"", file.getAbsolutePath());
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         writer.write(getAsJsonString());
         writer.close();

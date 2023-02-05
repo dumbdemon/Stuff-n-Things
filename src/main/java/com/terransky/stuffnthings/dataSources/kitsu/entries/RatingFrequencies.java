@@ -32,231 +32,231 @@ import javax.annotation.Generated;
 public class RatingFrequencies {
 
     @JsonProperty("2")
-    private String _2;
+    private Long _2;
     @JsonProperty("3")
-    private String _3;
+    private Long _3;
     @JsonProperty("4")
-    private String _4;
+    private Long _4;
     @JsonProperty("5")
-    private String _5;
+    private Long _5;
     @JsonProperty("6")
-    private String _6;
+    private Long _6;
     @JsonProperty("7")
-    private String _7;
+    private Long _7;
     @JsonProperty("8")
-    private String _8;
+    private Long _8;
     @JsonProperty("9")
-    private String _9;
+    private Long _9;
     @JsonProperty("10")
-    private String _10;
+    private Long _10;
     @JsonProperty("11")
-    private String _11;
+    private Long _11;
     @JsonProperty("12")
-    private String _12;
+    private Long _12;
     @JsonProperty("13")
-    private String _13;
+    private Long _13;
     @JsonProperty("14")
-    private String _14;
+    private Long _14;
     @JsonProperty("15")
-    private String _15;
+    private Long _15;
     @JsonProperty("16")
-    private String _16;
+    private Long _16;
     @JsonProperty("17")
-    private String _17;
+    private Long _17;
     @JsonProperty("18")
-    private String _18;
+    private Long _18;
     @JsonProperty("19")
-    private String _19;
+    private Long _19;
     @JsonProperty("20")
-    private String _20;
+    private Long _20;
 
     @JsonProperty("2")
-    public String get2() {
+    public Long get2() {
         return _2;
     }
 
     @JsonProperty("2")
-    public void set2(String _2) {
+    public void set2(Long _2) {
         this._2 = _2;
     }
 
     @JsonProperty("3")
-    public String get3() {
+    public Long get3() {
         return _3;
     }
 
     @JsonProperty("3")
-    public void set3(String _3) {
+    public void set3(Long _3) {
         this._3 = _3;
     }
 
     @JsonProperty("4")
-    public String get4() {
+    public Long get4() {
         return _4;
     }
 
     @JsonProperty("4")
-    public void set4(String _4) {
+    public void set4(Long _4) {
         this._4 = _4;
     }
 
     @JsonProperty("5")
-    public String get5() {
+    public Long get5() {
         return _5;
     }
 
     @JsonProperty("5")
-    public void set5(String _5) {
+    public void set5(Long _5) {
         this._5 = _5;
     }
 
     @JsonProperty("6")
-    public String get6() {
+    public Long get6() {
         return _6;
     }
 
     @JsonProperty("6")
-    public void set6(String _6) {
+    public void set6(Long _6) {
         this._6 = _6;
     }
 
     @JsonProperty("7")
-    public String get7() {
+    public Long get7() {
         return _7;
     }
 
     @JsonProperty("7")
-    public void set7(String _7) {
+    public void set7(Long _7) {
         this._7 = _7;
     }
 
     @JsonProperty("8")
-    public String get8() {
+    public Long get8() {
         return _8;
     }
 
     @JsonProperty("8")
-    public void set8(String _8) {
+    public void set8(Long _8) {
         this._8 = _8;
     }
 
     @JsonProperty("9")
-    public String get9() {
+    public Long get9() {
         return _9;
     }
 
     @JsonProperty("9")
-    public void set9(String _9) {
+    public void set9(Long _9) {
         this._9 = _9;
     }
 
     @JsonProperty("10")
-    public String get10() {
+    public Long get10() {
         return _10;
     }
 
     @JsonProperty("10")
-    public void set10(String _10) {
+    public void set10(Long _10) {
         this._10 = _10;
     }
 
     @JsonProperty("11")
-    public String get11() {
+    public Long get11() {
         return _11;
     }
 
     @JsonProperty("11")
-    public void set11(String _11) {
+    public void set11(Long _11) {
         this._11 = _11;
     }
 
     @JsonProperty("12")
-    public String get12() {
+    public Long get12() {
         return _12;
     }
 
     @JsonProperty("12")
-    public void set12(String _12) {
+    public void set12(Long _12) {
         this._12 = _12;
     }
 
     @JsonProperty("13")
-    public String get13() {
+    public Long get13() {
         return _13;
     }
 
     @JsonProperty("13")
-    public void set13(String _13) {
+    public void set13(Long _13) {
         this._13 = _13;
     }
 
     @JsonProperty("14")
-    public String get14() {
+    public Long get14() {
         return _14;
     }
 
     @JsonProperty("14")
-    public void set14(String _14) {
+    public void set14(Long _14) {
         this._14 = _14;
     }
 
     @JsonProperty("15")
-    public String get15() {
+    public Long get15() {
         return _15;
     }
 
     @JsonProperty("15")
-    public void set15(String _15) {
+    public void set15(Long _15) {
         this._15 = _15;
     }
 
     @JsonProperty("16")
-    public String get16() {
+    public Long get16() {
         return _16;
     }
 
     @JsonProperty("16")
-    public void set16(String _16) {
+    public void set16(Long _16) {
         this._16 = _16;
     }
 
     @JsonProperty("17")
-    public String get17() {
+    public Long get17() {
         return _17;
     }
 
     @JsonProperty("17")
-    public void set17(String _17) {
+    public void set17(Long _17) {
         this._17 = _17;
     }
 
     @JsonProperty("18")
-    public String get18() {
+    public Long get18() {
         return _18;
     }
 
     @JsonProperty("18")
-    public void set18(String _18) {
+    public void set18(Long _18) {
         this._18 = _18;
     }
 
     @JsonProperty("19")
-    public String get19() {
+    public Long get19() {
         return _19;
     }
 
     @JsonProperty("19")
-    public void set19(String _19) {
+    public void set19(Long _19) {
         this._19 = _19;
     }
 
     @JsonProperty("20")
-    public String get20() {
+    public Long get20() {
         return _20;
     }
 
     @JsonProperty("20")
-    public void set20(String _20) {
+    public void set20(Long _20) {
         this._20 = _20;
     }
 

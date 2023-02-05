@@ -2,18 +2,27 @@ package com.terransky.stuffnthings.dataSources.kitsu.entries.enums;
 
 public enum AgeRating {
 
-    NR("NR", "Not Rated"),
+    /**
+     * Since not rated content could potentially be adult it is set as so.
+     */
+    NR("NR", "Not Rated", true),
     G("G", "General Audiences"),
     PG("PG", "Parental Guidance Suggested"),
-    R("R", "Restricted"),
-    R18("R18", "Explicit");
+    R("R", "Restricted", true),
+    R18("R18", "Explicit", true);
 
     private final String code;
     private final String codename;
+    private final boolean isAdult;
 
     AgeRating(String code, String codename) {
+        this(code, codename, false);
+    }
+
+    AgeRating(String code, String codename, boolean isAdult) {
         this.code = code;
         this.codename = codename;
+        this.isAdult = isAdult;
     }
 
     public static AgeRating getAgeRatingByCode(String code) {
@@ -38,17 +47,15 @@ public enum AgeRating {
         }
     }
 
-    public static boolean checkIfAdult(AgeRating ageRating) {
-        return ageRating == R ||
-            ageRating == R18 ||
-            ageRating == NR;
-    }
-
     public String getCode() {
         return code;
     }
 
     public String getCodename() {
         return codename;
+    }
+
+    public boolean isAdult() {
+        return isAdult;
     }
 }

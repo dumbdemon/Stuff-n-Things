@@ -54,9 +54,9 @@ public class EntryAttributes extends Attributes {
     @JsonProperty("ageRatingGuide")
     private String ageRatingGuide;
     @JsonProperty("subtype")
-    private Subtype subtype;
+    private String subtype;
     @JsonProperty("status")
-    private Status status;
+    private String status;
     @JsonProperty("posterImage")
     private PosterImage posterImage;
     @JsonProperty("coverImage")
@@ -181,8 +181,8 @@ public class EntryAttributes extends Attributes {
     }
 
     @JsonProperty("startDate")
-    public Date getStartDate() {
-        return formatDate(startDate);
+    public String getStartDate() {
+        return startDate;
     }
 
     @JsonProperty("startDate")
@@ -190,14 +190,24 @@ public class EntryAttributes extends Attributes {
         this.startDate = startDate;
     }
 
+    @JsonIgnore
+    public Date getStartDateAsDate() {
+        return formatDate(startDate);
+    }
+
     @JsonProperty("endDate")
-    public Date getEndDate() {
-        return formatDate(endDate);
+    public String getEndDate() {
+        return endDate;
     }
 
     @JsonProperty("endDate")
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    @JsonIgnore
+    public Date getEndDateAsDate() {
+        return formatDate(endDate);
     }
 
     @JsonProperty("nextRelease")
@@ -241,31 +251,33 @@ public class EntryAttributes extends Attributes {
     }
 
     @JsonProperty("status")
-    public Status getStatus() {
+    public String getStatus() {
         return status;
     }
 
     @JsonProperty("status")
     public void setStatus(String status) {
-        if (status == null) {
-            this.status = Status.UNKNOWN;
-            return;
-        }
-        this.status = Status.getStatusByState(status);
+        this.status = status;
     }
 
     @JsonIgnore
-    public Subtype getSubtype() {
+    public Status getStatusEnum() {
+        return Status.getStatusByState(status);
+    }
+
+    @JsonProperty("subtype")
+    public String getSubtype() {
         return subtype;
     }
 
-    @JsonIgnore
+    @JsonProperty("subtype")
     public void setSubtype(String subtype) {
-        if (subtype == null) {
-            this.subtype = Subtype.UNKNOWN;
-            return;
-        }
-        this.subtype = Subtype.getSubtypeByCode(subtype);
+        this.subtype = subtype;
+    }
+
+    @JsonIgnore
+    public Subtype getSubtypeEnum() {
+        return Subtype.getSubtypeByCode(subtype);
     }
 
     @JsonProperty("posterImage")

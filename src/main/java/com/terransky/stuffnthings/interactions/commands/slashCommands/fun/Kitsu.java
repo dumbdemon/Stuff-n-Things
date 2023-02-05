@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +36,7 @@ public class Kitsu {
     private static final FastDateFormat FORMAT = Metadata.getFastDateFormat();
 
     private static long getGlobalLastUpdated() throws ParseException {
-        return FORMAT.parse("21-1-2023_18:35").getTime();
+        return FORMAT.parse("5-2-2023_12:27").getTime();
     }
 
     private static Metadata getStandard(String name) throws ParseException {
@@ -43,15 +44,15 @@ public class Kitsu {
             .setCommandName(name)
             .setMastermind(Mastermind.DEVELOPER)
             .setCategory(CommandCategory.FUN)
-            .setCreatedDate(FORMAT.parse("4-2-2023_21:58"))
+            .setCreatedDate(FORMAT.parse("17-1-2023_12:43"))
             .addOptions(
                 new OptionData(OptionType.STRING, "search", "Queary for search", true)
             );
     }
 
     private static String getDates(@NotNull EntryAttributes attributes) {
-        Date startDate = attributes.getStartDate(),
-            endDate = attributes.getEndDate();
+        Date startDate = attributes.getStartDateAsDate(),
+            endDate = attributes.getEndDateAsDate();
 
         if (endDate.compareTo(Attributes.NULL_DATE) == 0)
             return String.format("from **%s** to **?**", Attributes.formatDate(startDate));
@@ -59,7 +60,7 @@ public class Kitsu {
         if (startDate.compareTo(endDate) == 0)
             return String.format("on **%s**", Attributes.formatDate(startDate));
 
-        return String.format("from **%s** to **%s**", Attributes.formatDate(startDate), Attributes.formatDate(attributes.getEndDate()));
+        return String.format("from **%s** to **%s**", Attributes.formatDate(startDate), Attributes.formatDate(attributes.getEndDateAsDate()));
     }
 
     @NotNull
@@ -72,8 +73,8 @@ public class Kitsu {
             .setTitle(attributes.getCanonicalTitle(), attributes.getBaseUrl() + attributes.getSlug())
             .setDescription(attributes.getSynopsis())
             .setThumbnail(attributes.getPosterImage().getOriginal())
-            .addField(":hourglass_flowing_sand: Status", attributes.getStatus().getState(), true)
-            .addField(":dividers: Type", attributes.getSubtype().getCode(), true)
+            .addField(":hourglass_flowing_sand: Status", attributes.getStatusEnum().getState(), true)
+            .addField(":dividers: Type", attributes.getSubtypeEnum().getCode(), true)
             .addField(":lock: Rating", String.format("%s [%s]", ageRating.getCode(), ageRating.getCodename()), true)
             .addField(":arrow_right: Genres", categories.getCategoriesString(), false);
 
@@ -90,17 +91,17 @@ public class Kitsu {
                 .addField(":newspaper: Chapters", chapters, true)
                 .addField(":books: Volumes", volumes, true);
 
-            if (mangaAttributes.getSubtype() != Subtype.OEL && mangaAttributes.getSerialization() != null)
+            if (mangaAttributes.getSubtypeEnum() != Subtype.OEL && mangaAttributes.getSerialization() != null)
                 builder.addField(":office: Serialization", String.format("[%s](https://www.google.com/search?q=%s)",
                     mangaAttributes.getSerialization(), URLEncoder.encode(mangaAttributes.getSerialization(), StandardCharsets.UTF_8)), true);
         } else
             throw new IllegalArgumentException(String.format("Root type '%s.class' cannot be used.", Attributes.class.getName()));
 
-        String averageRating = attributes.getAverageRating() == null ? "**Not Rated**" : String.format("**%s/100**", attributes.getAverageRating()),
-            ranking = attributes.getRatingRank() == 0 ? "**No Ranking**" : String.format("**TOP %s**", attributes.getRatingRank());
+        String averageRating = attributes.getAverageRating() == null ? "**Not Rated**" : String.format("**%s/100**", attributes.getAverageRating());
 
+        DecimalFormat rank = new DecimalFormat("##,###");
         builder.addField(":star: Average Rating", averageRating, true)
-            .addField(":trophy: Ranking", ranking, true);
+            .addField(":trophy: Ranking", String.format("**TOP %s**", rank.format(attributes.getPopularityRank())), true);
         return builder.build();
     }
 
@@ -172,7 +173,7 @@ public class Kitsu {
 
         @Override
         public Metadata getMetadata() throws ParseException {
-            long mangaLastUpdated = FORMAT.parse("18-1-2023_16:19").getTime();
+            long mangaLastUpdated = FORMAT.parse("5-2-2023_11:52").getTime();
             return getStandard(getName())
                 .setLastUpdated(new Date(Math.max(getGlobalLastUpdated(), mangaLastUpdated)))
                 .setDescripstions("Search for a manga using Kitsu.io");
@@ -194,7 +195,7 @@ public class Kitsu {
             MangaAttributes attributes = mangaDatum.getAttributes();
             MessageEmbed message;
 
-            if (AgeRating.checkIfAdult(attributes.getAgeRatingEnum()) && !event.getChannel().asTextChannel().isNSFW())
+            if (attributes.getAgeRatingEnum().isAdult() && !event.getChannel().asTextChannel().isNSFW())
                 message = getNSFWMessage(blob, "Manga");
             else message = getResponseEmbed(attributes, categories, blob);
 

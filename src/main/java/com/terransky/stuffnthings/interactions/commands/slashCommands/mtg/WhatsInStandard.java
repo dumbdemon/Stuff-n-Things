@@ -86,7 +86,7 @@ public class WhatsInStandard implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.MTG,
             format.parse("27-10-2022_12:46"),
-            format.parse("1-2-2023_19:47")
+            format.parse("5-2-2023_13:44")
         )
             .addSubcommands(
                 new SubcommandData("all", "Get all info about the standard format."),
@@ -105,7 +105,7 @@ public class WhatsInStandard implements ICommandSlash {
             .setColor(EmbedColors.getDefault());
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand received");
-        String version = "6";
+        int version = 6;
         ObjectMapper om = new ObjectMapper();
 
         URL wis = new URL("https://whatsinstandard.com/api/v%s/standard.json".formatted(version));

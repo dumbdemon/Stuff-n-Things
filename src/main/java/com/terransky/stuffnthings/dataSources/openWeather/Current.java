@@ -225,7 +225,7 @@ public class Current {
         this.dewPoint = dewPoint;
     }
 
-    @JsonInclude
+    @JsonIgnore
     public String getDewPiontsAsString() {
         return getPrettyTempretures(dewPoint);
     }
