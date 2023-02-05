@@ -56,7 +56,7 @@ public class CypherCmd implements ICommandSlash {
             • Reverse
             ```
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
-            format.parse("4-2-2023_19:03"),
+            format.parse("5-2-2023_14:41"),
             new Date()
         )
             .addSubcommandGroups(
@@ -88,8 +88,8 @@ public class CypherCmd implements ICommandSlash {
                 Base64Cypher base64 = new Base64Cypher();
                 enDecodedString = isEncode ? base64.encode(message) : base64.decode(message);
             }
-            case "rot13" -> enDecodedString = new Rot13Cypher().decode(message);
-            case "reverse" -> enDecodedString = new ReverseCypher().decode(message);
+            case "rot13" -> enDecodedString = new Rot13Cypher().encode(message);
+            case "reverse" -> enDecodedString = new ReverseCypher().encode(message);
             default -> throw new IllegalStateException("Unexpected value: " + cypher);
         }
 

@@ -16,9 +16,4 @@ public class ReverseCypher implements Cypher {
         }
         return stringBuilder.toString();
     }
-
-    @Override
-    public String decode(@NotNull String str) {
-        return encode(str);
-    }
 }

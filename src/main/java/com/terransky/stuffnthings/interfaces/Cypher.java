@@ -16,10 +16,13 @@ public interface Cypher {
     String encode(@NotNull String str);
 
     /**
-     * Decode a message.
+     * Decode a message.<br/>
+     * Defaults to calling {@link #encode(String)} if the process for decoding is the same.
      *
      * @param str A message to decode
      * @return A decoded message.
      */
-    String decode(@NotNull String str);
+    default String decode(@NotNull String str) {
+        return encode(str);
+    }
 }
