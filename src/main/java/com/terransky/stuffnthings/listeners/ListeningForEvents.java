@@ -54,7 +54,7 @@ public class ListeningForEvents extends ListenerAdapter {
             @SuppressWarnings("ConstantConditions")
             public void run() {
                 Random random = new Random(new Date().getTime());
-                event.getJDA().getShardManager().setActivity(Activity.playing(WATCHLIST.get(random.nextInt(WATCHLIST.size()))));
+                event.getJDA().getShardManager().setActivity(Activity.watching(WATCHLIST.get(random.nextInt(WATCHLIST.size()))));
             }
         }, timer, timer);
     }
