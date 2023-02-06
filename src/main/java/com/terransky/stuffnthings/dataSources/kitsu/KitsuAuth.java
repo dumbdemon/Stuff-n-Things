@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.terransky.stuffnthings.interfaces.MapperObject;
+import com.terransky.stuffnthings.interfaces.Pojo;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
     "token_type"
 })
 @Generated("jsonschema2pojo")
-public class KitsuAuth implements MapperObject {
+public class KitsuAuth implements Pojo {
 
     @JsonProperty("access_token")
     @BsonProperty("access_token")

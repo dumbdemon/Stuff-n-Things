@@ -3,7 +3,7 @@ package com.terransky.stuffnthings.dataSources.openWeather;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.terransky.stuffnthings.interfaces.MapperObject;
+import com.terransky.stuffnthings.interfaces.Pojo;
 
 import javax.annotation.Generated;
 
@@ -16,7 +16,7 @@ import javax.annotation.Generated;
     "country"
 })
 @Generated("jsonschema2pojo")
-public class OpenWeatherGeoData implements MapperObject {
+public class OpenWeatherGeoData implements Pojo {
 
     @JsonProperty("zip")
     private String zip;

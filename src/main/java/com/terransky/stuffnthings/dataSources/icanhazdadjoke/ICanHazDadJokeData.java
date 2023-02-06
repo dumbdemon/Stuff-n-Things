@@ -3,7 +3,7 @@ package com.terransky.stuffnthings.dataSources.icanhazdadjoke;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.terransky.stuffnthings.interfaces.MapperObject;
+import com.terransky.stuffnthings.interfaces.Pojo;
 
 import javax.annotation.Generated;
 
@@ -14,7 +14,7 @@ import javax.annotation.Generated;
     "status"
 })
 @Generated("jsonschema2pojo")
-public class IcanhazdadjokeData implements MapperObject {
+public class ICanHazDadJokeData implements Pojo {
 
     @JsonProperty("id")
     private String id;

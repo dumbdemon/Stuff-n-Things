@@ -3,7 +3,7 @@ package com.terransky.stuffnthings.dataSources.NumbersAPI;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.terransky.stuffnthings.interfaces.MapperObject;
+import com.terransky.stuffnthings.interfaces.Pojo;
 
 import javax.annotation.Generated;
 
@@ -17,7 +17,7 @@ import javax.annotation.Generated;
     "year"
 })
 @Generated("jsonschema2pojo")
-public class NumbersAPIData implements MapperObject {
+public class NumbersAPIData implements Pojo {
 
     @JsonProperty("text")
     private String text;
