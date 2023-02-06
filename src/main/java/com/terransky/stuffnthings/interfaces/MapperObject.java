@@ -3,6 +3,7 @@ package com.terransky.stuffnthings.interfaces;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
@@ -11,11 +12,33 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * The interface for all Jackson POJOs
  */
 public interface MapperObject {
+
+    /**
+     * Get a file safe name to save
+     *
+     * @param name A name to encode
+     * @return A file safe name.
+     */
+    static String toSafeFileName(String name) {
+        return URLEncoder.encode(name, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Get a configured object mapper for saving.
+     *
+     * @return A configured {@link ObjectMapper}.
+     */
+    static ObjectMapper getMapperObject() {
+        return new ObjectMapper()
+            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+    }
 
     /**
      * Create a json file of this object with the class name as the file name.<br />
@@ -41,7 +64,7 @@ public interface MapperObject {
     @JsonIgnore
     @BsonIgnore
     default void saveAsJsonFile(String name) throws IOException {
-        saveAsJsonFile(new File("jsons/" + name + ".json"));
+        saveAsJsonFile(new File("jsons/" + toSafeFileName(name) + ".json"));
     }
 
     /**
@@ -69,6 +92,8 @@ public interface MapperObject {
     @JsonIgnore
     @BsonIgnore
     default String getAsJsonString() throws JsonProcessingException {
-        return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(this);
+        return getMapperObject()
+            .writerWithDefaultPrettyPrinter()
+            .writeValueAsString(this);
     }
 }
