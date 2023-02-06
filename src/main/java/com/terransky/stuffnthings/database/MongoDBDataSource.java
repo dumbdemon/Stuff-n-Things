@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.database;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.ServerApi;
@@ -13,10 +14,12 @@ import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import com.mongodb.reactivestreams.client.MongoDatabase;
+import com.terransky.stuffnthings.dataSources.kitsu.KitsuAuth;
 import com.terransky.stuffnthings.database.helpers.KillStorage;
 import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.database.helpers.entry.*;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
+import com.terransky.stuffnthings.utilities.apiHandlers.KitsuHandler;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.entities.Guild;
@@ -27,6 +30,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -48,7 +53,8 @@ public class MongoDBDataSource implements DatabaseManager {
 
     private final Logger log;
     private final CodecRegistry CODEC_REGISTRY;
-    private final MongoClient CLIENT;
+    private final MongoDatabase DATABASE;
+    private final String KITSU_ID_REFERENCE = "0";
 
     public MongoDBDataSource() {
         this.log = LoggerFactory.getLogger(MongoDBDataSource.class);
@@ -58,7 +64,18 @@ public class MongoDBDataSource implements DatabaseManager {
         String password = URLEncoder.encode(credentials.getPassword(), StandardCharsets.UTF_8);
 
         this.CODEC_REGISTRY = fromRegistries(getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-        this.CLIENT = getConstructedClient(new ConnectionString("mongodb+srv://" + username + ":" + password + "@" + Config.getMongoHostname()));
+        MongoClient client = MongoClients.create(
+            MongoClientSettings.builder()
+                .applicationName(Config.getApplicationName() + (Config.isTestingMode() ? "_TEST" : ""))
+                .serverApi(ServerApi.builder()
+                    .version(ServerApiVersion.V1)
+                    .build()
+                )
+                .applyConnectionString(new ConnectionString("mongodb+srv://" + username + ":" + password + "@" + Config.getMongoHostname()))
+                .retryWrites(true)
+                .build()
+        );
+        this.DATABASE = client.getDatabase(Config.getDatabaseName());
     }
 
     private void ifAnErrorOccurs(String success, String failed, RuntimeException throwable) {
@@ -69,35 +86,17 @@ public class MongoDBDataSource implements DatabaseManager {
 
     @NotNull
     private MongoCollection<GuildEntry> getGuilds() {
-        MongoDatabase database = CLIENT.getDatabase(Config.getDatabaseName());
-        return database.getCollection("guilds", GuildEntry.class).withCodecRegistry(CODEC_REGISTRY);
+        return DATABASE.getCollection("guilds", GuildEntry.class).withCodecRegistry(CODEC_REGISTRY);
     }
 
     @NotNull
     private MongoCollection<UserEntry> getUsers() {
-        MongoDatabase database = CLIENT.getDatabase(Config.getDatabaseName());
-        return database.getCollection("users", UserEntry.class).withCodecRegistry(CODEC_REGISTRY);
+        return DATABASE.getCollection("users", UserEntry.class).withCodecRegistry(CODEC_REGISTRY);
     }
 
     @NotNull
     private MongoCollection<KillStrings> getKills() {
-        MongoDatabase database = CLIENT.getDatabase(Config.getDatabaseName());
-        return database.getCollection("sources", KillStrings.class).withCodecRegistry(CODEC_REGISTRY);
-    }
-
-    @NotNull
-    private MongoClient getConstructedClient(ConnectionString connectionString) {
-        MongoClientSettings settings = MongoClientSettings.builder()
-            .applicationName(Config.getApplicationName() + (Config.isTestingMode() ? "_TEST" : ""))
-            .serverApi(ServerApi.builder()
-                .version(ServerApiVersion.V1)
-                .build()
-            )
-            .applyConnectionString(connectionString)
-            .retryWrites(true)
-            .build();
-
-        return MongoClients.create(settings);
+        return DATABASE.getCollection("sources", KillStrings.class).withCodecRegistry(CODEC_REGISTRY);
     }
 
     @Override
@@ -141,6 +140,66 @@ public class MongoDBDataSource implements DatabaseManager {
     }
 
     @Override
+    public boolean uploadKitsuAuth(KitsuAuth kitsuAuth) {
+        if (!Config.isDatabaseEnabled()) {
+            try {
+                kitsuAuth.saveAsJsonFile(new File(KitsuHandler.FILE_NAME));
+                return true;
+            } catch (IOException e) {
+                log.error("Error saving KitsuAuth", e);
+                return false;
+            }
+        }
+
+        if (kitsuAuth.getIdReference() == null)
+            kitsuAuth.setIdReference(KITSU_ID_REFERENCE);
+        MongoCollection<KitsuAuth> auths = DATABASE.getCollection("kitsuauth", KitsuAuth.class).withCodecRegistry(CODEC_REGISTRY);
+
+        var finder = new ObjectSubscriber<KitsuAuth>();
+        auths.find(Filters.eq("idReference", KITSU_ID_REFERENCE))
+            .subscribe(finder);
+
+        if (finder.await().getError() != null) throw finder.getError();
+
+        if (finder.first() == null) {
+            var inserter = new ObjectSubscriber<InsertOneResult>();
+            auths.insertOne(kitsuAuth).subscribe(inserter);
+            return inserter.await().getError() == null;
+        }
+
+        var replacer = new ObjectSubscriber<UpdateResult>();
+        auths.replaceOne(Filters.eq("idReference", ""), kitsuAuth)
+            .subscribe(replacer);
+        return replacer.await().getError() == null;
+    }
+
+    @Override
+    public Optional<KitsuAuth> getKitsuAuth() {
+        if (!Config.isDatabaseEnabled()) {
+            File kitsuAuth = new File(KitsuHandler.FILE_NAME);
+            if (kitsuAuth.exists())
+                try {
+                    return Optional.ofNullable(new ObjectMapper().readValue(kitsuAuth, KitsuAuth.class));
+                } catch (IOException e) {
+                    log.error("Unable to get KitsuAuth", e);
+                    return Optional.empty();
+                }
+            return Optional.empty();
+        }
+
+        MongoCollection<KitsuAuth> auths = DATABASE.getCollection("kitsuauth", KitsuAuth.class).withCodecRegistry(CODEC_REGISTRY);
+
+        var finder = new ObjectSubscriber<KitsuAuth>();
+        auths.find(Filters.eq("idReference", KITSU_ID_REFERENCE))
+            .subscribe(finder);
+
+        if (finder.await().getError() != null)
+            log.error("Failed to get KitsuAuth", finder.getError());
+
+        return Optional.ofNullable(finder.first());
+    }
+
+    @Override
     public Optional<Object> getFromDatabase(@NotNull EventBlob blob, @NotNull Property property) {
         if (!Config.isDatabaseEnabled()) return Optional.empty();
         MongoCollection<?> collection = getCollection(property);
@@ -149,8 +208,10 @@ public class MongoDBDataSource implements DatabaseManager {
         var subscriber = new ObjectSubscriber<>();
         collection.find(Filters.eq(ID_REFERENCE.getPropertyName(property.getTable()), target)).subscribe(subscriber);
 
-        if (subscriber.await().getError() != null)
+        if (subscriber.await().getError() != null) {
+            log.error(String.format("Failed to get property %s from database", property), subscriber.getError());
             return Optional.empty();
+        }
 
         switch (property.getTable()) {
             case GUILD -> {

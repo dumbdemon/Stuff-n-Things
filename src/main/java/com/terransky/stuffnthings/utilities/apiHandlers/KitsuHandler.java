@@ -6,6 +6,7 @@ import com.terransky.stuffnthings.dataSources.kitsu.entries.anime.AnimeKitsuData
 import com.terransky.stuffnthings.dataSources.kitsu.entries.manga.MangaKitsuData;
 import com.terransky.stuffnthings.dataSources.kitsu.relationships.Relationships;
 import com.terransky.stuffnthings.dataSources.kitsu.relationships.categories.CategoriesKitsuData;
+import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.utilities.general.Config;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -36,16 +38,14 @@ public class KitsuHandler {
     private static final File KITSU_AUTH = new File(FILE_NAME);
     private static final Config.Credentials credentials = Config.Credentials.KITSU_IO;
     private final String BASE_URL = "https://kitsu.io/api/edge/";
-    private String token;
+    private final String token;
 
     /**
      * API handler for Kitsu.io's API
      */
-    public KitsuHandler() throws IOException {
-        if (!credentials.isDefault() && upsertAuthorizationToken()) {
-            KitsuAuth kitsuAuth = MAPPER.readValue(KITSU_AUTH, KitsuAuth.class);
-            token = String.format("%s %s", kitsuAuth.getTokenType(), kitsuAuth.getAccessToken());
-        }
+    public KitsuHandler() {
+        Optional<KitsuAuth> kitsuAuth = DatabaseManager.INSTANCE.getKitsuAuth();
+        token = kitsuAuth.map(KitsuAuth::getBearerString).orElse(null);
     }
 
     /**
@@ -63,11 +63,11 @@ public class KitsuHandler {
             .build();
         try {
             String requestBody;
+            Optional<KitsuAuth> oldAuth = DatabaseManager.INSTANCE.getKitsuAuth();
 
-            //todo: replace if-else block with database call
-            if (KITSU_AUTH.exists()) {
-                log.info("Auth found: reading file");
-                KitsuAuth auth = MAPPER.readValue(KITSU_AUTH, KitsuAuth.class);
+            if (oldAuth.isPresent()) {
+                log.info("Auth found: reading auth");
+                KitsuAuth auth = oldAuth.get();
                 if (!auth.isExpired()) {
                     log.warn("Auth is still valid for {} days: skipping request", auth.getDaysUntilExpired());
                     return true;
@@ -78,7 +78,7 @@ public class KitsuHandler {
                     .setRefreshToken(auth.getRefreshToken())
                     .getAsJsonString();
             } else {
-                log.info("Auth not found: creating file");
+                log.info("Auth not found: creating new auth");
                 if (credentials.isDefault()) {
                     log.warn("Auth request canceled: no credentials present");
                     return false;
@@ -109,11 +109,13 @@ public class KitsuHandler {
 
             KitsuAuth auth = MAPPER.readValue(response.body(), KitsuAuth.class);
 
-            //todo: create database call and change to save if testing mode
-            auth.saveAsJsonFile(KITSU_AUTH);
-            log.info("Auth request successful: absolute path of new auth is {}", KITSU_AUTH.getAbsolutePath());
+            if (DatabaseManager.INSTANCE.uploadKitsuAuth(auth)) {
+                log.info("Auth request successful: uploaded to database");
+                auth.saveAsJsonFile(KITSU_AUTH);
+                log.info("Auth file saved: the absolute path of new auth is {}", KITSU_AUTH.getAbsolutePath());
+            } else return false;
         } catch (IOException | InterruptedException e) {
-            log.error("{}; {}", e.getClass().getName(), e.getMessage());
+            log.error("Auth request failed", e);
             return false;
         } finally {
             service.shutdownNow();
@@ -168,8 +170,8 @@ public class KitsuHandler {
     private InputStream getInputStreamOf(@NotNull URL url) throws IOException {
         HttpURLConnection kitsuConnection = (HttpURLConnection) url.openConnection();
         kitsuConnection.addRequestProperty("Accept", "application/vnd.api+json");
-        if (!credentials.isDefault())
-            kitsuConnection.addRequestProperty("Authorization", String.format("Bearer %s", token));
+        if (token != null)
+            kitsuConnection.addRequestProperty("Authorization", token);
         switch (kitsuConnection.getResponseCode()) {
             case 200 -> {
                 return kitsuConnection.getInputStream();
