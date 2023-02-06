@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.dataSources.openWeather;
 
 import com.fasterxml.jackson.annotation.*;
-import com.terransky.stuffnthings.interfaces.MapperObject;
+import com.terransky.stuffnthings.interfaces.Pojo;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
 import org.apache.commons.lang3.time.FastDateFormat;
 
@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Generated("jsonschema2pojo")
-public class OpenWeatherData implements MapperObject {
+public class OpenWeatherData implements Pojo {
 
     @JsonProperty("lat")
     private Float latitude;

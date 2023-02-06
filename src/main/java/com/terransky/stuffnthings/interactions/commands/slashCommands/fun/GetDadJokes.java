@@ -1,11 +1,10 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.terransky.stuffnthings.dataSources.icanhazdadjoke.IcanhazdadjokeData;
+import com.terransky.stuffnthings.dataSources.icanhazdadjoke.ICanHazDadJokeData;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
+import com.terransky.stuffnthings.utilities.apiHandlers.ICanHazDadJokeHandler;
 import com.terransky.stuffnthings.utilities.command.*;
-import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -18,8 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.ParseException;
 
 public class GetDadJokes implements ICommandSlash {
@@ -44,17 +41,10 @@ public class GetDadJokes implements ICommandSlash {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
-        URL iCanHazDadJoke = new URL("https://icanhazdadjoke.com/");
-        String iCanHazDadJokeLogo = "https://icanhazdadjoke.com/static/smile.svg";
-        HttpURLConnection dadJoke = (HttpURLConnection) iCanHazDadJoke.openConnection();
-        dadJoke.addRequestProperty("User-Agent", Config.getBotUserAgent());  //https://icanhazdadjoke.com/api#custom-user-agent
-        dadJoke.addRequestProperty("Accept", "application/json");
-        ObjectMapper om = new ObjectMapper();
-        IcanhazdadjokeData theJoke = om.readValue(dadJoke.getInputStream(), IcanhazdadjokeData.class);
+        ICanHazDadJokeData theJoke = new ICanHazDadJokeHandler().getDadJoke();
 
         event.replyEmbeds(new EmbedBuilder()
             .setDescription(theJoke.getJoke())
-            .setThumbnail(iCanHazDadJokeLogo)
             .setColor(EmbedColors.getDefault())
             .setFooter("Requested by %s | ID #%s".formatted(blob.getMemberAsTag(), theJoke.getId()))
             .build()

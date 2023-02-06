@@ -3,7 +3,7 @@ package com.terransky.stuffnthings.dataSources.oxfordDictionary;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.terransky.stuffnthings.interfaces.MapperObject;
+import com.terransky.stuffnthings.interfaces.Pojo;
 
 import javax.annotation.Generated;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.List;
     "word"
 })
 @Generated("jsonschema2pojo")
-public class OxfordData implements MapperObject {
+public class OxfordData implements Pojo {
 
     @JsonProperty("id")
     private String id;

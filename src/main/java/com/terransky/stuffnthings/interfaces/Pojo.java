@@ -18,7 +18,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * The interface for all Jackson POJOs
  */
-public interface MapperObject {
+public interface Pojo {
 
     /**
      * Get a file safe name to save
@@ -77,7 +77,7 @@ public interface MapperObject {
     @JsonIgnore
     @BsonIgnore
     default void saveAsJsonFile(@NotNull final File file) throws IOException {
-        LoggerFactory.getLogger(MapperObject.class).info("Saving to -> \"{}\"", file.getAbsolutePath());
+        LoggerFactory.getLogger(Pojo.class).info("Saving to -> \"{}\"", file.getAbsolutePath());
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         writer.write(getAsJsonString());
         writer.close();

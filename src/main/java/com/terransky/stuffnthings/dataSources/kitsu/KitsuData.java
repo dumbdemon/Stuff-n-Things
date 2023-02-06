@@ -2,7 +2,7 @@ package com.terransky.stuffnthings.dataSources.kitsu;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.terransky.stuffnthings.interfaces.MapperObject;
+import com.terransky.stuffnthings.interfaces.Pojo;
 
 import javax.annotation.Generated;
 
@@ -11,7 +11,7 @@ import javax.annotation.Generated;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("jsonschema2pojo")
-public class KitsuData implements MapperObject {
+public class KitsuData implements Pojo {
 
     @JsonProperty("meta")
     private Meta meta;

@@ -1,14 +1,14 @@
 package com.terransky.stuffnthings.dataSources.kitsu;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.terransky.stuffnthings.interfaces.MapperObject;
+import com.terransky.stuffnthings.interfaces.Pojo;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Root POJO for OAUTH requests to Kitsu.io
  */
 @SuppressWarnings({"unused", "SpellCheckingInspection"})
-public class KitsuAuthRequest implements MapperObject {
+public class KitsuAuthRequest implements Pojo {
 
     @JsonProperty("grant_type")
     private String grantType;

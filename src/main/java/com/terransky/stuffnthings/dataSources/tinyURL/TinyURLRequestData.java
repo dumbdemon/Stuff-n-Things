@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.terransky.stuffnthings.interfaces.MapperObject;
+import com.terransky.stuffnthings.interfaces.Pojo;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Generated;
@@ -23,7 +23,7 @@ import java.util.Date;
     "expires_at"
 })
 @Generated("jsonschema2pojo")
-public class TinyURLRequestData implements MapperObject {
+public class TinyURLRequestData implements Pojo {
 
     @JsonProperty("url")
     private String url;
