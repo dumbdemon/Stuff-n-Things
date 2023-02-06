@@ -27,6 +27,9 @@ import java.util.concurrent.TimeUnit;
 @Generated("jsonschema2pojo")
 public class KitsuAuth implements Pojo {
 
+    @JsonIgnore
+    @BsonProperty("idReference")
+    private String idReference;
     @JsonProperty("access_token")
     @BsonProperty("access_token")
     private String accessToken;
@@ -45,6 +48,18 @@ public class KitsuAuth implements Pojo {
     @JsonProperty("token_type")
     @BsonProperty("token_type")
     private String tokenType;
+
+    @JsonIgnore
+    @BsonProperty("idReference")
+    public String getIdReference() {
+        return idReference;
+    }
+
+    @JsonIgnore
+    @BsonProperty("idReference")
+    public void setIdReference(String idReference) {
+        this.idReference = idReference;
+    }
 
     /**
      * Token used in Authorization header
@@ -157,5 +172,11 @@ public class KitsuAuth implements Pojo {
     @BsonProperty("token_type")
     public void setTokenType(String tokenType) {
         this.tokenType = tokenType;
+    }
+
+    @JsonIgnore
+    @BsonIgnore
+    public String getBearerString() {
+        return String.format("%s %s", tokenType, accessToken);
     }
 }

@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interfaces;
 
+import com.terransky.stuffnthings.dataSources.kitsu.KitsuAuth;
 import com.terransky.stuffnthings.database.MongoDBDataSource;
 import com.terransky.stuffnthings.database.helpers.KillStorage;
 import com.terransky.stuffnthings.database.helpers.Property;
@@ -79,6 +80,22 @@ public interface DatabaseManager {
             )
             .orElse(List.of("you"));
     }
+
+    /**
+     * Upload a new {@link KitsuAuth} to the database, or save it to the file system if the database is not enabled
+     *
+     * @param kitsuAuth A {@link KitsuAuth} generated with
+     *                  {@link com.terransky.stuffnthings.utilities.apiHandlers.KitsuHandler#upsertAuthorizationToken() KitsuHandler.upsertAuthorizationToken()}
+     * @return True if the operation was successful
+     */
+    boolean uploadKitsuAuth(KitsuAuth kitsuAuth);
+
+    /**
+     * Get the stored {@link KitsuAuth} from the database, if enabled; otherwise, get it from filesystem.
+     *
+     * @return An {@link Optional} of a {@link KitsuAuth}
+     */
+    Optional<KitsuAuth> getKitsuAuth();
 
     /**
      * Add the guild to the database and create a user table.
