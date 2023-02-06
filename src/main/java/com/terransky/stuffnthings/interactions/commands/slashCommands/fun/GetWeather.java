@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
 
 public class GetWeather implements ICommandSlash {
     @Override
@@ -40,7 +39,7 @@ public class GetWeather implements ICommandSlash {
             Top 25 list is valid as of %s.
             """, OpenWeatherHandler.VALID_TIME), Mastermind.DEVELOPER, CommandCategory.FUN,
             format.parse("1-2-2023_16:27"),
-            new Date()
+            format.parse("5-2-2023_19:19")
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("by-coordinates", "Get the weather by coordinates.")
@@ -48,9 +47,9 @@ public class GetWeather implements ICommandSlash {
                         new SubcommandData("coordinates", "Get the weather by coordinates.")
                             .addOptions(
                                 new OptionData(OptionType.NUMBER, "latitude", "The latitude", true)
-                                    .setRequiredRange(-100, 100),
+                                    .setRequiredRange(-360, 360),
                                 new OptionData(OptionType.NUMBER, "longitude", "The longitude", true)
-                                    .setRequiredRange(-100, 100)
+                                    .setRequiredRange(-360, 360)
                             )
                     ),
                 new SubcommandGroupData("by-zipcode", "Get the weather by zipcode")

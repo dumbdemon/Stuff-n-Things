@@ -43,7 +43,7 @@ public class TinyURLRequestData implements MapperObject {
      * @throws MalformedURLException Thrown when the URL is not valid.
      * @throws URISyntaxException    Thrown when the URL is not valid.
      */
-    public TinyURLRequestData(String url) throws MalformedURLException, URISyntaxException {
+    protected TinyURLRequestData(String url) throws MalformedURLException, URISyntaxException {
         this.url = new URL(url).toURI().toString();
     }
 
