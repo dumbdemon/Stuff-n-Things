@@ -373,14 +373,27 @@ public class MongoDBDataSource implements DatabaseManager {
         if (!Config.isDatabaseEnabled()) return;
         MongoCollection<UserEntry> guilds = getUsers();
 
-        var subscriber = new ObjectSubscriber<DeleteResult>();
+        var finder = new ObjectSubscriber<UserEntry>();
 
-        guilds.deleteOne(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId))
-            .subscribe(subscriber);
+        guilds.find(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId))
+            .subscribe(finder);
 
-        ifAnErrorOccurs(String.format("User of ID %s was removed from the database", userId),
-            String.format("Unable to remove user of id %s to database", userId),
-            subscriber.await(2, TimeUnit.MINUTES).getError());
+        if (finder.await().getError() != null) throw finder.getError();
+
+        List<KillLock> killLocks = finder.first().getKillLocks();
+        KillLock killlock = killLocks.stream().filter(lock -> lock.getGuildReference().equals(guild.getId()))
+            .findFirst()
+            .orElse(new KillLock(guild.getId()));
+
+        killLocks.remove(killlock);
+        var updater = new ObjectSubscriber<UpdateResult>();
+
+        guilds.updateOne(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId), Updates.set(KILL_LOCK.getPropertyName(), killLocks))
+            .subscribe(updater);
+
+        ifAnErrorOccurs("A user's KillLock was removed from the database",
+            "Unable to remove a user's KillLock from the database",
+            updater.await(2, TimeUnit.MINUTES).getError());
     }
 
     @Override
