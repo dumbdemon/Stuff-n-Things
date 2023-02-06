@@ -5,7 +5,6 @@ import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
-import com.terransky.stuffnthings.utilities.general.LogList;
 import com.terransky.stuffnthings.utilities.jda.ChannelPermsController;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -23,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Arrays;
 
 public class ChannelUnLock implements ICommandSlash {
 
@@ -110,8 +108,7 @@ public class ChannelUnLock implements ICommandSlash {
                 }
             }
         } catch (Exception e) {
-            LoggerFactory.getLogger(ChannelUnLock.class).debug("{}: {}", e.getClass().getName(), e.getMessage());
-            LogList.error(Arrays.asList(e.getStackTrace()), ChannelUnLock.class);
+            LoggerFactory.getLogger(ChannelUnLock.class).debug("Unable to perform channel action", e);
             event.replyEmbeds(
                 response
                     .setDescription(("Either I do not have access to modify the permissions for %s, or something else has happened and it should be reported." +

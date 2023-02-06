@@ -6,7 +6,6 @@ import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
-import com.terransky.stuffnthings.utilities.general.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -21,7 +20,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.util.Arrays;
 
 public class Meme implements ICommandSlash {
     private final Logger log = LoggerFactory.getLogger(Meme.class);
@@ -40,7 +38,7 @@ public class Meme implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
             format.parse("24-08-2022_11:10"),
-            format.parse("21-1-2023_16:05")
+            format.parse("5-1-2023_19:47")
         )
             .addSubcommands(
                 new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, or from r/me_irl.")
@@ -110,8 +108,7 @@ public class Meme implements ICommandSlash {
                     .setColor(EmbedColors.getError())
                     .build()
             ).queue();
-            log.error("{}: {}", e.getClass().getName(), e.getMessage());
-            LogList.error(Arrays.asList(e.getStackTrace()), Meme.class);
+            log.error("Unable to get meme", e);
         }
     }
 }

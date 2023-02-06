@@ -8,39 +8,39 @@ import java.util.Date;
 @SuppressWarnings("unused")
 public enum Timestamp {
     /**
-     * <b>EX:</b> {@literal <}t:1673461755:F{@literal >}<br/>
-     * <b>On Discord:</b> Wednesday, January 11, 2023 at 12:29 PM
-     */
-    LONG_DATE_W_DoW_SHORT_TIME('F'),
-    /**
-     * <b>EX:</b> {@literal <}t:1673461755:f{@literal >}<br/>
-     * <b>On Discord:</b> January 11, 2023 at 12:29 PM
-     */
-    LONG_DATE_W_SHORT_TIME('f'),
-    /**
      * <b>EX:</b> {@literal <}t:1673461755:D{@literal >}<br/>
      * <b>On Discord:</b> January 11, 2023
      */
     LONG_DATE('D'),
     /**
-     * <b>EX:</b> {@literal <}t:1673461755:d{@literal >}<br/>
-     * <b>On Discord:</b> 01/11/2023
+     * <b>EX:</b> {@literal <}t:1673461755:F{@literal >}<br/>
+     * <b>On Discord:</b> Wednesday, January 11, 2023, at 12:29 PM
      */
-    SHORT_DATE('d'),
+    LONG_DATE_W_DoW_SHORT_TIME('F'),
+    /**
+     * <b>EX:</b> {@literal <}t:1673461755:f{@literal >}<br/>
+     * <b>On Discord:</b> January 11, 2023, at 12:29 PM
+     */
+    LONG_DATE_W_SHORT_TIME('f'),
     /**
      * <b>EX:</b> {@literal <}t:1673461755:t{@literal >}<br/>
      * <b>On Discord:</b> 12:29 PM
      */
     LONG_TIME('T'),
     /**
+     * Will show the difference between the current time and the markdown time
+     */
+    RELATIVE('R'),
+    /**
+     * <b>EX:</b> {@literal <}t:1673461755:d{@literal >}<br/>
+     * <b>On Discord:</b> 01/11/2023
+     */
+    SHORT_DATE('d'),
+    /**
      * <b>EX:</b> {@literal <}t:1673461755:T{@literal >}<br/>
      * <b>On Discord:</b> 12:29:15 PM
      */
-    SHORT_TIME('t'),
-    /**
-     * Will show the difference between the current time and the markdown time
-     */
-    RELATIVE('R');
+    SHORT_TIME('t');
 
     private final Character code;
 

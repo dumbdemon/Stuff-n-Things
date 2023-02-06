@@ -7,7 +7,6 @@ import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
-import com.terransky.stuffnthings.utilities.general.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Icon;
@@ -30,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -52,7 +50,7 @@ public class ConfigCmd implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.ADMIN,
             format.parse("28-08-2022_21:46"),
-            format.parse("30-1-2023_16:05")
+            format.parse("5-2-2023_19:53")
         )
             .addDefaultPerms(Permission.MANAGE_SERVER)
             .addSubcommandGroups(
@@ -214,8 +212,7 @@ public class ConfigCmd implements ICommandSlash {
         try {
             DatabaseManager.INSTANCE.updateProperty(blob, Property.KILLS_TIMEOUT, newTimeoutMillis);
         } catch (Exception e) {
-            log.error("{}: {}", e.getClass().getName(), e.getMessage());
-            LogList.error(Arrays.asList(e.getStackTrace()), log);
+            log.error(String.format("Unable to update property %s", Property.KILLS_TIMEOUT), e);
         }
 
         eb.setTitle("Config Updated")
@@ -254,8 +251,7 @@ public class ConfigCmd implements ICommandSlash {
         try {
             DatabaseManager.INSTANCE.updateProperty(blob, Property.KILLS_MAX, newMax);
         } catch (Exception e) {
-            log.error("{}: {}", e.getClass().getName(), e.getMessage());
-            LogList.error(Arrays.asList(e.getStackTrace()), log);
+            log.error(String.format("Unable to update property %s", Property.KILLS_MAX), e);
         }
 
         eb.setTitle("Config Updated")

@@ -9,7 +9,6 @@ import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.Config;
-import com.terransky.stuffnthings.utilities.general.LogList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
@@ -28,7 +27,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,16 +45,14 @@ public class InteractionListener extends ListenerAdapter {
             .build();
     }
 
-    private void logInteractionFailure(String interactionName, @NotNull EventBlob blob, @NotNull Exception e) {
-        log.debug("{} failed to execute on guild id {}", interactionName, blob.getGuildId());
-        log.error("{}: {}", e.getClass().getName(), e.getMessage());
-        LogList.error(Arrays.asList(e.getStackTrace()), log);
+    private void logInteractionFailure(String interactionName, @NotNull String guildId, @NotNull Exception e) {
+        log.error(String.format("%S failed to execute on guild id %s", interactionName, guildId), e);
     }
 
     private void errorHandler(@NotNull GenericCommandInteractionEvent event, @NotNull IInteraction interaction,
                               IInteraction.Type type, EventBlob blob, Exception e) {
         MessageEmbed commandFailed = getFailedInteractionMessage(type, blob);
-        logInteractionFailure(interaction.getName(), blob, e);
+        logInteractionFailure(interaction.getName(), blob.getGuildId(), e);
         if (event.isAcknowledged()) {
             event.getHook().sendMessageEmbeds(commandFailed).queue();
         } else event.replyEmbeds(commandFailed).setEphemeral(true).queue();
@@ -65,7 +61,7 @@ public class InteractionListener extends ListenerAdapter {
     private void errorHandler(@NotNull GenericComponentInteractionCreateEvent event, @NotNull IInteraction interaction,
                               IInteraction.Type type, EventBlob blob, Exception e) {
         MessageEmbed componentFailed = getFailedInteractionMessage(type, blob);
-        logInteractionFailure(interaction.getName(), blob, e);
+        logInteractionFailure(interaction.getName(), blob.getGuildId(), e);
         if (event.isAcknowledged()) {
             event.getHook().sendMessageEmbeds(componentFailed).queue();
         } else event.replyEmbeds(componentFailed).setEphemeral(true).queue();
@@ -260,7 +256,7 @@ public class InteractionListener extends ListenerAdapter {
             modal.execute(event, blob);
         } catch (RuntimeException | IOException e) {
             MessageEmbed modalFailed = getFailedInteractionMessage(IInteraction.Type.MODAL, blob);
-            logInteractionFailure(modal.getName(), blob, e);
+            logInteractionFailure(modal.getName(), blob.getGuildId(), e);
             if (event.isAcknowledged()) {
                 event.getHook().sendMessageEmbeds(modalFailed).queue();
             } else event.replyEmbeds(modalFailed).setEphemeral(true).queue();

@@ -7,7 +7,6 @@ import com.terransky.stuffnthings.dataSources.kitsu.entries.manga.MangaKitsuData
 import com.terransky.stuffnthings.dataSources.kitsu.relationships.Relationships;
 import com.terransky.stuffnthings.dataSources.kitsu.relationships.categories.CategoriesKitsuData;
 import com.terransky.stuffnthings.utilities.general.Config;
-import com.terransky.stuffnthings.utilities.general.LogList;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +21,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -116,7 +114,6 @@ public class KitsuHandler {
             log.info("Auth request successful: absolute path of new auth is {}", KITSU_AUTH.getAbsolutePath());
         } catch (IOException | InterruptedException e) {
             log.error("{}; {}", e.getClass().getName(), e.getMessage());
-            LogList.error(Arrays.asList(e.getStackTrace()), log);
             return false;
         } finally {
             service.shutdownNow();
