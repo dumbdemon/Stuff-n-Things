@@ -243,10 +243,10 @@ public class MongoDBDataSource implements DatabaseManager {
 
         GuildEntry guildEntry = guildGetter.await().first();
 
-        KillLock killLock = userGetter.await().first().getKillLocks().stream().filter(lock -> lock.getGuildReference().equals(guildId))
-            .findFirst().orElse(new KillLock(guildId));
+        PerServer perServer = userGetter.await().first().getKillLocks().stream().filter(lock -> lock.getGuildReference().equals(guildId))
+            .findFirst().orElse(new PerServer(guildId));
 
-        return new UserGuildEntry(killLock)
+        return new UserGuildEntry(perServer)
             .setMaxKills(guildEntry.getKillMaximum())
             .setTimeout(guildEntry.getKillTimeout());
     }
@@ -258,13 +258,13 @@ public class MongoDBDataSource implements DatabaseManager {
 
         users.find(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId)).subscribe(userGetter);
 
-        List<KillLock> killLocks = userGetter.await().first().getKillLocks();
-        for (KillLock killLock : killLocks) {
-            if (killLock.getGuildReference().equals(guildId)) {
-                killLocks.remove(killLock);
-                killLock.setKillAttempts(0L);
-                killLock.setKillUnderTo(false);
-                killLocks.add(killLock);
+        List<PerServer> perServers = userGetter.await().first().getKillLocks();
+        for (PerServer perServer : perServers) {
+            if (perServer.getGuildReference().equals(guildId)) {
+                perServers.remove(perServer);
+                perServer.setKillAttempts(0L);
+                perServer.setKillUnderTo(false);
+                perServers.add(perServer);
                 break;
             }
         }
@@ -296,29 +296,29 @@ public class MongoDBDataSource implements DatabaseManager {
                 var subscriber = getSubscriber(collection, search);
 
                 UserEntry user = (UserEntry) subscriber.first();
-                List<KillLock> killLocks = new ArrayList<>(user.getKillLocks());
-                KillLock killLock = killLocks.stream().filter(lock -> lock.getGuildReference().equals(blob.getGuildId()))
+                List<PerServer> perServers = new ArrayList<>(user.getKillLocks());
+                PerServer perServer = perServers.stream().filter(lock -> lock.getGuildReference().equals(blob.getGuildId()))
                     .findFirst()
-                    .orElse(new KillLock(blob.getGuildId()));
+                    .orElse(new PerServer(blob.getGuildId()));
 
-                killLocks.remove(killLock);
-                killLock.setKillUnderTo((Boolean) newValue);
-                killLocks.add(killLock);
-                collection.updateOne(search, Updates.set(property.getPropertyName(), killLocks)).subscribe(updater);
+                perServers.remove(perServer);
+                perServer.setKillUnderTo((Boolean) newValue);
+                perServers.add(perServer);
+                collection.updateOne(search, Updates.set(property.getPropertyName(), perServers)).subscribe(updater);
             }
             case KILL_ATTEMPTS -> {
                 var subscriber = getSubscriber(collection, search);
 
                 UserEntry user = (UserEntry) subscriber.first();
-                List<KillLock> killLocks = new ArrayList<>(user.getKillLocks());
-                KillLock killLock = killLocks.stream().filter(lock -> lock.getGuildReference().equals(blob.getGuildId()))
+                List<PerServer> perServers = new ArrayList<>(user.getKillLocks());
+                PerServer perServer = perServers.stream().filter(lock -> lock.getGuildReference().equals(blob.getGuildId()))
                     .findFirst()
-                    .orElse(new KillLock(blob.getGuildId()));
+                    .orElse(new PerServer(blob.getGuildId()));
 
-                killLocks.remove(killLock);
-                killLock.setKillAttempts((Long) newValue);
-                killLocks.add(killLock);
-                collection.updateOne(search, Updates.set(property.getPropertyName(), killLocks)).subscribe(updater);
+                perServers.remove(perServer);
+                perServer.setKillAttempts((Long) newValue);
+                perServers.add(perServer);
+                collection.updateOne(search, Updates.set(property.getPropertyName(), perServers)).subscribe(updater);
             }
             default ->
                 collection.updateOne(search, Updates.set(property.getPropertyName(), newValue)).subscribe(updater);
@@ -401,7 +401,7 @@ public class MongoDBDataSource implements DatabaseManager {
         if (finder.getObjects().isEmpty()) {
             var insert = new ObjectSubscriber<InsertOneResult>();
             UserEntry userEntry = new UserEntry(blob.getMemberId());
-            userEntry.setKillLocks(List.of(new KillLock(guildId)));
+            userEntry.setKillLocks(List.of(new PerServer(guildId)));
             users.insertOne(userEntry)
                 .subscribe(insert);
 
@@ -412,16 +412,16 @@ public class MongoDBDataSource implements DatabaseManager {
         }
 
         UserEntry user = finder.first();
-        List<KillLock> killLocks = new ArrayList<>(user.getKillLocks());
+        List<PerServer> perServers = new ArrayList<>(user.getKillLocks());
 
-        if (killLocks.stream().anyMatch(lock -> lock.getGuildReference().equals(guildId))) {
+        if (perServers.stream().anyMatch(lock -> lock.getGuildReference().equals(guildId))) {
             log.info("User [{}] already has KillLock for server ID [{}]", userId, guildId);
             return;
         }
 
         var updater = new ObjectSubscriber<UpdateResult>();
-        killLocks.add(new KillLock(guildId));
-        users.updateOne(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId), Updates.set(KILL_LOCK.getPropertyName(), killLocks))
+        perServers.add(new PerServer(guildId));
+        users.updateOne(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId), Updates.set(KILL_LOCK.getPropertyName(), perServers))
             .subscribe(updater);
 
         ifAnErrorOccurs(String.format("User of ID %s was updated", userId),
@@ -441,15 +441,15 @@ public class MongoDBDataSource implements DatabaseManager {
 
         if (finder.await().getError() != null) throw finder.getError();
 
-        List<KillLock> killLocks = finder.first().getKillLocks();
-        KillLock killlock = killLocks.stream().filter(lock -> lock.getGuildReference().equals(guild.getId()))
+        List<PerServer> perServers = finder.first().getKillLocks();
+        PerServer killlock = perServers.stream().filter(lock -> lock.getGuildReference().equals(guild.getId()))
             .findFirst()
-            .orElse(new KillLock(guild.getId()));
+            .orElse(new PerServer(guild.getId()));
 
-        killLocks.remove(killlock);
+        perServers.remove(killlock);
         var updater = new ObjectSubscriber<UpdateResult>();
 
-        guilds.updateOne(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId), Updates.set(KILL_LOCK.getPropertyName(), killLocks))
+        guilds.updateOne(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId), Updates.set(KILL_LOCK.getPropertyName(), perServers))
             .subscribe(updater);
 
         ifAnErrorOccurs("A user's KillLock was removed from the database",

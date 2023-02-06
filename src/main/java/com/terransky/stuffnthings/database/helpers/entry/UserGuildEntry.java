@@ -4,12 +4,16 @@ import java.util.Objects;
 
 public class UserGuildEntry {
 
-    private final KillLock killLock;
+    private final PerServer perServer;
     private long maxKills;
     private long timeout;
 
-    public UserGuildEntry(KillLock killLock) {
-        this.killLock = killLock;
+    public UserGuildEntry(PerServer perServer) {
+        this.perServer = perServer;
+    }
+
+    public PerServer getPerServer() {
+        return perServer;
     }
 
     public long getMaxKills() {
@@ -31,11 +35,11 @@ public class UserGuildEntry {
     }
 
     public long getKillAttempts() {
-        return killLock.getKillAttempts();
+        return perServer.getKillAttempts();
     }
 
     public boolean isUnderTimeout() {
-        return killLock.isKillUnderTo();
+        return perServer.isKillUnderTo();
     }
 
     @Override
@@ -43,11 +47,11 @@ public class UserGuildEntry {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserGuildEntry entry = (UserGuildEntry) o;
-        return getMaxKills() == entry.getMaxKills() && getTimeout() == entry.getTimeout() && killLock.equals(entry.killLock);
+        return getMaxKills() == entry.getMaxKills() && getTimeout() == entry.getTimeout() && perServer.equals(entry.getPerServer());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(killLock, getMaxKills(), getTimeout());
+        return Objects.hash(getPerServer(), getMaxKills(), getTimeout());
     }
 }

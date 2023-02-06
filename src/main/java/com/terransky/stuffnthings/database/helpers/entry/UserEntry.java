@@ -16,7 +16,7 @@ public class UserEntry {
     @BsonProperty("userId")
     private String idReference;
     @BsonProperty("killLocks")
-    private List<KillLock> killLocks;
+    private List<PerServer> perServers;
 
     /**
      * No-args constructor for Mongo Driver
@@ -31,7 +31,7 @@ public class UserEntry {
      */
     public UserEntry(String idReference) {
         this.idReference = idReference;
-        this.killLocks = new ArrayList<>();
+        this.perServers = new ArrayList<>();
     }
 
     @BsonProperty("userId")
@@ -45,26 +45,26 @@ public class UserEntry {
     }
 
     @BsonProperty("killLocks")
-    public List<KillLock> getKillLocks() {
-        return killLocks;
+    public List<PerServer> getKillLocks() {
+        return perServers;
     }
 
     @BsonProperty("killLocks")
-    public void setKillLocks(List<KillLock> killLocks) {
-        this.killLocks = killLocks;
+    public void setKillLocks(List<PerServer> perServers) {
+        this.perServers = perServers;
     }
 
     @BsonIgnore
     public Optional<Object> getProperty(@NotNull Property property, String idReference) {
-        Predicate<KillLock> isItThisOne = lock -> lock.getGuildReference().equals(idReference);
+        Predicate<PerServer> isItThisOne = lock -> lock.getGuildReference().equals(idReference);
         switch (property) {
             case KILL_TIMEOUT -> {
-                return killLocks.stream().filter(isItThisOne).findFirst()
-                    .map(KillLock::isKillUnderTo);
+                return perServers.stream().filter(isItThisOne).findFirst()
+                    .map(PerServer::isKillUnderTo);
             }
             case KILL_ATTEMPTS -> {
-                return killLocks.stream().filter(isItThisOne).findFirst()
-                    .map(KillLock::getKillAttempts);
+                return perServers.stream().filter(isItThisOne).findFirst()
+                    .map(PerServer::getKillAttempts);
             }
             case KILL_LOCK ->
                 throw new IllegalArgumentException(String.format("%S is not intended to be called.", property));
@@ -75,7 +75,7 @@ public class UserEntry {
     @Override
     public String toString() {
         return "SNTUser{" +
-            "killLocks=" + killLocks +
+            "killLocks=" + perServers +
             ", idReference='" + idReference + '\'' +
             '}';
     }

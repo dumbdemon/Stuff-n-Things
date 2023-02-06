@@ -5,16 +5,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
-public class KillLock implements Comparable<KillLock> {
+public class PerServer implements Comparable<PerServer> {
 
     private String guildReference;
     private Long killAttempts;
     private Boolean killUnderTo;
 
-    public KillLock() {
+    public PerServer() {
     }
 
-    public KillLock(String guildReference) {
+    public PerServer(String guildReference) {
         this.guildReference = guildReference;
         this.killAttempts = 0L;
         this.killUnderTo = false;
@@ -45,8 +45,8 @@ public class KillLock implements Comparable<KillLock> {
     }
 
     @Override
-    public int compareTo(@NotNull KillLock killLock) {
-        return String.CASE_INSENSITIVE_ORDER.compare(getGuildReference(), killLock.getGuildReference());
+    public int compareTo(@NotNull PerServer perServer) {
+        return String.CASE_INSENSITIVE_ORDER.compare(getGuildReference(), perServer.getGuildReference());
     }
 
     @Override
@@ -62,8 +62,8 @@ public class KillLock implements Comparable<KillLock> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        KillLock killLock = (KillLock) o;
-        return getGuildReference().equals(killLock.getGuildReference());
+        PerServer perServer = (PerServer) o;
+        return getGuildReference().equals(perServer.getGuildReference());
     }
 
     @Override

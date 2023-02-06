@@ -4,6 +4,7 @@ import com.terransky.stuffnthings.dataSources.kitsu.KitsuAuth;
 import com.terransky.stuffnthings.database.MongoDBDataSource;
 import com.terransky.stuffnthings.database.helpers.KillStorage;
 import com.terransky.stuffnthings.database.helpers.Property;
+import com.terransky.stuffnthings.database.helpers.entry.PerServer;
 import com.terransky.stuffnthings.database.helpers.entry.UserGuildEntry;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import net.dv8tion.jda.api.entities.Guild;
@@ -42,7 +43,7 @@ public interface DatabaseManager {
      * Reset all user properties for the {@link com.terransky.stuffnthings.interactions.commands.slashCommands.fun.Kill /kill} command
      *
      * @param userId  The user id to reset
-     * @param guildId The guild id reference for the {@link com.terransky.stuffnthings.database.helpers.entry.KillLock KillLock}
+     * @param guildId The guild id reference for the {@link PerServer KillLock}
      */
     void resetUserKillProperties(@NotNull String userId, @NotNull String guildId);
 
