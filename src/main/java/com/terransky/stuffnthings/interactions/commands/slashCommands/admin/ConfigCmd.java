@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.admin;
 
+import com.terransky.stuffnthings.dataSources.jokeAPI.Flags;
 import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
@@ -79,6 +80,18 @@ public class ConfigCmd implements ICommandSlash {
                                 new OptionData(OptionType.STRING, "report-message", "The message the bot gives when a user reports.")
                                     .setRequiredLength(10, MessageEmbed.DESCRIPTION_MAX_LENGTH / 4)
                             )
+                    ),
+                new SubcommandGroupData("joke-flags", "Allow or deny certain flags from being shown.")
+                    .addSubcommands(
+                        new SubcommandData("view-flags", "View current flags"),
+                        new SubcommandData("set-flags", "Allow/Deny flags")
+                            .addOptions(
+                                new OptionData(OptionType.BOOLEAN, "religious", "Allow/Deny religious jokes.", true),
+                                new OptionData(OptionType.BOOLEAN, "political", "Allow/Deny political jokes.", true),
+                                new OptionData(OptionType.BOOLEAN, "racist", "Allow/Deny racist jokes.", true),
+                                new OptionData(OptionType.BOOLEAN, "sexist", "Allow/Deny sexist jokes.", true),
+                                new OptionData(OptionType.BOOLEAN, "safe-mode", "Set the entire server to safe mode.")
+                            )
                     )
             );
     }
@@ -101,7 +114,46 @@ public class ConfigCmd implements ICommandSlash {
             case "timeout" -> updateKillTimeout(event, blob, eb);
             case "reporting-channel" -> updateReportingWebhook(event, blob, eb);
             case "reporting-response" -> updateReportingResponse(event, blob, eb);
+            case "view-flags", "set-flags" -> updateFlags(event, blob, eb, subcommand);
         }
+    }
+
+    private void updateFlags(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull EmbedBuilder eb, @NotNull String subcommand) {
+        Flags serverFlags = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.JOKE_FLAGS)
+            .map(flags -> (Flags) flags)
+            .orElse(new Flags());
+
+        if (subcommand.equals("view-flags")) {
+            eb.setTitle(getNameReadable() + " - View Joke Flags");
+        } else {
+            eb.setTitle(getNameReadable() + " - Set Joke Flags");
+
+            boolean religious = !event.getOption("religious", true, OptionMapping::getAsBoolean);
+            boolean political = !event.getOption("political", true, OptionMapping::getAsBoolean);
+            boolean racist = !event.getOption("racist", true, OptionMapping::getAsBoolean);
+            boolean sexist = !event.getOption("sexist", true, OptionMapping::getAsBoolean);
+            boolean safeMode = event.getOption("safe-mode", false, OptionMapping::getAsBoolean);
+
+            serverFlags.setReligious(religious);
+            serverFlags.setPolitical(political);
+            serverFlags.setRacist(racist);
+            serverFlags.setSexist(sexist);
+            serverFlags.setSafeMode(safeMode);
+        }
+
+        if (serverFlags.getSafeMode()) {
+            eb.setDescription("**NOTICE: Server is in safe mode.**");
+        }
+
+        DatabaseManager.INSTANCE.updateProperty(blob, Property.JOKE_FLAGS, serverFlags);
+
+        event.replyEmbeds(
+            eb.addField("Religious", serverFlags.getReligious() ? "***Denied***" : "**Allowed**", false)
+                .addField("Political", serverFlags.getPolitical() ? "***Denied***" : "**Allowed**", false)
+                .addField("Racist", serverFlags.getRacist() ? "***Denied***" : "**Allowed**", false)
+                .addField("Sexist", serverFlags.getSexist() ? "***Denied***" : "**Allowed**", false)
+                .build()
+        ).queue();
     }
 
     private void updateReportingWebhook(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull EmbedBuilder eb) throws IOException {

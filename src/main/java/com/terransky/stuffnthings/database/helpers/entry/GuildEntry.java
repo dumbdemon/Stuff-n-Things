@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.database.helpers.entry;
 
+import com.terransky.stuffnthings.dataSources.jokeAPI.Flags;
 import com.terransky.stuffnthings.database.helpers.Property;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
@@ -21,6 +22,8 @@ public class GuildEntry {
     private String webhookId;
     @BsonProperty("reportResponse")
     private String reportResponse;
+    @BsonProperty("joke_flags")
+    private Flags jokeFlags;
 
     public GuildEntry() {
     }
@@ -84,6 +87,16 @@ public class GuildEntry {
         this.reportResponse = reportResponse;
     }
 
+    @BsonProperty("joke_flags")
+    public Flags getJokeFlags() {
+        return jokeFlags;
+    }
+
+    @BsonProperty("joke_flags")
+    public void setJokeFlags(Flags jokeFlags) {
+        this.jokeFlags = jokeFlags;
+    }
+
     @BsonIgnore
     public Optional<Object> getProperty(@NotNull Property property) {
         switch (property) {
@@ -98,6 +111,9 @@ public class GuildEntry {
             }
             case REPORT_RESPONSE -> {
                 return Optional.ofNullable(reportResponse);
+            }
+            case JOKE_FLAGS -> {
+                return Optional.ofNullable(jokeFlags);
             }
             default -> throw new IllegalArgumentException(String.format("%S is not a guild property.", property));
         }
