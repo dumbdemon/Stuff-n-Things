@@ -10,6 +10,7 @@ public enum Property {
     KILLS_TIMEOUT("killTimeout", Table.GUILD),
     REPORT_WEBHOOK("reportWebhook", Table.GUILD),
     REPORT_RESPONSE("reportResponse", Table.GUILD),
+    JOKE_FLAGS("joke_flags", Table.GUILD),
     KILL_LOCK("killLocks", Table.USER),
     KILL_ATTEMPTS("killAttempts", Table.USER),
     KILL_TIMEOUT("killUnderTo", Table.USER),
