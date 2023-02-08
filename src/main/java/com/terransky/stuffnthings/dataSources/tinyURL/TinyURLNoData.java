@@ -42,6 +42,6 @@ public class TinyURLNoData implements Pojo {
 
     @JsonProperty("errors")
     public void setErrors(List<String> errors) {
-        this.errors = errors;
+        this.errors = List.copyOf(errors);
     }
 }

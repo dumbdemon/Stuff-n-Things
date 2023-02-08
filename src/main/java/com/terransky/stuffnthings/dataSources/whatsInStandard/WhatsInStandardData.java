@@ -55,7 +55,7 @@ public class WhatsInStandardData implements Pojo {
 
     @JsonProperty("sets")
     public void setSets(List<MtGSet> mtgSets) {
-        this.mtgSets = mtgSets;
+        this.mtgSets = List.copyOf(mtgSets);
     }
 
     @JsonProperty("bans")
@@ -65,7 +65,7 @@ public class WhatsInStandardData implements Pojo {
 
     @JsonProperty("bans")
     public void setBans(List<Ban> bans) {
-        this.bans = bans;
+        this.bans = List.copyOf(bans);
     }
 
 }

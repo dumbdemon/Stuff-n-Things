@@ -28,7 +28,7 @@ public class Subsense {
 
     @JsonProperty("definitions")
     public void setDefinitions(List<String> definitions) {
-        this.definitions = definitions;
+        this.definitions = List.copyOf(definitions);
     }
 
     @JsonProperty("id")

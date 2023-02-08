@@ -110,7 +110,7 @@ public class OpenWeatherData implements Pojo {
 
     @JsonProperty("alerts")
     public void setAlerts(List<Alert> alerts) {
-        this.alerts = alerts;
+        this.alerts = List.copyOf(alerts);
     }
 
     @JsonIgnore

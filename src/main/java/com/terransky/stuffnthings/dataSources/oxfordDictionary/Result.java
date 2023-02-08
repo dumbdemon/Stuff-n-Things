@@ -57,7 +57,7 @@ public class Result {
 
     @JsonProperty("lexicalEntries")
     public void setLexicalEntries(List<LexicalEntry> lexicalEntries) {
-        this.lexicalEntries = lexicalEntries;
+        this.lexicalEntries = List.copyOf(lexicalEntries);
     }
 
     @JsonProperty("type")

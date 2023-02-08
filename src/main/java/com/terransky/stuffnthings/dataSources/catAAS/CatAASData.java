@@ -83,7 +83,7 @@ public class CatAASData implements Pojo {
 
     @JsonProperty("tags")
     public void setTags(List<String> tags) {
-        this.tags = tags;
+        this.tags = List.copyOf(tags);
     }
 
     @JsonProperty("owner")

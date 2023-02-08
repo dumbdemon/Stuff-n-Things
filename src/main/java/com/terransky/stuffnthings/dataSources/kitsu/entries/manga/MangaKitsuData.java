@@ -31,6 +31,6 @@ public class MangaKitsuData extends KitsuData {
 
     @JsonProperty("data")
     public void setData(List<MangaDatum> data) {
-        this.data = data;
+        this.data = List.copyOf(data);
     }
 }

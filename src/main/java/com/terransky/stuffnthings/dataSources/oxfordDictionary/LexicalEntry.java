@@ -34,7 +34,7 @@ public class LexicalEntry {
 
     @JsonProperty("entries")
     public void setEntries(List<Entry> entries) {
-        this.entries = entries;
+        this.entries = List.copyOf(entries);
     }
 
     @JsonProperty("language")

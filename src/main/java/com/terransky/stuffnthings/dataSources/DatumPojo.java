@@ -36,6 +36,7 @@ public record DatumPojo<T>(List<T> datum) implements Pojo {
      * @return An {@link Optional} containing an object of type {@link T}.
      */
     public Optional<T> first() {
+        // Both List<> and Optional<> are of type T skipcq: JAVA-W1036
         return Optional.ofNullable(datum.get(0));
     }
 

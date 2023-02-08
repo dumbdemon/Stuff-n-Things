@@ -38,7 +38,7 @@ public class Entry {
 
     @JsonProperty("senses")
     public void setSenses(List<Sense> senses) {
-        this.senses = senses;
+        this.senses = List.copyOf(senses);
     }
 
 }

@@ -329,6 +329,6 @@ public class Current {
 
     @JsonProperty("weather")
     public void setWeather(List<Weather> weather) {
-        this.weather = weather;
+        this.weather = List.copyOf(weather);
     }
 }

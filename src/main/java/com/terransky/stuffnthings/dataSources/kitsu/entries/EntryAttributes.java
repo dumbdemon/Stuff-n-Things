@@ -122,7 +122,7 @@ public class EntryAttributes extends Attributes {
 
     @JsonProperty("abbreviatedTitles")
     public void setAbbreviatedTitles(List<String> abbreviatedTitles) {
-        this.abbreviatedTitles = abbreviatedTitles;
+        this.abbreviatedTitles = List.copyOf(abbreviatedTitles);
     }
 
     @JsonProperty("ageRating")

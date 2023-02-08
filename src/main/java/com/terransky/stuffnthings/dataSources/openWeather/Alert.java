@@ -114,7 +114,7 @@ public class Alert {
 
     @JsonProperty("tags")
     public void setTags(List<String> tags) {
-        this.tags = tags;
+        this.tags = List.copyOf(tags);
     }
 
 }

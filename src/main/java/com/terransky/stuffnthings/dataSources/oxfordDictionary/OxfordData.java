@@ -55,7 +55,7 @@ public class OxfordData implements Pojo {
 
     @JsonProperty("results")
     public void setResults(List<Result> results) {
-        this.results = results;
+        this.results = List.copyOf(results);
     }
 
     @JsonProperty("word")

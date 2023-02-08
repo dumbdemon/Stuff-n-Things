@@ -75,7 +75,7 @@ public class JokeAPIError extends JokeAPI {
 
     @JsonProperty("causedBy")
     public void setCausedBy(List<String> causedBy) {
-        this.causedBy = causedBy;
+        this.causedBy = List.copyOf(causedBy);
     }
 
     @JsonProperty("additionalInfo")

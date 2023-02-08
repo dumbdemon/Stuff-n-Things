@@ -27,7 +27,7 @@ public class Sense extends Subsense {
 
     @JsonProperty("subsenses")
     public void setSubsenses(List<Subsense> subsenses) {
-        this.subsenses = subsenses;
+        this.subsenses = List.copyOf(subsenses);
     }
 
 }
