@@ -1,76 +1,30 @@
 package com.terransky.stuffnthings.utilities.apiHandlers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.neovisionaries.i18n.CountryCode;
+import com.terransky.stuffnthings.dataSources.DatumPojo;
 import com.terransky.stuffnthings.dataSources.openWeather.OpenWeatherData;
 import com.terransky.stuffnthings.dataSources.openWeather.OpenWeatherGeoData;
 import com.terransky.stuffnthings.utilities.general.Config;
-import net.dv8tion.jda.api.interactions.commands.Command;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * The handler for OpenWeather's API
  */
 public class OpenWeatherHandler {
 
-    public static final String VALID_TIME = "Q4 2022";
-    /**
-     * Valid as of {@value #VALID_TIME}
-     */
-    private static final List<CountryCode> TOP_25_COUNTRIES_USING_DISCORD = List.of(
-        CountryCode.US,
-        CountryCode.BR,
-        CountryCode.PH,
-        CountryCode.GB,
-        CountryCode.IN,
-        CountryCode.FR,
-        CountryCode.CN,
-        CountryCode.ID,
-        CountryCode.CA,
-        CountryCode.RU,
-        CountryCode.DE,
-        CountryCode.TR,
-        CountryCode.JP,
-        CountryCode.MX,
-        CountryCode.VN,
-        CountryCode.KR,
-        CountryCode.AU,
-        CountryCode.PL,
-        CountryCode.IT,
-        CountryCode.ES,
-        CountryCode.CO,
-        CountryCode.TW,
-        CountryCode.PE,
-        CountryCode.MY,
-        CountryCode.TH
-    );
     private final Config.Credentials CREDENTIALS = Config.Credentials.OPEN_WEATHER;
     private final String BASE_URL = String.format("https://api.openweathermap.org/data/3.0/onecall?lat={}&lon={}&exclude=minutely,hourly,daily&appid=%s",
         CREDENTIALS.getPassword()).replaceAll("\\{}", "%s");
     private final ObjectMapper MAPPER = new ObjectMapper();
-
-    /**
-     * Get a list of choices for countries.
-     * <p>
-     * Use {@link CountryCode#getByCode(String)} to get the appropriate enum.
-     *
-     * @return A {@link List} of {@link Command.Choice}s
-     */
-    @NotNull
-    @Contract(" -> new")
-    public static List<Command.Choice> getCountryCodesAsChoices() {
-        return new ArrayList<>() {{
-            for (CountryCode countryCode : TOP_25_COUNTRIES_USING_DISCORD) {
-                add(new Command.Choice(countryCode.getName(), countryCode.getAlpha2()));
-            }
-        }};
-    }
 
     /**
      * Get weather date from geo coordinates
@@ -95,9 +49,7 @@ public class OpenWeatherHandler {
     public OpenWeatherData getWeatherData(int zipcode) throws IOException {
         String zicodeString = String.valueOf(zipcode);
         int difference = 5 - zicodeString.length();
-        if (difference > 0)
-            zicodeString = "0".repeat(difference) + zicodeString;
-        return getWeatherData(zicodeString, CountryCode.US);
+        return getWeatherData("0".repeat(difference) + zicodeString, CountryCode.US);
     }
 
     /**
@@ -110,11 +62,36 @@ public class OpenWeatherHandler {
      */
     public OpenWeatherData getWeatherData(String zipcode, @NotNull CountryCode countryCode) throws IOException {
         URL request = new URL(String.format("http://api.openweathermap.org/geo/1.0/zip?zip=%s,%s&appid=%s",
-            zipcode,
+            URLEncoder.encode(zipcode, StandardCharsets.UTF_8),
             countryCode.getAlpha2(),
             CREDENTIALS.getPassword()
         ));
         OpenWeatherGeoData geoData = MAPPER.readValue(request, OpenWeatherGeoData.class);
+        return getWeatherData(geoData.getLat(), geoData.getLon())
+            .setGeoData(geoData);
+    }
+
+    /**
+     * Get weather data using a location's name
+     *
+     * @param city  The city's name
+     * @param state The state's name, if applicable
+     * @param code  A {@link CountryCode}
+     * @return An {@link OpenWeatherData}
+     * @throws IOException If an i/o exception occurs
+     */
+    @Nullable
+    public OpenWeatherData getWeatherData(String city, String state, @NotNull CountryCode code) throws IOException {
+        URL request = new URL("http://api.openweathermap.org/geo/1.0/direct?q=" + city + "," + (state != null ? state + "," : "") + code.getAlpha2() +
+            "&limit=1&appid=" + CREDENTIALS.getPassword());
+        DatumPojo<OpenWeatherGeoData> locations = new DatumPojo<>(MAPPER.readValue(request, new TypeReference<>() {
+        }));
+        Optional<OpenWeatherGeoData> firstGeoData = locations.first(location -> code.getAlpha2().equals(location.getCountry()));
+
+        if (firstGeoData.isEmpty())
+            return null;
+
+        OpenWeatherGeoData geoData = firstGeoData.get();
         return getWeatherData(geoData.getLat(), geoData.getLon())
             .setGeoData(geoData);
     }

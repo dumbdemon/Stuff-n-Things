@@ -13,6 +13,7 @@ import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.DegreeToQuadrant;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -21,6 +22,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -34,10 +36,11 @@ public class GetWeather implements ICommandSlash {
     @Override
     public Metadata getMetadata() throws ParseException {
         FastDateFormat format = Metadata.getFastDateFormat();
-        return new Metadata(getName(), "Get the weather for a specific location.", String.format("""
-            Get the weather for a specific location. Due to Discord limitations and and the sheer amount of countries in existence, only the top 25 countries that use Discord will be provided.
-            Top 25 list is valid as of %s.
-            """, OpenWeatherHandler.VALID_TIME), Mastermind.DEVELOPER, CommandCategory.FUN,
+        return new Metadata(getName(), "Get the weather for a specific location.", """
+            Get the weather for a specific location.
+            Examples of Country Codes: US (United States), GB (United Kingdom), FR (France), DE (Germany), etc.
+            If you don't know your country's code, you can use [this website](https://www.iso.org/obp/ui/#search).
+            """, Mastermind.DEVELOPER, CommandCategory.FUN,
             format.parse("1-2-2023_16:27"),
             format.parse("5-2-2023_19:19")
         )
@@ -57,13 +60,23 @@ public class GetWeather implements ICommandSlash {
                         new SubcommandData("us", "Get weather data from a US zipcode.")
                             .addOptions(
                                 new OptionData(OptionType.INTEGER, "zipcode", "A zipcode", true)
-                                    .setMaxValue(99999)
+                                    .setRequiredRange(0, 99999)
                             ),
                         new SubcommandData("global", "Get weather data from a global zipcode")
                             .addOptions(
                                 new OptionData(OptionType.STRING, "zipcode", "A zipcode", true),
-                                new OptionData(OptionType.STRING, "country", "A country", true)
-                                    .addChoices(OpenWeatherHandler.getCountryCodesAsChoices())
+                                new OptionData(OptionType.STRING, "country-code", "A country code EX: US, GB", true)
+                                    .setRequiredLength(2, 2)
+                            )
+                    ),
+                new SubcommandGroupData("by-location", "Get the weather by the location's name")
+                    .addSubcommands(
+                        new SubcommandData("name", "Get the weather by the location's name")
+                            .addOptions(
+                                new OptionData(OptionType.STRING, "city", "The name of the city.", true),
+                                new OptionData(OptionType.STRING, "country-code", "A country code EX: US, GB", true)
+                                    .setRequiredLength(2, 2),
+                                new OptionData(OptionType.STRING, "state", "The name of the state, if applicable.")
                             )
                     )
             );
@@ -81,27 +94,65 @@ public class GetWeather implements ICommandSlash {
         OpenWeatherHandler handler = new OpenWeatherHandler();
 
         try {
-            if (subcommandGroup.equals("by-zipcode")) {
-                if (subcommand.equals("us")) {
-                    int zipcode = event.getOption("zipcode", 90210, OptionMapping::getAsInt);
-                    weatherData = handler.getWeatherData(zipcode);
-                } else {
-                    String zipcode = event.getOption("zipcode", "E14", OptionMapping::getAsString);
-                    CountryCode code = CountryCode.getByCode(event.getOption("country", "GB", OptionMapping::getAsString));
-                    weatherData = handler.getWeatherData(zipcode, code);
+            switch (subcommandGroup) {
+                case "by-zipcode" -> {
+                    if (subcommand.equals("us")) {
+                        int zipcode = event.getOption("zipcode", 90210, OptionMapping::getAsInt);
+                        weatherData = handler.getWeatherData(zipcode);
+                    } else {
+                        String zipcode = event.getOption("zipcode", OptionMapping::getAsString);
+                        String userCode = event.getOption("country-code", OptionMapping::getAsString);
+                        CountryCode code = CountryCode.getByCode(userCode, false);
+                        if (code == null) {
+                            event.getHook().sendMessageEmbeds(getBadUserCodeEmbed(blob, userCode)).queue();
+                            return;
+                        }
+                        weatherData = handler.getWeatherData(zipcode, code);
+                    }
+                    where = weatherData.getGeoData().getNameReadable();
                 }
-                where = weatherData.getGeoData().getName() + ", " + weatherData.getGeoData().getCountry();
-            } else {
-                double lat = event.getOption("latitude", 33.44, OptionMapping::getAsDouble);
-                double lon = event.getOption("longitude", -94.04, OptionMapping::getAsDouble);
-                weatherData = handler.getWeatherData(lat, lon);
-                where = String.format("[%s, %s]", lat, lon);
+                case "by-coordinates" -> {
+                    double lat = event.getOption("latitude", 33.44, OptionMapping::getAsDouble);
+                    double lon = event.getOption("longitude", -94.04, OptionMapping::getAsDouble);
+                    weatherData = handler.getWeatherData(lat, lon);
+                    where = String.format("[%s, %s]", lat, lon);
+                }
+                default -> {
+                    String city = event.getOption("city", OptionMapping::getAsString);
+                    assert city != null;
+                    String state = event.getOption("state", OptionMapping::getAsString);
+                    String userCode = event.getOption("country-code", OptionMapping::getAsString);
+                    CountryCode code = CountryCode.getByCode(userCode, false);
+                    if (code == null) {
+                        event.getHook().sendMessageEmbeds(getBadUserCodeEmbed(blob, userCode)).queue();
+                        return;
+                    }
+
+                    weatherData = handler.getWeatherData(city, state, code);
+                    if (weatherData == null) {
+                        event.getHook().sendMessageEmbeds(
+                            new EmbedBuilder()
+                                .setTitle(getNameReadable())
+                                .setDescription("No location data returned from API. Did you type the location right?")
+                                .setColor(EmbedColors.getError())
+                                .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+                                .addField("City", city, true)
+                                .addField("State", state != null ? state : "*None Provided*", true)
+                                .addField("Country", code.getAlpha2(), true)
+                                .build()
+                        ).queue();
+                        return;
+                    }
+
+                    where = weatherData.getGeoData().getNameReadable();
+                }
             }
-        } catch (IOException ignore) {
+        } catch (IOException e) {
+            LoggerFactory.getLogger(GetWeather.class).error("Couldn't get location data.", e);
             event.getHook().sendMessageEmbeds(
                 new EmbedBuilder()
                     .setTitle(getName())
-                    .setDescription(String.format("Location provided is invalid. Please try again.%nIf this continues, [please make a report.](%s).",
+                    .setDescription(String.format("Location provided is invalid. Please try again.%nIf this continues, [please make a report](%s).",
                         Config.getErrorReportingURL()))
                     .setColor(EmbedColors.getError())
                     .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
@@ -120,12 +171,13 @@ public class GetWeather implements ICommandSlash {
             .addField("Current Time", current.getDtAsTimeStamp(), false)
             .addField("Sunrise", current.getSunriseAsTimeStamp(Timestamp.SHORT_TIME), true)
             .addField("Sunset", current.getSunsetAsTimestamp(Timestamp.SHORT_TIME), true)
-            .addField("Temperature (Actual)", current.getTempsAsString(), false)
-            .addField("Temperature (Feels Like)", current.getFeelsLikesAsString(), false)
+            .addBlankField(true)
+            .addField("Temperature (Actual)", current.getTempsAsString(), true)
+            .addField("Dew Point", current.getDewPiontsAsString(), true)
+            .addField("Temperature (Feels Like)", current.getFeelsLikesAsString(), true)
             .addField("Pressure", String.format("**%s** hPa", current.getPressure()), true)
             .addField("Humidity", String.format("**%s**%%", current.getHumidity()), true)
             .addField("Clouds", String.format("**%s**%%", current.getClouds()), true)
-            .addField("Dew Point", current.getDewPiontsAsString(), false)
             .addField("UV Index", String.format("**%s**", current.getUvi()), true)
             .addField("Visibility", String.format(current.getVisibilityAsString()), true)
             .addField("Wind Speed", current.getWindSpeedAsString(), true);
@@ -134,7 +186,7 @@ public class GetWeather implements ICommandSlash {
             main.addField("Wind Gust", current.getWindGustAsString(), true);
         }
 
-        main.addField("Wind Direction", String.format("**%s**° (%s)", current.getWindDeg(), toQuadrant.getQuadrantName(current.getWindDeg())), true);
+        main.addField("Wind Direction", String.format("**%s**° (%s)", (int) (double) current.getWindDeg(), toQuadrant.getQuadrantName(current.getWindDeg())), true);
 
         if (!current.getWeather().isEmpty()) {
             Weather weather = current.getWeather().get(0);
@@ -149,5 +201,16 @@ public class GetWeather implements ICommandSlash {
         }
 
         event.getHook().sendMessageEmbeds(main.build()).queue();
+    }
+
+    @NotNull
+    private MessageEmbed getBadUserCodeEmbed(@NotNull EventBlob blob, String userCode) {
+        return new EmbedBuilder()
+            .setTitle(getNameReadable())
+            .setDescription("Country code given was invalid.")
+            .setColor(EmbedColors.getError())
+            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+            .addField("Given", userCode, false)
+            .build();
     }
 }

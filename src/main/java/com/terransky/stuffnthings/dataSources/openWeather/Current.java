@@ -74,13 +74,13 @@ public class Current {
     private List<Weather> weather = new ArrayList<>();
 
     @JsonInclude
-    private Float KelvinToCelsius(float kelkin) {
+    private Float kelvinToCelsius(float kelkin) {
         return (float) (kelkin - 273.15);
     }
 
     @JsonInclude
-    private Float KelvinToFerenheit(float kelvin) {
-        return (float) (KelvinToCelsius(kelvin) * 1.8 + 32);
+    private Float kelvinToFerenheit(float kelvin) {
+        return (float) (kelvinToCelsius(kelvin) * 1.8 + 32);
     }
 
     @JsonInclude
@@ -91,16 +91,8 @@ public class Current {
 
     @JsonIgnore
     public String getPrettyTempretures(Float tempreture) {
-        float celiusFloat = KelvinToCelsius(tempreture);
-        float ferenheitFloat = KelvinToFerenheit(tempreture);
-
-        int celsiusInt = celiusFloat < 0.0 ?
-            (int) Math.floor(celiusFloat) :
-            (int) Math.ceil(celiusFloat);
-
-        int ferenheitInt = ferenheitFloat < 0.0 ?
-            (int) Math.floor(ferenheitFloat) :
-            (int) Math.ceil(ferenheitFloat);
+        int celsiusInt = Math.round(kelvinToCelsius(tempreture));
+        int ferenheitInt = Math.round(kelvinToFerenheit(tempreture));
 
         return String.format("**%s**K | **%s**°C | **%s**°F", FORMAT.format(tempreture), celsiusInt, ferenheitInt);
     }

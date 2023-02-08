@@ -1,8 +1,6 @@
 package com.terransky.stuffnthings.dataSources.openWeather;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.*;
 import com.terransky.stuffnthings.interfaces.Pojo;
 
 import javax.annotation.Generated;
@@ -13,8 +11,10 @@ import javax.annotation.Generated;
     "name",
     "lat",
     "lon",
-    "country"
+    "country",
+    "state"
 })
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Generated("jsonschema2pojo")
 public class OpenWeatherGeoData implements Pojo {
 
@@ -28,6 +28,8 @@ public class OpenWeatherGeoData implements Pojo {
     private Float lon;
     @JsonProperty("country")
     private String country;
+    @JsonProperty("state")
+    private String state;
 
     @JsonProperty("zip")
     public String getZip() {
@@ -79,4 +81,18 @@ public class OpenWeatherGeoData implements Pojo {
         this.country = country;
     }
 
+    @JsonProperty("state")
+    public String getState() {
+        return state;
+    }
+
+    @JsonProperty("state")
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    @JsonIgnore
+    public String getNameReadable() {
+        return name + ", " + (state != null ? state + ", " : "") + country;
+    }
 }
