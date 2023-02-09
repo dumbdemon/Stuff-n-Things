@@ -52,8 +52,8 @@ public class CypherCmd implements ICommandSlash {
             • Reverse
             ```
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
-            Metadata.parseDate("5-2-2023_14:41"),
-            Metadata.parseDate("4-2-2023_12:00")
+            Metadata.parseDate("2023-02-05T14:41Z"),
+            Metadata.parseDate("2023-02-04T12:00Z")
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("base64", "Base64 Cypher")

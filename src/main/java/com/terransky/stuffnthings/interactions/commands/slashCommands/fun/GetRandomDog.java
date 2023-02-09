@@ -17,22 +17,21 @@ import java.net.URL;
 public class GetRandomDog implements ICommandSlash {
     @Override
     public String getName() {
-        return "dog";
+        return "random-dog";
     }
 
     @Override
     public Metadata getMetadata() {
         return new Metadata(getName(), "Random Dogs! Go!",
             Mastermind.DEVELOPER, CommandCategory.FUN,
-            Metadata.parseDate("6-2-2023_17:31"),
-            Metadata.parseDate("6-2-2023_17:31")
+            Metadata.parseDate("2023-02-06T17:31Z"),
+            Metadata.parseDate("2023-02-06T17:31Z")
         );
     }
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         RandomDog randomDog = new ObjectMapper().readValue(new URL("https://random.dog/woof.json"), RandomDog.class);
-        randomDog.saveAsJsonFile();
 
         event.reply(randomDog.getUrl()).queue();
     }

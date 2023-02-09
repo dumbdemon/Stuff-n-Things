@@ -48,6 +48,7 @@ public class Managers {
         new CypherCmd(),
         new Dictionary(),
         new GetDadJokes(),
+        new GetRandomCat(),
         new GetRandomDog(),
         new GetWeather(),
         new JokesV2(),

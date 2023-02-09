@@ -22,8 +22,8 @@ public class Ping implements ICommandSlash {
             Pong! Get the ping of the bot.
             """, Mastermind.DEFAULT,
             CommandCategory.GENERAL,
-            Metadata.parseDate("24-08-2022_11:10"),
-            Metadata.parseDate("30-12-2022_16:44")
+            Metadata.parseDate("2022-08-24T11:10Z"),
+            Metadata.parseDate("2022-12-30T16:44Z")
         );
     }
 

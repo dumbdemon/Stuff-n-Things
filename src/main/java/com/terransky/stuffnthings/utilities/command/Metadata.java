@@ -95,7 +95,7 @@ public class Metadata implements Comparable<Metadata> {
      * @return An {@link OffsetDateTime}
      */
     public static OffsetDateTime parseDate(String date) {
-        return OffsetDateTime.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy_HH:mm"));
+        return OffsetDateTime.parse(date);
     }
 
     @NotNull
@@ -354,6 +354,6 @@ public class Metadata implements Comparable<Metadata> {
         return String.CASE_INSENSITIVE_ORDER.compare(getCommandName(), metadata.getCommandName()) |
             String.CASE_INSENSITIVE_ORDER.compare(getShortDescription(), metadata.getShortDescription()) |
             String.CASE_INSENSITIVE_ORDER.compare(getLongDescription(), metadata.getLongDescription()) |
-            createdDate.compareTo(metadata.createdDate);
+            createdDate.compareTo(metadata.getCreatedDate());
     }
 }

@@ -28,8 +28,8 @@ public class Lmgtfy implements ICommandSlash {
             When a person is too lazy to search it up themselves, call this on 'em.
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
-            Metadata.parseDate("24-08-2022_11:10"),
-            Metadata.parseDate("21-12-2022_20:00")
+            Metadata.parseDate("2022-08-24T11:10Z"),
+            Metadata.parseDate("2022-12-21T20:00Z")
         )
             .addSubcommands(
                 new SubcommandData("web", "Let me Google that for you!")

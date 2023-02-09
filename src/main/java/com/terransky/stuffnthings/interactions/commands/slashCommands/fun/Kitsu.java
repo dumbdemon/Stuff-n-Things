@@ -32,7 +32,7 @@ import java.util.List;
 public class Kitsu {
 
     private static OffsetDateTime getGlobalLastUpdated() {
-        return Metadata.parseDate("9-2-2023_12:34");
+        return Metadata.parseDate("2023-02-09T12:34Z");
     }
 
     private static Metadata getStandard(String name) {
@@ -40,7 +40,7 @@ public class Kitsu {
             .setCommandName(name)
             .setMastermind(Mastermind.DEVELOPER)
             .setCategory(CommandCategory.FUN)
-            .setCreatedDate(Metadata.parseDate("17-1-2023_12:43"))
+            .setCreatedDate(Metadata.parseDate("2023-01-17T12:43Z"))
             .addOptions(
                 new OptionData(OptionType.STRING, "search", "Queary for search", true)
             );
@@ -127,7 +127,7 @@ public class Kitsu {
 
         @Override
         public Metadata getMetadata() {
-            OffsetDateTime animeLastUpdated = Metadata.parseDate("18-1-2023_16:19"),
+            OffsetDateTime animeLastUpdated = Metadata.parseDate("2023-01-18T16:19Z"),
                 lastUpdated = getGlobalLastUpdated();
             if (animeLastUpdated.isAfter(getGlobalLastUpdated()))
                 lastUpdated = animeLastUpdated;
@@ -169,7 +169,7 @@ public class Kitsu {
 
         @Override
         public Metadata getMetadata() {
-            OffsetDateTime mangaLastUpdated = Metadata.parseDate("5-2-2023_11:52"),
+            OffsetDateTime mangaLastUpdated = Metadata.parseDate("2023-02-05T11:52Z"),
                 lastUpdated = getGlobalLastUpdated();
             if (mangaLastUpdated.isAfter(getGlobalLastUpdated()))
                 lastUpdated = mangaLastUpdated;

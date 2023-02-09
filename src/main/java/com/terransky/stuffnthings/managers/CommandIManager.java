@@ -5,8 +5,11 @@ import com.terransky.stuffnthings.interfaces.interactions.ICommand;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,8 +70,13 @@ public class CommandIManager<T extends ICommand> extends IManager<T> {
         if (effectiveCommands.isEmpty()) return new ArrayList<>();
 
         return new ArrayList<>() {{
+            final Logger log = LoggerFactory.getLogger(CommandIManager.class);
             for (T command : getEffectiveCounts(effectiveCommands, effectiveCommands.get(0).getInteractionType())) {
-                add(command.getCommandData());
+                try {
+                    add(command.getCommandData());
+                } catch (DateTimeParseException e) {
+                    log.error("Skipping {} because {}", command.getName(), e.getMessage());
+                }
             }
         }};
     }

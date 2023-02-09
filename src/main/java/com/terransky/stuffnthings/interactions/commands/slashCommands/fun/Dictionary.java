@@ -146,8 +146,8 @@ public class Dictionary implements ICommandSlash {
             """.formatted(langCodes.size()),
             Mastermind.DEVELOPER,
             CommandCategory.FUN,
-            Metadata.parseDate("27-10-2022_12:46"),
-            Metadata.parseDate("21-1-2023_16:05")
+            Metadata.parseDate("2022-10-27T12:46Z"),
+            Metadata.parseDate("2023-01-21T16:05Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "word", "The word to look up.", true),

@@ -113,8 +113,8 @@ public class Kill implements ICommandSlash {
             Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
             """, Mastermind.USER,
             CommandCategory.FUN,
-            Metadata.parseDate("24-08-2022_11:10"),
-            Metadata.parseDate("31-1-2023_12:03")
+            Metadata.parseDate("2022-08-24T11:10Z"),
+            Metadata.parseDate("2023-01-31T12:03Z")
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),

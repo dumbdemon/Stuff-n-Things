@@ -26,8 +26,8 @@ public class Suggest implements ICommandSlash {
             Have a command that you would like the bot to have? Suggest it with this command!
             """, Mastermind.DEVELOPER,
             CommandCategory.GENERAL,
-            Metadata.parseDate("24-08-2022_11:10"),
-            Metadata.parseDate("1-1-2022_18:23")
+            Metadata.parseDate("2022-08-24T11:10Z"),
+            Metadata.parseDate("2022-01-01T18:23Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "suggestion", "What do you want the bot to do?", true),

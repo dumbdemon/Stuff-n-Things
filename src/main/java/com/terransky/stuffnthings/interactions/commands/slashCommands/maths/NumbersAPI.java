@@ -61,8 +61,8 @@ public class NumbersAPI implements ICommandSlash {
             Facts are provided by [NumbersAPI](http://numbersapi.com).
             """, Mastermind.DEVELOPER,
             CommandCategory.MATHS,
-            Metadata.parseDate("10-11-2022_20:45"),
-            Metadata.parseDate("21-1-2023_16:05")
+            Metadata.parseDate("2022-11-10T20:45Z"),
+            Metadata.parseDate("2023-01-21T16:05Z")
         )
             .addSubcommands(
                 new SubcommandData("number", "A fact about a number.")

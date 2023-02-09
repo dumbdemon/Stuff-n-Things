@@ -82,8 +82,8 @@ public class WhatsInStandard implements ICommandSlash {
             """,
             Mastermind.DEVELOPER,
             CommandCategory.MTG,
-            Metadata.parseDate("27-10-2022_12:46"),
-            Metadata.parseDate("5-2-2023_13:44")
+            Metadata.parseDate("2022-10-27T12:46Z"),
+            Metadata.parseDate("2023-02-05T13:44Z")
         )
             .addSubcommands(
                 new SubcommandData("all", "Get all info about the standard format."),

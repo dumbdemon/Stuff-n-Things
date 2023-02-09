@@ -35,8 +35,8 @@ public class JokesV2 implements ICommandSlash {
             Get a random joke!
             Admins can use `/config jokes` to limit the specifiers.
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
-            Metadata.parseDate("6-2-2023_18:34"),
-            Metadata.parseDate("6-2-2023_18:34")
+            Metadata.parseDate("2023-02-06T18:34Z"),
+            Metadata.parseDate("2023-02-06T18:34Z")
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("get", "Get a random joke.")

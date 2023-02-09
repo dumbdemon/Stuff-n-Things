@@ -27,8 +27,8 @@ public class UpsertKitsuToken implements ICommandSlash {
     public Metadata getMetadata() {
         return new Metadata(getName(), "Upsert the Authorization token for `Kitsu.io`.",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
-            Metadata.parseDate("16-1-2023_13:00"),
-            Metadata.parseDate("17-1-2023_11:48")
+            Metadata.parseDate("2023-01-16T13:00Z"),
+            Metadata.parseDate("2023-01-17T11:48Z")
         );
     }
 

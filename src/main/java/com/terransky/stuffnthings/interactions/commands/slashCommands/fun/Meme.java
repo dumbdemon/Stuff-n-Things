@@ -34,8 +34,8 @@ public class Meme implements ICommandSlash {
             Reddit pulls from [r/memes](https://www.reddit.com/r/memes), [r/dankmemes](https://www.reddit.com/r/dankmemes), or from [r/me_irl](https://www.reddit.com/r/me_irl).
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
-            Metadata.parseDate("24-08-2022_11:10"),
-            Metadata.parseDate("5-1-2023_19:47")
+            Metadata.parseDate("2022-08-24T11:10Z"),
+            Metadata.parseDate("2023-01-05T19:47Z")
         )
             .addSubcommands(
                 new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, or from r/me_irl.")

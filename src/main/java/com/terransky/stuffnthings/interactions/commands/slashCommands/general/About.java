@@ -55,8 +55,8 @@ public class About implements ICommandSlash {
             ***NOTE:** If you choose from both, the command will prioritize `command-one`.
             """, Mastermind.DEVELOPER,
             CommandCategory.GENERAL,
-            Metadata.parseDate("24-08-2022_11:10"),
-            Metadata.parseDate("1-2-2023_17:12")
+            Metadata.parseDate("2022-08-24T11:10Z"),
+            Metadata.parseDate("2023-02-01T17:12Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "command-one", "Get more info on a Command.")

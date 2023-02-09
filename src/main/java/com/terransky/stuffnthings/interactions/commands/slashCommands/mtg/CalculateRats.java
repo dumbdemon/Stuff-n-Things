@@ -28,8 +28,8 @@ public class CalculateRats implements ICommandSlash {
             """.formatted("https://scryfall.com/card/chk/124/marrow-gnawer", "https://scryfall.com/card/mor/145/thornbite-staff"),
             Mastermind.DEVELOPER,
             CommandCategory.MTG,
-            Metadata.parseDate("5-10-2022_11:48"),
-            Metadata.parseDate("29-12-2022_10:14")
+            Metadata.parseDate("2022-10-05T11:48Z"),
+            Metadata.parseDate("2022-12-29T10:14Z")
         )
             .addOptions(
                 new OptionData(OptionType.INTEGER, "start-count", "How many do you have right now?", true)

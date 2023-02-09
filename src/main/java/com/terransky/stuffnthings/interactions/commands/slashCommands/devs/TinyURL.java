@@ -64,8 +64,8 @@ public class TinyURL implements ICommandSlash {
     public Metadata getMetadata() {
         return new Metadata(getName(), "Create short URLs with TinyURL",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
-            Metadata.parseDate("6-1-2023_16:04"),
-            Metadata.parseDate("5-2-2023_13:16")
+            Metadata.parseDate("2023-01-06T16:04Z"),
+            Metadata.parseDate("2023-02-05T13:16Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "url", "A URL to shorten.", true),

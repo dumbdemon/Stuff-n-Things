@@ -64,8 +64,8 @@ public class CheckPerms implements ICommandSlash {
             """.formatted(permString.substring(0, permString.length() - 2)),
             Mastermind.DEVELOPER,
             CommandCategory.ADMIN,
-            Metadata.parseDate("30-08-2022_16:14"),
-            Metadata.parseDate("27-1-2023_21:38")
+            Metadata.parseDate("2022-08-30T16:14Z"),
+            Metadata.parseDate("2023-01-27T21:38Z")
         )
             .addDefaultPerms(Permission.MANAGE_ROLES)
             .addSubcommands(
