@@ -29,8 +29,49 @@ public class JokesV2 implements ICommandSlash {
         return "jokes";
     }
 
+    @NotNull
+    private static String getEffectiveURL(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, String command) {
+        Flags serverFlags = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.JOKE_FLAGS)
+            .map(flags -> (Flags) flags)
+            .orElse(new Flags());
+
+        String lang = event.getOption("language", "en", OptionMapping::getAsString);
+        boolean nsfw = event.getChannel().asTextChannel().isNSFW();
+        boolean religious = serverFlags.getReligious() ? !serverFlags.getReligious() : event.getOption("religious", true, OptionMapping::getAsBoolean);
+        boolean political = serverFlags.getPolitical() ? !serverFlags.getPolitical() : event.getOption("political", true, OptionMapping::getAsBoolean);
+        boolean racist = serverFlags.getRacist() ? !serverFlags.getRacist() : event.getOption("racist", true, OptionMapping::getAsBoolean);
+        boolean sexist = serverFlags.getSexist() ? !serverFlags.getSexist() : event.getOption("sexist", true, OptionMapping::getAsBoolean);
+        boolean safeMode = serverFlags.getSafeMode() ? serverFlags.getSafeMode() : "safe".equals(command);
+
+        StringBuilder blacklistFlags = new StringBuilder();
+        if (!nsfw)
+            blacklistFlags.append("nsfw,");
+        if (!religious)
+            blacklistFlags.append("religious,");
+        if (!political)
+            blacklistFlags.append("political,");
+        if (!racist)
+            blacklistFlags.append("racist,");
+        if (!sexist)
+            blacklistFlags.append("sexist,");
+        if (!nsfw)
+            blacklistFlags.append("explicit,");
+        String blacklist = blacklistFlags.isEmpty() ?
+            "" : "?blacklistFlags=" + blacklistFlags.substring(0, blacklistFlags.length() - 1) + "&";
+        return "https://v2.jokeapi.dev/joke/Any" + (safeMode ? "?safe-mode&" : "") + blacklist + "?lang=" + lang;
+    }
+
     @Override
     public Metadata getMetadata() {
+        OptionData language = new OptionData(OptionType.STRING, "language", "Get output language. Defaults to English.")
+            .addChoices(
+                new Command.Choice("Czech", "cs"),
+                new Command.Choice("German", "de"),
+                new Command.Choice("English", "en"),
+                new Command.Choice("Spanish", "es"),
+                new Command.Choice("French", "fr"),
+                new Command.Choice("Portuguese", "pt")
+            );
         return new Metadata(getName(), "Get a random joke", """
             Get a random joke!
             Admins can use `/config jokes` to limit the specifiers.
@@ -42,32 +83,14 @@ public class JokesV2 implements ICommandSlash {
                 new SubcommandGroupData("get", "Get a random joke.")
                     .addSubcommands(
                         new SubcommandData("any", "Get a random joke. No specifier.")
-                            .addOptions(
-                                new OptionData(OptionType.STRING, "language", "Get output language. Defaults to English.")
-                                    .addChoices(
-                                        new Command.Choice("Czech", "cs"),
-                                        new Command.Choice("German", "de"),
-                                        new Command.Choice("English", "en"),
-                                        new Command.Choice("Spanish", "es"),
-                                        new Command.Choice("French", "fr"),
-                                        new Command.Choice("Portuguese", "pt")
-                                    )
-                            ),
+                            .addOptions(language),
                         new SubcommandData("limited", "Get a random jokes is specific categories.")
                             .addOptions(
                                 new OptionData(OptionType.BOOLEAN, "religious", "Add religious jokes."),
                                 new OptionData(OptionType.BOOLEAN, "political", "Add political jokes."),
                                 new OptionData(OptionType.BOOLEAN, "racist", "Add racist jokes."),
                                 new OptionData(OptionType.BOOLEAN, "sexist", "Add sexist jokes."),
-                                new OptionData(OptionType.STRING, "language", "Get output language. Defaults to English.")
-                                    .addChoices(
-                                        new Command.Choice("Czech", "cs"),
-                                        new Command.Choice("German", "de"),
-                                        new Command.Choice("English", "en"),
-                                        new Command.Choice("Spanish", "es"),
-                                        new Command.Choice("French", "fr"),
-                                        new Command.Choice("Portuguese", "pt")
-                                    )
+                                language
                             ),
                         new SubcommandData("safe", "Get a safe random joke")
                     ),
@@ -87,35 +110,7 @@ public class JokesV2 implements ICommandSlash {
             return;
         }
 
-        Flags serverFlags = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.JOKE_FLAGS)
-            .map(flags -> (Flags) flags)
-            .orElse(new Flags());
-
-        String lang = event.getOption("language", "en", OptionMapping::getAsString);
-        boolean nsfw = event.getChannel().asTextChannel().isNSFW();
-        boolean religious = serverFlags.getReligious() ? !serverFlags.getReligious() : event.getOption("religious", true, OptionMapping::getAsBoolean);
-        boolean political = serverFlags.getPolitical() ? !serverFlags.getPolitical() : event.getOption("political", true, OptionMapping::getAsBoolean);
-        boolean racist = serverFlags.getRacist() ? !serverFlags.getRacist() : event.getOption("racist", true, OptionMapping::getAsBoolean);
-        boolean sexist = serverFlags.getSexist() ? !serverFlags.getSexist() : event.getOption("sexist", true, OptionMapping::getAsBoolean);
-        boolean safeMode = serverFlags.getSafeMode() ? serverFlags.getSafeMode() : "safe".equals(command[2]);
-
-        StringBuilder blacklistFlags = new StringBuilder();
-        if (!nsfw)
-            blacklistFlags.append("nsfw,");
-        if (!religious)
-            blacklistFlags.append("religious,");
-        if (!political)
-            blacklistFlags.append("political,");
-        if (!racist)
-            blacklistFlags.append("racist,");
-        if (!sexist)
-            blacklistFlags.append("sexist,");
-        if (!nsfw)
-            blacklistFlags.append("explicit,");
-        String blacklist = blacklistFlags.isEmpty() ?
-            "" : "?blacklistFlags=" + blacklistFlags.substring(0, blacklistFlags.length() - 1) + "&";
-        String URL = "https://v2.jokeapi.dev/joke/Any" + (safeMode ? "?safe-mode&" : "") + blacklist + "?lang=" + lang;
-
+        String URL = getEffectiveURL(event, blob, command[2]);
         URL jokeApi = new URL(URL);
         if (Config.isTestingMode()) LoggerFactory.getLogger(JokesV2.class).debug(URL);
         ObjectMapper mapper = new ObjectMapper();
