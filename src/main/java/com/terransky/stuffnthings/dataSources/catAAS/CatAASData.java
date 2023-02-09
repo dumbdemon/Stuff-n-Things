@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.terransky.stuffnthings.interfaces.Pojo;
+import com.terransky.stuffnthings.utilities.general.Timestamp;
 
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,6 +92,16 @@ public class CatAASData implements Pojo {
         this.tags = List.copyOf(tags);
     }
 
+    @JsonIgnore
+    public String getTagsAsString() {
+        StringBuilder tagsString = new StringBuilder();
+        if (tags.isEmpty()) return "No Tags";
+        for (String tag : tags) {
+            tagsString.append(tag).append(", ");
+        }
+        return tagsString.substring(0, tagsString.length() - 2);
+    }
+
     @JsonProperty("createdAt")
     public String getCreatedAt() {
         return createdAt;
@@ -104,7 +114,12 @@ public class CatAASData implements Pojo {
 
     @JsonIgnore
     public OffsetDateTime getCreatedAtAsDate() {
-        return OffsetDateTime.parse(createdAt, DateTimeFormatter.ISO_INSTANT);
+        return OffsetDateTime.parse(createdAt);
+    }
+
+    @JsonIgnore
+    public String getCreatedAtAsTimestamp() {
+        return Timestamp.getDateAsTimestamp(getCreatedAtAsDate(), Timestamp.LONG_DATE_W_SHORT_TIME);
     }
 
     @JsonProperty("updatedAt")
@@ -119,7 +134,12 @@ public class CatAASData implements Pojo {
 
     @JsonIgnore
     public OffsetDateTime getUpdatedAtAsDate() {
-        return OffsetDateTime.parse(updatedAt, DateTimeFormatter.ISO_INSTANT);
+        return OffsetDateTime.parse(updatedAt);
+    }
+
+    @JsonIgnore
+    public String getUpdatedAtAsTimestamp() {
+        return Timestamp.getDateAsTimestamp(getUpdatedAtAsDate(), Timestamp.LONG_DATE_W_SHORT_TIME);
     }
 
     @JsonProperty("validated")
@@ -135,6 +155,14 @@ public class CatAASData implements Pojo {
 
     @JsonProperty("owner")
     public String getOwner() {
+        return owner;
+    }
+
+    @JsonIgnore
+    public String getEffectiveOwner() {
+        if (owner == null || "null".equals(owner)) {
+            return "No Owner";
+        }
         return owner;
     }
 
