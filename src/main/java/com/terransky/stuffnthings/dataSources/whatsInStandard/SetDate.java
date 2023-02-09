@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Generated;
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -38,7 +37,7 @@ public class SetDate {
     public OffsetDateTime getExactAsDate() {
         if (exact == null)
             return null;
-        return OffsetDateTime.parse(exact, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"));
+        return OffsetDateTime.parse(exact + 'Z');
     }
 
     @JsonProperty("rough")
