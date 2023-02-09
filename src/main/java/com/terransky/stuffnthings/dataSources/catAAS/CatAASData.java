@@ -6,22 +6,28 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.terransky.stuffnthings.interfaces.Pojo;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * <a href="https://cataas.com/doc.html">CatAAS Documentation</a>
- * API is currently down. Will implement when it is up.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "message",
     "code",
-    "_id",
     "tags",
-    "owner",
     "createdAt",
-    "updatedAt"
+    "updatedAt",
+    "validated",
+    "owner",
+    "file",
+    "mimetype",
+    "size",
+    "_id",
+    "url"
 })
 @SuppressWarnings("unused")
 public class CatAASData implements Pojo {
@@ -30,16 +36,26 @@ public class CatAASData implements Pojo {
     private String message;
     @JsonProperty("code")
     private Integer code;
-    @JsonProperty("_id")
-    private String id;
     @JsonProperty("tags")
     private List<String> tags = new ArrayList<>();
-    @JsonProperty("owner")
-    private String owner;
     @JsonProperty("createdAt")
     private String createdAt;
     @JsonProperty("updatedAt")
     private String updatedAt;
+    @JsonProperty("validated")
+    private Boolean validated;
+    @JsonProperty("owner")
+    private String owner;
+    @JsonProperty("file")
+    private String file;
+    @JsonProperty("mimetype")
+    private String mimetype;
+    @JsonProperty("size")
+    private Double size;
+    @JsonProperty("_id")
+    private String id;
+    @JsonProperty("url")
+    private String url;
 
     @JsonProperty("message")
     public String getMessage() {
@@ -66,16 +82,6 @@ public class CatAASData implements Pojo {
         return message != null || code != null;
     }
 
-    @JsonProperty("_id")
-    public String getId() {
-        return id;
-    }
-
-    @JsonProperty("_id")
-    public void setId(String id) {
-        this.id = id;
-    }
-
     @JsonProperty("tags")
     public List<String> getTags() {
         return tags;
@@ -84,16 +90,6 @@ public class CatAASData implements Pojo {
     @JsonProperty("tags")
     public void setTags(List<String> tags) {
         this.tags = List.copyOf(tags);
-    }
-
-    @JsonProperty("owner")
-    public String getOwner() {
-        return owner;
-    }
-
-    @JsonProperty("owner")
-    public void setOwner(String owner) {
-        this.owner = owner;
     }
 
     @JsonProperty("createdAt")
@@ -106,6 +102,11 @@ public class CatAASData implements Pojo {
         this.createdAt = createdAt;
     }
 
+    @JsonIgnore
+    public OffsetDateTime getCreatedAtAsDate() {
+        return OffsetDateTime.parse(createdAt, DateTimeFormatter.ISO_INSTANT);
+    }
+
     @JsonProperty("updatedAt")
     public String getUpdatedAt() {
         return updatedAt;
@@ -114,5 +115,81 @@ public class CatAASData implements Pojo {
     @JsonProperty("updatedAt")
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    @JsonIgnore
+    public OffsetDateTime getUpdatedAtAsDate() {
+        return OffsetDateTime.parse(updatedAt, DateTimeFormatter.ISO_INSTANT);
+    }
+
+    @JsonProperty("validated")
+    public Boolean getValidated() {
+        return validated;
+    }
+
+    @JsonProperty("validated")
+
+    public void setValidated(Boolean validated) {
+        this.validated = validated;
+    }
+
+    @JsonProperty("owner")
+    public String getOwner() {
+        return owner;
+    }
+
+    @JsonProperty("owner")
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    @JsonProperty("file")
+    public String getFile() {
+        return file;
+    }
+
+    @JsonProperty("file")
+    public void setFile(String file) {
+        this.file = file;
+    }
+
+    @JsonProperty("mimetype")
+    public String getMimetype() {
+        return mimetype;
+    }
+
+    @JsonProperty("mimetype")
+    public void setMimetype(String mimetype) {
+        this.mimetype = mimetype;
+    }
+
+    @JsonProperty("size")
+    public Double getSize() {
+        return size;
+    }
+
+    @JsonProperty("size")
+    public void setSize(Double size) {
+        this.size = size;
+    }
+
+    @JsonProperty("_id")
+    public String getId() {
+        return id;
+    }
+
+    @JsonProperty("_id")
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @JsonProperty("url")
+    public String getUrl() {
+        return url;
+    }
+
+    @JsonProperty("url")
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

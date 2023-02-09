@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 
 public class Meme implements ICommandSlash {
     private final Logger log = LoggerFactory.getLogger(Meme.class);
@@ -30,15 +28,14 @@ public class Meme implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(this.getName(), "Get a random meme.", """
             Get your fresh hot (or cold) memes here!
             Reddit pulls from [r/memes](https://www.reddit.com/r/memes), [r/dankmemes](https://www.reddit.com/r/dankmemes), or from [r/me_irl](https://www.reddit.com/r/me_irl).
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
-            format.parse("24-08-2022_11:10"),
-            format.parse("5-1-2023_19:47")
+            Metadata.parseDate("24-08-2022_11:10"),
+            Metadata.parseDate("5-1-2023_19:47")
         )
             .addSubcommands(
                 new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, or from r/me_irl.")

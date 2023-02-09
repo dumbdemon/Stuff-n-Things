@@ -19,48 +19,41 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class Kitsu {
 
-    private static final FastDateFormat FORMAT = Metadata.getFastDateFormat();
-
-    private static long getGlobalLastUpdated() throws ParseException {
-        return FORMAT.parse("5-2-2023_12:27").getTime();
+    private static OffsetDateTime getGlobalLastUpdated() {
+        return Metadata.parseDate("9-2-2023_12:34");
     }
 
-    private static Metadata getStandard(String name) throws ParseException {
+    private static Metadata getStandard(String name) {
         return new Metadata()
             .setCommandName(name)
             .setMastermind(Mastermind.DEVELOPER)
             .setCategory(CommandCategory.FUN)
-            .setCreatedDate(FORMAT.parse("17-1-2023_12:43"))
+            .setCreatedDate(Metadata.parseDate("17-1-2023_12:43"))
             .addOptions(
                 new OptionData(OptionType.STRING, "search", "Queary for search", true)
             );
     }
 
     private static String getDates(@NotNull EntryAttributes attributes) {
-        Date startDate = attributes.getStartDateAsDate(),
-            endDate = attributes.getEndDateAsDate();
+        if (attributes.getEndDate() == null)
+            return String.format("from **%s** to **?**", attributes.getStartDate());
 
-        if (endDate.compareTo(Attributes.NULL_DATE) == 0)
-            return String.format("from **%s** to **?**", Attributes.formatDate(startDate));
+        if (attributes.getStartDate().equals(attributes.getEndDate()))
+            return String.format("on **%s**", attributes.getStartDate());
 
-        if (startDate.compareTo(endDate) == 0)
-            return String.format("on **%s**", Attributes.formatDate(startDate));
-
-        return String.format("from **%s** to **%s**", Attributes.formatDate(startDate), Attributes.formatDate(attributes.getEndDateAsDate()));
+        return String.format("from **%s** to **%s**", attributes.getStartDate(), attributes.getEndDate());
     }
 
     @NotNull
@@ -133,10 +126,13 @@ public class Kitsu {
         }
 
         @Override
-        public Metadata getMetadata() throws ParseException {
-            long animeLastUpdated = FORMAT.parse("18-1-2023_16:19").getTime();
+        public Metadata getMetadata() {
+            OffsetDateTime animeLastUpdated = Metadata.parseDate("18-1-2023_16:19"),
+                lastUpdated = getGlobalLastUpdated();
+            if (animeLastUpdated.isAfter(getGlobalLastUpdated()))
+                lastUpdated = animeLastUpdated;
             return getStandard(getName())
-                .setLastUpdated(new Date(Math.max(getGlobalLastUpdated(), animeLastUpdated)))
+                .setLastUpdated(lastUpdated)
                 .setDescripstions("Search for an anime using Kitsu.io");
         }
 
@@ -172,10 +168,13 @@ public class Kitsu {
         }
 
         @Override
-        public Metadata getMetadata() throws ParseException {
-            long mangaLastUpdated = FORMAT.parse("5-2-2023_11:52").getTime();
+        public Metadata getMetadata() {
+            OffsetDateTime mangaLastUpdated = Metadata.parseDate("5-2-2023_11:52"),
+                lastUpdated = getGlobalLastUpdated();
+            if (mangaLastUpdated.isAfter(getGlobalLastUpdated()))
+                lastUpdated = mangaLastUpdated;
             return getStandard(getName())
-                .setLastUpdated(new Date(Math.max(getGlobalLastUpdated(), mangaLastUpdated)))
+                .setLastUpdated(lastUpdated)
                 .setDescripstions("Search for a manga using Kitsu.io");
         }
 

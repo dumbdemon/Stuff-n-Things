@@ -15,14 +15,12 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,12 +61,11 @@ public class TinyURL implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(getName(), "Create short URLs with TinyURL",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
-            format.parse("6-1-2023_16:04"),
-            format.parse("5-2-2023_13:16")
+            Metadata.parseDate("6-1-2023_16:04"),
+            Metadata.parseDate("5-2-2023_13:16")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "url", "A URL to shorten.", true),
@@ -107,8 +104,8 @@ public class TinyURL implements ICommandSlash {
             switch (shortURLData.getCode()) {
                 case 0 -> {
                     Data urlData = shortURLData.getData();
-                    Date createdAt = urlData.getCreatedAtAsDate();
-                    Date expiresAt = urlData.getExpiresAtAsDate();
+                    OffsetDateTime createdAt = urlData.getCreatedAtAsDate();
+                    OffsetDateTime expiresAt = urlData.getExpiresAtAsDate();
 
                     event.getHook().sendMessageEmbeds(
                         embedBuilder.addField("Long URL", url, false)

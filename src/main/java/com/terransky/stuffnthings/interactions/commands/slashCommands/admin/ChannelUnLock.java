@@ -15,13 +15,11 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 public class ChannelUnLock implements ICommandSlash {
 
@@ -31,12 +29,11 @@ public class ChannelUnLock implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(this.getName(), "Lock or unlock a channel for everyone or from a specific role to see.",
             Mastermind.DEVELOPER, CommandCategory.ADMIN,
-            format.parse("23-11-2022_18:34"),
-            format.parse("21-1-2023_16:05")
+            Metadata.parseDate("23-11-2022_18:34"),
+            Metadata.parseDate("21-1-2023_16:05")
         )
             .addDefaultPerms(Permission.MANAGE_CHANNEL)
             .addSubcommands(

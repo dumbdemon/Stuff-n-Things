@@ -8,13 +8,11 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 
 public class SolveQuadratic implements ICommandSlash {
     @Override
@@ -23,15 +21,13 @@ public class SolveQuadratic implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
-
+    public Metadata getMetadata() {
         return new Metadata(this.getName(), "Solve a Quadratic Equation.", """
             Given a, b, and/or c, solve for when the parabola intersects the x-axis.
             """, Mastermind.DEVELOPER,
             CommandCategory.MATHS,
-            format.parse("19-11-2022_13:09"),
-            format.parse("12-1-2023_20:52")
+            Metadata.parseDate("19-11-2022_13:09"),
+            Metadata.parseDate("12-1-2023_20:52")
         )
             .addOptions(
                 new OptionData(OptionType.NUMBER, "value-a", "A value of Quadratic Formula"),

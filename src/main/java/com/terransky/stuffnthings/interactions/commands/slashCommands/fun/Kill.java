@@ -18,11 +18,9 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.*;
 
 public class Kill implements ICommandSlash {
@@ -110,14 +108,13 @@ public class Kill implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(this.getName(), "Time to un-alive random members!", """
             Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
             """, Mastermind.USER,
             CommandCategory.FUN,
-            format.parse("24-08-2022_11:10"),
-            format.parse("31-1-2023_12:03")
+            Metadata.parseDate("24-08-2022_11:10"),
+            Metadata.parseDate("31-1-2023_12:03")
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),

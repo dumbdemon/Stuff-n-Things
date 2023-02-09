@@ -13,12 +13,10 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -51,8 +49,7 @@ public class CheckPerms implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         var permString = new StringBuilder();
 
         for (Permission requiredPerm : getRequiredPerms()) {
@@ -67,8 +64,8 @@ public class CheckPerms implements ICommandSlash {
             """.formatted(permString.substring(0, permString.length() - 2)),
             Mastermind.DEVELOPER,
             CommandCategory.ADMIN,
-            format.parse("30-08-2022_16:14"),
-            format.parse("27-1-2023_21:38")
+            Metadata.parseDate("30-08-2022_16:14"),
+            Metadata.parseDate("27-1-2023_21:38")
         )
             .addDefaultPerms(Permission.MANAGE_ROLES)
             .addSubcommands(

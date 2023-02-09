@@ -2,20 +2,15 @@ package com.terransky.stuffnthings.managers;
 
 import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.interfaces.interactions.ICommand;
-import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CommandIManager<T extends ICommand> extends IManager<T> {
-
-    private final Logger log = LoggerFactory.getLogger(CommandIManager.class);
 
     @SafeVarargs
     public CommandIManager(@NotNull T... commands) {
@@ -47,9 +42,6 @@ public class CommandIManager<T extends ICommand> extends IManager<T> {
 
     /**
      * Get the command data of all commands.
-     * <p>
-     * <b>Things to note:</b><br>
-     * • If a {@link ParseException} occurs, it will not be pushed.<br>
      *
      * @param serverId The ID of the server to check for.
      * @return A {@link List} of {@link CommandData}
@@ -62,9 +54,6 @@ public class CommandIManager<T extends ICommand> extends IManager<T> {
 
     /**
      * Get the command data of all commands.
-     * <p>
-     * <b>Things to note:</b><br>
-     * • If a {@link ParseException} occurs, it will not be pushed.<br>
      *
      * @param guild A {@link Guild} to check for.
      * @return A {@link List} of {@link CommandData}
@@ -79,12 +68,7 @@ public class CommandIManager<T extends ICommand> extends IManager<T> {
 
         return new ArrayList<>() {{
             for (T command : getEffectiveCounts(effectiveCommands, effectiveCommands.get(0).getInteractionType())) {
-                try {
-                    add(command.getCommandData());
-                } catch (ParseException e) {
-                    String commandName = command instanceof ICommandSlash slash ? slash.getNameReadable() : command.getName();
-                    log.warn("The date formatting in %s is invalid and will not be pushed.".formatted(commandName.toUpperCase()));
-                }
+                add(command.getCommandData());
             }
         }};
     }

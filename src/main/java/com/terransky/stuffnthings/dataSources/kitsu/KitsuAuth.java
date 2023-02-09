@@ -9,11 +9,11 @@ import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import javax.annotation.Generated;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -90,16 +90,8 @@ public class KitsuAuth implements Pojo {
 
     @JsonInclude
     @BsonIgnore
-    public Date getCreatedAtAsDate() {
-        return new Date(TimeUnit.SECONDS.toMillis(createdAt));
-    }
-
-    @JsonIgnore
-    @BsonIgnore
-    public LocalDate getExpiredAtAsLocalDate() {
-        return getExpiresAt().toInstant()
-            .atZone(ZoneId.systemDefault())
-            .toLocalDate();
+    public OffsetDateTime getCreatedAtAsDate() {
+        return OffsetDateTime.ofInstant(Instant.ofEpochSecond(createdAt), ZoneId.systemDefault());
     }
 
     /**
@@ -119,14 +111,14 @@ public class KitsuAuth implements Pojo {
 
     @JsonIgnore
     @BsonIgnore
-    public Date getExpiresAt() {
-        return new Date(getCreatedAtAsDate().getTime() + TimeUnit.SECONDS.toMillis(expiresIn));
+    public OffsetDateTime getExpiresAt() {
+        return getCreatedAtAsDate().plusSeconds(expiresIn);
     }
 
     @JsonIgnore
     @BsonIgnore
     public long getDaysUntilExpired() {
-        return LocalDate.now().until(getExpiredAtAsLocalDate(), ChronoUnit.DAYS);
+        return LocalDate.now().until(getExpiresAt(), ChronoUnit.DAYS);
     }
 
     @JsonIgnore

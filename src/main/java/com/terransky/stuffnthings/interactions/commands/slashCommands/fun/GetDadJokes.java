@@ -11,13 +11,11 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 public class GetDadJokes implements ICommandSlash {
     private final Logger log = LoggerFactory.getLogger(GetDadJokes.class);
@@ -28,14 +26,13 @@ public class GetDadJokes implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(this.getName(), "Why was 6 afraid of 7? Because 7 was a registered 6 offender.", """
             An unoriginal or unfunny joke of a type supposedly told by middle-aged or older men.
             """, Mastermind.USER,
             CommandCategory.FUN,
-            format.parse("25-8-2022_20:53"),
-            format.parse("21-1-2023_16:05")
+            Metadata.parseDate("25-8-2022_20:53"),
+            Metadata.parseDate("21-1-2023_16:05")
         );
     }
 

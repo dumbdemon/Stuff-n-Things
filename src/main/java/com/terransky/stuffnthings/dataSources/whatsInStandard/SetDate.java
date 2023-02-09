@@ -4,12 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Generated;
-import java.text.ParseException;
-import java.util.Date;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -36,15 +35,10 @@ public class SetDate {
 
     @JsonIgnore
     @Nullable
-    public Date getExactAsDate() {
+    public OffsetDateTime getExactAsDate() {
         if (exact == null)
             return null;
-        FastDateFormat format = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSS");
-        try {
-            return format.parse(exact);
-        } catch (ParseException e) {
-            return null;
-        }
+        return OffsetDateTime.parse(exact, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"));
     }
 
     @JsonProperty("rough")

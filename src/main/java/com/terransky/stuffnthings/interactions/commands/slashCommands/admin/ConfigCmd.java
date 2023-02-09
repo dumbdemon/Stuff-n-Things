@@ -22,14 +22,12 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -43,15 +41,14 @@ public class ConfigCmd implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(this.getName(), "The config manager.", """
             Sets certain constant values of specific commands.
             """,
             Mastermind.DEVELOPER,
             CommandCategory.ADMIN,
-            format.parse("28-08-2022_21:46"),
-            format.parse("5-2-2023_19:53")
+            Metadata.parseDate("28-08-2022_21:46"),
+            Metadata.parseDate("5-2-2023_19:53")
         )
             .addDefaultPerms(Permission.MANAGE_SERVER)
             .addSubcommandGroups(

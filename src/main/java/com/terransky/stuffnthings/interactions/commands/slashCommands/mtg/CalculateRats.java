@@ -8,12 +8,10 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 
 public class CalculateRats implements ICommandSlash {
 
@@ -24,15 +22,14 @@ public class CalculateRats implements ICommandSlash {
 
     @SuppressWarnings("SpellCheckingInspection")
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(this.getName(), "How many rats you have?", """
             Returns an amount of 1/1 black Rat creature tokens after X triggers created by the interaction between [Marrow-Gnawer](%s) equipped with [Thornbite Staff](%s).
             """.formatted("https://scryfall.com/card/chk/124/marrow-gnawer", "https://scryfall.com/card/mor/145/thornbite-staff"),
             Mastermind.DEVELOPER,
             CommandCategory.MTG,
-            format.parse("5-10-2022_11:48"),
-            format.parse("29-12-2022_10:14")
+            Metadata.parseDate("5-10-2022_11:48"),
+            Metadata.parseDate("29-12-2022_10:14")
         )
             .addOptions(
                 new OptionData(OptionType.INTEGER, "start-count", "How many do you have right now?", true)

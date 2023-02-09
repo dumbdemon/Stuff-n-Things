@@ -6,13 +6,13 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,8 +27,8 @@ public class Metadata implements Comparable<Metadata> {
     private String longDescription;
     private Mastermind mastermind;
     private CommandCategory category;
-    private Date createdDate;
-    private Date lastUpdated;
+    private OffsetDateTime createdDate;
+    private OffsetDateTime lastUpdated;
     private boolean isNsfw = false;
 
     /**
@@ -52,11 +52,11 @@ public class Metadata implements Comparable<Metadata> {
      *                    {@value MessageEmbed#DESCRIPTION_MAX_LENGTH} characters.
      * @param mastermind  The {@link Mastermind}.
      * @param category    The {@link CommandCategory}.
-     * @param createdDate The {@link Date} when the command was first created.
-     * @param lastUpdated The {@link Date} when the last time the command was edited.
+     * @param createdDate The {@link OffsetDateTime} of when the command was first created.
+     * @param lastUpdated The {@link OffsetDateTime} of when the last time the command was edited.
      */
     public Metadata(String commandName, String description, Mastermind mastermind, CommandCategory category,
-                    Date createdDate, Date lastUpdated) {
+                    OffsetDateTime createdDate, OffsetDateTime lastUpdated) {
         this(commandName, description, description, mastermind, category, createdDate, lastUpdated);
     }
 
@@ -74,11 +74,11 @@ public class Metadata implements Comparable<Metadata> {
      *                         /about [command]}. It will be truncated if it has more than {@value MessageEmbed#DESCRIPTION_MAX_LENGTH} characters.
      * @param mastermind       The {@link Mastermind}.
      * @param category         The {@link CommandCategory}.
-     * @param createdDate      The {@link Date} when the command was first created.
-     * @param lastUpdated      The {@link Date} when the last time the command was edited.
+     * @param createdDate      The {@link OffsetDateTime} of when the command was first created.
+     * @param lastUpdated      The {@link OffsetDateTime} of when the last time the command was edited.
      */
     public Metadata(String commandName, String shortDescription, String longDescription, Mastermind mastermind, CommandCategory category,
-                    Date createdDate, Date lastUpdated) {
+                    OffsetDateTime createdDate, OffsetDateTime lastUpdated) {
         this.commandName = commandName;
         this.shortDescription = shortDescription;
         this.longDescription = longDescription;
@@ -89,21 +89,23 @@ public class Metadata implements Comparable<Metadata> {
     }
 
     /**
-     * The default formatting for all Metadata dates
+     * Get an {@link OffsetDateTime} from a string
      *
-     * @return A {@link FastDateFormat}
+     * @param date Date string
+     * @return An {@link OffsetDateTime}
      */
-    public static FastDateFormat getFastDateFormat() {
-        return FastDateFormat.getInstance("dd-MM-yyyy_HH:mm");
+    public static OffsetDateTime parseDate(String date) {
+        return OffsetDateTime.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy_HH:mm"));
     }
 
     @NotNull
+    @SuppressWarnings("unused")
     public static Metadata getEmptyMetadata() {
         return new Metadata()
             .setCommandName("")
             .setDescripstions("")
-            .setCreatedDate(new Date())
-            .setLastUpdated(new Date())
+            .setCreatedDate(OffsetDateTime.now())
+            .setLastUpdated(OffsetDateTime.now())
             .setMastermind(Mastermind.DEVELOPER)
             .setCategory(CommandCategory.TEST)
             .setNsfw(false);
@@ -215,11 +217,11 @@ public class Metadata implements Comparable<Metadata> {
         return this;
     }
 
-    public Date getCreatedDate() {
+    public OffsetDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public Metadata setCreatedDate(Date createdDate) {
+    public Metadata setCreatedDate(OffsetDateTime createdDate) {
         this.createdDate = createdDate;
         return this;
     }
@@ -232,11 +234,11 @@ public class Metadata implements Comparable<Metadata> {
         return Timestamp.getDateAsTimestamp(getCreatedDate(), timestamp);
     }
 
-    public Date getLastUpdated() {
+    public OffsetDateTime getLastUpdated() {
         return lastUpdated;
     }
 
-    public Metadata setLastUpdated(Date lastUpdated) {
+    public Metadata setLastUpdated(OffsetDateTime lastUpdated) {
         this.lastUpdated = lastUpdated;
         return this;
     }
@@ -331,7 +333,6 @@ public class Metadata implements Comparable<Metadata> {
     @Override
     public String toString() {
         int[] countz = getCounts();
-        var dateFormat = getFastDateFormat();
         return "Metadata{" +
             "defaultPerms=" + Permission.getRaw(defaultPerms) +
             ", subcommandGroups=" + countz[0] +
@@ -342,8 +343,8 @@ public class Metadata implements Comparable<Metadata> {
             ", longDescription='" + longDescription + '\'' +
             ", mastermind=" + mastermind.toString() +
             ", module=" + category.toString() +
-            ", implementationDate=" + dateFormat.format(createdDate) +
-            ", lastUpdated=" + dateFormat.format(lastUpdated) +
+            ", implementationDate=" + createdDate.format(DateTimeFormatter.ISO_LOCAL_DATE) +
+            ", lastUpdated=" + lastUpdated.format(DateTimeFormatter.ISO_LOCAL_DATE) +
             ", isNsfw=" + isNsfw +
             '}';
     }

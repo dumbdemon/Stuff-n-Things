@@ -7,12 +7,10 @@ import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 
 public class GetInvite implements ICommandSlash {
@@ -22,13 +20,12 @@ public class GetInvite implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(this.getName(), "Get an invite for the bot."
             , Mastermind.DEFAULT,
             CommandCategory.DEVS,
-            format.parse("24-08-2022_11:10"),
-            format.parse("21-12-2022_12:16")
+            Metadata.parseDate("24-08-2022_11:10"),
+            Metadata.parseDate("21-12-2022_12:16")
         );
     }
 

@@ -20,12 +20,10 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 public class GetWeather implements ICommandSlash {
     @Override
@@ -34,15 +32,14 @@ public class GetWeather implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(getName(), "Get the weather for a specific location.", """
             Get the weather for a specific location.
             Examples of Country Codes: US (United States), GB (United Kingdom), FR (France), DE (Germany), etc.
             If you don't know your country's code, you can use [this website](https://www.iso.org/obp/ui/#search).
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
-            format.parse("1-2-2023_16:27"),
-            format.parse("5-2-2023_19:19")
+            Metadata.parseDate("1-2-2023_16:27"),
+            Metadata.parseDate("5-2-2023_19:19")
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("by-coordinates", "Get the weather by coordinates.")

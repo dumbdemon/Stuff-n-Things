@@ -13,12 +13,10 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -68,8 +66,7 @@ public class UserInfo implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(this.getName(), "Get info on a specific user on the server! Defaults to you.", """
             Get info on a user or bot.
             The following info with be returned:
@@ -83,8 +80,8 @@ public class UserInfo implements ICommandSlash {
             • Boosting Status (if user)
             """, Mastermind.DEFAULT,
             CommandCategory.DEVS,
-            format.parse("24-08-2022_11:10"),
-            format.parse("27-1-2023_21:58")
+            Metadata.parseDate("24-08-2022_11:10"),
+            Metadata.parseDate("27-1-2023_21:58")
         )
             .addOptions(
                 new OptionData(OptionType.USER, "user", "Who you want to know about.")

@@ -13,13 +13,11 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.text.ParseException;
 import java.time.Duration;
 import java.util.Date;
 import java.util.Optional;
@@ -51,15 +49,14 @@ public class About implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(this.getName(), "What am I? Who am I?", """
             The about command. What else did you expect?
             ***NOTE:** If you choose from both, the command will prioritize `command-one`.
             """, Mastermind.DEVELOPER,
             CommandCategory.GENERAL,
-            format.parse("24-08-2022_11:10"),
-            format.parse("1-2-2023_17:12")
+            Metadata.parseDate("24-08-2022_11:10"),
+            Metadata.parseDate("1-2-2023_17:12")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "command-one", "Get more info on a Command.")
@@ -78,19 +75,13 @@ public class About implements ICommandSlash {
         Optional<String> ifCommandFour = Optional.ofNullable(event.getOption("command-four", OptionMapping::getAsString));
 
         if (ifCommandOne.isPresent() || ifCommandTwo.isPresent() || ifCommandThree.isPresent() || ifCommandFour.isPresent()) {
-            try {
-                String command = ifCommandOne.orElse(
-                    ifCommandTwo.orElse(
-                        ifCommandThree.orElse(
-                            ifCommandFour.orElse(getName())
-                        )
+            getCommandInfo(event, blob, ifCommandOne.orElse(
+                ifCommandTwo.orElse(
+                    ifCommandThree.orElse(
+                        ifCommandFour.orElse(getName())
                     )
-                );
-
-                getCommandInfo(event, blob, command);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
+                )
+            ));
             return;
         }
 
@@ -103,17 +94,10 @@ public class About implements ICommandSlash {
         commandCnt += guildCommandCnt;
         long guildCount;
         long userCount;
-        String serviced;
+        String serviced = Config.isDatabaseEnabled() ? " Serviced" : "";
 
-        if (Config.isDatabaseEnabled()) {
-            guildCount = DatabaseManager.INSTANCE.getGuildsCount();
-            userCount = DatabaseManager.INSTANCE.getUserCount();
-            serviced = " Serviced";
-        } else {
-            guildCount = event.getJDA().getGuildCache().stream().distinct().count();
-            userCount = event.getJDA().getUserCache().stream().distinct().filter(user -> !user.isBot()).count();
-            serviced = "";
-        }
+        guildCount = DatabaseManager.INSTANCE.getGuildsCount(event.getJDA());
+        userCount = DatabaseManager.INSTANCE.getUserCount(event.getJDA());
 
         event.getHook().sendMessageEmbeds(
             new EmbedBuilder()
@@ -143,8 +127,8 @@ public class About implements ICommandSlash {
         ).queue();
     }
 
-    private void getCommandInfo(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, String command) throws ParseException {
-        Optional<Metadata> ifMetadata = new Managers().getSlashManager().getMetadata(command);
+    private void getCommandInfo(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, String command) {
+        Optional<Metadata> ifMetadata = Managers.getInstance().getSlashManager().getMetadata(command);
         Metadata metadata = ifMetadata.orElse(getMetadata());
         String commandName = metadata.getCommandNameReadable();
 

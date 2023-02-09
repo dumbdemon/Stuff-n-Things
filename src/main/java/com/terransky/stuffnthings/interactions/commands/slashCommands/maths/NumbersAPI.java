@@ -13,7 +13,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +22,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.util.*;
 
 public class NumbersAPI implements ICommandSlash {
@@ -57,16 +55,14 @@ public class NumbersAPI implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
-
+    public Metadata getMetadata() {
         return new Metadata(this.getName(), "Get some fun info on a number", """
             Random facts about numbers! How nerdy/geeky can you get? Leaving any option empty will return a random fact of that category.
             Facts are provided by [NumbersAPI](http://numbersapi.com).
             """, Mastermind.DEVELOPER,
             CommandCategory.MATHS,
-            format.parse("10-11-2022_20:45"),
-            format.parse("21-1-2023_16:05")
+            Metadata.parseDate("10-11-2022_20:45"),
+            Metadata.parseDate("21-1-2023_16:05")
         )
             .addSubcommands(
                 new SubcommandData("number", "A fact about a number.")

@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import javax.annotation.Generated;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -139,8 +138,8 @@ public class Data {
     }
 
     @JsonIgnore
-    public Date getCreatedAtAsDate() {
-        return Date.from(OffsetDateTime.parse(createdAt).toInstant());
+    public OffsetDateTime getCreatedAtAsDate() {
+        return OffsetDateTime.parse(createdAt);
     }
 
     @JsonProperty("expires_at")
@@ -154,9 +153,9 @@ public class Data {
     }
 
     @JsonIgnore
-    public Date getExpiresAtAsDate() {
+    public OffsetDateTime getExpiresAtAsDate() {
         if (expiresAt == null)
             return null;
-        return Date.from(OffsetDateTime.parse(expiresAt).toInstant());
+        return OffsetDateTime.parse(expiresAt);
     }
 }

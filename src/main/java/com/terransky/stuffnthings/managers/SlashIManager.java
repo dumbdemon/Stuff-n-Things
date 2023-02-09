@@ -5,7 +5,6 @@ import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import org.jetbrains.annotations.NotNull;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -55,15 +54,11 @@ public class SlashIManager extends CommandIManager<ICommandSlash> {
      *
      * @param search The name of the command to look for.
      * @return An {@link Optional} of {@link Metadata}.
-     * @throws ParseException If the pattern used in {@link Metadata#getCreatedDate()} or {@link Metadata#getLastUpdated()} in a slash command class
-     *                        is given an invalid date string.
      */
-    public Optional<Metadata> getMetadata(@NotNull String search) throws ParseException {
+    public Optional<Metadata> getMetadata(@NotNull String search) {
         Optional<ICommandSlash> commandSlash = getInteraction(search);
 
-        if (commandSlash.isPresent())
-            return Optional.of(commandSlash.get().getMetadata());
-        return Optional.empty();
+        return commandSlash.map(ICommandSlash::getMetadata);
     }
 
     /**

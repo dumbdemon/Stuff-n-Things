@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Generated;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -190,11 +189,6 @@ public class EntryAttributes extends Attributes {
         this.startDate = startDate;
     }
 
-    @JsonIgnore
-    public Date getStartDateAsDate() {
-        return formatDate(startDate);
-    }
-
     @JsonProperty("endDate")
     public String getEndDate() {
         return endDate;
@@ -203,16 +197,6 @@ public class EntryAttributes extends Attributes {
     @JsonProperty("endDate")
     public void setEndDate(String endDate) {
         this.endDate = endDate;
-    }
-
-    @JsonIgnore
-    public Date getEndDateAsDate() {
-        return formatDate(endDate);
-    }
-
-    @JsonProperty("nextRelease")
-    public Date getNextRelease() {
-        return formatDate(nextRelease);
     }
 
     @JsonProperty("nextRelease")

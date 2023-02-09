@@ -459,7 +459,6 @@ public class MongoDBDataSource implements DatabaseManager {
 
     @Override
     public long getUserCount() {
-        if (!Config.isDatabaseEnabled()) return Integer.MAX_VALUE;
         MongoCollection<UserEntry> users = getUsers();
         var subscriber = new OperationSubscriber<Long>();
         users.countDocuments().subscribe(subscriber);
@@ -468,7 +467,6 @@ public class MongoDBDataSource implements DatabaseManager {
 
     @Override
     public long getGuildsCount() {
-        if (!Config.isDatabaseEnabled()) return Integer.MAX_VALUE;
         MongoCollection<GuildEntry> guilds = getGuilds();
         var subscriber = new OperationSubscriber<Long>();
         guilds.countDocuments().subscribe(subscriber);

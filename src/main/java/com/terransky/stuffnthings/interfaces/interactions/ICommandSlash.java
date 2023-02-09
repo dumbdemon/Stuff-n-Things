@@ -12,7 +12,6 @@ import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 public interface ICommandSlash extends ICommand {
 
@@ -24,11 +23,9 @@ public interface ICommandSlash extends ICommand {
      * Builds a {@link CommandData} object based on {@link Metadata}.
      *
      * @return A built {@link CommandData} object.
-     * @throws ParseException If the pattern used in {@link Metadata#getCreatedDate()} or {@link Metadata#getLastUpdated()}
-     *                        in a slash command class is given an invalid date string.
      */
     @Override
-    default CommandData getCommandData() throws ParseException {
+    default CommandData getCommandData() {
         Metadata metadata = getMetadata();
         SlashCommandData commandData = Commands.slash(getName(), metadata.getShortDescription())
             .setNSFW(metadata.isNsfw())
@@ -50,10 +47,8 @@ public interface ICommandSlash extends ICommand {
      * Get the {@link Metadata} object of an {@link ICommandSlash}.
      *
      * @return A {@link Metadata} object.
-     * @throws ParseException If the pattern used in {@link Metadata#getCreatedDate()} or {@link Metadata#getLastUpdated()}
-     *                        in a slash command class is given an invalid date string.
      */
-    Metadata getMetadata() throws ParseException;
+    Metadata getMetadata();
 
     /**
      * The main slash command handler.

@@ -2,15 +2,11 @@ package com.terransky.stuffnthings.dataSources.openWeather;
 
 import com.fasterxml.jackson.annotation.*;
 import com.terransky.stuffnthings.interfaces.Pojo;
-import com.terransky.stuffnthings.utilities.general.Timestamp;
-import org.apache.commons.lang3.time.FastDateFormat;
 
 import javax.annotation.Generated;
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -80,17 +76,6 @@ public class OpenWeatherData implements Pojo {
     @JsonProperty("timezone_offset")
     public void setTimezoneOffset(Long timezoneOffset) {
         this.timezoneOffset = timezoneOffset;
-    }
-
-    @JsonIgnore
-    public String getDateWithOffset(long time) {
-        FastDateFormat format = FastDateFormat.getInstance("yyyy-MM-dd hh:mm:ss");
-        return format.format(new Date(TimeUnit.SECONDS.toMillis(time + timezoneOffset)));
-    }
-
-    @JsonIgnore
-    public String getDateWithOffset(long time, Timestamp timestamp) {
-        return Timestamp.getDateAsTimestamp((time + timezoneOffset), timestamp);
     }
 
     @JsonProperty("current")

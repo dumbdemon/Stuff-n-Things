@@ -6,6 +6,8 @@ import com.terransky.stuffnthings.database.helpers.KillStorage;
 import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.database.helpers.entry.UserGuildEntry;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.general.Config;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 
@@ -127,16 +129,44 @@ public interface DatabaseManager {
     void removeUser(String userId, Guild guild);
 
     /**
-     * Get count of users serviced
+     * Get count of users serviced.
      *
      * @return A long containing the user count
      */
     long getUserCount();
 
     /**
-     * Get count of all guilds the not is in
+     * Get count of users serviced. If the database is not enabled, it will get the count of users stored in the cache.
+     * <p>
+     * It is recommended to set cache flags to get an accurate count.
+     *
+     * @param jda The JDA instance.
+     * @return A long containing the user count
+     */
+    default long getUserCount(@NotNull JDA jda) {
+        if (Config.isTestingMode())
+            return getUserCount();
+        return jda.getGuildCache().stream().count();
+    }
+
+    /**
+     * Get count of all guilds the bot is in.
      *
      * @return A long containing the guild count
      */
     long getGuildsCount();
+
+    /**
+     * Get count of all guilds the bot is in. If the database is not enabled, it will get the count of guilds stored in the cache.
+     * <p>
+     * It is recommended to set cache flags to get an accurate count.
+     *
+     * @param jda The JDA instance.
+     * @return A long containing the guild count
+     */
+    default long getGuildsCount(@NotNull JDA jda) {
+        if (Config.isTestingMode())
+            return getGuildsCount();
+        return jda.getUserCache().stream().count();
+    }
 }

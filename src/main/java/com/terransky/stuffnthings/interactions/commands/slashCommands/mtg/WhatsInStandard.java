@@ -14,22 +14,20 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.ParseException;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
 
 public class WhatsInStandard implements ICommandSlash {
 
     private final Predicate<MtGSet> IS_VALID_SET = (set) -> set.getCode() != null &&
-        (set.getEnterDate().getExactAsDate() != null && set.getEnterDate().getExactAsDate().before(new Date())) &&
-        (set.getExitDate().getExactAsDate() == null || set.getExitDate().getExactAsDate().after(new Date()));
+        (set.getEnterDate().getExactAsDate() != null && set.getEnterDate().getExactAsDate().isBefore(OffsetDateTime.now())) &&
+        (set.getExitDate().getExactAsDate() == null || set.getExitDate().getExactAsDate().isAfter(OffsetDateTime.now()));
 
     private @NotNull String getSets(@NotNull List<MtGSet> mtgSets) {
         StringBuilder theSets = new StringBuilder();
@@ -77,16 +75,15 @@ public class WhatsInStandard implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(this.getName(), "Get Magic: the Gathering's set list for the standard format.", """
             Prints out the sets and ban list information for Magic: the Gathering's standard formant created by Wizards of the Coast.
             Information the bot uses is provided by [WhatsInStandard.com](https://whatsinstandard.com).
             """,
             Mastermind.DEVELOPER,
             CommandCategory.MTG,
-            format.parse("27-10-2022_12:46"),
-            format.parse("5-2-2023_13:44")
+            Metadata.parseDate("27-10-2022_12:46"),
+            Metadata.parseDate("5-2-2023_13:44")
         )
             .addSubcommands(
                 new SubcommandData("all", "Get all info about the standard format."),

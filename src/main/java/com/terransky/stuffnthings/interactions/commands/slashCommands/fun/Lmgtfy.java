@@ -12,11 +12,9 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 public class Lmgtfy implements ICommandSlash {
     @Override
@@ -25,14 +23,13 @@ public class Lmgtfy implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(this.getName(), "Let me Google that for you!", """
             When a person is too lazy to search it up themselves, call this on 'em.
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
-            format.parse("24-08-2022_11:10"),
-            format.parse("21-12-2022_20:00")
+            Metadata.parseDate("24-08-2022_11:10"),
+            Metadata.parseDate("21-12-2022_20:00")
         )
             .addSubcommands(
                 new SubcommandData("web", "Let me Google that for you!")

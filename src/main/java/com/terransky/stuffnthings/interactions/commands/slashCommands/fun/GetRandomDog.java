@@ -9,12 +9,10 @@ import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.Mastermind;
 import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.ParseException;
 
 public class GetRandomDog implements ICommandSlash {
     @Override
@@ -23,12 +21,11 @@ public class GetRandomDog implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(getName(), "Random Dogs! Go!",
             Mastermind.DEVELOPER, CommandCategory.FUN,
-            format.parse("6-2-2023_17:31"),
-            format.parse("6-2-2023_17:31")
+            Metadata.parseDate("6-2-2023_17:31"),
+            Metadata.parseDate("6-2-2023_17:31")
         );
     }
 

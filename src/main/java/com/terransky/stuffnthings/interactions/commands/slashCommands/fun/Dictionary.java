@@ -16,7 +16,6 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -25,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.ParseException;
 import java.util.*;
 
 public class Dictionary implements ICommandSlash {
@@ -140,8 +138,7 @@ public class Dictionary implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(this.getName(), "Look up a word in the dictionary in up to 9 different languages.", """
             Powered by Oxford Languages, this command returns all definitions of a given word in up to %d languages as long as it is within that language's lexicon.
                         
@@ -149,8 +146,8 @@ public class Dictionary implements ICommandSlash {
             """.formatted(langCodes.size()),
             Mastermind.DEVELOPER,
             CommandCategory.FUN,
-            format.parse("27-10-2022_12:46"),
-            format.parse("21-1-2023_16:05")
+            Metadata.parseDate("27-10-2022_12:46"),
+            Metadata.parseDate("21-1-2023_16:05")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "word", "The word to look up.", true),

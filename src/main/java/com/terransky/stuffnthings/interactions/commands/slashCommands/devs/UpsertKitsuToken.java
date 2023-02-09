@@ -6,11 +6,9 @@ import com.terransky.stuffnthings.utilities.apiHandlers.KitsuHandler;
 import com.terransky.stuffnthings.utilities.command.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class UpsertKitsuToken implements ICommandSlash {
@@ -26,12 +24,11 @@ public class UpsertKitsuToken implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(getName(), "Upsert the Authorization token for `Kitsu.io`.",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
-            format.parse("16-1-2023_13:00"),
-            format.parse("17-1-2023_11:48")
+            Metadata.parseDate("16-1-2023_13:00"),
+            Metadata.parseDate("17-1-2023_11:48")
         );
     }
 

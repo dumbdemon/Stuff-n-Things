@@ -11,8 +11,8 @@ import javax.annotation.Generated;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -34,7 +34,7 @@ public class TinyURLRequestData implements Pojo {
     @JsonProperty("tags")
     private String tags;
     @JsonProperty("expires_at")
-    private Date expiresAt;
+    private OffsetDateTime expiresAt;
 
     /**
      * Builder for <a href="https://tinyurl.com/app/">TinyURLs</a> API request packet
@@ -111,12 +111,12 @@ public class TinyURLRequestData implements Pojo {
     }
 
     @JsonProperty("expires_at")
-    public Date getExpiresAt() {
+    public OffsetDateTime getExpiresAt() {
         return expiresAt;
     }
 
     @JsonProperty("expires_at")
-    public void setExpiresAt(Date expiresAt) {
+    public void setExpiresAt(OffsetDateTime expiresAt) {
         this.expiresAt = expiresAt;
     }
 
@@ -127,11 +127,11 @@ public class TinyURLRequestData implements Pojo {
 
     @JsonIgnore
     public String getExpiresAtAsString(String pattern) {
-        return new SimpleDateFormat(pattern).format(expiresAt);
+        return DateTimeFormatter.ofPattern(pattern).format(expiresAt);
     }
 
     @JsonIgnore
-    public TinyURLRequestData withExpiresAt(Date expiresAt) {
+    public TinyURLRequestData withExpiresAt(OffsetDateTime expiresAt) {
         this.expiresAt = expiresAt;
         return this;
     }

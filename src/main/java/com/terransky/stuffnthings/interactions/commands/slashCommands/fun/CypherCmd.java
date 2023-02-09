@@ -14,13 +14,10 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,8 +30,7 @@ public class CypherCmd implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         final List<SubcommandData> enDeCode = List.of(
             new SubcommandData("encode", "Encode a message")
                 .addOptions(
@@ -56,8 +52,8 @@ public class CypherCmd implements ICommandSlash {
             • Reverse
             ```
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
-            format.parse("5-2-2023_14:41"),
-            new Date()
+            Metadata.parseDate("5-2-2023_14:41"),
+            Metadata.parseDate("4-2-2023_12:00")
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("base64", "Base64 Cypher")

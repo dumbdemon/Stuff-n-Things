@@ -17,13 +17,11 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.ParseException;
 
 public class JokesV2 implements ICommandSlash {
     @Override
@@ -32,14 +30,13 @@ public class JokesV2 implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(getName(), "Get a random joke", """
             Get a random joke!
             Admins can use `/config jokes` to limit the specifiers.
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
-            format.parse("6-2-2023_18:34"),
-            format.parse("6-2-2023_18:34")
+            Metadata.parseDate("6-2-2023_18:34"),
+            Metadata.parseDate("6-2-2023_18:34")
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("get", "Get a random joke.")

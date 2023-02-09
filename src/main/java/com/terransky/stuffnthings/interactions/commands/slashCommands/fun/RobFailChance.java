@@ -8,12 +8,10 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class RobFailChance implements ICommandSlash {
@@ -26,14 +24,13 @@ public class RobFailChance implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(this.getName(), "Calculate the fail chance to rob a member for the UnbelievaBoat bot!", """
             Returns the chance of failure of the `/rob` command of the bot UnbelievaBoat. If you don't have the bot, you can ask your admins to invite it [here](%s).
             """.formatted(uBoatInvite), Mastermind.DEVELOPER,
             CommandCategory.FUN,
-            format.parse("24-08-2022_11:10"),
-            format.parse("21-12-2022_20:02")
+            Metadata.parseDate("24-08-2022_11:10"),
+            Metadata.parseDate("21-12-2022_20:02")
         )
             .addOptions(
                 new OptionData(OptionType.INTEGER, "your-net-worth", "Your net-worth.", true),

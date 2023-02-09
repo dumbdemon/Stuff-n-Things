@@ -14,11 +14,9 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.Optional;
 
 public class AddToWatchlist implements ICommandSlash {
@@ -28,12 +26,11 @@ public class AddToWatchlist implements ICommandSlash {
     }
 
     @Override
-    public Metadata getMetadata() throws ParseException {
-        FastDateFormat format = Metadata.getFastDateFormat();
+    public Metadata getMetadata() {
         return new Metadata(getName(), "Add something to the watchlist",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
-            format.parse("27-1-2023_22:35"),
-            format.parse("30-1-2023_16:06")
+            Metadata.parseDate("27-1-2023_22:35"),
+            Metadata.parseDate("30-1-2023_16:06")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "watch-this", "What to watch...", true)
