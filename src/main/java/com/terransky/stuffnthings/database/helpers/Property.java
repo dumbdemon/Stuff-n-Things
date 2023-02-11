@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.database.helpers;
 
 import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.Formatter;
 import org.jetbrains.annotations.NotNull;
 
 public enum Property {
@@ -11,9 +12,10 @@ public enum Property {
     REPORT_WEBHOOK("reportWebhook", Table.GUILD),
     REPORT_RESPONSE("reportResponse", Table.GUILD),
     JOKE_FLAGS("joke_flags", Table.GUILD),
-    KILL_LOCK("killLocks", Table.USER),
+    PER_SERVER("killLocks", Table.USER),
     KILL_ATTEMPTS("killAttempts", Table.USER),
     KILL_TIMEOUT("killUnderTo", Table.USER),
+    KILL_END_DATE("killEndTime", Table.USER),
     KILL_TARGET("killTargets", Table.KILL),
     KILL_RANDOM("killRandoms", Table.KILL),
     ;
@@ -32,7 +34,7 @@ public enum Property {
 
     public String getPropertyName() {
         if (this == ID_REFERENCE)
-            throw new IllegalArgumentException(String.format("Called for %S but didn't include a %S", this, Table.class.getName()));
+            throw new IllegalArgumentException(String.format("Called for %S but didn't include a %S", this, Formatter.getNameOfClass(Table.class)));
         return propertyName;
     }
 
@@ -41,8 +43,11 @@ public enum Property {
             case USER -> {
                 return "userId";
             }
-            case GUILD, KILL -> {
+            case GUILD -> {
                 return "guildId";
+            }
+            case KILL -> {
+                return "guildReference";
             }
             default -> {
                 return propertyName;

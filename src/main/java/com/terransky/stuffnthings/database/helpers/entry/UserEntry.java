@@ -45,13 +45,13 @@ public class UserEntry {
     }
 
     @BsonProperty("killLocks")
-    public List<PerServer> getKillLocks() {
+    public List<PerServer> getPerServers() {
         return perServers;
     }
 
     @BsonProperty("killLocks")
-    public void setKillLocks(List<PerServer> perServers) {
-        this.perServers = perServers;
+    public void setPerServers(List<PerServer> perServers) {
+        this.perServers = List.copyOf(perServers);
     }
 
     @BsonIgnore
@@ -60,13 +60,17 @@ public class UserEntry {
         switch (property) {
             case KILL_TIMEOUT -> {
                 return perServers.stream().filter(isItThisOne).findFirst()
-                    .map(PerServer::isKillUnderTo);
+                    .map(PerServer::getKillUnderTo);
             }
             case KILL_ATTEMPTS -> {
                 return perServers.stream().filter(isItThisOne).findFirst()
                     .map(PerServer::getKillAttempts);
             }
-            case KILL_LOCK ->
+            case KILL_END_DATE -> {
+                return perServers.stream().filter(isItThisOne).findFirst()
+                    .map(PerServer::getKillEndTimeAsDate);
+            }
+            case PER_SERVER ->
                 throw new IllegalArgumentException(String.format("%S is not intended to be called.", property));
             default -> throw new IllegalArgumentException(String.format("%S is not a guild property.", property));
         }
@@ -74,9 +78,9 @@ public class UserEntry {
 
     @Override
     public String toString() {
-        return "SNTUser{" +
-            "killLocks=" + perServers +
-            ", idReference='" + idReference + '\'' +
+        return "UserEntry{" +
+            "idReference='" + idReference + '\'' +
+            ", perServers=" + perServers +
             '}';
     }
 }

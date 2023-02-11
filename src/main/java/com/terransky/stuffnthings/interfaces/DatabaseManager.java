@@ -45,8 +45,9 @@ public interface DatabaseManager {
      *
      * @param userId  The user id to reset
      * @param guildId The guild id reference for the {@link com.terransky.stuffnthings.database.helpers.entry.PerServer PerServer}
+     * @return True if the operation completed without errors.
      */
-    void resetUserKillProperties(@NotNull String userId, @NotNull String guildId);
+    boolean resetUserKillProperties(@NotNull String userId, @NotNull String guildId);
 
     /**
      * Update a property in the database

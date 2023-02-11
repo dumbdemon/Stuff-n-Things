@@ -8,6 +8,7 @@ import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
+import com.terransky.stuffnthings.utilities.general.Timestamp;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -19,9 +20,13 @@ import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Kill implements ICommandSlash {
 
@@ -65,16 +70,24 @@ public class Kill implements ICommandSlash {
         if (target.equals(blob.getSelfMember().getAsMention())) {
             target += " (hey wait a second…)";
         }
+        UserGuildEntry entry = DatabaseManager.INSTANCE.getUserGuildEntry(blob.getMemberId(), blob.getGuildId());
+        OffsetDateTime endTime = entry.getEndTime();
+
+        if (endTime.isBefore(OffsetDateTime.now())) {
+            new ResetKillProperties(blob, getClass()).run();
+            entry.resetAttempts();
+        }
 
         if (!event.getUser().getId().equals(Config.getDeveloperId()) &&
-            !blob.getGuildId().equals(Config.getSupportGuildId())) {
-            UserGuildEntry entry = DatabaseManager.INSTANCE.getUserGuildEntry(blob.getMemberId(), blob.getGuildId());
+            !blob.getGuildId().equals(Config.getSupportGuildId()) &&
+            !Config.isTestingMode()) {
             long maxKills = entry.getMaxKills();
             long attempts = entry.getKillAttempts();
 
             if (attempts >= maxKills) {
                 event.replyEmbeds(
-                    eb.setDescription(String.format("… tried to kill %s but they couldn't because that's bad manners!", target))
+                    eb.setDescription(String.format("… tried to kill %s but they couldn't because that's bad manners!%n" +
+                            "Next available kill %s.", target, Timestamp.getDateAsTimestamp(endTime, Timestamp.RELATIVE)))
                         .build()
                 ).setEphemeral(true).queue();
                 return;
@@ -99,7 +112,8 @@ public class Kill implements ICommandSlash {
 
     private void performLockOut(EventBlob blob, long timeout) {
         DatabaseManager.INSTANCE.updateProperty(blob, Property.KILL_TIMEOUT, true);
-        new Timer().schedule(new ResetKillProperties(blob), timeout);
+        DatabaseManager.INSTANCE.updateProperty(blob, Property.KILL_END_DATE, OffsetDateTime.now().plusSeconds(TimeUnit.MILLISECONDS.toSeconds(timeout)));
+        new Timer().schedule(new ResetKillProperties(blob, getClass()), timeout);
     }
 
     @Override
@@ -114,7 +128,7 @@ public class Kill implements ICommandSlash {
             """, Mastermind.USER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-01-31T12:03Z")
+            Metadata.parseDate("2023-02-11T14:34Z")
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),
@@ -167,15 +181,19 @@ public class Kill implements ICommandSlash {
 
         private final String userId;
         private final String guildId;
+        private final Logger log;
 
-        protected ResetKillProperties(@NotNull EventBlob blob) {
+        protected ResetKillProperties(@NotNull EventBlob blob, Class<? extends ICommandSlash> aClass) {
             this.userId = blob.getMemberId();
             this.guildId = blob.getGuildId();
+            this.log = LoggerFactory.getLogger(aClass);
         }
 
         @Override
         public void run() {
-            DatabaseManager.INSTANCE.resetUserKillProperties(userId, guildId);
+            if (!DatabaseManager.INSTANCE.resetUserKillProperties(userId, guildId)) {
+                log.error("Failed to reset kill settings for {}", userId);
+            }
         }
     }
 }

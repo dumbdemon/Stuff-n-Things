@@ -45,7 +45,7 @@ public class KillStrings {
 
     @BsonProperty("killTargets")
     public void setKillTargets(List<String> killTargets) {
-        this.killTargets = killTargets;
+        this.killTargets = List.copyOf(killTargets);
     }
 
     @BsonProperty("killRandoms")
@@ -55,7 +55,7 @@ public class KillStrings {
 
     @BsonProperty("killRandoms")
     public void setKillRandoms(List<String> killRandoms) {
-        this.killRandoms = killRandoms;
+        this.killRandoms = List.copyOf(killRandoms);
     }
 
     @BsonIgnore

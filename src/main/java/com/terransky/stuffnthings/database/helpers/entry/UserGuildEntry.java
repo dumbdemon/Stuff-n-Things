@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.database.helpers.entry;
 
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 public class UserGuildEntry {
@@ -7,6 +8,7 @@ public class UserGuildEntry {
     private final PerServer perServer;
     private long maxKills;
     private long timeout;
+    private OffsetDateTime endTime;
 
     public UserGuildEntry(PerServer perServer) {
         this.perServer = perServer;
@@ -39,7 +41,20 @@ public class UserGuildEntry {
     }
 
     public boolean isUnderTimeout() {
-        return perServer.isKillUnderTo();
+        return perServer.getKillUnderTo();
+    }
+
+    public void resetAttempts() {
+        perServer.setKillAttempts(0L);
+    }
+
+    public OffsetDateTime getEndTime() {
+        return endTime;
+    }
+
+    public UserGuildEntry setEndTime(OffsetDateTime endTime) {
+        this.endTime = endTime;
+        return this;
     }
 
     @Override

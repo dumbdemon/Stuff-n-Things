@@ -69,4 +69,9 @@ public class Formatter {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
+
+    public static String getNameOfClass(@NotNull Class<?> aClass) {
+        String[] className = aClass.getName().split("\\.");
+        return className[className.length - 1];
+    }
 }

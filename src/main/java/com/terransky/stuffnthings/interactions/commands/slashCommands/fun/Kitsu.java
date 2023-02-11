@@ -32,7 +32,7 @@ import java.util.List;
 public class Kitsu {
 
     private static OffsetDateTime getGlobalLastUpdated() {
-        return Metadata.parseDate("2023-02-09T12:34Z");
+        return Metadata.parseDate("2023-02-11T13:17Z");
     }
 
     private static Metadata getStandard(String name) {
@@ -88,7 +88,7 @@ public class Kitsu {
                 builder.addField(":office: Serialization", String.format("[%s](https://www.google.com/search?q=%s)",
                     mangaAttributes.getSerialization(), URLEncoder.encode(mangaAttributes.getSerialization(), StandardCharsets.UTF_8)), true);
         } else
-            throw new IllegalArgumentException(String.format("Root type '%s.class' cannot be used.", Attributes.class.getName()));
+            throw new IllegalArgumentException(String.format("Root type '%s.class' cannot be used.", Formatter.getNameOfClass(Attributes.class)));
 
         String averageRating = attributes.getAverageRating() == null ? "**Not Rated**" : String.format("**%s/100**", attributes.getAverageRating());
 

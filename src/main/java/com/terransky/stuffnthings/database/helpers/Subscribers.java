@@ -6,13 +6,18 @@ import org.jetbrains.annotations.NotNull;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+/**
+ * Hold all {@link Subscriber Subscribers} for {@link com.mongodb.reactivestreams.client.MongoClient MongoClient} actions
+ */
 @SuppressWarnings("unused")
 public class Subscribers {
     public static class ObjectSubscriber<T> implements Subscriber<T> {
@@ -22,6 +27,9 @@ public class Subscribers {
         private final CountDownLatch latch;
         private volatile Subscription subscription;
 
+        /**
+         * The default subscriber for all {@link com.mongodb.reactivestreams.client.MongoClient MongoClient} actions
+         */
         public ObjectSubscriber() {
             this.objects = new ArrayList<>();
             this.errors = new ArrayList<>();
@@ -53,10 +61,20 @@ public class Subscribers {
             latch.countDown();
         }
 
+        /**
+         * Get the list of all items processed
+         *
+         * @return A {@link List} of type {@link T}
+         */
         public List<T> getObjects() {
             return objects;
         }
 
+        /**
+         * Get a runtime exception if one had occurred during operation
+         *
+         * @return A {@link RuntimeException} or null
+         */
         public RuntimeException getError() {
             if (errors.size() > 0) {
                 return errors.get(0);
@@ -64,23 +82,108 @@ public class Subscribers {
             return null;
         }
 
+        /**
+         * Checks if an error had occurred
+         *
+         * @return True if there is an error
+         */
+        public boolean hasError() {
+            return getError() != null;
+        }
+
+        /**
+         * Checks if there is no error. If there is, it will log it.
+         *
+         * @return True if there is no error
+         */
+        public boolean hasNoError() {
+            return hasNoError(getClass(), "Subscriber failed to complete");
+        }
+
+        /**
+         * Checks if there is no error. If there is, it will log it.
+         *
+         * @param aClass Class for the log to represent
+         * @return True if there is no error
+         */
+        public boolean hasNoError(Class<?> aClass) {
+            return hasNoError(aClass, "Subscriber failed to complete");
+        }
+
+        /**
+         * Checks if there is no error. If there is, it will log it.
+         *
+         * @param message The message to send with the error if one has occurred
+         * @return True if there is no error
+         */
+        public boolean hasNoError(String message) {
+            return hasNoError(getClass(), message);
+        }
+
+        /**
+         * Checks if there is no error. If there is, it will log it.
+         *
+         * @param aClass  Class for the log to represent
+         * @param message The message to send with the error if one has occurred
+         * @return True if there is no error
+         */
+        public boolean hasNoError(Class<?> aClass, String message) {
+            if (hasError()) {
+                LoggerFactory.getLogger(aClass).error(message, getError());
+                return false;
+            }
+            return true;
+        }
+
+        /**
+         * Get all objects of type {@link T} that got return.
+         *
+         * @return A {@link List} of type {@link T}
+         * @throws MongoTimeoutException     If the operation takes longer than 60 seconds.
+         * @throws MongoInterruptedException If the operation get interrupted for any reason.
+         */
         public List<T> get() {
             return await().getObjects();
         }
 
+        /**
+         * Get all objects of type {@link T} that got return
+         *
+         * @param timeout The amount of time to wait
+         * @param unit    The unit of time to wait
+         * @return A {@link List} of type {@link T}
+         * @throws MongoTimeoutException     If the operation takes longer than the time given.
+         * @throws MongoInterruptedException If the operation get interrupted for any reason.
+         */
         public List<T> get(final long timeout, TimeUnit unit) {
             return await(timeout, unit).getObjects();
         }
 
-        public T first() {
-            List<T> objects = await().getObjects();
-            return !objects.isEmpty() ? getObjects().get(0) : null;
+        /**
+         * Get an optional of the first element
+         *
+         * @return An {@link Optional} or type {@link T}
+         */
+        public Optional<T> first() {
+            return await().getObjects().stream().findFirst();
         }
 
+        /**
+         * Call to wait 60 seconds to allow the subscriber to finish processing.
+         *
+         * @return This {@link ObjectSubscriber} instance
+         */
         public ObjectSubscriber<T> await() {
             return await(60, TimeUnit.SECONDS);
         }
 
+        /**
+         * Call to wait to allow the subscriber to finish processing.
+         *
+         * @param timeout The amount of time to wait
+         * @param unit    The unit of time to wait
+         * @return This {@link ObjectSubscriber} instance
+         */
         public ObjectSubscriber<T> await(final long timeout, final TimeUnit unit) {
             subscription.request(Integer.MAX_VALUE);
             try {
@@ -110,6 +213,11 @@ public class Subscribers {
 
         private final Consumer<T> consumer;
 
+        /**
+         * An {@link OperationSubscriber OperationSubscriber} that processes a {@link Consumer} on each entry
+         *
+         * @param consumer A consumer to apply to each entry
+         */
         public ConsumerSubscriber(final Consumer<T> consumer) {
             this.consumer = consumer;
         }
@@ -122,6 +230,12 @@ public class Subscribers {
     }
 
     public static class LoggerSubscriber<T> extends ConsumerSubscriber<T> {
+
+        /**
+         * A {@link ConsumerSubscriber ConsumerSubscriber} that logs each entry.
+         *
+         * @param log A {@link Logger}
+         */
         public LoggerSubscriber(Logger log) {
             super(t -> log.info(t.toString()));
         }

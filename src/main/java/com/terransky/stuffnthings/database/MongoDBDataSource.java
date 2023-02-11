@@ -21,6 +21,7 @@ import com.terransky.stuffnthings.database.helpers.entry.*;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.utilities.apiHandlers.KitsuHandler;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.Formatter;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.entities.Guild;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -34,6 +35,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -55,6 +58,7 @@ public class MongoDBDataSource implements DatabaseManager {
     private final CodecRegistry CODEC_REGISTRY;
     private final MongoDatabase DATABASE;
     private final String KITSU_ID_REFERENCE = "0";
+    private final String THAT_NAME = Formatter.getNameOfClass(PerServer.class);
 
     public MongoDBDataSource() {
         this.log = LoggerFactory.getLogger(MongoDBDataSource.class);
@@ -105,26 +109,26 @@ public class MongoDBDataSource implements DatabaseManager {
         Bson filter = Filters.eq(ID_REFERENCE.getPropertyName(Table.KILL), idReference);
 
         var strings = getKills();
-        var finder = new ObjectSubscriber<KillStrings>();
-        var updater = new ObjectSubscriber<UpdateResult>();
-        strings.find(filter).subscribe(finder);
+        var finder = getSubscriber(strings, filter);
 
-        if (finder.await().getError() != null) throw finder.getError();
+        if (finder.await().hasError()) throw finder.getError();
 
-        if (finder.first() == null) {
+        if (finder.first().isEmpty()) {
             var insert = new ObjectSubscriber<InsertOneResult>();
 
             strings.insertOne(new KillStrings(idReference))
                 .subscribe(insert);
 
-            if (insert.await().getError() != null) throw insert.getError();
+            if (insert.await().hasError()) throw insert.getError();
 
-            finder = new ObjectSubscriber<>();
-            strings.find(filter).subscribe(finder);
-            if (finder.await().getError() != null) throw finder.getError();
+            finder = getSubscriber(strings, filter);
+            if (finder.await().hasError()) throw finder.getError();
         }
 
-        KillStrings killStrings = finder.first();
+        var updater = new ObjectSubscriber<UpdateResult>();
+        KillStrings killStrings = finder.first()
+            .map(string -> (KillStrings) string)
+            .orElse(new KillStrings(idReference));
         List<String> killStringsList;
         if (property == KILL_RANDOM) {
             killStringsList = killStrings.getKillRandoms();
@@ -133,10 +137,10 @@ public class MongoDBDataSource implements DatabaseManager {
         }
         killStringsList.add(killString);
 
-        strings.updateOne(Filters.and(filter), Updates.set(property.getPropertyName(), killStringsList))
+        strings.updateOne(filter, Updates.set(property.getPropertyName(), killStringsList))
             .subscribe(updater);
 
-        return updater.await().getError() == null;
+        return updater.await().hasNoError();
     }
 
     @Override
@@ -155,22 +159,20 @@ public class MongoDBDataSource implements DatabaseManager {
             kitsuAuth.setIdReference(KITSU_ID_REFERENCE);
         MongoCollection<KitsuAuth> auths = DATABASE.getCollection("kitsuauth", KitsuAuth.class).withCodecRegistry(CODEC_REGISTRY);
 
-        var finder = new ObjectSubscriber<KitsuAuth>();
-        auths.find(Filters.eq("idReference", KITSU_ID_REFERENCE))
-            .subscribe(finder);
+        var finder = getSubscriber(auths, Filters.eq("idReference", KITSU_ID_REFERENCE));
 
-        if (finder.await().getError() != null) throw finder.getError();
+        if (finder.await().hasError()) throw finder.getError();
 
-        if (finder.first() == null) {
+        if (finder.first().isEmpty()) {
             var inserter = new ObjectSubscriber<InsertOneResult>();
             auths.insertOne(kitsuAuth).subscribe(inserter);
-            return inserter.await().getError() == null;
+            return inserter.await().hasNoError();
         }
 
         var replacer = new ObjectSubscriber<UpdateResult>();
         auths.replaceOne(Filters.eq("idReference", KITSU_ID_REFERENCE), kitsuAuth)
             .subscribe(replacer);
-        return replacer.await().getError() == null;
+        return replacer.await().hasNoError();
     }
 
     @Override
@@ -189,14 +191,11 @@ public class MongoDBDataSource implements DatabaseManager {
 
         MongoCollection<KitsuAuth> auths = DATABASE.getCollection("kitsuauth", KitsuAuth.class).withCodecRegistry(CODEC_REGISTRY);
 
-        var finder = new ObjectSubscriber<KitsuAuth>();
-        auths.find(Filters.eq("idReference", KITSU_ID_REFERENCE))
-            .subscribe(finder);
+        var finder = getSubscriber(auths, Filters.eq("idReference", KITSU_ID_REFERENCE));
 
-        if (finder.await().getError() != null)
-            log.error("Failed to get KitsuAuth", finder.getError());
+        finder.await().hasNoError("Failed to get KitsuAuth");
 
-        return Optional.ofNullable(finder.first());
+        return finder.first().map(auth -> (KitsuAuth) auth);
     }
 
     @Override
@@ -208,22 +207,22 @@ public class MongoDBDataSource implements DatabaseManager {
         var subscriber = new ObjectSubscriber<>();
         collection.find(Filters.eq(ID_REFERENCE.getPropertyName(property.getTable()), target)).subscribe(subscriber);
 
-        if (subscriber.await().getError() != null) {
-            log.error(String.format("Failed to get property %s from database", property), subscriber.getError());
+        if (subscriber.await().hasNoError(String.format("Failed to get property %s from database", property))) {
             return Optional.empty();
         }
 
         switch (property.getTable()) {
             case GUILD -> {
-                GuildEntry guildEntry = (GuildEntry) subscriber.first();
+                GuildEntry guildEntry = subscriber.first().map(entry -> (GuildEntry) entry).orElse(new GuildEntry(blob.getGuildId()));
                 return guildEntry.getProperty(property);
             }
             case USER -> {
-                UserEntry userEntry = (UserEntry) subscriber.first();
+                UserEntry userEntry = subscriber.first().map(entry -> (UserEntry) entry).orElse(new UserEntry(blob.getGuildId()));
                 return userEntry.getProperty(property, blob.getGuildId());
             }
             case KILL -> {
-                KillStrings killStrings = (KillStrings) subscriber.first();
+                KillStrings killStrings = subscriber.first().map(entry -> (KillStrings) entry)
+                    .orElse(new KillStrings(ID_REFERENCE.getPropertyName(property.getTable())));
                 return killStrings.getProperty(property);
             }
             default ->
@@ -241,33 +240,43 @@ public class MongoDBDataSource implements DatabaseManager {
         guilds.find(Filters.eq(ID_REFERENCE.getPropertyName(Table.GUILD), guildId)).subscribe(guildGetter);
         users.find(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId)).subscribe(userGetter);
 
-        GuildEntry guildEntry = guildGetter.await().first();
+        GuildEntry guildEntry = guildGetter.await().first().orElse(new GuildEntry(guildId));
 
-        PerServer perServer = userGetter.await().first().getKillLocks().stream().filter(lock -> lock.getGuildReference().equals(guildId))
+        PerServer perServer = userGetter.await().first()
+            .orElse(new UserEntry(userId))
+            .getPerServers().stream().filter(lock -> lock.getGuildReference().equals(guildId))
             .findFirst().orElse(new PerServer(guildId));
 
         return new UserGuildEntry(perServer)
             .setMaxKills(guildEntry.getKillMaximum())
-            .setTimeout(guildEntry.getKillTimeout());
+            .setTimeout(guildEntry.getKillTimeout())
+            .setEndTime(OffsetDateTime.parse(perServer.getKillEndTime()));
     }
 
     @Override
-    public void resetUserKillProperties(@NotNull String userId, @NotNull String guildId) {
-        var users = getUsers();
+    public boolean resetUserKillProperties(@NotNull String userId, @NotNull String guildId) {
+        MongoCollection<UserEntry> users = getUsers();
         var userGetter = new ObjectSubscriber<UserEntry>();
+        Bson target = Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId);
 
-        users.find(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId)).subscribe(userGetter);
+        users.find(target).subscribe(userGetter);
 
-        List<PerServer> perServers = userGetter.await().first().getKillLocks();
-        for (PerServer perServer : perServers) {
-            if (perServer.getGuildReference().equals(guildId)) {
-                perServers.remove(perServer);
-                perServer.setKillAttempts(0L);
-                perServer.setKillUnderTo(false);
-                perServers.add(perServer);
-                break;
-            }
-        }
+        List<PerServer> perServers = new ArrayList<>(userGetter.await().first().orElse(new UserEntry(guildId)).getPerServers());
+        PerServer perServer = perServers.stream().filter(server -> server.getGuildReference().equals(guildId)).findFirst()
+            .orElse(new PerServer(guildId));
+
+        perServers.remove(perServer);
+        perServer.setKillAttempts(0L);
+        perServer.setKillUnderTo(false);
+        perServer.setKillEndTime(PerServer.DEFAULT_DT.format(DateTimeFormatter.ISO_INSTANT));
+        perServers.add(perServer);
+
+        var updater = new ObjectSubscriber<UpdateResult>();
+
+        users.updateOne(target, Updates.set(PER_SERVER.getPropertyName(), perServers))
+            .subscribe(updater);
+
+        return updater.await().hasNoError();
     }
 
     @NotNull
@@ -295,8 +304,8 @@ public class MongoDBDataSource implements DatabaseManager {
             case KILL_TIMEOUT -> {
                 var subscriber = getSubscriber(collection, search);
 
-                UserEntry user = (UserEntry) subscriber.first();
-                List<PerServer> perServers = new ArrayList<>(user.getKillLocks());
+                UserEntry user = subscriber.first().map(entry -> (UserEntry) entry).orElse(new UserEntry(blob.getGuildId()));
+                List<PerServer> perServers = new ArrayList<>(user.getPerServers());
                 PerServer perServer = perServers.stream().filter(lock -> lock.getGuildReference().equals(blob.getGuildId()))
                     .findFirst()
                     .orElse(new PerServer(blob.getGuildId()));
@@ -304,13 +313,13 @@ public class MongoDBDataSource implements DatabaseManager {
                 perServers.remove(perServer);
                 perServer.setKillUnderTo((Boolean) newValue);
                 perServers.add(perServer);
-                collection.updateOne(search, Updates.set(property.getPropertyName(), perServers)).subscribe(updater);
+                collection.updateOne(search, Updates.set(PER_SERVER.getPropertyName(), perServers)).subscribe(updater);
             }
             case KILL_ATTEMPTS -> {
                 var subscriber = getSubscriber(collection, search);
 
-                UserEntry user = (UserEntry) subscriber.first();
-                List<PerServer> perServers = new ArrayList<>(user.getKillLocks());
+                UserEntry user = subscriber.first().map(entry -> (UserEntry) entry).orElse(new UserEntry(blob.getGuildId()));
+                List<PerServer> perServers = new ArrayList<>(user.getPerServers());
                 PerServer perServer = perServers.stream().filter(lock -> lock.getGuildReference().equals(blob.getGuildId()))
                     .findFirst()
                     .orElse(new PerServer(blob.getGuildId()));
@@ -318,7 +327,25 @@ public class MongoDBDataSource implements DatabaseManager {
                 perServers.remove(perServer);
                 perServer.setKillAttempts((Long) newValue);
                 perServers.add(perServer);
-                collection.updateOne(search, Updates.set(property.getPropertyName(), perServers)).subscribe(updater);
+                collection.updateOne(search, Updates.set(PER_SERVER.getPropertyName(), perServers)).subscribe(updater);
+            }
+            case KILL_END_DATE -> {
+                var subscriber = getSubscriber(collection, search);
+
+                UserEntry user = subscriber.first().map(entry -> (UserEntry) entry).orElse(new UserEntry(blob.getGuildId()));
+                List<PerServer> perServers = new ArrayList<>(user.getPerServers());
+                PerServer perServer = perServers.stream().filter(lock -> lock.getGuildReference().equals(blob.getGuildId()))
+                    .findFirst()
+                    .orElse(new PerServer(blob.getGuildId()));
+
+                perServers.remove(perServer);
+                if (newValue instanceof OffsetDateTime dateTime) {
+                    perServer.setKillEndTime(dateTime.format(DateTimeFormatter.ISO_INSTANT));
+                } else {
+                    perServer.setKillEndTime((String) newValue);
+                }
+                perServers.add(perServer);
+                collection.updateOne(search, Updates.set(PER_SERVER.getPropertyName(), perServers)).subscribe(updater);
             }
             default ->
                 collection.updateOne(search, Updates.set(property.getPropertyName(), newValue)).subscribe(updater);
@@ -334,7 +361,7 @@ public class MongoDBDataSource implements DatabaseManager {
         var subscriber = new ObjectSubscriber<>();
         collection.find(bson).subscribe(subscriber);
 
-        if (subscriber.await().getError() == null) throw subscriber.getError();
+        if (subscriber.await().hasError()) throw subscriber.getError();
         return subscriber;
     }
 
@@ -345,17 +372,13 @@ public class MongoDBDataSource implements DatabaseManager {
             guildId = guild.getId();
         MongoCollection<GuildEntry> guilds = getGuilds();
 
-        var finder = new ObjectSubscriber<GuildEntry>();
+        var finder = getSubscriber(guilds, Filters.eq(ID_REFERENCE.getPropertyName(Table.GUILD), guildId));
         var subscriber = new ObjectSubscriber<InsertOneResult>();
 
-        guilds.find(Filters.eq(ID_REFERENCE.getPropertyName(Table.GUILD), guildId)).subscribe(finder);
-
-        if (finder.await(2, TimeUnit.MINUTES).getError() != null) {
-            log.error("Unable to find guild", finder.getError());
+        if (finder.await(2, TimeUnit.MINUTES).hasNoError(String.format("An error occurred whilst finding guild with id %s", guildId)))
             return;
-        }
 
-        if (finder.first() == null) {
+        if (finder.first().isEmpty()) {
             guilds.insertOne(new GuildEntry(guildId))
                 .subscribe(subscriber);
 
@@ -389,9 +412,7 @@ public class MongoDBDataSource implements DatabaseManager {
             guildId = blob.getGuildId();
         MongoCollection<UserEntry> users = getUsers();
 
-        var finder = new ObjectSubscriber<UserEntry>();
-
-        users.find(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), blob.getMemberId())).subscribe(finder);
+        var finder = getSubscriber(users, Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), blob.getMemberId()));
 
         if (finder.await(2, TimeUnit.MINUTES).getError() != null) {
             log.error("Couldn't find user", finder.getError());
@@ -401,7 +422,7 @@ public class MongoDBDataSource implements DatabaseManager {
         if (finder.getObjects().isEmpty()) {
             var insert = new ObjectSubscriber<InsertOneResult>();
             UserEntry userEntry = new UserEntry(blob.getMemberId());
-            userEntry.setKillLocks(List.of(new PerServer(guildId)));
+            userEntry.setPerServers(List.of(new PerServer(guildId)));
             users.insertOne(userEntry)
                 .subscribe(insert);
 
@@ -411,17 +432,19 @@ public class MongoDBDataSource implements DatabaseManager {
             return;
         }
 
-        UserEntry user = finder.first();
-        List<PerServer> perServers = new ArrayList<>(user.getKillLocks());
+        UserEntry user = finder.first()
+            .map(entry -> (UserEntry) entry)
+            .orElseThrow(finder::getError);
+        List<PerServer> perServers = new ArrayList<>(user.getPerServers());
 
         if (perServers.stream().anyMatch(lock -> lock.getGuildReference().equals(guildId))) {
-            log.info("User [{}] already has KillLock for server ID [{}]", userId, guildId);
+            log.info("User [{}] already has {} for server ID [{}]", userId, THAT_NAME, guildId);
             return;
         }
 
         var updater = new ObjectSubscriber<UpdateResult>();
         perServers.add(new PerServer(guildId));
-        users.updateOne(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId), Updates.set(KILL_LOCK.getPropertyName(), perServers))
+        users.updateOne(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId), Updates.set(PER_SERVER.getPropertyName(), perServers))
             .subscribe(updater);
 
         ifAnErrorOccurs(String.format("User of ID %s was updated", userId),
@@ -432,28 +455,23 @@ public class MongoDBDataSource implements DatabaseManager {
     @Override
     public void removeUser(String userId, @NotNull Guild guild) {
         if (!Config.isDatabaseEnabled()) return;
-        MongoCollection<UserEntry> guilds = getUsers();
+        MongoCollection<UserEntry> users = getUsers();
 
-        var finder = new ObjectSubscriber<UserEntry>();
+        var finder = getSubscriber(users, Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId));
 
-        guilds.find(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId))
-            .subscribe(finder);
-
-        if (finder.await().getError() != null) throw finder.getError();
-
-        List<PerServer> perServers = finder.first().getKillLocks();
-        PerServer killlock = perServers.stream().filter(lock -> lock.getGuildReference().equals(guild.getId()))
+        List<PerServer> perServers = finder.first().map(entry -> (UserEntry) entry).orElse(new UserEntry(guild.getId())).getPerServers();
+        PerServer perServer = perServers.stream().filter(lock -> lock.getGuildReference().equals(guild.getId()))
             .findFirst()
-            .orElse(new PerServer(guild.getId()));
+            .orElseThrow(finder::getError);
 
-        perServers.remove(killlock);
+        perServers.remove(perServer);
         var updater = new ObjectSubscriber<UpdateResult>();
 
-        guilds.updateOne(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId), Updates.set(KILL_LOCK.getPropertyName(), perServers))
+        users.updateOne(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId), Updates.set(PER_SERVER.getPropertyName(), perServers))
             .subscribe(updater);
 
-        ifAnErrorOccurs("A user's KillLock was removed from the database",
-            "Unable to remove a user's KillLock from the database",
+        ifAnErrorOccurs(String.format("A user's %s was removed from the database", THAT_NAME),
+            String.format("Unable to remove a user's %s from the database", THAT_NAME),
             updater.await(2, TimeUnit.MINUTES).getError());
     }
 
@@ -462,7 +480,7 @@ public class MongoDBDataSource implements DatabaseManager {
         MongoCollection<UserEntry> users = getUsers();
         var subscriber = new OperationSubscriber<Long>();
         users.countDocuments().subscribe(subscriber);
-        return subscriber.await().first();
+        return subscriber.await().first().orElseThrow(subscriber::getError);
     }
 
     @Override
@@ -470,6 +488,6 @@ public class MongoDBDataSource implements DatabaseManager {
         MongoCollection<GuildEntry> guilds = getGuilds();
         var subscriber = new OperationSubscriber<Long>();
         guilds.countDocuments().subscribe(subscriber);
-        return subscriber.await().first();
+        return subscriber.await().first().orElseThrow(subscriber::getError);
     }
 }
