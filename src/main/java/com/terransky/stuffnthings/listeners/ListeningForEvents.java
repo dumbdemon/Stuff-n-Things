@@ -10,6 +10,7 @@ import com.terransky.stuffnthings.managers.SlashIManager;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
@@ -21,6 +22,7 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
+import net.dv8tion.jda.api.sharding.ShardManager;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,12 +35,12 @@ public class ListeningForEvents extends ListenerAdapter {
     private final SlashIManager slashManager = Managers.getInstance().getSlashManager();
     private final CommandIManager<ICommandMessage> messageManager = Managers.getInstance().getMessageContextManager();
     private final CommandIManager<ICommandUser> userManager = Managers.getInstance().getUserContextManager();
-    private final List<String> WATCHLIST = DatabaseManager.INSTANCE.getWatchList();
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
+        JDA jda = event.getJDA();
         if (Config.isTestingMode()) {
-            event.getJDA().updateCommands().queue();
+            jda.updateCommands().queue();
             return;
         }
 
@@ -49,14 +51,7 @@ public class ListeningForEvents extends ListenerAdapter {
             .queue(commands -> log.info("{} global commands loaded!", commands.size()), DiscordAPIException::new);
 
         long timer = TimeUnit.MINUTES.toMillis(10);
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            @SuppressWarnings("ConstantConditions")
-            public void run() {
-                Random random = new Random(new Date().getTime());
-                event.getJDA().getShardManager().setActivity(Activity.watching(WATCHLIST.get(random.nextInt(WATCHLIST.size()))));
-            }
-        }, timer, timer);
+        new Timer().scheduleAtFixedRate(new SetWatcherTask(jda.getShardManager()), timer, timer);
     }
 
     @Override
@@ -109,5 +104,22 @@ public class ListeningForEvents extends ListenerAdapter {
 
         updateAction.queue(commands -> log.info("{} guild commands loaded onto {}[{}]", commands.size(), guild.getName(), guild.getId()),
             DiscordAPIException::new);
+    }
+
+    public static class SetWatcherTask extends TimerTask {
+
+        private final ShardManager shardManager;
+        private final List<String> watchList;
+
+        public SetWatcherTask(ShardManager shardManager) {
+            this.shardManager = shardManager;
+            this.watchList = DatabaseManager.INSTANCE.getWatchList();
+        }
+
+        @Override
+        public void run() {
+            Random random = new Random(new Date().getTime());
+            shardManager.setActivity(Activity.watching(watchList.get(random.nextInt(watchList.size()))));
+        }
     }
 }

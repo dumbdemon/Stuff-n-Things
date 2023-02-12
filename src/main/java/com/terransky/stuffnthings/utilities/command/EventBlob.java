@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.utilities.command;
 
+import com.terransky.stuffnthings.interfaces.IInteraction;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 
@@ -9,6 +10,7 @@ public class EventBlob {
 
     private Guild guild;
     private Member member;
+    private IInteraction.Type interactionType;
 
     /**
      * An object containing checked non-null {@link Guild} object and {@link Member} object.
@@ -85,17 +87,26 @@ public class EventBlob {
         return member.getId();
     }
 
+    public IInteraction.Type getInteractionType() {
+        return interactionType;
+    }
+
+    public EventBlob setInteractionType(IInteraction.Type interactionType) {
+        this.interactionType = interactionType;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        EventBlob blob = (EventBlob) o;
-        return getGuild().equals(blob.getGuild()) && getMember().equals(blob.getMember());
+        EventBlob eventBlob = (EventBlob) o;
+        return getGuild().equals(eventBlob.getGuild()) && getMember().equals(eventBlob.getMember()) && getInteractionType() == eventBlob.getInteractionType();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getGuild(), getMember());
+        return Objects.hash(getGuild(), getMember(), getInteractionType());
     }
 
     @Override
@@ -103,6 +114,7 @@ public class EventBlob {
         return "EventBlob{" +
             "guild=" + guild +
             ", member=" + member +
+            ", interactionType=" + interactionType +
             '}';
     }
 }

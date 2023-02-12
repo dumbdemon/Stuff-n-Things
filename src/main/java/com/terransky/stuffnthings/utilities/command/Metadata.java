@@ -3,9 +3,8 @@ package com.terransky.stuffnthings.utilities.command;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
+import net.dv8tion.jda.api.interactions.commands.build.*;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -110,12 +109,17 @@ public class Metadata implements Comparable<Metadata> {
         );
     }
 
+    /**
+     * A temporary {@link Metadata} object for new commands.
+     *
+     * @return A constructed {@link Metadata} object
+     */
     @NotNull
     @SuppressWarnings("unused")
-    public static Metadata getEmptyMetadata() {
+    public static Metadata getTemporaryMetadata() {
         return new Metadata()
-            .setCommandName("")
-            .setDescripstions("")
+            .setCommandName("temp-test-name")
+            .setDescripstions("A casual Test Name")
             .setCreatedDate(OffsetDateTime.now())
             .setLastUpdated(OffsetDateTime.now())
             .setMastermind(Mastermind.DEVELOPER)
@@ -286,6 +290,23 @@ public class Metadata implements Comparable<Metadata> {
         }
 
         return description;
+    }
+
+    public SlashCommandData getConstructedCommandData() {
+        SlashCommandData commandData = Commands.slash(commandName, shortDescription)
+            .setNSFW(isNsfw)
+            .setDefaultPermissions(DefaultMemberPermissions.enabledFor(defaultPerms));
+
+        if (!options.isEmpty())
+            return commandData.addOptions(options);
+
+        if (!subcommands.isEmpty())
+            return commandData.addSubcommands(subcommands);
+
+        if (!subcommandGroups.isEmpty())
+            return commandData.addSubcommandGroups(subcommandGroups);
+
+        return commandData;
     }
 
     @NotNull

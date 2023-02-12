@@ -4,10 +4,7 @@ import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,21 +23,7 @@ public interface ICommandSlash extends ICommand {
      */
     @Override
     default CommandData getCommandData() {
-        Metadata metadata = getMetadata();
-        SlashCommandData commandData = Commands.slash(getName(), metadata.getShortDescription())
-            .setNSFW(metadata.isNsfw())
-            .setDefaultPermissions(DefaultMemberPermissions.enabledFor(metadata.getDefaultPerms()));
-
-        if (!metadata.getOptions().isEmpty())
-            return commandData.addOptions(metadata.getOptions());
-
-        if (!metadata.getSubcommands().isEmpty())
-            return commandData.addSubcommands(metadata.getSubcommands());
-
-        if (!metadata.getSubcommandGroups().isEmpty())
-            return commandData.addSubcommandGroups(metadata.getSubcommandGroups());
-
-        return commandData;
+        return getMetadata().getConstructedCommandData();
     }
 
     /**
