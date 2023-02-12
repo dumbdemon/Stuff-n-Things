@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.managers;
 
+import com.terransky.stuffnthings.interactions.commands.slashCommands.general.About;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -24,27 +25,23 @@ public class SlashIManager extends CommandIManager<ICommandSlash> {
     }
 
     /**
-     * Get all command names as {@link Command.Choice Choises} for the
-     * {@link com.terransky.stuffnthings.interactions.commands.slashCommands.general.About about} command.
+     * Get all command names as {@link Command.Choice Choises} for the {@link About} command.
      *
+     * @param slashSet The set number from 1 to 4.
      * @return A {@link List} of {@link Command.Choice Choises}.
      */
-    public List<Command.Choice> getCommandsAsChoicesSetOne() {
+    public List<Command.Choice> getCommandsAsChoices(@NotNull SlashSet slashSet) {
         List<ICommandSlash> slashes = interactions.stream().filter(super::checkIfGlobal).sorted().toList();
-        return new ArrayList<>() {{
-            int max = Math.min(25, slashes.size());
-            for (int i = 0; i < max; i++) {
-                add(new Command.Choice(slashes.get(i).getNameReadable(), slashes.get(i).getName()));
-            }
-        }};
-    }
+        int setMax = 25 * slashSet.getSetNumber();
+        int setMin = setMax - 25;
+        if (setMin > slashes.size()) {
+            About about = new About();
+            return List.of(new Command.Choice(about.getNameReadable(), about.getName()));
+        }
 
-    public List<Command.Choice> getCommandsAsChoicesSetTwo() {
-        List<ICommandSlash> slashes = interactions.stream().filter(super::checkIfGlobal).sorted().toList();
-        if (slashes.size() < 25) return List.of(new Command.Choice("Dummy Option", "dum"));
         return new ArrayList<>() {{
-            for (int i = 25; i < slashes.size(); i++) {
-                add(new Command.Choice(slashes.get(i).getNameReadable(), slashes.get(i).getName()));
+            for (ICommandSlash slash : slashes.subList(setMin, Math.min(setMax, slashes.size()))) {
+                add(new Command.Choice(slash.getNameReadable(), slash.getName()));
             }
         }};
     }
@@ -80,4 +77,20 @@ public class SlashIManager extends CommandIManager<ICommandSlash> {
         return (int) interactions.stream().filter(iCommandSlash -> checkIfGuild(iCommandSlash, serverId)).count();
     }
 
+    public enum SlashSet {
+        ONE(1),
+        TWO(2),
+        THREE(3),
+        FOUR(4);
+
+        private final int setNumber;
+
+        SlashSet(int setNumber) {
+            this.setNumber = setNumber;
+        }
+
+        public int getSetNumber() {
+            return setNumber;
+        }
+    }
 }

@@ -50,19 +50,25 @@ public class About implements ICommandSlash {
 
     @Override
     public Metadata getMetadata() {
+        SlashIManager slashManager = Managers.getInstance().getSlashManager();
         return new Metadata(this.getName(), "What am I? Who am I?", """
             The about command. What else did you expect?
-            ***NOTE:** If you choose from both, the command will prioritize `command-one`.
+
+            **NOTE:** If you choose from more than one, the command will prioritize from highest to lowest: `command-one`, `command-two`, `command-three`, and then `command-four`.
             """, Mastermind.DEVELOPER,
             CommandCategory.GENERAL,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-02-01T17:12Z")
+            Metadata.parseDate("2023-02-11T18:48Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "command-one", "Get more info on a Command.")
-                    .addChoices(Managers.getInstance().getSlashManager().getCommandsAsChoicesSetOne()),
+                    .addChoices(slashManager.getCommandsAsChoices(SlashIManager.SlashSet.ONE)),
                 new OptionData(OptionType.STRING, "command-two", "Get more info on a Command.")
-                    .addChoices(Managers.getInstance().getSlashManager().getCommandsAsChoicesSetTwo())
+                    .addChoices(slashManager.getCommandsAsChoices(SlashIManager.SlashSet.TWO)),
+                new OptionData(OptionType.STRING, "command-three", "Get more info on a Command.")
+                    .addChoices(slashManager.getCommandsAsChoices(SlashIManager.SlashSet.THREE)),
+                new OptionData(OptionType.STRING, "command-four", "Get more info on a Command.")
+                    .addChoices(slashManager.getCommandsAsChoices(SlashIManager.SlashSet.FOUR))
             );
     }
 

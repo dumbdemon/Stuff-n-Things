@@ -23,8 +23,8 @@ public interface IInteraction extends Comparable<IInteraction> {
 
     @Override
     default int compareTo(@NotNull IInteraction iInteraction) {
-        return String.CASE_INSENSITIVE_ORDER.compare(getName(), iInteraction.getName()) &
-            Integer.compare(getInteractionType().getId(), iInteraction.getInteractionType().getId());
+        return String.CASE_INSENSITIVE_ORDER.compare(getName(), iInteraction.getName()) |
+            getInteractionType().compareTo(iInteraction.getInteractionType());
     }
 
     enum Type {
