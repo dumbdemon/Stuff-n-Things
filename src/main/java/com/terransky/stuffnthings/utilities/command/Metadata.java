@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -94,8 +95,19 @@ public class Metadata implements Comparable<Metadata> {
      * @param date Date string
      * @return An {@link OffsetDateTime}
      */
-    public static OffsetDateTime parseDate(String date) {
-        return OffsetDateTime.parse(date);
+    public static OffsetDateTime parseDate(@NotNull String date) {
+        return OffsetDateTime.parse(date.replace("Z", "-0600"),
+            new DateTimeFormatterBuilder()
+                .parseCaseInsensitive()
+                .append(DateTimeFormatter.ISO_LOCAL_DATE)
+                .appendLiteral('T')
+                .append(DateTimeFormatter.ISO_LOCAL_TIME)
+                .optionalStart()
+                .parseLenient()
+                .appendOffset("+HHMMss", "Z")
+                .parseStrict()
+                .toFormatter()
+        );
     }
 
     @NotNull
