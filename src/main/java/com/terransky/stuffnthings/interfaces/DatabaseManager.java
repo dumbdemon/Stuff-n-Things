@@ -9,6 +9,7 @@ import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -21,6 +22,24 @@ public interface DatabaseManager {
      * The main instance of the database.
      */
     DatabaseManager INSTANCE = new MongoDBDataSource();
+
+    /**
+     * Converts an object to a {@link List} of Strings
+     *
+     * @param object An Object to be converted
+     * @return A {@link List} of Strings
+     * @throws IllegalArgumentException If the object is not an instance of a {@link List}
+     */
+    @NotNull
+    @Contract("_ -> new")
+    static List<String> toListOfString(Object object) {
+        if (!(object instanceof List<?>)) throw new IllegalArgumentException("Object not a list");
+        return new ArrayList<>() {{
+            for (Object o1 : ((List<?>) object)) {
+                add((String) o1);
+            }
+        }};
+    }
 
     /**
      * Get a {@link Property} from the database as an Integer.
@@ -75,12 +94,7 @@ public interface DatabaseManager {
      */
     default List<String> getWatchList() {
         return getFromDatabase(new EventBlob(null, null), Property.KILL_RANDOM)
-            .map(o -> (List<String>) new ArrayList<String>() {{
-                    for (Object o1 : ((List<?>) o)) {
-                        add((String) o1);
-                    }
-                }}
-            )
+            .map(DatabaseManager::toListOfString)
             .orElse(List.of("you"));
     }
 

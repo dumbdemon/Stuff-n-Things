@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class IManager<T extends IInteraction> {
+public class IManager<T extends IInteraction<?>> {
 
     final List<T> interactions = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(IManager.class);

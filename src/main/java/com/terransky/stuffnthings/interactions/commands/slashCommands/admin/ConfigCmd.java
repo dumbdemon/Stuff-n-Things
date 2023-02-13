@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class ConfigCmd implements ICommandSlash {
@@ -48,7 +49,7 @@ public class ConfigCmd implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.ADMIN,
             Metadata.parseDate("2022-08-28T21:46Z"),
-            Metadata.parseDate("2022-02-05T19:53Z")
+            Metadata.parseDate("2022-02-12T20:13Z")
         )
             .addDefaultPerms(Permission.MANAGE_SERVER)
             .addSubcommandGroups(
@@ -99,7 +100,7 @@ public class ConfigCmd implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException {
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
         EmbedBuilder eb = new EmbedBuilder()
@@ -153,7 +154,7 @@ public class ConfigCmd implements ICommandSlash {
         ).queue();
     }
 
-    private void updateReportingWebhook(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull EmbedBuilder eb) throws IOException {
+    private void updateReportingWebhook(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull EmbedBuilder eb) throws IOException, ExecutionException, InterruptedException {
         event.deferReply().queue();
         Optional<GuildChannelUnion> channel = Optional.ofNullable(event.getOption("channel", OptionMapping::getAsChannel));
         eb.setTitle(getNameReadable() + " - Reporting Channel");
@@ -169,7 +170,7 @@ public class ConfigCmd implements ICommandSlash {
 
         if (channel.isEmpty()) {
             String webhookId = (String) DatabaseManager.INSTANCE.getFromDatabase(blob, Property.REPORT_WEBHOOK).orElse(null);
-            List<Webhook> webhooks = blob.getGuild().retrieveWebhooks().complete();
+            List<Webhook> webhooks = blob.getGuild().retrieveWebhooks().submit().get();
             Optional<Webhook> webhook = webhooks.stream().filter(hook -> hook.getId().equals(webhookId)).findFirst();
 
             if (webhook.isEmpty()) {
@@ -189,14 +190,18 @@ public class ConfigCmd implements ICommandSlash {
         }
 
         TextChannel textChannel = channel.get().asTextChannel();
-        List<Webhook> webhooks = textChannel.retrieveWebhooks().complete();
-        webhooks.stream().filter(hook -> blob.getSelfMember().equals(hook.getOwner()))
-            .findFirst()
-            .ifPresent(hook -> hook.delete().queue());
+        textChannel.retrieveWebhooks().submit()
+            .whenComplete((webhooks, throwable) -> {
+                if (throwable == null)
+                    webhooks.stream().filter(hook -> blob.getSelfMember().equals(hook.getOwner()))
+                        .findFirst()
+                        .ifPresent(hook -> hook.delete().queue());
+                else log.error("Couldn't obtain webhooks", throwable);
+            });
 
         Webhook hook = textChannel.createWebhook("Message Reporting")
             .setAvatar(Icon.from(new URL(Config.getBotLogoURL()).openStream()))
-            .complete();
+            .submit().get();
         DatabaseManager.INSTANCE.updateProperty(blob, Property.REPORT_WEBHOOK, hook.getId());
 
         event.getHook().sendMessageEmbeds(

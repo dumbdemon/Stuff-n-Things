@@ -97,6 +97,8 @@ public class ListeningForEvents extends ListenerAdapter {
 
         if (Config.isTestingMode()) {
             updateAction.addCommands(slashManager.getCommandData())
+                .addCommands(messageManager.getCommandData())
+                .addCommands(userManager.getCommandData())
                 .queue(commands -> log.info("{} global commands loaded as guild commands on {}[{}]", commands.size(), guild.getName(), guild.getId()),
                     DiscordAPIException::new);
             return;

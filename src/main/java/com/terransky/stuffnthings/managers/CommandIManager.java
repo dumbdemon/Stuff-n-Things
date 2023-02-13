@@ -14,7 +14,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandIManager<T extends ICommand> extends IManager<T> {
+public class CommandIManager<T extends ICommand<?>> extends IManager<T> {
 
     @SafeVarargs
     public CommandIManager(@NotNull T... commands) {

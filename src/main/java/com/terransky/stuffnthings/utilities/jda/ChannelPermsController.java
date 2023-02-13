@@ -3,13 +3,13 @@ package com.terransky.stuffnthings.utilities.jda;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.IPermissionHolder;
 import net.dv8tion.jda.api.entities.PermissionOverride;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.attribute.IPermissionContainer;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 public class ChannelPermsController {
 
@@ -22,62 +22,47 @@ public class ChannelPermsController {
     /**
      * Gets a {@link PermissionOverride} from a {@link List}.
      *
-     * @param iPermissionHolder An {@link Role} or {@link net.dv8tion.jda.api.entities.Member Member}.
+     * @param iPermissionHolder A {@link net.dv8tion.jda.api.entities.Role Role} or {@link net.dv8tion.jda.api.entities.Member Member}.
      * @param container         An {@link IPermissionContainer}.
-     * @return A {@link PermissionOverride} or null.
+     * @return A {@link Optional} of a {@link PermissionOverride}.
      */
-    @Nullable
-    private <T extends IPermissionHolder> PermissionOverride getPermissionOverride(T iPermissionHolder, @NotNull IPermissionContainer container) {
-        List<PermissionOverride> overrides = container.getPermissionOverrides();
-        if (iPermissionHolder instanceof Role) {
-            for (PermissionOverride override : overrides.stream().filter(PermissionOverride::isRoleOverride).toList()) {
-                if (iPermissionHolder.equals(override.getRole())) {
-                    return override;
-                }
-            }
-        } else {
-            for (PermissionOverride override : overrides.stream().filter(PermissionOverride::isMemberOverride).toList()) {
-                if (iPermissionHolder.equals(override.getMember())) {
-                    return override;
-                }
-            }
-        }
-        return null;
+    @NotNull
+    private <T extends IPermissionHolder> Optional<PermissionOverride> getPermissionOverride(T iPermissionHolder, @NotNull IPermissionContainer container) {
+        return container.getPermissionOverrides().stream()
+            .filter(override -> iPermissionHolder.equals(override.getMember()) || iPermissionHolder.equals(override.getRole()))
+            .findFirst();
     }
 
     /**
      * Reset all provided permissions to the inherent state.
      *
-     * @param iPermissionHolder An {@link Role} or {@link net.dv8tion.jda.api.entities.Member Member}.
+     * @param iPermissionHolder A {@link net.dv8tion.jda.api.entities.Role Role} or {@link net.dv8tion.jda.api.entities.Member Member}.
      * @param permissions       {@link Permission}s to reset
      * @return False if {@link PermissionOverride} is null; otherwise true.
      */
     public <T extends IPermissionHolder> boolean resetChannelPerms(T iPermissionHolder, Permission... permissions) {
-        PermissionOverride permissionOverride = getPermissionOverride(iPermissionHolder, guildChannel.getPermissionContainer());
+        Optional<PermissionOverride> permissionOverride = getPermissionOverride(iPermissionHolder, guildChannel.getPermissionContainer());
 
-        if (permissionOverride == null)
+        if (permissionOverride.isEmpty())
             return false;
 
-        permissionOverride.getManager().clear(permissions).queue();
+        permissionOverride.get().getManager().clear(permissions).queue();
         return true;
     }
 
     /**
      * Grant permissions on a channel to a role or member.
      *
-     * @param iPermissionHolder An {@link Role} or {@link net.dv8tion.jda.api.entities.Member Member}.
+     * @param iPermissionHolder A {@link net.dv8tion.jda.api.entities.Role Role} or {@link net.dv8tion.jda.api.entities.Member Member}.
      * @param permissions       {@link Permission}s to grant.
      * @return False if target channel already has the provided permissions granted for {@link IPermissionHolder}; otherwise true.
      */
-    public <T extends IPermissionHolder> boolean grantChannelPerms(@NotNull T iPermissionHolder, @NotNull Permission... permissions) {
+    public <T extends IPermissionHolder> boolean grantChannelPerms(@NotNull T iPermissionHolder, @NotNull Permission... permissions) throws ExecutionException, InterruptedException {
         if (iPermissionHolder.hasPermission(guildChannel, permissions))
             return false;
 
-        PermissionOverride permissionOverride = getPermissionOverride(iPermissionHolder, guildChannel.getPermissionContainer());
-
-        if (permissionOverride == null) {
-            permissionOverride = guildChannel.getPermissionContainer().upsertPermissionOverride(iPermissionHolder).complete();
-        }
+        PermissionOverride permissionOverride = getPermissionOverride(iPermissionHolder, guildChannel.getPermissionContainer())
+            .orElse(guildChannel.getPermissionContainer().upsertPermissionOverride(iPermissionHolder).submit().get());
 
         permissionOverride.getManager().grant(permissions).queue();
         return true;
@@ -86,19 +71,16 @@ public class ChannelPermsController {
     /**
      * Deny permissions on a channel to a role or member.
      *
-     * @param iPermissionHolder An {@link Role} or {@link net.dv8tion.jda.api.entities.Member Member}.
+     * @param iPermissionHolder A {@link net.dv8tion.jda.api.entities.Role Role} or {@link net.dv8tion.jda.api.entities.Member Member}.
      * @param permissions       {@link Permission}s to deny.
      * @return False if target channel already has the provided permissions denied for {@link IPermissionHolder}; otherwise true.
      */
-    public <T extends IPermissionHolder> boolean denyChannelPerms(@NotNull T iPermissionHolder, @NotNull Permission... permissions) {
+    public <T extends IPermissionHolder> boolean denyChannelPerms(@NotNull T iPermissionHolder, @NotNull Permission... permissions) throws ExecutionException, InterruptedException {
         if (!iPermissionHolder.hasPermission(guildChannel, permissions))
             return false;
 
-        PermissionOverride permissionOverride = getPermissionOverride(iPermissionHolder, guildChannel.getPermissionContainer());
-
-        if (permissionOverride == null) {
-            permissionOverride = guildChannel.getPermissionContainer().upsertPermissionOverride(iPermissionHolder).complete();
-        }
+        PermissionOverride permissionOverride = getPermissionOverride(iPermissionHolder, guildChannel.getPermissionContainer())
+            .orElse(guildChannel.getPermissionContainer().upsertPermissionOverride(iPermissionHolder).submit().get());
 
         permissionOverride.getManager().deny(permissions).queue();
         return true;

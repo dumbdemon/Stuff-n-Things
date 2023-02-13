@@ -43,11 +43,8 @@ public enum Property {
             case USER -> {
                 return "userId";
             }
-            case GUILD -> {
+            case GUILD, KILL -> {
                 return "guildId";
-            }
-            case KILL -> {
-                return "guildReference";
             }
             default -> {
                 return propertyName;

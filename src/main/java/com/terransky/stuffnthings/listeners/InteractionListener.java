@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 public class InteractionListener extends ListenerAdapter {
 
@@ -49,7 +50,7 @@ public class InteractionListener extends ListenerAdapter {
         log.error(String.format("%S failed to execute on guild id %s", interactionName, guildId), e);
     }
 
-    private void errorHandler(@NotNull GenericCommandInteractionEvent event, @NotNull IInteraction interaction,
+    private void errorHandler(@NotNull GenericCommandInteractionEvent event, @NotNull IInteraction<?> interaction,
                               EventBlob blob, Exception e) {
         MessageEmbed commandFailed = getFailedInteractionMessage(blob);
         logInteractionFailure(interaction.getName(), blob.getGuildId(), e);
@@ -58,7 +59,7 @@ public class InteractionListener extends ListenerAdapter {
         } else event.replyEmbeds(commandFailed).setEphemeral(true).queue();
     }
 
-    private void errorHandler(@NotNull GenericComponentInteractionCreateEvent event, @NotNull IInteraction interaction,
+    private void errorHandler(@NotNull GenericComponentInteractionCreateEvent event, @NotNull IInteraction<?> interaction,
                               EventBlob blob, Exception e) {
         MessageEmbed componentFailed = getFailedInteractionMessage(blob);
         logInteractionFailure(interaction.getName(), blob.getGuildId(), e);
@@ -118,7 +119,7 @@ public class InteractionListener extends ListenerAdapter {
 
         try {
             slash.execute(event, blob);
-        } catch (RuntimeException | IOException e) {
+        } catch (RuntimeException | IOException | ExecutionException | InterruptedException e) {
             log.debug("Full command path that triggered error :: [{}]", event.getFullCommandName());
             errorHandler(event, slash, blob, e);
         }
@@ -154,7 +155,7 @@ public class InteractionListener extends ListenerAdapter {
 
         try {
             commandMessage.execute(event, blob);
-        } catch (RuntimeException | IOException e) {
+        } catch (RuntimeException | IOException | ExecutionException | InterruptedException e) {
             errorHandler(event, commandMessage, blob, e);
         }
     }
@@ -189,7 +190,7 @@ public class InteractionListener extends ListenerAdapter {
 
         try {
             commandUser.execute(event, blob);
-        } catch (RuntimeException | IOException e) {
+        } catch (RuntimeException | IOException | ExecutionException | InterruptedException e) {
             errorHandler(event, commandUser, blob, e);
         }
     }
@@ -213,7 +214,7 @@ public class InteractionListener extends ListenerAdapter {
         log.debug("Button {} called on {} [{}]", iButton.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
         try {
             iButton.execute(event, blob);
-        } catch (RuntimeException | IOException e) {
+        } catch (RuntimeException | IOException | ExecutionException | InterruptedException e) {
             errorHandler(event, iButton, blob, e);
         }
     }
@@ -229,14 +230,13 @@ public class InteractionListener extends ListenerAdapter {
         Optional<ISelectMenuEntity> ifMenu = selectMenuManager.getInteraction(event.getInteraction().getComponentId());
         if (ifMenu.isEmpty()) return;
 
-
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
             .setInteractionType(IInteraction.Type.SELECTION_ENTITY);
         ISelectMenuEntity menu = ifMenu.get();
         log.debug("Select Menu {} called on {} [{}]", menu.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
         try {
             menu.execute(event, blob);
-        } catch (RuntimeException | IOException e) {
+        } catch (RuntimeException | IOException | ExecutionException | InterruptedException e) {
             errorHandler(event, menu, blob, e);
         }
     }
@@ -258,7 +258,7 @@ public class InteractionListener extends ListenerAdapter {
         log.debug("Modal {} called on {} [{}]", modal.getName().toUpperCase(), blob.getGuild().getName(), blob.getGuildIdLong());
         try {
             modal.execute(event, blob);
-        } catch (RuntimeException | IOException e) {
+        } catch (RuntimeException | IOException | ExecutionException | InterruptedException e) {
             MessageEmbed modalFailed = getFailedInteractionMessage(blob);
             logInteractionFailure(modal.getName(), blob.getGuildId(), e);
             if (event.isAcknowledged()) {
@@ -290,7 +290,7 @@ public class InteractionListener extends ListenerAdapter {
             log.debug("Select Menu {} called on {} [{}]", interactionName, blob.getGuildName(), blob.getGuildIdLong());
             try {
                 stringMenu.execute(event, blob);
-            } catch (RuntimeException | IOException e) {
+            } catch (RuntimeException | IOException | ExecutionException | InterruptedException e) {
                 errorHandler(event, stringMenu, blob, e);
             }
         }

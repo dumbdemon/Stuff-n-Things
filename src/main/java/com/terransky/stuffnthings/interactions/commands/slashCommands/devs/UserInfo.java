@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class UserInfo implements ICommandSlash {
     private static String setUserPerms(@NotNull Member member) {
@@ -81,7 +82,7 @@ public class UserInfo implements ICommandSlash {
             """, Mastermind.DEFAULT,
             CommandCategory.DEVS,
             Metadata.parseDate("2023-08-24T11:10Z"),
-            Metadata.parseDate("2023-01-27T21:58Z")
+            Metadata.parseDate("2023-02-12T20:02Z")
         )
             .addOptions(
                 new OptionData(OptionType.USER, "user", "Who you want to know about.")
@@ -89,9 +90,9 @@ public class UserInfo implements ICommandSlash {
     }
 
     @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException {
         String memberId = event.getOption("user", blob.getMember(), OptionMapping::getAsMember).getId();
-        Member member = blob.getGuild().retrieveMemberById(memberId).complete();
+        Member member = blob.getGuild().retrieveMemberById(memberId).submit().get();
         List<Role> roles = member.getRoles().stream().sorted().toList();
         int roleCount = roles.size() + 1;
         Role topRole = roles.isEmpty() ? blob.getGuild().getPublicRole() : roles.get(roles.size() - 1);

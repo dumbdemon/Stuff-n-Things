@@ -1,12 +1,13 @@
 package com.terransky.stuffnthings.interfaces.interactions;
 
 import com.terransky.stuffnthings.interfaces.IInteraction;
+import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public interface ICommand extends IInteraction {
+public interface ICommand<T extends GenericCommandInteractionEvent> extends IInteraction<T> {
 
     /**
      * Get this commands {@link CommandData}.

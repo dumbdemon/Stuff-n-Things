@@ -36,12 +36,7 @@ public class Kill implements ICommandSlash {
 
     private void killRandom(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull Random random, EmbedBuilder eb) {
         List<String> randomStrings = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILL_RANDOM)
-            .map(o -> (List<String>) new ArrayList<String>() {{
-                    for (Object o1 : ((List<?>) o)) {
-                        add((String) o1);
-                    }
-                }}
-            )
+            .map(DatabaseManager::toListOfString)
             .orElse(List.of("just dies by %s's hands."));
         List<String> victims = new ArrayList<>() {{
             blob.getGuild().getMembers().stream()
@@ -98,12 +93,7 @@ public class Kill implements ICommandSlash {
                 performLockOut(blob, entry.getTimeout());
         }
         List<String> targetStrings = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILL_TARGET)
-            .map(o -> (List<String>) new ArrayList<String>() {{
-                    for (Object o1 : ((List<?>) o)) {
-                        add((String) o1);
-                    }
-                }}
-            )
+            .map(DatabaseManager::toListOfString)
             .orElse(List.of("tried to kill %s but they couldn't because that's bad manners!"));
 
         eb.setDescription(String.format("… %s", targetStrings.get(random.nextInt(targetStrings.size()))).formatted(target));
@@ -128,7 +118,7 @@ public class Kill implements ICommandSlash {
             """, Mastermind.USER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-02-11T14:34Z")
+            Metadata.parseDate("2023-02-12T21:53Z")
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),

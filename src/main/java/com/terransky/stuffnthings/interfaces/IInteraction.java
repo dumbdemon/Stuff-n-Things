@@ -1,9 +1,15 @@
 package com.terransky.stuffnthings.interfaces;
 
+import com.terransky.stuffnthings.exceptions.FailedInteractionException;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
+import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
 
-public interface IInteraction extends Comparable<IInteraction> {
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+
+public interface IInteraction<T extends GenericInteractionCreateEvent> extends Comparable<IInteraction<T>> {
 
     /**
      * The name or ID reference of this bot element.
@@ -20,6 +26,22 @@ public interface IInteraction extends Comparable<IInteraction> {
     default Type getInteractionType() {
         return Type.UNKNOWN;
     }
+
+    /**
+     * The main handler for all interactions
+     *
+     * @param event A Discord {@link GenericInteractionCreateEvent event}
+     * @param blob  An {@link EventBlob} containing checked non-null {@link net.dv8tion.jda.api.entities.Guild Guild} object
+     *              and {@link net.dv8tion.jda.api.entities.Member Member} object.
+     * @throws FailedInteractionException Any exception thrown that could prevent operation.
+     * @throws IOException                Potentially could be thrown during network operations
+     * @throws ExecutionException         Thrown when a {@link java.util.concurrent.CompletableFuture CompletableFuture}.
+     *                                    {@link java.util.concurrent.CompletableFuture#get() get()} could not be completed
+     * @throws InterruptedException       Thrown when a {@link java.util.concurrent.CompletableFuture CompletableFuture}.
+     *                                    {@link java.util.concurrent.CompletableFuture#get() get()} call gets interrupted.
+     */
+    void execute(@NotNull T event, EventBlob blob)
+        throws FailedInteractionException, IOException, ExecutionException, InterruptedException;
 
     @Override
     default int compareTo(@NotNull IInteraction iInteraction) {

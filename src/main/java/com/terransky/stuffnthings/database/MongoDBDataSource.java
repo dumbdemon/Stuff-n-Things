@@ -127,7 +127,6 @@ public class MongoDBDataSource implements DatabaseManager {
 
         var updater = new ObjectSubscriber<UpdateResult>();
         KillStrings killStrings = finder.first()
-            .map(string -> (KillStrings) string)
             .orElse(new KillStrings(idReference));
         List<String> killStringsList;
         if (property == KILL_RANDOM) {
@@ -195,7 +194,7 @@ public class MongoDBDataSource implements DatabaseManager {
 
         finder.await().hasNoError("Failed to get KitsuAuth");
 
-        return finder.first().map(auth -> (KitsuAuth) auth);
+        return finder.first();
     }
 
     @Override
@@ -204,10 +203,9 @@ public class MongoDBDataSource implements DatabaseManager {
         MongoCollection<?> collection = getCollection(property);
         String target = property.getTable().getTarget(blob);
 
-        var subscriber = new ObjectSubscriber<>();
-        collection.find(Filters.eq(ID_REFERENCE.getPropertyName(property.getTable()), target)).subscribe(subscriber);
+        var subscriber = getSubscriber(collection, Filters.eq(ID_REFERENCE.getPropertyName(property.getTable()), target));
 
-        if (subscriber.await().hasNoError(String.format("Failed to get property %s from database", property))) {
+        if (!subscriber.await().hasNoError(String.format("Failed to get property %s from database", property))) {
             return Optional.empty();
         }
 
@@ -222,7 +220,7 @@ public class MongoDBDataSource implements DatabaseManager {
             }
             case KILL -> {
                 KillStrings killStrings = subscriber.first().map(entry -> (KillStrings) entry)
-                    .orElse(new KillStrings(ID_REFERENCE.getPropertyName(property.getTable())));
+                    .orElse(new KillStrings(property.getTable().getTarget(blob)));
                 return killStrings.getProperty(property);
             }
             default ->
@@ -357,8 +355,8 @@ public class MongoDBDataSource implements DatabaseManager {
     }
 
     @NotNull
-    private ObjectSubscriber<?> getSubscriber(@NotNull MongoCollection<?> collection, Bson bson) {
-        var subscriber = new ObjectSubscriber<>();
+    private <T> ObjectSubscriber<T> getSubscriber(@NotNull MongoCollection<T> collection, Bson bson) {
+        ObjectSubscriber<T> subscriber = new ObjectSubscriber<>();
         collection.find(bson).subscribe(subscriber);
 
         if (subscriber.await().hasError()) throw subscriber.getError();
@@ -433,7 +431,6 @@ public class MongoDBDataSource implements DatabaseManager {
         }
 
         UserEntry user = finder.first()
-            .map(entry -> (UserEntry) entry)
             .orElseThrow(finder::getError);
         List<PerServer> perServers = new ArrayList<>(user.getPerServers());
 
@@ -459,7 +456,7 @@ public class MongoDBDataSource implements DatabaseManager {
 
         var finder = getSubscriber(users, Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId));
 
-        List<PerServer> perServers = finder.first().map(entry -> (UserEntry) entry).orElse(new UserEntry(guild.getId())).getPerServers();
+        List<PerServer> perServers = finder.first().orElse(new UserEntry(guild.getId())).getPerServers();
         PerServer perServer = perServers.stream().filter(lock -> lock.getGuildReference().equals(guild.getId()))
             .findFirst()
             .orElseThrow(finder::getError);

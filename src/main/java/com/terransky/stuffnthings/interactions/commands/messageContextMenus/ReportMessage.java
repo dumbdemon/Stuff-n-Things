@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 public class ReportMessage implements ICommandMessage {
     @Override
@@ -30,7 +31,7 @@ public class ReportMessage implements ICommandMessage {
     }
 
     @Override
-    public void execute(@NotNull MessageContextInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
+    public void execute(@NotNull MessageContextInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException {
         Optional<String> ifWebhookId = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.REPORT_WEBHOOK)
             .map(hook -> (String) hook);
         String reportResponse = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.REPORT_RESPONSE)
@@ -50,7 +51,7 @@ public class ReportMessage implements ICommandMessage {
 
         Message message = event.getTarget();
         List<Message.Attachment> attachments = message.getAttachments();
-        Webhook webhook = event.getJDA().retrieveWebhookById(ifWebhookId.get()).complete();
+        Webhook webhook = event.getJDA().retrieveWebhookById(ifWebhookId.get()).submit().get();
 
         if (message.getAuthor().isBot()) {
             event.replyEmbeds(new EmbedBuilder()
