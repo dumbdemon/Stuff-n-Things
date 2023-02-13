@@ -87,6 +87,13 @@ public class EventBlob {
         return member.getId();
     }
 
+    /**
+     * @see Member#getIdLong()
+     */
+    public long getMemberIdLong() {
+        return member.getIdLong();
+    }
+
     public IInteraction.Type getInteractionType() {
         return interactionType;
     }
