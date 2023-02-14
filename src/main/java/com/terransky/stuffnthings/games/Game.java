@@ -1,10 +1,8 @@
 package com.terransky.stuffnthings.games;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.terransky.stuffnthings.interfaces.Pojo;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -21,6 +19,7 @@ public class Game<T extends Player<?>> implements Pojo {
     private int playersMax;
     private Host host;
     private List<T> players;
+    private boolean isGameCompleted;
 
     protected Game() {
         this.players = new ArrayList<>();
@@ -30,10 +29,11 @@ public class Game<T extends Player<?>> implements Pojo {
         this(channelId, member, List.of(requiredPermissions));
     }
 
-    protected Game(String channelId, Member member, Collection<Permission> requiredPermissions) {
+    protected Game(String channelId, @NotNull Member member, Collection<Permission> requiredPermissions) {
         this.channelId = channelId;
-        constructAndSetGameHost(member, requiredPermissions);
+        this.host = new Host(member.getId(), requiredPermissions);
         this.players = new ArrayList<>();
+        this.isGameCompleted = false;
     }
 
     public String getChannelId() {
@@ -76,18 +76,6 @@ public class Game<T extends Player<?>> implements Pojo {
         this.host = host;
     }
 
-    @JsonIgnore
-    @BsonIgnore
-    public void constructAndSetGameHost(@NotNull Member member, Collection<Permission> requiredPermissions) {
-        this.host = new Host(member.getId(), requiredPermissions);
-    }
-
-    @JsonIgnore
-    @BsonIgnore
-    public void constructAndSetGameHost(@NotNull Member member, Permission... requiredPermissions) {
-        this.host = new Host(member.getId(), requiredPermissions);
-    }
-
     public List<T> getPlayers() {
         return players;
     }
@@ -105,6 +93,14 @@ public class Game<T extends Player<?>> implements Pojo {
         addPlayers(List.of(players));
     }
 
+    public boolean isGameCompleted() {
+        return isGameCompleted;
+    }
+
+    public void setGameCompleted(boolean gameCompleted) {
+        isGameCompleted = gameCompleted;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -115,12 +111,13 @@ public class Game<T extends Player<?>> implements Pojo {
             getPlayersMax() == game.getPlayersMax() &&
             getChannelId().equals(game.getChannelId()) &&
             getHost().equals(game.getHost()) &&
-            getPlayers().equals(game.getPlayers());
+            getPlayers().equals(game.getPlayers()) &&
+            isGameCompleted() == game.isGameCompleted();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getChannelId(), isMultiplayer(), getPlayersMin(), getPlayersMax(), getHost(), getPlayers());
+        return Objects.hash(getChannelId(), isMultiplayer(), getPlayersMin(), getPlayersMax(), getHost(), getPlayers(), isGameCompleted());
     }
 
     @Override
@@ -132,6 +129,7 @@ public class Game<T extends Player<?>> implements Pojo {
             ", playersMax=" + playersMax +
             ", gameHost=" + host +
             ", players=" + players +
+            ", isGameCompleted=" + isGameCompleted +
             '}';
     }
 }

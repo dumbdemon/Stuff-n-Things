@@ -67,8 +67,6 @@ public class BingoPlayer extends Player<Number> {
      *
      * @param seed The initial seed
      */
-    @JsonIgnore
-    @BsonIgnore
     private void generateBoard(long seed) {
         Random random = new Random(seed);
         for (int i = 0; i < GRID_SIZE; i++) {
@@ -89,8 +87,6 @@ public class BingoPlayer extends Player<Number> {
      * @param number The number to check
      * @return Tru if the number is on the player's board
      */
-    @JsonIgnore
-    @BsonIgnore
     private boolean isOnBoard(int number) {
         for (int[] row : board) {
             if (Arrays.stream(row).anyMatch(anInt -> anInt == number))
@@ -105,8 +101,6 @@ public class BingoPlayer extends Player<Number> {
      * @param number A Number to check
      * @return True if the player has won.
      */
-    @JsonIgnore
-    @BsonIgnore
     public boolean checkBoard(int number) {
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
@@ -132,11 +126,17 @@ public class BingoPlayer extends Player<Number> {
      *
      * @return True if the player has won
      */
-    @JsonIgnore
-    @BsonIgnore
     private boolean checkDiagonalWin() {
-        return (checks[0][0] && checks[1][1] && checks[3][3] && checks[4][4]) ||
-            (checks[4][0] && checks[3][1] && checks[1][3] && checks[0][4]);
+        return checkTLBR() ||
+            checkBLTR();
+    }
+
+    private boolean checkTLBR() {
+        return checks[0][0] && checks[1][1] && checks[3][3] && checks[4][4];
+    }
+
+    private boolean checkBLTR() {
+        return checks[4][0] && checks[3][1] && checks[1][3] && checks[0][4];
     }
 
     /**
@@ -144,14 +144,32 @@ public class BingoPlayer extends Player<Number> {
      *
      * @return True if the player has won
      */
-    @JsonIgnore
-    @BsonIgnore
     private boolean checkHorizontalWin() {
-        return (checks[0][0] && checks[0][1] && checks[0][2] && checks[0][3] && checks[0][4]) ||
-            (checks[1][0] && checks[1][1] && checks[1][2] && checks[1][3] && checks[1][4]) ||
-            (checks[2][0] && checks[2][1] && checks[2][3] && checks[2][4]) ||
-            (checks[3][0] && checks[3][1] && checks[3][2] && checks[3][3] && checks[3][4]) ||
-            (checks[4][0] && checks[4][1] && checks[4][2] && checks[4][3] && checks[4][4]);
+        return checkFirstRow() ||
+            checkSecondRow() ||
+            checkThirdRow() ||
+            checkFourthRow() ||
+            checkFifthRow();
+    }
+
+    private boolean checkFirstRow() {
+        return checks[0][0] && checks[0][1] && checks[0][2] && checks[0][3] && checks[0][4];
+    }
+
+    private boolean checkSecondRow() {
+        return checks[1][0] && checks[1][1] && checks[1][2] && checks[1][3] && checks[1][4];
+    }
+
+    private boolean checkThirdRow() {
+        return checks[2][0] && checks[2][1] && checks[2][3] && checks[2][4];
+    }
+
+    private boolean checkFourthRow() {
+        return checks[3][0] && checks[3][1] && checks[3][2] && checks[3][3] && checks[3][4];
+    }
+
+    private boolean checkFifthRow() {
+        return checks[4][0] && checks[4][1] && checks[4][2] && checks[4][3] && checks[4][4];
     }
 
     /**
@@ -159,14 +177,32 @@ public class BingoPlayer extends Player<Number> {
      *
      * @return True if the player has won
      */
-    @JsonIgnore
-    @BsonIgnore
     private boolean checkVerticalWin() {
-        return (checks[0][0] && checks[1][0] && checks[2][0] && checks[3][0] && checks[4][0]) ||
-            (checks[0][1] && checks[1][1] && checks[2][1] && checks[3][1] && checks[4][1]) ||
-            (checks[0][2] && checks[1][2] && checks[3][2] && checks[4][2]) ||
-            (checks[0][3] && checks[1][3] && checks[2][3] && checks[3][3] && checks[4][3]) ||
-            (checks[0][4] && checks[1][4] && checks[2][4] && checks[3][4] && checks[4][4]);
+        return checkColB() ||
+            checkColI() ||
+            checkColN() ||
+            checkColG() ||
+            checkColO();
+    }
+
+    private boolean checkColB() {
+        return checks[0][0] && checks[1][0] && checks[2][0] && checks[3][0] && checks[4][0];
+    }
+
+    private boolean checkColI() {
+        return checks[0][1] && checks[1][1] && checks[2][1] && checks[3][1] && checks[4][1];
+    }
+
+    private boolean checkColN() {
+        return checks[0][2] && checks[1][2] && checks[3][2] && checks[4][2];
+    }
+
+    private boolean checkColG() {
+        return checks[0][3] && checks[1][3] && checks[2][3] && checks[3][3] && checks[4][3];
+    }
+
+    private boolean checkColO() {
+        return checks[0][4] && checks[1][4] && checks[2][4] && checks[3][4] && checks[4][4];
     }
 
     /**
@@ -174,15 +210,11 @@ public class BingoPlayer extends Player<Number> {
      *
      * @return True if the player has won
      */
-    @JsonIgnore
-    @BsonIgnore
     private boolean checkWinner() {
         return checkDiagonalWin() || checkHorizontalWin() || checkVerticalWin();
     }
 
 
-    @JsonIgnore
-    @BsonIgnore
     public String getWinMethod() {
         if (checkDiagonalWin())
             return "Diagonally (" + getDiagonalWinMethod() + ")";
@@ -194,7 +226,7 @@ public class BingoPlayer extends Player<Number> {
     @NotNull
     @Contract(pure = true)
     private String getDiagonalWinMethod() {
-        if (checks[0][0] && checks[1][1] && checks[3][3] && checks[4][4])
+        if (checkTLBR())
             return "TL->BR";
         return "BL->TR";
     }
@@ -202,13 +234,13 @@ public class BingoPlayer extends Player<Number> {
     @NotNull
     @Contract(pure = true)
     private String getHorizontalWinMethod() {
-        if (checks[0][0] && checks[0][1] && checks[0][2] && checks[0][3] && checks[0][4])
+        if (checkFirstRow())
             return "1st Row";
-        if (checks[1][0] && checks[1][1] && checks[1][2] && checks[1][3] && checks[1][4])
+        if (checkSecondRow())
             return "2nd Row";
-        if (checks[2][0] && checks[2][1] && checks[2][3] && checks[2][4])
+        if (checkThirdRow())
             return "3rd Row";
-        if (checks[3][0] && checks[3][1] && checks[3][2] && checks[3][3] && checks[3][4])
+        if (checkFourthRow())
             return "4th Row";
         return "5th Row";
     }
@@ -216,13 +248,13 @@ public class BingoPlayer extends Player<Number> {
     @NotNull
     @Contract(pure = true)
     private String getVerticalWinMethod() {
-        if (checks[0][0] && checks[1][0] && checks[2][0] && checks[3][0] && checks[4][0])
+        if (checkColB())
             return "B";
-        if (checks[0][1] && checks[1][1] && checks[2][1] && checks[3][1] && checks[4][1])
+        if (checkColI())
             return "I";
-        if (checks[0][2] && checks[1][2] && checks[3][2] && checks[4][2])
+        if (checkColN())
             return "N";
-        if (checks[0][3] && checks[1][3] && checks[2][3] && checks[3][3] && checks[4][3])
+        if (checkColG())
             return "G";
         return "O";
     }

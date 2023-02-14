@@ -12,6 +12,7 @@ import java.util.*;
 @JsonPropertyOrder({
     "host",
     "channelId",
+    "gameCompleted",
     "playersMin",
     "playersMax",
     "multiplayer",
@@ -55,6 +56,7 @@ public class BingoGame extends Game<BingoPlayer> { //todo: Implement Letter call
                 }
                 if (!isEmpty()) break;
             }
+            setGameCompleted(true);
         }};
     }
 
