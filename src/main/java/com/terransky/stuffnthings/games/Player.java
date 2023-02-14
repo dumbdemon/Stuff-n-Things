@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.Member;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +13,7 @@ import java.util.Objects;
  * @param <T> A Number type as each game may or may not require a decimal
  */
 @SuppressWarnings("unused")
-public class Player<T extends Number> {
+public class Player<T extends Number> implements Comparable<Player<T>> {
 
     private String name;
     private String id;
@@ -23,12 +23,12 @@ public class Player<T extends Number> {
     /**
      * Constructor for a new Player
      *
-     * @param user A {@link User} to create the Player object for
+     * @param member A {@link Member} to create the Player object for
      */
-    protected Player(@NotNull User user) {
-        this.name = user.getName();
-        this.id = user.getId();
-        this.mention = user.getAsMention();
+    protected Player(@NotNull Member member) {
+        this.name = member.getEffectiveName();
+        this.id = member.getId();
+        this.mention = member.getAsMention();
     }
 
     public String getName() {
@@ -87,5 +87,10 @@ public class Player<T extends Number> {
     @Override
     public int hashCode() {
         return Objects.hash(getName(), getId(), getMention(), getScore());
+    }
+
+    @Override
+    public int compareTo(@NotNull Player<T> player) {
+        return String.CASE_INSENSITIVE_ORDER.compare(getName(), player.getName());
     }
 }

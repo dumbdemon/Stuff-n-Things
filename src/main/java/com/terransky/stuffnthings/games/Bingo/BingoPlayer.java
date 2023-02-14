@@ -3,7 +3,7 @@ package com.terransky.stuffnthings.games.Bingo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.terransky.stuffnthings.games.Player;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.Member;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -39,10 +39,10 @@ public class BingoPlayer extends Player<Number> {
     private int[][] board;
     private boolean[][] checks;
 
-    public BingoPlayer(@NotNull User user) {
-        super(user);
+    public BingoPlayer(@NotNull Member member) {
+        super(member);
         this.board = new int[GRID_SIZE][GRID_SIZE];
-        generateBoard(user.getIdLong() | new Date().getTime());
+        generateBoard(member.getIdLong() | new Date().getTime());
         this.checks = new boolean[GRID_SIZE][GRID_SIZE];
     }
 

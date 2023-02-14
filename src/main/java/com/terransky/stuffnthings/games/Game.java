@@ -77,7 +77,7 @@ public class Game<T extends Player<?>> implements Pojo {
     }
 
     public List<T> getPlayers() {
-        return players;
+        return players.stream().sorted().toList();
     }
 
     public void setPlayers(List<T> players) {
@@ -86,6 +86,15 @@ public class Game<T extends Player<?>> implements Pojo {
 
     public void addPlayers(Collection<T> players) {
         this.players.addAll(players);
+    }
+
+    /**
+     * Creates a Player object from a {@link Member}<br/>
+     * This function is intended to be overridden and should not be called directly; otherwise, this function effectively does nothing.
+     *
+     * @param member A Member to add as a player
+     */
+    public void addPlayer(Member member) {
     }
 
     @SafeVarargs

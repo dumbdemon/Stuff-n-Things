@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.terransky.stuffnthings.games.Game;
 import net.dv8tion.jda.api.entities.Member;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.*;
@@ -76,6 +77,11 @@ public class BingoGame extends Game<BingoPlayer> { //todo: Implement Letter call
             numbers[i] = random.nextInt(BingoPlayer.getFLOOR(), BingoPlayer.getCEIL());
         }
         return numbers;
+    }
+
+    @Override
+    public void addPlayer(@NotNull Member member) {
+        addPlayers(new BingoPlayer(member));
     }
 
     @Override
