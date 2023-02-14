@@ -220,7 +220,9 @@ public class BingoPlayer extends Player<Number> {
             return "Diagonally (" + getDiagonalWinMethod() + ")";
         if (checkHorizontalWin())
             return "Horizontally (" + getHorizontalWinMethod() + ")";
-        return "Vertically (" + getVerticalWinMethod() + ")";
+        if (checkVerticalWin())
+            return "Vertically (" + getVerticalWinMethod() + ")";
+        return "N/A";
     }
 
     @NotNull
