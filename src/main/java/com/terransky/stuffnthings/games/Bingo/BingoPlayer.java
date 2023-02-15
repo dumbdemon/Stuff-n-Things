@@ -1,9 +1,11 @@
 package com.terransky.stuffnthings.games.Bingo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.terransky.stuffnthings.games.Player;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +27,7 @@ import java.util.Random;
     "checks"
 })
 @SuppressWarnings("unused")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BingoPlayer extends Player<Number> {
 
     @BsonIgnore
@@ -39,6 +42,17 @@ public class BingoPlayer extends Player<Number> {
     private int[][] board;
     private boolean[][] checks;
 
+    /**
+     * Constructor Jackson and MongoDB
+     */
+    public BingoPlayer() {
+    }
+
+    /**
+     * Constructor for a new Player
+     *
+     * @param member A {@link Member} to create the Player object for
+     */
     public BingoPlayer(@NotNull Member member) {
         super(member);
         this.board = new int[GRID_SIZE][GRID_SIZE];
@@ -60,6 +74,46 @@ public class BingoPlayer extends Player<Number> {
 
     public void setBoard(int[][] board) {
         this.board = board;
+    }
+
+    @JsonIgnore
+    @BsonIgnore
+    public String getPrettyBoard() {
+        StringBuilder prettyBoard = new StringBuilder("```");
+        for (int i = 0; i < GRID_SIZE; i++) {
+            StringBuilder row = new StringBuilder();
+            for (int j = 0; j < GRID_SIZE; j++) {
+                String number = String.valueOf(board[i][j]);
+                int diff = 2 - number.length();
+                row.append("0".repeat(diff))
+                    .append(board[i][j] == -1 ? "[]" : number)
+                    .append(", ");
+            }
+            prettyBoard.append(row.substring(0, row.length() - 2)).append("\n");
+        }
+
+        prettyBoard.append("```\n");
+        return prettyBoard.toString();
+    }
+
+    @JsonIgnore
+    @BsonIgnore
+    public MessageEmbed.Field getNumberGotField() {
+        StringBuilder numbersGot = new StringBuilder();
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                if (checks[i][j]) {
+                    String number = String.valueOf(board[i][j]);
+                    int diff = 2 - number.length();
+                    numbersGot.append("0".repeat(diff))
+                        .append(board[i][j])
+                        .append(", ");
+                }
+            }
+        }
+
+        String numbers = numbersGot.isEmpty() ? "None" : numbersGot.substring(0, numbersGot.length() - 2);
+        return new MessageEmbed.Field("Number Got", numbers, false);
     }
 
     /**
@@ -210,10 +264,9 @@ public class BingoPlayer extends Player<Number> {
      *
      * @return True if the player has won
      */
-    private boolean checkWinner() {
+    public boolean checkWinner() {
         return checkDiagonalWin() || checkHorizontalWin() || checkVerticalWin();
     }
-
 
     public String getWinMethod() {
         if (checkDiagonalWin())

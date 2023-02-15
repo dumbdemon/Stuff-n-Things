@@ -24,11 +24,6 @@ import java.io.IOException;
 import java.net.URL;
 
 public class JokesV2 implements ICommandSlash {
-    @Override
-    public String getName() {
-        return "jokes";
-    }
-
     @NotNull
     private static String getEffectiveURL(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, String command) {
         Flags serverFlags = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.JOKE_FLAGS)
@@ -59,6 +54,11 @@ public class JokesV2 implements ICommandSlash {
         String blacklist = blacklistFlags.isEmpty() ?
             "" : "?blacklistFlags=" + blacklistFlags.substring(0, blacklistFlags.length() - 1) + "&";
         return "https://v2.jokeapi.dev/joke/Any" + (safeMode ? "?safe-mode&" : "") + blacklist + "?lang=" + lang;
+    }
+
+    @Override
+    public String getName() {
+        return "jokes";
     }
 
     @Override

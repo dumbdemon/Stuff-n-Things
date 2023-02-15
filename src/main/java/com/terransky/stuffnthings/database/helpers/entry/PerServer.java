@@ -10,11 +10,11 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public class PerServer implements Comparable<PerServer> {
 
+    @BsonIgnore
+    public static OffsetDateTime DEFAULT_DT = OffsetDateTime.parse("2023-02-11T14:27Z");
     private String guildReference;
     private Long killAttempts;
     private Boolean killUnderTo;
-    @BsonIgnore
-    public static OffsetDateTime DEFAULT_DT = OffsetDateTime.parse("2023-02-11T14:27Z");
     private String killEndTime;
 
     public PerServer() {

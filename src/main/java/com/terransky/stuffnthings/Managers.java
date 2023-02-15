@@ -10,6 +10,7 @@ import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.Chec
 import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.ConfigCmd;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.devs.*;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.*;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.games.Bingo;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.general.About;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.general.Ping;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.general.Suggest;
@@ -42,6 +43,9 @@ public class Managers {
         //M:tG Commands
         new CalculateRats(),
         new WhatsInStandard(),
+
+        //Games
+        new Bingo(),
 
         //Fun Commands
         new ColorInfo(),

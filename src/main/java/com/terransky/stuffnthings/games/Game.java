@@ -1,39 +1,57 @@
 package com.terransky.stuffnthings.games;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.terransky.stuffnthings.interfaces.Pojo;
+import com.terransky.stuffnthings.utilities.general.Timestamp;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.channel.Channel;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.io.IOException;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalUnit;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 @SuppressWarnings("unused")
 public class Game<T extends Player<?>> implements Pojo {
 
+    private static int playersMin;
     private String channelId;
+    private String channelMention;
     private boolean isMultiplayer;
-    private int playersMin;
     private int playersMax;
     private Host host;
     private List<T> players;
+    private String startTime;
+    private boolean isStarted;
     private boolean isGameCompleted;
+    private boolean isDelayedStartGame;
 
     protected Game() {
         this.players = new ArrayList<>();
     }
 
-    protected Game(String channelId, Member member, Permission... requiredPermissions) {
-        this(channelId, member, List.of(requiredPermissions));
+    protected Game(Channel channel, Member member, Permission... requiredPermissions) {
+        this(channel, member, List.of(requiredPermissions));
     }
 
-    protected Game(String channelId, @NotNull Member member, Collection<Permission> requiredPermissions) {
-        this.channelId = channelId;
+    protected Game(@NotNull Channel channel, @NotNull Member member, Collection<Permission> requiredPermissions) {
+        this.channelId = channel.getId();
+        this.channelMention = channel.getAsMention();
         this.host = new Host(member.getId(), requiredPermissions);
         this.players = new ArrayList<>();
         this.isGameCompleted = false;
+    }
+
+    @JsonIgnore
+    @BsonIgnore
+    public static int getMinimumPlayers() {
+        return playersMin;
     }
 
     public String getChannelId() {
@@ -42,6 +60,14 @@ public class Game<T extends Player<?>> implements Pojo {
 
     public void setChannelId(String channelId) {
         this.channelId = channelId;
+    }
+
+    public String getChannelMention() {
+        return channelMention;
+    }
+
+    public void setChannelMention(String channelMention) {
+        this.channelMention = channelMention;
     }
 
     public boolean isMultiplayer() {
@@ -57,7 +83,7 @@ public class Game<T extends Player<?>> implements Pojo {
     }
 
     public void setPlayersMin(int playersMin) {
-        this.playersMin = playersMin;
+        Game.playersMin = playersMin;
     }
 
     public int getPlayersMax() {
@@ -81,7 +107,7 @@ public class Game<T extends Player<?>> implements Pojo {
     }
 
     public void setPlayers(List<T> players) {
-        this.players = players;
+        this.players = List.copyOf(players);
     }
 
     public void addPlayers(Collection<T> players) {
@@ -93,13 +119,104 @@ public class Game<T extends Player<?>> implements Pojo {
      * This function is intended to be overridden and should not be called directly; otherwise, this function effectively does nothing.
      *
      * @param member A Member to add as a player
+     * @return If the player was successfully added
      */
-    public void addPlayer(Member member) {
+    public boolean addPlayer(Member member) {
+        return false;
+    }
+
+    @JsonIgnore
+    @BsonIgnore
+    public boolean hasMaxPlayers() {
+        return players.size() == playersMax;
     }
 
     @SafeVarargs
     public final void addPlayers(T... players) {
         addPlayers(List.of(players));
+    }
+
+    public long getPlayerSeed() {
+        List<Long> playerIds = new ArrayList<>() {{
+            players.forEach(player -> add(Long.parseLong(player.getId())));
+        }};
+
+        AtomicLong seed = new AtomicLong(new Date().getTime());
+        playerIds.forEach(id -> seed.updateAndGet(value -> value | id));
+        return seed.get();
+    }
+
+    @JsonIgnore
+    @BsonIgnore
+    public boolean isPlayerCountUnderMin() {
+        return players.size() < playersMin;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    @JsonIgnore
+    @BsonIgnore
+    public String getStartTimeAsTimestamp() {
+        return Timestamp.getDateAsTimestamp(getStartTimeAsODT());
+    }
+
+    @JsonIgnore
+    @BsonIgnore
+    public String getStartTimeAsTimestampWithRelative() {
+        return getStartTimeAsTimestampWithRelative(false);
+    }
+
+    public String getStartTimeAsTimestampWithRelative(boolean newLine) {
+        return Timestamp.getDateAsTimestamp(getStartTimeAsODT()) + (newLine ? "\n" : " ") +
+            "(" + Timestamp.getDateAsTimestamp(getStartTimeAsODT(), Timestamp.RELATIVE) + ")";
+    }
+
+    @JsonIgnore
+    @BsonIgnore
+    public OffsetDateTime getStartTimeAsODT() {
+        return OffsetDateTime.parse(startTime);
+    }
+
+    /**
+     * Set the start time to now.
+     */
+    @JsonIgnore
+    @BsonIgnore
+    public void setStartTimeWithODT() {
+        setStartTime(OffsetDateTime.now().format(DateTimeFormatter.ISO_INSTANT));
+    }
+
+    /**
+     * Sets a delayed start time.
+     *
+     * @see OffsetDateTime#plus(long, TemporalUnit)
+     */
+    @JsonIgnore
+    @BsonIgnore
+    public void setStartTimeWithODT(long amountToAdd, TemporalUnit unit) {
+        setStartTime(OffsetDateTime.now().plus(amountToAdd, unit).format(DateTimeFormatter.ISO_INSTANT));
+    }
+
+    public boolean isStarted() {
+        return isStarted;
+    }
+
+    public void setStarted(boolean started) {
+        isStarted = started;
+    }
+
+    public boolean isDelayedStartGame() {
+        return isDelayedStartGame;
+    }
+
+    public void setDelayedStartGame(boolean delayedStartGame) {
+        isDelayedStartGame = delayedStartGame;
     }
 
     public boolean isGameCompleted() {
@@ -110,6 +227,35 @@ public class Game<T extends Player<?>> implements Pojo {
         isGameCompleted = gameCompleted;
     }
 
+    @JsonIgnore
+    @BsonIgnore
+    public String getPlayersAsMentions() {
+        List<String> mentions = new ArrayList<>() {{
+            for (T player : getPlayers()) {
+                add(player.getMention());
+            }
+        }};
+        StringBuilder mentionString = new StringBuilder();
+        for (String mention : mentions) {
+            if (mentionString.length() + mention.length() > MessageEmbed.VALUE_MAX_LENGTH)
+                return mentionString.substring(0, mentionString.length() - 2) + "…";
+            mentionString.append(mention).append(", ");
+        }
+        return mentionString.substring(0, mentionString.length() - 2);
+    }
+
+    /**
+     * Create a json file of this object with a custom file name.<br />
+     * The name of the file follows this convention:<br/><code>{game name}+On+{channelId}.json</code>
+     *
+     * @throws IOException Is thrown if the file could not be saved or if {@link #getAsJsonString()} failed to parse.
+     */
+    @Override
+    public void saveAsJsonFile() throws IOException {
+        String[] className = this.getClass().getName().split("\\.");
+        saveAsJsonFile(className[className.length - 1] + " on " + getChannelId());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -118,27 +264,43 @@ public class Game<T extends Player<?>> implements Pojo {
         return isMultiplayer() == game.isMultiplayer() &&
             getPlayersMin() == game.getPlayersMin() &&
             getPlayersMax() == game.getPlayersMax() &&
+            isStarted() == game.isStarted() &&
+            isGameCompleted() == game.isGameCompleted() &&
+            isDelayedStartGame() == game.isDelayedStartGame() &&
             getChannelId().equals(game.getChannelId()) &&
             getHost().equals(game.getHost()) &&
             getPlayers().equals(game.getPlayers()) &&
-            isGameCompleted() == game.isGameCompleted();
+            getStartTime().equals(game.getStartTime());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getChannelId(), isMultiplayer(), getPlayersMin(), getPlayersMax(), getHost(), getPlayers(), isGameCompleted());
+        return Objects.hash(getChannelId(),
+            isMultiplayer(),
+            getPlayersMin(),
+            getPlayersMax(),
+            getHost(),
+            getPlayers(),
+            getStartTime(),
+            isStarted(),
+            isGameCompleted(),
+            isDelayedStartGame());
     }
 
     @Override
     public String toString() {
         return "Game{" +
             "channelId='" + channelId + '\'' +
+            ", channelMention='" + channelMention + '\'' +
             ", isMultiplayer=" + isMultiplayer +
             ", playersMin=" + playersMin +
             ", playersMax=" + playersMax +
-            ", gameHost=" + host +
+            ", host=" + host +
             ", players=" + players +
+            ", startTime='" + startTime + '\'' +
+            ", isStarted=" + isStarted +
             ", isGameCompleted=" + isGameCompleted +
+            ", isDelayedStartGame=" + isDelayedStartGame +
             '}';
     }
 }

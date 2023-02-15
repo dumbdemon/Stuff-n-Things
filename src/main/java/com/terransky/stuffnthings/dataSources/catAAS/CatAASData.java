@@ -158,17 +158,17 @@ public class CatAASData implements Pojo {
         return owner;
     }
 
+    @JsonProperty("owner")
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
     @JsonIgnore
     public String getEffectiveOwner() {
         if (owner == null || "null".equals(owner)) {
             return "No Owner";
         }
         return owner;
-    }
-
-    @JsonProperty("owner")
-    public void setOwner(String owner) {
-        this.owner = owner;
     }
 
     @JsonProperty("file")

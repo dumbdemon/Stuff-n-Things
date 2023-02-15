@@ -21,6 +21,12 @@ public class Player<T extends Number> implements Comparable<Player<T>> {
     private T score;
 
     /**
+     * Constructor Jackson and MongoDB
+     */
+    protected Player() {
+    }
+
+    /**
      * Constructor for a new Player
      *
      * @param member A {@link Member} to create the Player object for
@@ -81,7 +87,10 @@ public class Player<T extends Number> implements Comparable<Player<T>> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Player<?> player = (Player<?>) o;
-        return getName().equals(player.getName()) && getId().equals(player.getId()) && getMention().equals(player.getMention()) && Objects.equals(getScore(), player.getScore());
+        return getName().equals(player.getName()) &&
+            getId().equals(player.getId()) &&
+            getMention().equals(player.getMention()) &&
+            Objects.equals(getScore(), player.getScore());
     }
 
     @Override
