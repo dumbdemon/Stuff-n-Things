@@ -4,17 +4,17 @@ import com.terransky.stuffnthings.dataSources.kitsu.KitsuAuth;
 import com.terransky.stuffnthings.database.MongoDBDataSource;
 import com.terransky.stuffnthings.database.helpers.KillStorage;
 import com.terransky.stuffnthings.database.helpers.Property;
+import com.terransky.stuffnthings.database.helpers.PropertyMapping;
 import com.terransky.stuffnthings.database.helpers.entry.UserGuildEntry;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 public interface DatabaseManager {
 
@@ -24,31 +24,40 @@ public interface DatabaseManager {
     DatabaseManager INSTANCE = new MongoDBDataSource();
 
     /**
-     * Converts an object to a {@link List} of Strings
-     *
-     * @param object An Object to be converted
-     * @return A {@link List} of Strings
-     * @throws IllegalArgumentException If the object is not an instance of a {@link List}
-     */
-    @NotNull
-    @Contract("_ -> new")
-    static List<String> toListOfString(Object object) {
-        if (!(object instanceof List<?>)) throw new IllegalArgumentException("Object not a list");
-        return new ArrayList<>() {{
-            for (Object o1 : ((List<?>) object)) {
-                add((String) o1);
-            }
-        }};
-    }
-
-    /**
-     * Get a {@link Property} from the database as an Integer.
+     * Get a {@link Property} from the database.
      *
      * @param blob     An {@link EventBlob}
      * @param property A {@link Property}
      * @return An {@link Optional} object associated with the property
      */
     Optional<Object> getFromDatabase(@NotNull EventBlob blob, @NotNull Property property);
+
+    /**
+     * Get a {@link Property} from the database.
+     *
+     * @param blob     An {@link EventBlob}
+     * @param property A {@link Property}
+     * @param mapper   The mapping function to apply to a value, if present
+     * @return An {@link Optional} object associated with the property
+     */
+    default <T> Optional<T> getFromDatabase(@NotNull EventBlob blob, @NotNull Property property, Function<Object, ? extends T> mapper) {
+        return getFromDatabase(blob, property)
+            .map(mapper);
+    }
+
+    /**
+     * Get a {@link Property} from the database.
+     *
+     * @param blob     An {@link EventBlob}
+     * @param property A {@link Property}
+     * @param fallback What to return if no value was retrieved from the database
+     * @param mapper   The mapping function to apply to a value, if present
+     * @return The property from the database
+     */
+    default <T> T getFromDatabase(@NotNull EventBlob blob, @NotNull Property property, T fallback, Function<Object, T> mapper) {
+        return getFromDatabase(blob, property, mapper)
+            .orElse(fallback);
+    }
 
     /**
      * Get all properties form the database connected to a specific user.
@@ -93,9 +102,7 @@ public interface DatabaseManager {
      * @return A watchlist
      */
     default List<String> getWatchList() {
-        return getFromDatabase(new EventBlob(null, null), Property.KILL_RANDOM)
-            .map(DatabaseManager::toListOfString)
-            .orElse(List.of("you"));
+        return getFromDatabase(new EventBlob(null, null), Property.KILL_RANDOM, List.of("you"), PropertyMapping::getAsListOfString);
     }
 
     /**

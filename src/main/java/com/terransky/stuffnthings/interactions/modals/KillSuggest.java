@@ -30,10 +30,7 @@ public class KillSuggest {
         String suggestion = ifSuggestion.orElseThrow(DiscordAPIException::new).getAsString();
 
         List<String> victims = new ArrayList<>() {{
-            blob.getGuild().getMembers().stream()
-                .filter(member -> !member.getUser().isBot() ||
-                    member.getUser().equals(event.getJDA().getSelfUser())
-                ).forEach(member -> add(member.getAsMention()));
+            blob.getNonBotMembersAndSelf().forEach(member -> add(member.getAsMention()));
         }};
 
         TextChannel requestChannel = event.getJDA().getTextChannelById(Config.getRequestChannelID());

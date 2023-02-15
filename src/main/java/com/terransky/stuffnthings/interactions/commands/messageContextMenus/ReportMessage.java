@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interactions.commands.messageContextMenus;
 
 import com.terransky.stuffnthings.database.helpers.Property;
+import com.terransky.stuffnthings.database.helpers.PropertyMapping;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandMessage;
@@ -32,11 +33,9 @@ public class ReportMessage implements ICommandMessage {
 
     @Override
     public void execute(@NotNull MessageContextInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException {
-        Optional<String> ifWebhookId = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.REPORT_WEBHOOK)
-            .map(hook -> (String) hook);
-        String reportResponse = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.REPORT_RESPONSE)
-            .map(response -> (String) response)
-            .orElse("Got it. Message has been reported.");
+        Optional<String> ifWebhookId = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.REPORT_WEBHOOK, PropertyMapping::getAsString);
+        String reportResponse = DatabaseManager.INSTANCE
+            .getFromDatabase(blob, Property.REPORT_RESPONSE, "Got it. Message has been reported.", PropertyMapping::getAsString);
 
         if (ifWebhookId.isEmpty()) {
             event.replyEmbeds(new EmbedBuilder()

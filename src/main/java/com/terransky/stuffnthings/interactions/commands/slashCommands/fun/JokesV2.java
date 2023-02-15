@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.stuffnthings.dataSources.jokeAPI.Flags;
 import com.terransky.stuffnthings.dataSources.jokeAPI.JokeAPIError;
 import com.terransky.stuffnthings.database.helpers.Property;
+import com.terransky.stuffnthings.database.helpers.PropertyMapping;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
@@ -26,9 +27,7 @@ import java.net.URL;
 public class JokesV2 implements ICommandSlash {
     @NotNull
     private static String getEffectiveURL(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, String command) {
-        Flags serverFlags = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.JOKE_FLAGS)
-            .map(flags -> (Flags) flags)
-            .orElse(new Flags());
+        Flags serverFlags = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.JOKE_FLAGS, new Flags(), PropertyMapping::getAsFlags);
 
         String lang = event.getOption("language", "en", OptionMapping::getAsString);
         boolean nsfw = event.getChannel().asTextChannel().isNSFW();

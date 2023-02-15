@@ -2,6 +2,7 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.admin;
 
 import com.terransky.stuffnthings.dataSources.jokeAPI.Flags;
 import com.terransky.stuffnthings.database.helpers.Property;
+import com.terransky.stuffnthings.database.helpers.PropertyMapping;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
@@ -117,9 +118,7 @@ public class ConfigCmd implements ICommandSlash {
     }
 
     private void updateFlags(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull EmbedBuilder eb, @NotNull String subcommand) {
-        Flags serverFlags = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.JOKE_FLAGS)
-            .map(flags -> (Flags) flags)
-            .orElse(new Flags());
+        Flags serverFlags = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.JOKE_FLAGS, new Flags(), PropertyMapping::getAsFlags);
 
         if (subcommand.equals("view-flags")) {
             eb.setTitle(getNameReadable() + " - View Joke Flags");
@@ -216,9 +215,8 @@ public class ConfigCmd implements ICommandSlash {
         eb.setTitle(getNameReadable() + " - Reporting Message");
 
         if (ifResponse.isEmpty()) {
-            String response = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.REPORT_RESPONSE)
-                .map(message -> (String) message)
-                .orElse("Got it. Message has been reported.");
+            String response = DatabaseManager.INSTANCE
+                .getFromDatabase(blob, Property.REPORT_RESPONSE, "Got it. Message has been reported.", PropertyMapping::getAsString);
 
             event.getHook().sendMessageEmbeds(
                 eb.setDescription("Current Set: ```" + response + "```")
@@ -238,9 +236,7 @@ public class ConfigCmd implements ICommandSlash {
     private void updateKillTimeout(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull EmbedBuilder eb) {
         event.deferReply().queue();
         Optional<Integer> ifNewTimeout = Optional.ofNullable(event.getOption("set-timeout", OptionMapping::getAsInt));
-        long oldTimeout = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILLS_TIMEOUT)
-            .map(o -> (long) o)
-            .orElseGet(() -> TimeUnit.MINUTES.toMillis(10));
+        long oldTimeout = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILLS_TIMEOUT, TimeUnit.MINUTES.toMillis(10), PropertyMapping::getAsLong);
         long oldTimeoutMinutes = TimeUnit.MILLISECONDS.toMinutes(oldTimeout);
         eb.setTitle(getNameReadable() + " - Kill Timeout");
 
@@ -279,9 +275,7 @@ public class ConfigCmd implements ICommandSlash {
     private void updateKillMaxKills(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull EmbedBuilder eb) {
         event.deferReply().queue();
         Optional<Long> ifNewMax = Optional.ofNullable(event.getOption("set-max", OptionMapping::getAsLong));
-        long oldMax = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILLS_MAX)
-            .map(o -> (Long) o)
-            .orElse(5L);
+        long oldMax = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILLS_MAX, 5L, PropertyMapping::getAsLong);
         eb.setTitle(getNameReadable() + " - Max Kills");
 
         if (ifNewMax.isEmpty()) {

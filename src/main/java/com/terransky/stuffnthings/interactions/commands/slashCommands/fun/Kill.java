@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.terransky.stuffnthings.database.helpers.Property;
+import com.terransky.stuffnthings.database.helpers.PropertyMapping;
 import com.terransky.stuffnthings.database.helpers.entry.UserGuildEntry;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
@@ -35,13 +36,10 @@ public class Kill implements ICommandSlash {
     public static final String MODAL_TEXT_INPUT_NAME = "kill-suggestion";
 
     private void killRandom(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull Random random, EmbedBuilder eb) {
-        List<String> randomStrings = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILL_RANDOM)
-            .map(DatabaseManager::toListOfString)
-            .orElse(List.of("just dies by %s's hands."));
+        List<String> randomStrings = DatabaseManager.INSTANCE
+            .getFromDatabase(blob, Property.KILL_RANDOM, List.of("just dies by %s's hands."), PropertyMapping::getAsListOfString);
         List<String> victims = new ArrayList<>() {{
-            blob.getGuild().getMembers().stream()
-                .filter(member -> !member.getUser().isBot() || member.getUser().equals(event.getJDA().getSelfUser()))
-                .forEach(member -> add(member.getAsMention()));
+            blob.getNonBotMembersAndSelf().forEach(member -> add(member.getAsMention()));
         }};
 
         String message = randomStrings.get(random.nextInt(randomStrings.size())).formatted(
@@ -92,9 +90,8 @@ public class Kill implements ICommandSlash {
             if (!entry.isUnderTimeout())
                 performLockOut(blob, entry.getTimeout());
         }
-        List<String> targetStrings = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILL_TARGET)
-            .map(DatabaseManager::toListOfString)
-            .orElse(List.of("tried to kill %s but they couldn't because that's bad manners!"));
+        List<String> targetStrings = DatabaseManager.INSTANCE
+            .getFromDatabase(blob, Property.KILL_TARGET, List.of("tried to kill %s but they couldn't because that's bad manners!"), PropertyMapping::getAsListOfString);
 
         eb.setDescription(String.format("… %s", targetStrings.get(random.nextInt(targetStrings.size()))).formatted(target));
         event.replyEmbeds(eb.build()).queue();
