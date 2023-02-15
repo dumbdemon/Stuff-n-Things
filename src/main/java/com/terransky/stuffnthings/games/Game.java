@@ -114,6 +114,11 @@ public class Game<T extends Player<?>> implements Pojo {
         this.players.addAll(players);
     }
 
+    @SafeVarargs
+    public final void addPlayers(T... players) {
+        addPlayers(List.of(players));
+    }
+
     /**
      * Creates a Player object from a {@link Member}<br/>
      * This function is intended to be overridden and should not be called directly; otherwise, this function effectively does nothing.
@@ -129,11 +134,6 @@ public class Game<T extends Player<?>> implements Pojo {
     @BsonIgnore
     public boolean hasMaxPlayers() {
         return players.size() == playersMax;
-    }
-
-    @SafeVarargs
-    public final void addPlayers(T... players) {
-        addPlayers(List.of(players));
     }
 
     public long getPlayerSeed() {
