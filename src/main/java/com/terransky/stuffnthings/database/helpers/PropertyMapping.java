@@ -27,6 +27,18 @@ public class PropertyMapping {
     }
 
     /**
+     * Get a constructed IllegalArgumentException
+     *
+     * @param aClass A possibly changing class
+     * @return An IllegalArgumentException
+     */
+    @NotNull
+    @Contract("_ -> new")
+    private static IllegalArgumentException getException(Class<?> aClass) {
+        return getException(Formatter.getNameOfClass(aClass));
+    }
+
+    /**
      * Converts an object to a {@link List} of Strings
      *
      * @param property An Object to be converted
@@ -81,7 +93,7 @@ public class PropertyMapping {
     public static Flags getAsFlags(Object property) {
         if (property instanceof Flags flags)
             return flags;
-        throw getException(Formatter.getNameOfClass(Flags.class));
+        throw getException(Flags.class);
     }
 
     /**
@@ -94,6 +106,6 @@ public class PropertyMapping {
     public static BingoGame getAsBingoGame(Object property) {
         if (property instanceof BingoGame player)
             return player;
-        throw getException(Formatter.getNameOfClass(BingoGame.class));
+        throw getException(BingoGame.class);
     }
 }
