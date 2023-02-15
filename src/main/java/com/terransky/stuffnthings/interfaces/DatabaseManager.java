@@ -6,6 +6,7 @@ import com.terransky.stuffnthings.database.helpers.KillStorage;
 import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.database.helpers.PropertyMapping;
 import com.terransky.stuffnthings.database.helpers.entry.UserGuildEntry;
+import com.terransky.stuffnthings.games.Game;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.JDA;
@@ -113,6 +114,41 @@ public interface DatabaseManager {
      * @return True if the operation was successful
      */
     boolean uploadKitsuAuth(KitsuAuth kitsuAuth);
+
+    /**
+     * Upload game data to the database
+     *
+     * @param blob  An {@link EventBlob}
+     * @param game  The game data to upload
+     * @param games The type of game
+     * @param <T>   A {@link Game}
+     */
+    <T extends Game<?>> void uploadGameData(@NotNull EventBlob blob, T game, Property.Games games);
+
+    /**
+     * Get the last game data that happened on a channel
+     *
+     * @param blob      An {@link EventBlob}
+     * @param channelId The channel where the game occurred
+     * @param games     The type of game
+     * @return An {@link Optional} containing generic {@link Game} data
+     */
+    Optional<? extends Game<?>> getLastGameData(@NotNull EventBlob blob, String channelId, @NotNull Property.Games games);
+
+    /**
+     * Get the last game data that happened on a channel
+     *
+     * @param blob      An {@link EventBlob}
+     * @param channelId The channel where the game occurred
+     * @param games     The type of game
+     * @param mapper    The mapping function to apply to a value, if present
+     * @param <T>       A {@link Game}
+     * @return An {@link Optional} containing game data
+     */
+    default <T> Optional<T> getLastGameData(@NotNull EventBlob blob, String channelId, @NotNull Property.Games games, Function<? super Game<?>, T> mapper) {
+        return getLastGameData(blob, channelId, games)
+            .map(mapper);
+    }
 
     /**
      * Get the stored {@link KitsuAuth} from the database, if enabled; otherwise, get it from filesystem.

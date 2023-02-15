@@ -18,6 +18,8 @@ import com.terransky.stuffnthings.dataSources.kitsu.KitsuAuth;
 import com.terransky.stuffnthings.database.helpers.KillStorage;
 import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.database.helpers.entry.*;
+import com.terransky.stuffnthings.games.Bingo.BingoGame;
+import com.terransky.stuffnthings.games.Game;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.utilities.apiHandlers.KitsuHandler;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
@@ -198,6 +200,44 @@ public class MongoDBDataSource implements DatabaseManager {
     }
 
     @Override
+    public <T extends Game<?>> void uploadGameData(@NotNull EventBlob blob, T game, Games games) {
+        if (!Config.isDatabaseEnabled()) return;
+        MongoCollection<GuildEntry> guilds = getGuilds();
+        if (Games.BINGO.equals(games)) {
+            var finder = getSubscriber(guilds, Filters.eq(ID_REFERENCE.getPropertyName(Table.GUILD), blob.getGuildId()));
+
+            GuildEntry guildEntry = finder.first().orElse(new GuildEntry(blob.getGuildId()));
+
+            List<BingoGame> bingoGames = guildEntry.getBingoGames() == null ? new ArrayList<>() : guildEntry.getBingoGames();
+            bingoGames.stream().filter(bingoGame -> bingoGame.getChannelId().equals(game.getChannelId()))
+                .findFirst()
+                .ifPresent(bingoGames::remove);
+            bingoGames.add((BingoGame) game);
+
+            var updater = new ObjectSubscriber<UpdateResult>();
+
+            guilds.updateOne(Filters.eq(ID_REFERENCE.getPropertyName(Table.GUILD), blob.getGuildId()), Updates.set(LAST_BINGO.getPropertyName(), bingoGames))
+                .subscribe(updater);
+            updater.await().hasNoError("Unable to upload Game data");
+        }
+    }
+
+    @Override
+    public Optional<? extends Game<?>> getLastGameData(@NotNull EventBlob blob, String channelId, @NotNull Games games) {
+        if (!Config.isDatabaseEnabled()) return Optional.empty();
+        MongoCollection<GuildEntry> users = getGuilds();
+        var finder = getSubscriber(users, Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), blob.getMemberId()));
+
+        GuildEntry guildEntry = finder.first().orElse(new GuildEntry(blob.getGuildId()));
+
+        if (Games.BINGO.equals(games)) {
+            return guildEntry.getBingoGames().stream().filter(game -> game.getChannelId().equals(channelId))
+                .findFirst();
+        }
+        throw new IllegalArgumentException("Games cannot be null");
+    }
+
+    @Override
     public Optional<Object> getFromDatabase(@NotNull EventBlob blob, @NotNull Property property) {
         if (!Config.isDatabaseEnabled()) return Optional.empty();
         MongoCollection<?> collection = getCollection(property);
@@ -260,14 +300,11 @@ public class MongoDBDataSource implements DatabaseManager {
         users.find(target).subscribe(userGetter);
 
         List<PerServer> perServers = new ArrayList<>(userGetter.await().first().orElse(new UserEntry(guildId)).getPerServers());
-        PerServer perServer = perServers.stream().filter(server -> server.getGuildReference().equals(guildId)).findFirst()
-            .orElse(new PerServer(guildId));
+        perServers.stream().filter(server -> server.getGuildReference().equals(guildId))
+            .findFirst()
+            .ifPresent(perServers::remove);
 
-        perServers.remove(perServer);
-        perServer.setKillAttempts(0L);
-        perServer.setKillUnderTo(false);
-        perServer.setKillEndTime(PerServer.DEFAULT_DT.format(DateTimeFormatter.ISO_INSTANT));
-        perServers.add(perServer);
+        perServers.add(new PerServer(guildId));
 
         var updater = new ObjectSubscriber<UpdateResult>();
 

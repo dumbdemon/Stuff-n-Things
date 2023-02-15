@@ -1,6 +1,8 @@
 package com.terransky.stuffnthings.database.helpers;
 
 import com.terransky.stuffnthings.dataSources.jokeAPI.Flags;
+import com.terransky.stuffnthings.games.Bingo.BingoGame;
+import com.terransky.stuffnthings.utilities.command.Formatter;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,6 +81,19 @@ public class PropertyMapping {
     public static Flags getAsFlags(Object property) {
         if (property instanceof Flags flags)
             return flags;
-        throw getException("Flags");
+        throw getException(Formatter.getNameOfClass(Flags.class));
+    }
+
+    /**
+     * Converts an object to a {@link BingoGame}
+     *
+     * @param property An Object to be converted
+     * @return A {@link BingoGame}
+     * @throws IllegalArgumentException If the object is not an instance of a {@link BingoGame}
+     */
+    public static BingoGame getAsBingoGame(Object property) {
+        if (property instanceof BingoGame player)
+            return player;
+        throw getException(Formatter.getNameOfClass(BingoGame.class));
     }
 }

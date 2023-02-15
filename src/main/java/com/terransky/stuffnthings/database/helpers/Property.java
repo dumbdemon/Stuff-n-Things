@@ -13,11 +13,11 @@ public enum Property {
     REPORT_WEBHOOK("reportWebhook", Table.GUILD),
     REPORT_RESPONSE("reportResponse", Table.GUILD),
     JOKE_FLAGS("joke_flags", Table.GUILD),
+    LAST_BINGO("bingo_games", Table.GUILD),
     PER_SERVER("killLocks", Table.USER),
     KILL_ATTEMPTS(Table.USER),
     KILL_TIMEOUT(Table.USER),
     KILL_END_DATE(Table.USER),
-    LAST_BINGO(Table.USER),
     KILL_TARGET("killTargets", Table.KILL),
     KILL_RANDOM("killRandoms", Table.KILL),
     ;

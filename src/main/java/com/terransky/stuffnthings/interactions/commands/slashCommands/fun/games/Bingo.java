@@ -1,9 +1,10 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun.games;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.terransky.stuffnthings.database.helpers.Property;
+import com.terransky.stuffnthings.database.helpers.PropertyMapping;
 import com.terransky.stuffnthings.games.Bingo.BingoGame;
 import com.terransky.stuffnthings.games.Bingo.BingoPlayer;
-import com.terransky.stuffnthings.interfaces.Pojo;
+import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ISlashGame;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
@@ -21,9 +22,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -94,8 +93,7 @@ public class Bingo implements ISlashGame {
         if (willHostJoin) bingoGame.addPlayer(host);
 
         if (Config.isTestingMode())
-            blob.getGuild().getMembers().stream().filter(member -> !member.getUser().isBot())
-                .forEach(bingoGame::addPlayer);
+            blob.getNonBotMembers(member -> !member.equals(host)).forEach(bingoGame::addPlayer);
 
         int maxPlayers = event.getOption("max-players", bingoGame.getPlayersMax(), OptionMapping::getAsInt);
         boolean verbose = event.getOption("verbose", false, OptionMapping::getAsBoolean);
@@ -121,17 +119,13 @@ public class Bingo implements ISlashGame {
 
         reply.queue();
 
-        future = executor.schedule(new StartBingoTask(bingoGame, event.getChannel().asTextChannel(), blob), bingoGame.getDelay(), TimeUnit.MINUTES);
-        try {
-            bingoGame.saveAsJsonFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        future = executor.schedule(new StartBingoTask(blob, event.getChannel().asTextChannel()), bingoGame.getDelay(), TimeUnit.MINUTES);
+        DatabaseManager.INSTANCE.uploadGameData(blob, bingoGame, Property.Games.BINGO);
     }
 
     @Override
     public void joinGame(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder response) {
-        Optional<BingoGame> game = getBingoGame(event, response);
+        Optional<BingoGame> game = getBingoGame(event, blob, response);
         if (game.isEmpty()) return;
 
         BingoGame bingoGame = game.get();
@@ -150,11 +144,7 @@ public class Bingo implements ISlashGame {
             return;
         }
 
-        try {
-            bingoGame.saveAsJsonFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        DatabaseManager.INSTANCE.uploadGameData(blob, bingoGame, Property.Games.BINGO);
         event.replyEmbeds(
             response.setDescription(
                 String.format("Player %s has been added! %s players are now playing!", blob.getMember().getAsMention(), bingoGame.getPlayers().size())
@@ -164,56 +154,31 @@ public class Bingo implements ISlashGame {
 
     @Override
     public void startGame(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder response) {
-        Optional<BingoGame> game = getBingoGame(event, response);
-        if (game.isEmpty()) return;
-        event.deferReply(true).queue();
+        event.reply("Attempting to start game…").setEphemeral(true).queue();
 
-        BingoGame bingoGame = game.get();
-
-        if (bingoGame.isGameCompleted() || OffsetDateTime.now().isAfter(bingoGame.getStartTimeAsODT())) {
+        try {
+            future.cancel(false);
+            new StartBingoTask(blob, event.getChannel().asTextChannel()).run();
+        } catch (Exception e) {
             event.getHook().sendMessageEmbeds(
                 noGameHasStartedEmbed(response)
-            ).queue();
-            return;
+            ).setEphemeral(true).queue();
         }
-
-        if (bingoGame.isPlayerCountUnderMin()) {
-            event.getHook().sendMessageEmbeds(
-                response.setDescription(String.format("Unable to start game! Not Enough players!\nThere is %s player!", bingoGame.getPlayers().size()))
-                    .setColor(EmbedColors.getError())
-                    .build()
-            ).queue();
-            return;
-        }
-
-        event.getHook().sendMessage("Started Game…").queue();
-
-        future.cancel(false);
-        new StartBingoTask(bingoGame, event.getChannel().asTextChannel(), blob).run();
     }
 
     @Override
     public void lastGame(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder response) {
-        Optional<BingoGame> game = getBingoGame(event, response);
+        Optional<BingoGame> game = getBingoGame(event, blob, response);
         if (game.isEmpty()) return;
 
         BingoGame bingoGame = game.get();
 
-        if (!bingoGame.isGameCompleted()) {
-            event.replyEmbeds(
-                response.setDescription("Cannot view stats of last game when a game is currently running.")
-                    .build()
-            ).setEphemeral(true).queue();
-            return;
-        }
-
-        Optional<BingoPlayer> userPlayer = bingoGame.getPlayers()
-            .stream().filter(player -> player.getId().equals(blob.getMemberId()))
+        Optional<BingoPlayer> userPlayer = bingoGame.getPlayers().stream().filter(player -> player.getId().equals(blob.getMemberId()))
             .findFirst();
 
         if (userPlayer.isEmpty()) {
             event.replyEmbeds(
-                response.setDescription("You did not participate in the last game on " + bingoGame.getChannelMention() + ".")
+                response.setDescription("You did not participate in the last game on " + event.getChannel().getAsMention() + ".")
                     .addField("Last Game was on...", bingoGame.getStartTimeAsTimestampWithRelative(), false)
                     .build()
             ).setEphemeral(true).queue();
@@ -241,15 +206,13 @@ public class Bingo implements ISlashGame {
     }
 
     @NotNull
-    private Optional<BingoGame> getBingoGame(@NotNull SlashCommandInteractionEvent event, EmbedBuilder response) {
-        try {
-            return Optional.ofNullable(new ObjectMapper().readValue(new File("jsons/" + Pojo.toSafeFileName("BingoGame On " + event.getChannel().getId()) + ".json"),
-                BingoGame.class));
-        } catch (IOException e) {
-            LoggerFactory.getLogger(getName()).error("Could not read file", e);
-            event.replyEmbeds(noGameHasStartedEmbed(response)).setEphemeral(true).queue();
-            return Optional.empty();
-        }
+    private Optional<BingoGame> getBingoGame(@NotNull SlashCommandInteractionEvent event, EventBlob blob, EmbedBuilder response) {
+        Optional<BingoGame> bingoGame = DatabaseManager.INSTANCE
+            .getLastGameData(blob, event.getChannel().asTextChannel().getId(), Property.Games.BINGO, PropertyMapping::getAsBingoGame);
+        if (bingoGame.isPresent()) return bingoGame;
+
+        event.replyEmbeds(noGameHasStartedEmbed(response)).setEphemeral(true).queue();
+        return Optional.empty();
     }
 
     @Override
@@ -259,19 +222,25 @@ public class Bingo implements ISlashGame {
 
     static class StartBingoTask implements Runnable {
 
-        private final BingoGame bingoGame;
+        private final EventBlob blob;
         private final TextChannel textChannel;
         private final Member selfMember;
 
         //todo: replace constructor parameter for BingoGame with database call in run()
-        public StartBingoTask(@NotNull BingoGame bingoGame, TextChannel textChannel, @NotNull EventBlob blob) {
-            this.bingoGame = bingoGame;
+        public StartBingoTask(@NotNull EventBlob blob, TextChannel textChannel) {
+            this.blob = blob;
             this.textChannel = textChannel;
             this.selfMember = blob.getSelfMember();
         }
 
         @Override
         public void run() {
+            Optional<BingoGame> serverGame = DatabaseManager.INSTANCE.getLastGameData(blob, textChannel.getId(), Property.Games.BINGO, PropertyMapping::getAsBingoGame);
+
+            if (serverGame.isEmpty())
+                return;
+
+            BingoGame bingoGame = serverGame.get();
             if (bingoGame.isGameCompleted())
                 return;
 
@@ -334,11 +303,7 @@ public class Bingo implements ISlashGame {
                     .build()
             ).queue();
             bingoGame.setGameCompleted(true);
-            try {
-                bingoGame.saveAsJsonFile();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            DatabaseManager.INSTANCE.uploadGameData(blob, bingoGame, Property.Games.BINGO);
         }
     }
 }

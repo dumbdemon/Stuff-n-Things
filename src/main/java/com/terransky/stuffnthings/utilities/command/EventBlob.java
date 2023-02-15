@@ -3,8 +3,12 @@ package com.terransky.stuffnthings.utilities.command;
 import com.terransky.stuffnthings.interfaces.IInteraction;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import org.jetbrains.annotations.Contract;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public class EventBlob {
 
@@ -92,6 +96,56 @@ public class EventBlob {
      */
     public long getMemberIdLong() {
         return member.getIdLong();
+    }
+
+    /**
+     * Get a list of all cached members in a guild that are not a bot.
+     *
+     * @return A {@link List} of non-bot {@link Member Members}
+     */
+    public List<Member> getNonBotMembers() {
+        return getNonBotMembers(member -> true);
+    }
+
+    /**
+     * Get a list of all cached members in a guild that are not a bot and some other filter.
+     *
+     * @param predicate An additional predicate for filtering.
+     * @return A {@link List} of non-bot {@link Member Members}
+     */
+    public List<Member> getNonBotMembers(Predicate<? super Member> predicate) {
+        return new ArrayList<>() {{
+            guild.getMembers().stream()
+                .filter(EventBlob.this::isNotBot)
+                .filter(predicate)
+                .forEach(this::add);
+        }};
+    }
+
+    public List<Member> getNonBotMembersAndSelf() {
+        return getNonBotMembersAndSelf(member -> true);
+    }
+
+    public List<Member> getNonBotMembersAndSelf(Predicate<? super Member> predicate) {
+        return new ArrayList<>() {{
+            guild.getMembers().stream()
+                .filter(member -> isNotBot(member) || getSelfMember().equals(member))
+                .filter(predicate)
+                .forEach(this::add);
+        }};
+    }
+
+    /**
+     * Checks if the member is a bot.
+     *
+     * @param member A member to check.
+     * @return True if the member is not a bot.
+     */
+    @Contract("null -> false")
+    private boolean isNotBot(Member member) {
+        if (member == null)
+            return false;
+        return !member.getUser().isBot();
     }
 
     public IInteraction.Type getInteractionType() {

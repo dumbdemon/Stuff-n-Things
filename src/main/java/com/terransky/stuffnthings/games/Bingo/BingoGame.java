@@ -30,7 +30,7 @@ import java.util.*;
 })
 @SuppressWarnings("unused")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BingoGame extends Game<BingoPlayer> { //todo: Implement Letter calls and database storage
+public class BingoGame extends Game<BingoPlayer> { //todo: Implement Letter calls and database storage [WIP]
 
     private List<Integer> calledNumbers;
     private long delay;

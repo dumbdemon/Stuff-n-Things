@@ -2,10 +2,13 @@ package com.terransky.stuffnthings.database.helpers.entry;
 
 import com.terransky.stuffnthings.dataSources.jokeAPI.Flags;
 import com.terransky.stuffnthings.database.helpers.Property;
+import com.terransky.stuffnthings.games.Bingo.BingoGame;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -24,6 +27,8 @@ public class GuildEntry {
     private String reportResponse;
     @BsonProperty("joke_flags")
     private Flags jokeFlags;
+    @BsonProperty("bingo_games")
+    private List<BingoGame> bingoGames;
 
     public GuildEntry() {
     }
@@ -33,6 +38,7 @@ public class GuildEntry {
         this.killMaximum = 5L;
         this.killTimeout = TimeUnit.MINUTES.toMillis(10);
         this.reportResponse = "Got it. Message has been reported.";
+        this.bingoGames = new ArrayList<>();
     }
 
     @BsonProperty("guildId")
@@ -95,6 +101,16 @@ public class GuildEntry {
     @BsonProperty("joke_flags")
     public void setJokeFlags(Flags jokeFlags) {
         this.jokeFlags = jokeFlags;
+    }
+
+    @BsonProperty("bingo_games")
+    public List<BingoGame> getBingoGames() {
+        return bingoGames;
+    }
+
+    @BsonProperty("bingo_games")
+    public void setBingoGames(List<BingoGame> bingoGames) {
+        this.bingoGames = bingoGames;
     }
 
     @BsonIgnore

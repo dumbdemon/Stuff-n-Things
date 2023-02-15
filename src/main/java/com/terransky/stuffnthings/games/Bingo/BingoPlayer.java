@@ -39,8 +39,8 @@ public class BingoPlayer extends Player<Number> {
     @BsonIgnore
     @JsonIgnore
     private final int GRID_SIZE = 5;
-    private int[][] board;
-    private boolean[][] checks;
+    private int[][] board; //todo: Create java object for board. Mongo does not recognize Array Matrices
+    private boolean[][] checks; //todo: Create java object for checks. Mongo does not recognize Array Matrices
 
     /**
      * Constructor Jackson and MongoDB
@@ -92,8 +92,7 @@ public class BingoPlayer extends Player<Number> {
             prettyBoard.append(row.substring(0, row.length() - 2)).append("\n");
         }
 
-        prettyBoard.append("```\n");
-        return prettyBoard.toString();
+        return prettyBoard.append("```\n").toString();
     }
 
     @JsonIgnore
@@ -276,6 +275,12 @@ public class BingoPlayer extends Player<Number> {
         if (checkVerticalWin())
             return "Vertically (" + getVerticalWinMethod() + ")";
         return "N/A";
+    }
+
+    /**
+     * Made to satisfy Bongo Driver. Ignore.
+     */
+    public void setWinMethod(String winMethod) {
     }
 
     @NotNull
