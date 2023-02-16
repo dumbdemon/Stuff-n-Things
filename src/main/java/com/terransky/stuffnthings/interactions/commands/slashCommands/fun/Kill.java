@@ -64,7 +64,7 @@ public class Kill implements ICommandSlash {
             target += " (hey wait a second…)";
         }
         UserGuildEntry entry = DatabaseManager.INSTANCE.getUserGuildEntry(blob.getMemberId(), blob.getGuildId());
-        OffsetDateTime endTime = entry.getEndTime();
+        OffsetDateTime endTime = entry.getKillEndTimeAsDate();
 
         if (endTime.isBefore(OffsetDateTime.now())) {
             new ResetKillProperties(blob, getClass()).run();
@@ -87,8 +87,8 @@ public class Kill implements ICommandSlash {
             }
 
             DatabaseManager.INSTANCE.updateProperty(blob, Property.KILL_ATTEMPTS, attempts + 1);
-            if (!entry.isUnderTimeout())
-                performLockOut(blob, entry.getTimeout());
+            if (!entry.getKillUnderTo())
+                performLockOut(blob, entry.getServerTimeout());
         }
         List<String> targetStrings = DatabaseManager.INSTANCE
             .getFromDatabase(blob, Property.KILL_TARGET, List.of("tried to kill %s but they couldn't because that's bad manners!"), PropertyMapping::getAsListOfString);
@@ -112,10 +112,9 @@ public class Kill implements ICommandSlash {
     public Metadata getMetadata() {
         return new Metadata(this.getName(), "Time to un-alive random members!", """
             Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
-            """, Mastermind.USER,
-            CommandCategory.FUN,
+            """, Mastermind.USER, CommandCategory.FUN,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-02-12T21:53Z")
+            Metadata.parseDate("2023-02-16T13:23Z")
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),

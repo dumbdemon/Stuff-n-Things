@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.database.helpers.entry;
 
 import com.terransky.stuffnthings.database.helpers.Property;
+import com.terransky.stuffnthings.utilities.command.Formatter;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.jetbrains.annotations.NotNull;
@@ -52,6 +53,14 @@ public class UserEntry {
     @BsonProperty("killLocks")
     public void setPerServers(List<PerServer> perServers) {
         this.perServers = List.copyOf(perServers);
+    }
+
+    @BsonIgnore
+    public static UserEntry asUserEntry(Object entry) {
+        if (entry instanceof UserEntry userEntry)
+            return userEntry;
+        throw new IllegalArgumentException(String.format("Object is not %s. Is it %s?",
+            Formatter.getNameOfClass(UserEntry.class), Formatter.getNameOfClass(GuildEntry.class)));
     }
 
     @BsonIgnore

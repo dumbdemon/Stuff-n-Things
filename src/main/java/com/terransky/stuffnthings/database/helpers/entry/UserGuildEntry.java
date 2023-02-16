@@ -1,21 +1,19 @@
 package com.terransky.stuffnthings.database.helpers.entry;
 
-import java.time.OffsetDateTime;
+import com.terransky.stuffnthings.interfaces.Pojo;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
-public class UserGuildEntry {
+public class UserGuildEntry extends PerServer implements Pojo {
 
-    private final PerServer perServer;
     private long maxKills;
-    private long timeout;
-    private OffsetDateTime endTime;
+    private long serverTimeout;
 
-    public UserGuildEntry(PerServer perServer) {
-        this.perServer = perServer;
-    }
-
-    public PerServer getPerServer() {
-        return perServer;
+    public UserGuildEntry(@NotNull PerServer perServer) {
+        setKillAttempts(perServer.getKillAttempts());
+        setKillEndTime(perServer.getKillEndTime());
+        setKillUnderTo(perServer.getKillUnderTo());
     }
 
     public long getMaxKills() {
@@ -27,46 +25,30 @@ public class UserGuildEntry {
         return this;
     }
 
-    public long getTimeout() {
-        return timeout;
+    public long getServerTimeout() {
+        return serverTimeout;
     }
 
-    public UserGuildEntry setTimeout(long timeout) {
-        this.timeout = timeout;
+    public UserGuildEntry setServerTimeout(long serverTimeout) {
+        this.serverTimeout = serverTimeout;
         return this;
-    }
-
-    public long getKillAttempts() {
-        return perServer.getKillAttempts();
-    }
-
-    public boolean isUnderTimeout() {
-        return perServer.getKillUnderTo();
     }
 
     public void resetAttempts() {
-        perServer.setKillAttempts(0L);
-    }
-
-    public OffsetDateTime getEndTime() {
-        return endTime;
-    }
-
-    public UserGuildEntry setEndTime(OffsetDateTime endTime) {
-        this.endTime = endTime;
-        return this;
+        setKillAttempts(0L);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         UserGuildEntry entry = (UserGuildEntry) o;
-        return getMaxKills() == entry.getMaxKills() && getTimeout() == entry.getTimeout() && perServer.equals(entry.getPerServer());
+        return getMaxKills() == entry.getMaxKills() && getServerTimeout() == entry.getServerTimeout();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getPerServer(), getMaxKills(), getTimeout());
+        return Objects.hash(super.hashCode(), getMaxKills(), getServerTimeout());
     }
 }

@@ -251,11 +251,11 @@ public class MongoDBDataSource implements DatabaseManager {
 
         switch (property.getTable()) {
             case GUILD -> {
-                GuildEntry guildEntry = subscriber.first().map(entry -> (GuildEntry) entry).orElse(new GuildEntry(blob.getGuildId()));
+                GuildEntry guildEntry = subscriber.first().map(GuildEntry::asGuildEntry).orElse(new GuildEntry(blob.getGuildId()));
                 return guildEntry.getProperty(property);
             }
             case USER -> {
-                UserEntry userEntry = subscriber.first().map(entry -> (UserEntry) entry).orElse(new UserEntry(blob.getGuildId()));
+                UserEntry userEntry = subscriber.first().map(UserEntry::asUserEntry).orElse(new UserEntry(blob.getGuildId()));
                 return userEntry.getProperty(property, blob.getGuildId());
             }
             case KILL -> {
@@ -287,8 +287,7 @@ public class MongoDBDataSource implements DatabaseManager {
 
         return new UserGuildEntry(perServer)
             .setMaxKills(guildEntry.getKillMaximum())
-            .setTimeout(guildEntry.getKillTimeout())
-            .setEndTime(OffsetDateTime.parse(perServer.getKillEndTime()));
+            .setServerTimeout(guildEntry.getKillTimeout());
     }
 
     @Override
@@ -339,7 +338,7 @@ public class MongoDBDataSource implements DatabaseManager {
             case KILL_TIMEOUT -> {
                 var subscriber = getSubscriber(collection, search);
 
-                UserEntry user = subscriber.first().map(entry -> (UserEntry) entry).orElse(new UserEntry(blob.getGuildId()));
+                UserEntry user = subscriber.first().map(UserEntry::asUserEntry).orElse(new UserEntry(blob.getGuildId()));
                 List<PerServer> perServers = new ArrayList<>(user.getPerServers());
                 PerServer perServer = perServers.stream().filter(lock -> lock.getGuildReference().equals(blob.getGuildId()))
                     .findFirst()
@@ -353,7 +352,7 @@ public class MongoDBDataSource implements DatabaseManager {
             case KILL_ATTEMPTS -> {
                 var subscriber = getSubscriber(collection, search);
 
-                UserEntry user = subscriber.first().map(entry -> (UserEntry) entry).orElse(new UserEntry(blob.getGuildId()));
+                UserEntry user = subscriber.first().map(UserEntry::asUserEntry).orElse(new UserEntry(blob.getGuildId()));
                 List<PerServer> perServers = new ArrayList<>(user.getPerServers());
                 PerServer perServer = perServers.stream().filter(lock -> lock.getGuildReference().equals(blob.getGuildId()))
                     .findFirst()
@@ -367,7 +366,7 @@ public class MongoDBDataSource implements DatabaseManager {
             case KILL_END_DATE -> {
                 var subscriber = getSubscriber(collection, search);
 
-                UserEntry user = subscriber.first().map(entry -> (UserEntry) entry).orElse(new UserEntry(blob.getGuildId()));
+                UserEntry user = subscriber.first().map(UserEntry::asUserEntry).orElse(new UserEntry(blob.getGuildId()));
                 List<PerServer> perServers = new ArrayList<>(user.getPerServers());
                 PerServer perServer = perServers.stream().filter(lock -> lock.getGuildReference().equals(blob.getGuildId()))
                     .findFirst()

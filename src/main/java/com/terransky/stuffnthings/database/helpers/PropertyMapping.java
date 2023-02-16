@@ -104,8 +104,8 @@ public class PropertyMapping {
      * @throws IllegalArgumentException If the object is not an instance of a {@link BingoGame}
      */
     public static BingoGame getAsBingoGame(Object property) {
-        if (property instanceof BingoGame player)
-            return player;
+        if (property instanceof BingoGame bingoGame)
+            return bingoGame;
         throw getException(BingoGame.class);
     }
 }

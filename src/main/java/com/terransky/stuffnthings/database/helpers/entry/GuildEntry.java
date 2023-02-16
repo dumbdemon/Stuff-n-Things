@@ -3,6 +3,7 @@ package com.terransky.stuffnthings.database.helpers.entry;
 import com.terransky.stuffnthings.dataSources.jokeAPI.Flags;
 import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.games.Bingo.BingoGame;
+import com.terransky.stuffnthings.utilities.command.Formatter;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.jetbrains.annotations.NotNull;
@@ -114,6 +115,14 @@ public class GuildEntry {
     }
 
     @BsonIgnore
+    public static GuildEntry asGuildEntry(Object entry) {
+        if (entry instanceof GuildEntry guildEntry)
+            return guildEntry;
+        throw new IllegalArgumentException(String.format("Object is not %s. Is it %s?",
+            Formatter.getNameOfClass(GuildEntry.class), Formatter.getNameOfClass(UserEntry.class)));
+    }
+
+    @BsonIgnore
     public Optional<Object> getProperty(@NotNull Property property) {
         switch (property) {
             case KILLS_MAX -> {
@@ -143,6 +152,8 @@ public class GuildEntry {
             ", killTimeout=" + killTimeout +
             ", webhookId='" + webhookId + '\'' +
             ", reportResponse='" + reportResponse + '\'' +
+            ", jokeFlags=" + jokeFlags +
+            ", bingoGames=" + bingoGames +
             '}';
     }
 }
