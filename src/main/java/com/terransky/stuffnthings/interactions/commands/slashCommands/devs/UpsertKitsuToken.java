@@ -4,11 +4,13 @@ import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.apiHandlers.KitsuHandler;
 import com.terransky.stuffnthings.utilities.command.*;
+import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.List;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class UpsertKitsuToken implements ICommandSlash {
@@ -21,6 +23,11 @@ public class UpsertKitsuToken implements ICommandSlash {
     @Override
     public boolean isDeveloperCommand() {
         return !ICommandSlash.super.isDeveloperCommand();
+    }
+
+    @Override
+    public List<Long> getServerRestrictions() {
+        return List.of(Config.getSupportGuildIdLong());
     }
 
     @Override

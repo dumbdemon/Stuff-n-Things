@@ -74,7 +74,7 @@ public class Bingo implements ISlashGame {
                     ),
                 new SubcommandData("join", "Join in a game. You cannot join a game that has already started."),
                 new SubcommandData("start", "No waiting! Start the game now!"),
-                //todo: implement store of BingoPlayer to PerServer and brag that instead of global last
+                //todo: implement store of BingoPlayer to PerServer and grab that instead of global last
                 new SubcommandData("last", "See your result on that last game on this channel.")
                     .addOptions(
                         new OptionData(OptionType.BOOLEAN, "hide-result", "Hide your results.", true)

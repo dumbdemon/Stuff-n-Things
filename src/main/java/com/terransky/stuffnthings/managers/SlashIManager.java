@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.managers;
 
 import com.terransky.stuffnthings.interactions.commands.slashCommands.general.About;
+import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -64,7 +65,7 @@ public class SlashIManager extends CommandIManager<ICommandSlash> {
      * @return The amount of slash commands.
      */
     public int getSlashCommandCount() {
-        return (int) interactions.stream().filter(super::checkIfGlobal).count();
+        return getEffectiveCounts(interactions.stream().filter(super::checkIfGlobal).toList(), IInteraction.Type.COMMAND_SLASH).size();
     }
 
     /**
@@ -74,7 +75,7 @@ public class SlashIManager extends CommandIManager<ICommandSlash> {
      * @return The amount of slash commands.
      */
     public int getSlashCommandCount(long serverId) {
-        return (int) interactions.stream().filter(iCommandSlash -> checkIfGuild(iCommandSlash, serverId)).count();
+        return getEffectiveCounts(interactions.stream().filter(iCommandSlash -> checkIfGuild(iCommandSlash, serverId)).toList(), IInteraction.Type.COMMAND_SLASH).size();
     }
 
     public enum SlashSet {

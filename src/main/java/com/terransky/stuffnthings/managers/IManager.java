@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class IManager<T extends IInteraction<?>> {
 
-    final List<T> interactions = new ArrayList<>();
+    protected final List<T> interactions = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(IManager.class);
 
     @SafeVarargs

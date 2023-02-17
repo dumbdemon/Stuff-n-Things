@@ -51,7 +51,10 @@ public class PropertyMapping {
         if (property instanceof List<?> aList)
             return new ArrayList<>() {{
                 for (Object obj : aList) {
-                    if (obj instanceof String str) add(str);
+                    if (obj instanceof String str)
+                        add(str);
+                    else
+                        throw getException("List of Strings");
                 }
             }};
         throw getException("List");

@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 public class AddToWatchlist implements ICommandSlash {
@@ -46,6 +47,11 @@ public class AddToWatchlist implements ICommandSlash {
     @Override
     public boolean isDeveloperCommand() {
         return !ICommandSlash.super.isDeveloperCommand();
+    }
+
+    @Override
+    public List<Long> getServerRestrictions() {
+        return List.of(Config.getSupportGuildIdLong());
     }
 
     @Override

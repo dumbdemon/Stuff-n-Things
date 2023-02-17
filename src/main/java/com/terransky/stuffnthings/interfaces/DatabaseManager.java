@@ -30,6 +30,7 @@ public interface DatabaseManager {
      * @param blob     An {@link EventBlob}
      * @param property A {@link Property}
      * @return An {@link Optional} object associated with the property
+     * @throws IllegalArgumentException If the provided {@link Property} is of {@link com.terransky.stuffnthings.database.helpers.Property.Table#ROOT Table.ROOT}
      */
     Optional<Object> getFromDatabase(@NotNull EventBlob blob, @NotNull Property property);
 
@@ -40,6 +41,7 @@ public interface DatabaseManager {
      * @param property A {@link Property}
      * @param mapper   The mapping function to apply to a value, if present
      * @return An {@link Optional} object associated with the property
+     * @throws IllegalArgumentException If the provided {@link Property} is of {@link com.terransky.stuffnthings.database.helpers.Property.Table#ROOT Table.ROOT}
      */
     default <T> Optional<T> getFromDatabase(@NotNull EventBlob blob, @NotNull Property property, Function<Object, ? extends T> mapper) {
         return getFromDatabase(blob, property)
@@ -54,6 +56,7 @@ public interface DatabaseManager {
      * @param fallback What to return if no value was retrieved from the database
      * @param mapper   The mapping function to apply to a value, if present
      * @return The property from the database
+     * @throws IllegalArgumentException If the provided {@link Property} is of {@link com.terransky.stuffnthings.database.helpers.Property.Table#ROOT Table.ROOT}
      */
     default <T> T getFromDatabase(@NotNull EventBlob blob, @NotNull Property property, T fallback, Function<Object, T> mapper) {
         return getFromDatabase(blob, property, mapper)
