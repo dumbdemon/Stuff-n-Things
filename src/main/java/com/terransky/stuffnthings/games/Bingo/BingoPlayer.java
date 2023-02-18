@@ -237,24 +237,33 @@ public class BingoPlayer extends Player<Number> {
             checkFifthRow();
     }
 
+    private boolean checkRow(boolean[] check) {
+        return checkRow(check, false);
+    }
+
+    private boolean checkRow(boolean[] check, boolean isMiddle) {
+        Objects.requireNonNull(check);
+        return check[0] && check[1] && (isMiddle || check[2]) && check[3] && check[4];
+    }
+
     private boolean checkFirstRow() {
-        return checks[0][0] && checks[0][1] && checks[0][2] && checks[0][3] && checks[0][4];
+        return checkRow(checks[0]);
     }
 
     private boolean checkSecondRow() {
-        return checks[1][0] && checks[1][1] && checks[1][2] && checks[1][3] && checks[1][4];
+        return checkRow(checks[1]);
     }
 
     private boolean checkThirdRow() {
-        return checks[2][0] && checks[2][1] && checks[2][3] && checks[2][4];
+        return checkRow(checks[2], true);
     }
 
     private boolean checkFourthRow() {
-        return checks[3][0] && checks[3][1] && checks[3][2] && checks[3][3] && checks[3][4];
+        return checkRow(checks[3]);
     }
 
     private boolean checkFifthRow() {
-        return checks[4][0] && checks[4][1] && checks[4][2] && checks[4][3] && checks[4][4];
+        return checkRow(checks[4]);
     }
 
     /**
@@ -263,31 +272,41 @@ public class BingoPlayer extends Player<Number> {
      * @return True if the player has won
      */
     private boolean checkVerticalWin() {
-        return checkColB() ||
-            checkColI() ||
-            checkColN() ||
-            checkColG() ||
-            checkColO();
+        return checkColumnB() ||
+            checkColumnI() ||
+            checkColumnN() ||
+            checkColumnG() ||
+            checkColumnO();
     }
 
-    private boolean checkColB() {
-        return checks[0][0] && checks[1][0] && checks[2][0] && checks[3][0] && checks[4][0];
+    private boolean checkColumn(int column) {
+        if (column < 0 || column > GRID_SIZE)
+            throw new IllegalArgumentException(String.format("Column must be between 0 and %d inclusively", GRID_SIZE));
+        int i = 0;
+        for (boolean[] check : checks) {
+            if (check[column]) i++;
+        }
+        return column != (int) Math.floor(GRID_SIZE / 2.0) ? i == 5 : i == 4;
     }
 
-    private boolean checkColI() {
-        return checks[0][1] && checks[1][1] && checks[2][1] && checks[3][1] && checks[4][1];
+    private boolean checkColumnB() {
+        return checkColumn(0);
     }
 
-    private boolean checkColN() {
-        return checks[0][2] && checks[1][2] && checks[3][2] && checks[4][2];
+    private boolean checkColumnI() {
+        return checkColumn(1);
     }
 
-    private boolean checkColG() {
-        return checks[0][3] && checks[1][3] && checks[2][3] && checks[3][3] && checks[4][3];
+    private boolean checkColumnN() {
+        return checkColumn(2);
     }
 
-    private boolean checkColO() {
-        return checks[0][4] && checks[1][4] && checks[2][4] && checks[3][4] && checks[4][4];
+    private boolean checkColumnG() {
+        return checkColumn(3);
+    }
+
+    private boolean checkColumnO() {
+        return checkColumn(4);
     }
 
     /**
@@ -348,13 +367,13 @@ public class BingoPlayer extends Player<Number> {
     @NotNull
     @Contract(pure = true)
     private String getVerticalWinMethod() {
-        if (checkColB())
+        if (checkColumnB())
             return "B";
-        if (checkColI())
+        if (checkColumnI())
             return "I";
-        if (checkColN())
+        if (checkColumnN())
             return "N";
-        if (checkColG())
+        if (checkColumnG())
             return "G";
         return "O";
     }
