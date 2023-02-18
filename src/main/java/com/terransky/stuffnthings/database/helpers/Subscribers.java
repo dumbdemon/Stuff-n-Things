@@ -14,6 +14,8 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Hold all {@link Subscriber Subscribers} for {@link com.mongodb.reactivestreams.client.MongoClient MongoClient} actions
@@ -83,7 +85,7 @@ public class Subscribers {
         }
 
         /**
-         * Checks if an error had occurred
+         * This is the inverted function of {@link #hasNoError(Class, String)} except it does not log if there is an error.
          *
          * @return True if there is an error
          */
@@ -92,47 +94,30 @@ public class Subscribers {
         }
 
         /**
-         * Checks if there is no error. If there is, it will log it.
+         * This is the inverted function of {@link #hasNoError(Class, String)}.
          *
-         * @return True if there is no error
+         * @param clazz   Class for the log to represent
+         * @param message The message to send with the error if one has occurred
+         * @return True if there is an error
          */
-        public boolean hasNoError() {
-            return hasNoError(getClass(), "Subscriber failed to complete");
+        public boolean hasError(Class<?> clazz, String message) {
+            return !hasNoError(clazz, message);
         }
 
         /**
-         * Checks if there is no error. If there is, it will log it.
+         * Checks if there is an error. If there is, it will log it.<br/>
+         * Use this function for return statements.
          *
-         * @param aClass Class for the log to represent
-         * @return True if there is no error
-         */
-        public boolean hasNoError(Class<?> aClass) {
-            return hasNoError(aClass, "Subscriber failed to complete");
-        }
-
-        /**
-         * Checks if there is no error. If there is, it will log it.
-         *
+         * @param clazz   Class for the log to represent
          * @param message The message to send with the error if one has occurred
          * @return True if there is no error
          */
-        public boolean hasNoError(String message) {
-            return hasNoError(getClass(), message);
-        }
-
-        /**
-         * Checks if there is no error. If there is, it will log it.
-         *
-         * @param aClass  Class for the log to represent
-         * @param message The message to send with the error if one has occurred
-         * @return True if there is no error
-         */
-        public boolean hasNoError(Class<?> aClass, String message) {
-            if (hasError()) {
-                LoggerFactory.getLogger(aClass).error(message, getError());
-                return false;
+        public boolean hasNoError(Class<?> clazz, String message) {
+            if (getError() != null) {
+                LoggerFactory.getLogger(clazz).error(message, getError());
+                return true;
             }
-            return true;
+            return false;
         }
 
         /**
@@ -147,7 +132,7 @@ public class Subscribers {
         }
 
         /**
-         * Get all objects of type {@link T} that got return
+         * Get all objects of type {@link T} that got returned
          *
          * @param timeout The amount of time to wait
          * @param unit    The unit of time to wait
@@ -238,6 +223,70 @@ public class Subscribers {
          */
         public LoggerSubscriber(Logger log) {
             super(t -> log.info(t.toString()));
+        }
+
+        /**
+         * A {@link ConsumerSubscriber ConsumerSubscriber} that logs each entry.
+         *
+         * @param clazz An object class
+         */
+        public LoggerSubscriber(Class<?> clazz) {
+            this(LoggerFactory.getLogger(clazz));
+        }
+    }
+
+    public static class MappingSubscriber<T> extends OperationSubscriber<T> {
+
+        /**
+         * Returns a stream consisting of the results of applying the given
+         * function to the objects from the publisher.
+         *
+         * @param mapper The mapping function to apply to a value, if present
+         * @param <R>    The kind of element in the new list
+         * @return The stream of new object
+         */
+        public <R> Stream<R> map(Function<? super T, R> mapper) {
+            return await().getObjects().stream().map(mapper);
+        }
+
+        /**
+         * Returns a stream consisting of the results of applying the given
+         * function to the objects from the publisher.
+         *
+         * @param timeout The amount of time to wait
+         * @param unit    The unit of time to wait
+         * @param mapper  The mapping function to apply to a value, if present
+         * @param <R>     The kind of element in the new list
+         * @return The stream of new object
+         */
+        public <R> Stream<R> map(final long timeout, TimeUnit unit, Function<? super T, R> mapper) {
+            return await(timeout, unit).getObjects().stream().map(mapper);
+        }
+
+        /**
+         * Returns a list of consisting of the results of applying the given
+         * function to the objects from the publisher.
+         *
+         * @param mapper The mapping function to apply to a value, if present
+         * @param <R>    The kind of element in the new list
+         * @return A list of objects
+         */
+        public <R> List<R> mapToList(Function<? super T, R> mapper) {
+            return map(mapper).toList();
+        }
+
+        /**
+         * Returns a list of consisting of the results of applying the given
+         * function to the objects from the publisher.
+         *
+         * @param timeout The amount of time to wait
+         * @param unit    The unit of time to wait
+         * @param mapper  The mapping function to apply to a value, if present
+         * @param <R>     The kind of element in the new list
+         * @return A list of objects
+         */
+        public <R> List<R> mapToList(final long timeout, TimeUnit unit, Function<? super T, R> mapper) {
+            return map(timeout, unit, mapper).toList();
         }
     }
 }

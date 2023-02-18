@@ -141,7 +141,7 @@ public class MongoDBDataSource implements DatabaseManager {
         strings.updateOne(filter, Updates.set(property.getPropertyName(), killStringsList))
             .subscribe(updater);
 
-        return updater.await().hasNoError();
+        return updater.await().hasNoError(getClass(), "Error in adding kill string");
     }
 
     @Override
@@ -167,13 +167,13 @@ public class MongoDBDataSource implements DatabaseManager {
         if (finder.first().isEmpty()) {
             var inserter = new ObjectSubscriber<InsertOneResult>();
             auths.insertOne(kitsuAuth).subscribe(inserter);
-            return inserter.await().hasNoError();
+            return inserter.await().hasNoError(getClass(), String.format("Error during upsert for %s", Formatter.getNameOfClass(KitsuAuth.class)));
         }
 
         var replacer = new ObjectSubscriber<UpdateResult>();
         auths.replaceOne(Filters.eq("idReference", KITSU_ID_REFERENCE), kitsuAuth)
             .subscribe(replacer);
-        return replacer.await().hasNoError();
+        return replacer.await().hasNoError(getClass(), String.format("Error during upsert for %s", Formatter.getNameOfClass(KitsuAuth.class)));
     }
 
     @Override
@@ -194,7 +194,7 @@ public class MongoDBDataSource implements DatabaseManager {
 
         var finder = getSubscriber(auths, Filters.eq("idReference", KITSU_ID_REFERENCE));
 
-        finder.await().hasNoError("Failed to get KitsuAuth");
+        finder.await().hasError(getClass(), "Failed to get KitsuAuth");
 
         return finder.first();
     }
@@ -218,7 +218,7 @@ public class MongoDBDataSource implements DatabaseManager {
 
             guilds.updateOne(Filters.eq(ID_REFERENCE.getPropertyName(Table.GUILD), blob.getGuildId()), Updates.set(LAST_BINGO.getPropertyName(), bingoGames))
                 .subscribe(updater);
-            updater.await().hasNoError("Unable to upload Game data");
+            updater.await().hasError(getClass(), "Unable to upload Game data");
         }
     }
 
@@ -245,7 +245,7 @@ public class MongoDBDataSource implements DatabaseManager {
 
         var subscriber = getSubscriber(collection, Filters.eq(ID_REFERENCE.getPropertyName(property.getTable()), target));
 
-        if (!subscriber.await().hasNoError(String.format("Failed to get property %s from database", property))) {
+        if (subscriber.await().hasError(getClass(), String.format("Failed to get property %s from database", property))) {
             return Optional.empty();
         }
 
@@ -310,7 +310,7 @@ public class MongoDBDataSource implements DatabaseManager {
         users.updateOne(target, Updates.set(PER_SERVER.getPropertyName(), perServers))
             .subscribe(updater);
 
-        return updater.await().hasNoError();
+        return updater.await().hasNoError(getClass(), String.format("Unable to reset kill properties for %s", userId));
     }
 
     @NotNull
@@ -407,18 +407,18 @@ public class MongoDBDataSource implements DatabaseManager {
         MongoCollection<GuildEntry> guilds = getGuilds();
 
         var finder = getSubscriber(guilds, Filters.eq(ID_REFERENCE.getPropertyName(Table.GUILD), guildId));
-        var subscriber = new ObjectSubscriber<InsertOneResult>();
 
-        if (finder.await(2, TimeUnit.MINUTES).hasNoError(String.format("An error occurred whilst finding guild with id %s", guildId)))
+        if (finder.await(2, TimeUnit.MINUTES).hasError(getClass(), String.format("An error occurred whilst finding guild with id %s", guildId)))
             return;
 
         if (finder.first().isEmpty()) {
+            var inserter = new ObjectSubscriber<InsertOneResult>();
             guilds.insertOne(new GuildEntry(guildId))
-                .subscribe(subscriber);
+                .subscribe(inserter);
 
             ifAnErrorOccurs(String.format("%s [%S] was added to the database", guildName, guildId),
                 String.format("Unable to add guild %s [%s] to database", guildName, guildId),
-                subscriber.await().getError());
+                inserter.await().getError());
         }
     }
 
@@ -448,10 +448,8 @@ public class MongoDBDataSource implements DatabaseManager {
 
         var finder = getSubscriber(users, Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), blob.getMemberId()));
 
-        if (finder.await(2, TimeUnit.MINUTES).getError() != null) {
-            log.error("Couldn't find user", finder.getError());
+        if (finder.await(2, TimeUnit.MINUTES).hasError(getClass(), "Couldn't find user"))
             return;
-        }
 
         if (finder.getObjects().isEmpty()) {
             var insert = new ObjectSubscriber<InsertOneResult>();
