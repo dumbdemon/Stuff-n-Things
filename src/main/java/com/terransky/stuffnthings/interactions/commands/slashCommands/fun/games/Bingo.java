@@ -20,7 +20,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -61,7 +61,7 @@ public class Bingo implements ISlashGame {
             Options with an `*` are required.
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-14T09:59Z"),
-            Metadata.parseDate("2023-02-18T13:12Z")
+            Metadata.parseDate("2023-02-18T15:25Z")
         )
             .addSubcommands(
                 new SubcommandData("new", "Start a new Bingo game in this channel.")
@@ -115,6 +115,17 @@ public class Bingo implements ISlashGame {
 
     @Override
     public void newGame(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder response) {
+        event.deferReply().queue();
+        Optional<BingoGame> lastGame = DatabaseManager.INSTANCE.getGameData(blob, event.getChannel().getId(), Property.Games.BINGO, PropertyMapping::getAsBingoGame);
+
+        if (lastGame.isPresent() && !lastGame.get().isGameCompleted()) {
+            event.getHook().sendMessageEmbeds(
+                response.setDescription("Unable to start a game. A game is already running! Join it using `/bingo join`!")
+                    .build()
+            ).queue();
+            return;
+        }
+
         boolean willHostJoin = event.getOption("join-game", false, OptionMapping::getAsBoolean);
         Optional<Long> ifDelay = Optional.ofNullable(event.getOption("delay", OptionMapping::getAsLong));
         Member host = blob.getMember();
@@ -135,7 +146,7 @@ public class Bingo implements ISlashGame {
         boolean toPing = event.getOption("ping", false, OptionMapping::getAsBoolean);
         Optional<Role> optionalRole = Optional.ofNullable(event.getOption("to-ping", OptionMapping::getAsRole));
 
-        ReplyCallbackAction reply;
+        WebhookMessageCreateAction<?> reply;
         response.setDescription("A game of BINGO has started! Join for funsies!~")
             .addField("Host", host.getAsMention(), false)
             .addField("Minimum Players", String.valueOf(bingoGame.getPlayersMin()), true)
@@ -144,9 +155,9 @@ public class Bingo implements ISlashGame {
             .addField("Host is Joining?", willHostJoin ? "Yes." : "No.", true);
 
         if (toPing && blob.getMember().hasPermission(Permission.MESSAGE_MENTION_EVERYONE)) {
-            reply = event.reply(optionalRole.map(IMentionable::getAsMention).orElse("@here"))
+            reply = event.getHook().sendMessage(optionalRole.map(IMentionable::getAsMention).orElse("@here"))
                 .setEmbeds(response.build());
-        } else reply = event.replyEmbeds(response.build());
+        } else reply = event.getHook().sendMessageEmbeds(response.build());
 
         reply.queue();
 
@@ -158,7 +169,7 @@ public class Bingo implements ISlashGame {
     public void startGame(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder response) {
         event.reply("Attempting to start game…").setEphemeral(true).queue();
 
-        new StartBingoTask(blob, event.getChannel().asTextChannel()).run();
+        new StartBingoTask(blob, event.getChannel().asTextChannel(), true).run();
     }
 
     @Override
@@ -214,11 +225,17 @@ public class Bingo implements ISlashGame {
         private final EventBlob blob;
         private final TextChannel textChannel;
         private final Member selfMember;
+        private final boolean isForced;
 
-        public StartBingoTask(@NotNull EventBlob blob, TextChannel textChannel) {
+        protected StartBingoTask(@NotNull EventBlob blob, TextChannel textChannel) {
+            this(blob, textChannel, false);
+        }
+
+        protected StartBingoTask(@NotNull EventBlob blob, TextChannel textChannel, boolean isForced) {
             this.blob = blob;
             this.textChannel = textChannel;
             this.selfMember = blob.getSelfMember();
+            this.isForced = isForced;
         }
 
         @Override
@@ -230,13 +247,13 @@ public class Bingo implements ISlashGame {
                 .setFooter(selfMember.getUser().getAsTag(), selfMember.getEffectiveAvatarUrl());
 
             if (serverGame.isEmpty()) {
-                textChannel.sendMessageEmbeds(noGameHasStartedEmbed(response)).queue();
+                if (isForced) textChannel.sendMessageEmbeds(noGameHasStartedEmbed(response)).queue();
                 return;
             }
 
             BingoGame bingoGame = serverGame.get();
             if (bingoGame.isGameCompleted()) {
-                textChannel.sendMessageEmbeds(noGameHasStartedEmbed(response)).queue();
+                if (isForced) textChannel.sendMessageEmbeds(noGameHasStartedEmbed(response)).queue();
                 return;
             }
 

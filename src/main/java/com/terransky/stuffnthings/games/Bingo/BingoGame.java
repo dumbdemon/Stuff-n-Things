@@ -86,7 +86,7 @@ public class BingoGame extends Game<BingoPlayer> { //todo: Implement Letter call
                 calledNumbers.add(number);
                 for (BingoPlayer player : getPlayers()) {
                     player.loadPlayer();
-                    if (player.checkBoard(number) && this.stream().noneMatch(bingoPlayer -> bingoPlayer.equals(player))) {
+                    if (player.checkBoard(number)) {
                         add(player);
                     }
                     player.savePlayer();

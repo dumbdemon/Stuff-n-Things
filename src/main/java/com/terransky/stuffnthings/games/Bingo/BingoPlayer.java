@@ -53,6 +53,7 @@ public class BingoPlayer extends Player<Number> {
      * Constructor Jackson and MongoDB
      */
     public BingoPlayer() {
+        this.checks = new boolean[GRID_SIZE][GRID_SIZE];
     }
 
     /**
@@ -187,6 +188,8 @@ public class BingoPlayer extends Player<Number> {
      * @return True if the player has won.
      */
     public boolean checkBoard(int number) {
+        if (checkWinner())
+            return false;
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
                 if (board[i][j] == number) {
