@@ -259,7 +259,7 @@ public class MongoDBDataSource implements DatabaseManager {
                 return userEntry.getProperty(property, blob.getGuildId());
             }
             case KILL -> {
-                KillStrings killStrings = subscriber.first().map(entry -> (KillStrings) entry)
+                KillStrings killStrings = subscriber.first().map(KillStrings::asKillStrings)
                     .orElse(new KillStrings(property.getTable().getTarget(blob)));
                 return killStrings.getProperty(property);
             }

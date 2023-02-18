@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.database.helpers.entry;
 
 import com.terransky.stuffnthings.database.helpers.Property;
+import com.terransky.stuffnthings.utilities.command.Formatter;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.jetbrains.annotations.NotNull;
@@ -59,6 +60,13 @@ public class KillStrings {
     }
 
     @BsonIgnore
+    public static KillStrings asKillStrings(Object obj) {
+        if (obj instanceof KillStrings killStrings)
+            return killStrings;
+        throw new IllegalArgumentException(String.format("Object is not %s", Formatter.getNameOfClass(KillStrings.class)));
+    }
+
+    @BsonIgnore
     public Optional<Object> getProperty(@NotNull Property property) {
         switch (property) {
             case KILL_RANDOM -> {
@@ -67,7 +75,7 @@ public class KillStrings {
             case KILL_TARGET -> {
                 return Optional.ofNullable(killTargets);
             }
-            default -> throw new IllegalArgumentException(String.format("%S is not a guild property.", property));
+            default -> throw new IllegalArgumentException(String.format("%S is not a kill property.", property));
         }
     }
 

@@ -205,9 +205,9 @@ public interface DatabaseManager {
      * @return A long containing the user count
      */
     default long getUserCount(@NotNull JDA jda) {
-        if (Config.isTestingMode())
+        if (Config.isDatabaseEnabled())
             return getUserCount();
-        return jda.getGuildCache().stream().count();
+        return jda.getUserCache().stream().count();
     }
 
     /**
@@ -226,8 +226,8 @@ public interface DatabaseManager {
      * @return A long containing the guild count
      */
     default long getGuildsCount(@NotNull JDA jda) {
-        if (Config.isTestingMode())
+        if (Config.isDatabaseEnabled())
             return getGuildsCount();
-        return jda.getUserCache().stream().count();
+        return jda.getGuildCache().stream().count();
     }
 }

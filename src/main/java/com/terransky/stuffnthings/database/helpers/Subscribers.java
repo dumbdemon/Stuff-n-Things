@@ -115,9 +115,9 @@ public class Subscribers {
         public boolean hasNoError(Class<?> clazz, String message) {
             if (getError() != null) {
                 LoggerFactory.getLogger(clazz).error(message, getError());
-                return true;
+                return false;
             }
-            return false;
+            return true;
         }
 
         /**
