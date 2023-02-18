@@ -30,7 +30,7 @@ import java.util.*;
 })
 @SuppressWarnings("unused")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BingoGame extends Game<BingoPlayer> { //todo: Implement Letter calls and database storage [WIP]
+public class BingoGame extends Game<BingoPlayer> { //todo: Implement Letter calls
 
     private List<Integer> calledNumbers;
     private long delay;
@@ -61,7 +61,7 @@ public class BingoGame extends Game<BingoPlayer> { //todo: Implement Letter call
     }
 
     public void setCalledNumbers(List<Integer> calledNumbers) {
-        this.calledNumbers = List.copyOf(calledNumbers);
+        this.calledNumbers = new ArrayList<>(calledNumbers);
     }
 
     public long getDelay() {
@@ -85,9 +85,11 @@ public class BingoGame extends Game<BingoPlayer> { //todo: Implement Letter call
             for (int number : getRandomNumbers(seed, 150)) {
                 calledNumbers.add(number);
                 for (BingoPlayer player : getPlayers()) {
+                    player.loadPlayer();
                     if (player.checkBoard(number) && this.stream().noneMatch(bingoPlayer -> bingoPlayer.equals(player))) {
                         add(player);
                     }
+                    player.savePlayer();
                 }
                 if (!isEmpty()) break;
             }

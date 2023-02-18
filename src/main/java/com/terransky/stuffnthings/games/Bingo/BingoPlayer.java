@@ -16,7 +16,8 @@ import java.util.Objects;
 import java.util.Random;
 
 /**
- * An Object representing a BINGO player
+ * An Object representing a BINGO player.<br/>
+ * It is recommended to call {@link #loadPlayer()} before accessing data if obtained from the database.
  */
 @JsonPropertyOrder({
     "name",
@@ -39,8 +40,14 @@ public class BingoPlayer extends Player<Number> {
     @BsonIgnore
     @JsonIgnore
     private final int GRID_SIZE = 5;
-    private int[][] board; //todo: Create java object for board. Mongo does not recognize Array Matrices
-    private boolean[][] checks; //todo: Create java object for checks. Mongo does not recognize Array Matrices
+    @BsonIgnore
+    private int[][] board;
+    @JsonIgnore
+    private BoardState boardState;
+    @BsonIgnore
+    private boolean[][] checks;
+    @JsonIgnore
+    private ChecksState checksState;
 
     /**
      * Constructor Jackson and MongoDB
@@ -58,6 +65,23 @@ public class BingoPlayer extends Player<Number> {
         this.board = new int[GRID_SIZE][GRID_SIZE];
         generateBoard(member.getIdLong() | new Date().getTime());
         this.checks = new boolean[GRID_SIZE][GRID_SIZE];
+        savePlayer();
+    }
+
+    /**
+     * Load the board and checks to access data.
+     */
+    public void loadPlayer() {
+        setBoard(boardState.getBoard(GRID_SIZE));
+        setChecks(checksState.getChecks(GRID_SIZE));
+    }
+
+    /**
+     * Save data to be uploaded to the database.
+     */
+    public void savePlayer() {
+        setBoardState(new BoardState(board));
+        setChecksState(new ChecksState(checks));
     }
 
     public static int getFLOOR() {
@@ -74,6 +98,14 @@ public class BingoPlayer extends Player<Number> {
 
     public void setBoard(int[][] board) {
         this.board = board;
+    }
+
+    public State getBoardState() {
+        return boardState;
+    }
+
+    public void setBoardState(BoardState boardState) {
+        this.boardState = boardState;
     }
 
     @JsonIgnore
@@ -265,6 +297,14 @@ public class BingoPlayer extends Player<Number> {
      */
     public boolean checkWinner() {
         return checkDiagonalWin() || checkHorizontalWin() || checkVerticalWin();
+    }
+
+    public State getChecksState() {
+        return checksState;
+    }
+
+    public void setChecksState(ChecksState checksState) {
+        this.checksState = checksState;
     }
 
     public String getWinMethod() {

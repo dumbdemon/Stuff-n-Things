@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -64,8 +65,8 @@ public class ChannelPermsController {
         PermissionOverride permissionOverride = getPermissionOverride(iPermissionHolder, guildChannel.getPermissionContainer())
             .orElse(guildChannel.getPermissionContainer().upsertPermissionOverride(iPermissionHolder).submit().get());
 
-        permissionOverride.getManager().grant(permissions).queue();
-        return true;
+        permissionOverride.getManager().grant(permissions).submit().get();
+        return Objects.requireNonNull(permissionOverride.getPermissionHolder()).hasPermission(guildChannel, permissions);
     }
 
     /**
@@ -82,7 +83,7 @@ public class ChannelPermsController {
         PermissionOverride permissionOverride = getPermissionOverride(iPermissionHolder, guildChannel.getPermissionContainer())
             .orElse(guildChannel.getPermissionContainer().upsertPermissionOverride(iPermissionHolder).submit().get());
 
-        permissionOverride.getManager().deny(permissions).queue();
-        return true;
+        permissionOverride.getManager().grant(permissions).submit().get();
+        return !Objects.requireNonNull(permissionOverride.getPermissionHolder()).hasPermission(guildChannel, permissions);
     }
 }
