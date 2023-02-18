@@ -136,7 +136,7 @@ public interface DatabaseManager {
      * @param games     The type of game
      * @return An {@link Optional} containing generic {@link Game} data
      */
-    Optional<? extends Game<?>> getLastGameData(@NotNull EventBlob blob, String channelId, @NotNull Property.Games games);
+    Optional<? extends Game<?>> getGameData(@NotNull EventBlob blob, String channelId, @NotNull Property.Games games);
 
     /**
      * Get the last game data that happened on a channel
@@ -148,8 +148,8 @@ public interface DatabaseManager {
      * @param <T>       A {@link Game}
      * @return An {@link Optional} containing game data
      */
-    default <T> Optional<T> getLastGameData(@NotNull EventBlob blob, String channelId, @NotNull Property.Games games, Function<? super Game<?>, T> mapper) {
-        return getLastGameData(blob, channelId, games)
+    default <T> Optional<T> getGameData(@NotNull EventBlob blob, String channelId, @NotNull Property.Games games, Function<? super Game<?>, T> mapper) {
+        return getGameData(blob, channelId, games)
             .map(mapper);
     }
 

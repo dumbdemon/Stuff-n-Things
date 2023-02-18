@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @SuppressWarnings("unused")
 public class Game<T extends Player<?>> implements Pojo {
 
-    private static int playersMin;
+    private int playersMin;
     private String channelId;
     private String channelMention;
     private boolean isMultiplayer;
@@ -28,6 +28,7 @@ public class Game<T extends Player<?>> implements Pojo {
     private Host host;
     private List<T> players;
     private String startTime;
+    private String completedOn;
     private boolean isStarted;
     private boolean isGameCompleted;
     private boolean isDelayedStartGame;
@@ -50,7 +51,7 @@ public class Game<T extends Player<?>> implements Pojo {
 
     @JsonIgnore
     @BsonIgnore
-    public static int getMinimumPlayers() {
+    public int getMinimumPlayers() {
         return playersMin;
     }
 
@@ -83,7 +84,7 @@ public class Game<T extends Player<?>> implements Pojo {
     }
 
     public void setPlayersMin(int playersMin) {
-        Game.playersMin = playersMin;
+        this.playersMin = playersMin;
     }
 
     public int getPlayersMax() {
@@ -183,6 +184,37 @@ public class Game<T extends Player<?>> implements Pojo {
         return OffsetDateTime.parse(startTime);
     }
 
+    public String getCompletedOn() {
+        return completedOn;
+    }
+
+    public void setCompletedOn(String completedOn) {
+        this.completedOn = completedOn;
+    }
+
+    @JsonIgnore
+    @BsonIgnore
+    public String getCompletedOnAsTimestamp() {
+        return Timestamp.getDateAsTimestamp(getCompletedOnAsODT());
+    }
+
+    @JsonIgnore
+    @BsonIgnore
+    public String getCompletedOnAsTimestampWithRelative() {
+        return getCompletedOnAsTimestampWithRelative(false);
+    }
+
+    public String getCompletedOnAsTimestampWithRelative(boolean newLine) {
+        return Timestamp.getDateAsTimestamp(getCompletedOnAsODT()) + (newLine ? "\n" : " ") +
+            "(" + Timestamp.getDateAsTimestamp(getCompletedOnAsODT(), Timestamp.RELATIVE) + ")";
+    }
+
+    @JsonIgnore
+    @BsonIgnore
+    public OffsetDateTime getCompletedOnAsODT() {
+        return OffsetDateTime.parse(completedOn);
+    }
+
     /**
      * Set the start time to now.
      */
@@ -224,6 +256,7 @@ public class Game<T extends Player<?>> implements Pojo {
     }
 
     public void setGameCompleted(boolean gameCompleted) {
+        setCompletedOn(OffsetDateTime.now().format(DateTimeFormatter.ISO_INSTANT));
         isGameCompleted = gameCompleted;
     }
 

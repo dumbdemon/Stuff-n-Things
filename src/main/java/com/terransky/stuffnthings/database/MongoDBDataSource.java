@@ -223,10 +223,10 @@ public class MongoDBDataSource implements DatabaseManager {
     }
 
     @Override
-    public Optional<? extends Game<?>> getLastGameData(@NotNull EventBlob blob, String channelId, @NotNull Games games) {
+    public Optional<? extends Game<?>> getGameData(@NotNull EventBlob blob, String channelId, @NotNull Games games) {
         if (!Config.isDatabaseEnabled()) return Optional.empty();
-        MongoCollection<GuildEntry> users = getGuilds();
-        var finder = getSubscriber(users, Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), blob.getMemberId()));
+        MongoCollection<GuildEntry> guilds = getGuilds();
+        var finder = getSubscriber(guilds, Filters.eq(ID_REFERENCE.getPropertyName(Table.GUILD), blob.getGuildId()));
 
         GuildEntry guildEntry = finder.first().orElse(new GuildEntry(blob.getGuildId()));
 

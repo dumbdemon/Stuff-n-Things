@@ -27,19 +27,22 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class Bingo implements ISlashGame {
 
-    private static final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(10);
-    private static ScheduledFuture<?> future;
-
     @Override
     public String getName() {
         return "bingo";
+    }
+
+    @NotNull
+    private static MessageEmbed noGameHasStartedEmbed(@NotNull EmbedBuilder response) {
+        return response.setDescription("No game has started. Start one with `/bingo new`.")
+            .setColor(EmbedColors.getError())
+            .build();
     }
 
     @Override
@@ -58,14 +61,14 @@ public class Bingo implements ISlashGame {
             Options with an `*` are required.
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-14T09:59Z"),
-            Metadata.parseDate("2023-02-14T09:59Z")
+            Metadata.parseDate("2023-02-18T13:12Z")
         )
             .addSubcommands(
                 new SubcommandData("new", "Start a new Bingo game in this channel.")
                     .addOptions(
                         new OptionData(OptionType.BOOLEAN, "join-game", "Join the game you started?", true),
                         new OptionData(OptionType.INTEGER, "max-players", "Change the max player count for this game. DEFAULT: 100")
-                            .setMinValue(BingoGame.getMinimumPlayers()),
+                            .setMinValue(2),
                         new OptionData(OptionType.INTEGER, "delay", "The amount of minutes to delay the game by. DEFAULT: 10")
                             .setRequiredRange(0, 60),
                         new OptionData(OptionType.BOOLEAN, "ping", "Mention users in this channel that a bingo game has started."),
@@ -74,12 +77,40 @@ public class Bingo implements ISlashGame {
                     ),
                 new SubcommandData("join", "Join in a game. You cannot join a game that has already started."),
                 new SubcommandData("start", "No waiting! Start the game now!"),
-                //todo: implement store of BingoPlayer to PerServer and grab that instead of global last
                 new SubcommandData("last", "See your result on that last game on this channel.")
                     .addOptions(
                         new OptionData(OptionType.BOOLEAN, "hide-result", "Hide your results.", true)
                     )
             );
+    }
+
+    @Override
+    public void joinGame(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder response) {
+        Optional<BingoGame> game = getBingoGame(event, blob, response);
+        if (game.isEmpty()) return;
+
+        BingoGame bingoGame = game.get();
+
+        if (bingoGame.isGameCompleted() || OffsetDateTime.now().isAfter(bingoGame.getStartTimeAsODT())) {
+            event.replyEmbeds(noGameHasStartedEmbed(response)).queue();
+            return;
+        }
+
+        if (!bingoGame.addPlayer(blob.getMember())) {
+            if (bingoGame.hasMaxPlayers()) {
+                response.setDescription("Max players reach! You cannot join this game! Start a new one in a different channel?");
+            } else
+                response.setDescription("You're already playing! Please wait until the timer runs out or until the host starts the game.");
+            event.replyEmbeds(response.setColor(EmbedColors.getError()).build()).queue();
+            return;
+        }
+
+        DatabaseManager.INSTANCE.uploadGameData(blob, bingoGame, Property.Games.BINGO);
+        event.replyEmbeds(
+            response.setDescription(
+                String.format("Player %s has been added! %s players are now playing!", blob.getMember().getAsMention(), bingoGame.getPlayers().size())
+            ).build()
+        ).queue();
     }
 
     @Override
@@ -119,51 +150,15 @@ public class Bingo implements ISlashGame {
 
         reply.queue();
 
-        future = executor.schedule(new StartBingoTask(blob, event.getChannel().asTextChannel()), bingoGame.getDelay(), TimeUnit.MINUTES);
+        new Timer(getName()).schedule(new StartBingoTask(blob, event.getChannel().asTextChannel()), TimeUnit.MINUTES.toMillis(bingoGame.getDelay()));
         DatabaseManager.INSTANCE.uploadGameData(blob, bingoGame, Property.Games.BINGO);
-    }
-
-    @Override
-    public void joinGame(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder response) {
-        Optional<BingoGame> game = getBingoGame(event, blob, response);
-        if (game.isEmpty()) return;
-
-        BingoGame bingoGame = game.get();
-
-        if (bingoGame.isGameCompleted() || OffsetDateTime.now().isAfter(bingoGame.getStartTimeAsODT())) {
-            event.replyEmbeds(noGameHasStartedEmbed(response)).queue();
-            return;
-        }
-
-        if (!bingoGame.addPlayer(blob.getMember())) {
-            if (bingoGame.hasMaxPlayers()) {
-                response.setDescription("Max players reach! You cannot join this game! Start a new one in a different channel?");
-            } else
-                response.setDescription("You're already playing! Please wait until the timer runs out or until the host starts the game.");
-            event.replyEmbeds(response.setColor(EmbedColors.getError()).build()).queue();
-            return;
-        }
-
-        DatabaseManager.INSTANCE.uploadGameData(blob, bingoGame, Property.Games.BINGO);
-        event.replyEmbeds(
-            response.setDescription(
-                String.format("Player %s has been added! %s players are now playing!", blob.getMember().getAsMention(), bingoGame.getPlayers().size())
-            ).build()
-        ).queue();
     }
 
     @Override
     public void startGame(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder response) {
         event.reply("Attempting to start game…").setEphemeral(true).queue();
 
-        try {
-            future.cancel(false);
-            new StartBingoTask(blob, event.getChannel().asTextChannel()).run();
-        } catch (Exception e) {
-            event.getHook().sendMessageEmbeds(
-                noGameHasStartedEmbed(response)
-            ).setEphemeral(true).queue();
-        }
+        new StartBingoTask(blob, event.getChannel().asTextChannel()).run();
     }
 
     @Override
@@ -186,6 +181,7 @@ public class Bingo implements ISlashGame {
         }
 
         BingoPlayer player = userPlayer.get();
+        player.loadPlayer();
 
         event.replyEmbeds(
             response.setTitle(getNameReadable())
@@ -193,22 +189,15 @@ public class Bingo implements ISlashGame {
                 .addField(player.getNumberGotField())
                 .addField("Won?", player.checkWinner() ? "Yes." : "No.", true)
                 .addField("Win Method", player.getWinMethod(), true)
-                .addField("When", bingoGame.getStartTimeAsTimestampWithRelative(true), false)
+                .addField("When", bingoGame.getCompletedOnAsTimestampWithRelative(true), false)
                 .build()
         ).setEphemeral(event.getOption("hide-result", true, OptionMapping::getAsBoolean)).queue();
     }
 
     @NotNull
-    private MessageEmbed noGameHasStartedEmbed(@NotNull EmbedBuilder response) {
-        return response.setDescription("No game has started. Start one with `/bingo new`.")
-            .setColor(EmbedColors.getError())
-            .build();
-    }
-
-    @NotNull
     private Optional<BingoGame> getBingoGame(@NotNull SlashCommandInteractionEvent event, EventBlob blob, EmbedBuilder response) {
         Optional<BingoGame> bingoGame = DatabaseManager.INSTANCE
-            .getLastGameData(blob, event.getChannel().asTextChannel().getId(), Property.Games.BINGO, PropertyMapping::getAsBingoGame);
+            .getGameData(blob, event.getChannel().asTextChannel().getId(), Property.Games.BINGO, PropertyMapping::getAsBingoGame);
         if (bingoGame.isPresent()) return bingoGame;
 
         event.replyEmbeds(noGameHasStartedEmbed(response)).setEphemeral(true).queue();
@@ -220,13 +209,12 @@ public class Bingo implements ISlashGame {
         return Config.isTestingMode();
     }
 
-    static class StartBingoTask implements Runnable {
+    static class StartBingoTask extends TimerTask {
 
         private final EventBlob blob;
         private final TextChannel textChannel;
         private final Member selfMember;
 
-        //todo: replace constructor parameter for BingoGame with database call in run()
         public StartBingoTask(@NotNull EventBlob blob, TextChannel textChannel) {
             this.blob = blob;
             this.textChannel = textChannel;
@@ -235,23 +223,28 @@ public class Bingo implements ISlashGame {
 
         @Override
         public void run() {
-            Optional<BingoGame> serverGame = DatabaseManager.INSTANCE.getLastGameData(blob, textChannel.getId(), Property.Games.BINGO, PropertyMapping::getAsBingoGame);
+            Optional<BingoGame> serverGame = DatabaseManager.INSTANCE.getGameData(blob, textChannel.getId(), Property.Games.BINGO, PropertyMapping::getAsBingoGame);
+            EmbedBuilder response = new EmbedBuilder()
+                .setTitle(new Bingo().getNameReadable())
+                .setColor(EmbedColors.getDefault())
+                .setFooter(selfMember.getUser().getAsTag(), selfMember.getEffectiveAvatarUrl());
 
-            if (serverGame.isEmpty())
+            if (serverGame.isEmpty()) {
+                textChannel.sendMessageEmbeds(noGameHasStartedEmbed(response)).queue();
                 return;
+            }
 
             BingoGame bingoGame = serverGame.get();
-            if (bingoGame.isGameCompleted())
+            if (bingoGame.isGameCompleted()) {
+                textChannel.sendMessageEmbeds(noGameHasStartedEmbed(response)).queue();
                 return;
+            }
 
             bingoGame.setStarted(true);
 
             if (bingoGame.isPlayerCountUnderMin()) {
                 textChannel.sendMessageEmbeds(
-                    new EmbedBuilder()
-                        .setTitle(new Bingo().getNameReadable())
-                        .setColor(EmbedColors.getError())
-                        .setDescription("Bingo game was cancelled! Not Enough players joined!")
+                    response.setDescription("Bingo game was cancelled! Not Enough players joined!")
                         .setFooter(selfMember.getUser().getAsTag(), selfMember.getEffectiveAvatarUrl())
                         .build()
                 ).queue();
@@ -265,15 +258,11 @@ public class Bingo implements ISlashGame {
             }
 
             List<BingoPlayer> winners = bingoGame.play(bingoGame.getPlayerSeed());
-            bingoGame.setGameCompleted(true);
 
             if (bingoGame.isVerbose()) { //todo: set up verbose
                 textChannel.sendMessageEmbeds(
-                    new EmbedBuilder()
-                        .setTitle(new Bingo().getNameReadable())
-                        .setDescription("Verbose has not been set up; skipping…")
+                    response.setDescription("Verbose has not been set up; skipping…")
                         .setColor(EmbedColors.getError())
-                        .setFooter(selfMember.getUser().getAsTag(), selfMember.getEffectiveAvatarUrl())
                         .build()
                 ).queue();
             }
@@ -288,10 +277,7 @@ public class Bingo implements ISlashGame {
                     .append("\n");
             }
             textChannel.sendMessageEmbeds(
-                new EmbedBuilder()
-                    .setTitle(new Bingo().getNameReadable())
-                    .setColor(EmbedColors.getDefault())
-                    .setDescription(String.format("There %s %s winner%s after %s called numbers!",
+                response.setDescription(String.format("There %s %s winner%s after %s called numbers!",
                         plural ? "were" : "was",
                         winners.isEmpty() ? "no" : winners.size(),
                         plural ? "s" : "",
@@ -299,7 +285,6 @@ public class Bingo implements ISlashGame {
                     )
                     .appendDescription("\n\nWinner(s):\n" + winnerString.substring(0, winnerString.length()))
                     .addField(String.format("Participated (%s users)", bingoGame.getPlayers().size()), bingoGame.getPlayersAsMentions(), false)
-                    .setFooter(selfMember.getUser().getAsTag(), selfMember.getEffectiveAvatarUrl())
                     .build()
             ).queue();
             bingoGame.setGameCompleted(true);
