@@ -44,7 +44,7 @@ public class Game<T extends Player<?>> implements Pojo {
     protected Game(@NotNull Channel channel, @NotNull Member member, Collection<Permission> requiredPermissions) {
         this.channelId = channel.getId();
         this.channelMention = channel.getAsMention();
-        this.host = new Host(member.getId(), requiredPermissions);
+        this.host = new Host(member);
         this.players = new ArrayList<>();
         this.isGameCompleted = false;
     }

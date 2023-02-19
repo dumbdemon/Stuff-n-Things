@@ -10,10 +10,7 @@ import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 /**
  * An Object representing a BINGO player.<br/>
@@ -112,7 +109,7 @@ public class BingoPlayer extends Player<Number> {
     @JsonIgnore
     @BsonIgnore
     public String getPrettyBoard() {
-        StringBuilder prettyBoard = new StringBuilder("```");
+        StringBuilder prettyBoard = new StringBuilder("```\nB   I   N   G   O\n");
         for (int i = 0; i < GRID_SIZE; i++) {
             StringBuilder row = new StringBuilder();
             for (int j = 0; j < GRID_SIZE; j++) {
@@ -131,21 +128,20 @@ public class BingoPlayer extends Player<Number> {
     @JsonIgnore
     @BsonIgnore
     public MessageEmbed.Field getNumberGotField() {
-        StringBuilder numbersGot = new StringBuilder();
+        List<String> numbersGotten = new ArrayList<>();
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
                 if (checks[i][j]) {
-                    String number = String.valueOf(board[i][j]);
-                    int diff = 2 - number.length();
-                    numbersGot.append("0".repeat(diff))
-                        .append(board[i][j])
-                        .append(", ");
+                    int diff = 2 - String.valueOf(board[i][j]).length();
+                    numbersGotten.add(BingoGame.BingoLetter.getLetter(board[i][j]) + "0".repeat(diff) + board[i][j]);
                 }
             }
         }
 
+        StringBuilder numbersGot = new StringBuilder();
+        numbersGotten.stream().sorted().forEach(number -> numbersGot.append(number).append(", "));
         String numbers = numbersGot.isEmpty() ? "None" : numbersGot.substring(0, numbersGot.length() - 2);
-        return new MessageEmbed.Field("Number Got", numbers, false);
+        return new MessageEmbed.Field("Numbers Gotten", numbers, false);
     }
 
     /**
@@ -158,8 +154,9 @@ public class BingoPlayer extends Player<Number> {
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
                 int number;
+                BingoGame.BingoLetter letter = BingoGame.BingoLetter.getBingoLetterByIndex(j);
                 do {
-                    number = random.nextInt(FLOOR, CEIL);
+                    number = random.nextInt(letter.getCallFloor(), letter.getCallCeiling());
                 } while (isOnBoard(number));
                 board[i][j] = number;
             }

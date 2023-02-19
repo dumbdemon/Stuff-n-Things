@@ -1,10 +1,8 @@
 package com.terransky.stuffnthings.games;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 @JsonPropertyOrder({
@@ -15,18 +13,15 @@ import java.util.Objects;
 public class Host {
 
     private String hostId;
-    private Collection<Permission> requiredPermissions;
+    private String hostMention;
 
     public Host() {
     }
 
-    public Host(String hostId, Permission... permissions) {
-        this(hostId, List.of(permissions));
-    }
-
-    public Host(String hostId, Collection<Permission> permissions) {
-        this.hostId = hostId;
-        this.requiredPermissions = List.copyOf(permissions);
+    public Host(Member member) {
+        Objects.requireNonNull(member);
+        this.hostId = member.getId();
+        this.hostMention = member.getAsMention();
     }
 
     public String getHostId() {
@@ -38,13 +33,12 @@ public class Host {
         return this;
     }
 
-    public Collection<Permission> getRequiredPermissions() {
-        return requiredPermissions;
+    public String getHostMention() {
+        return hostMention;
     }
 
-    public Host setRequiredPermissions(List<Permission> requiredPermissions) {
-        this.requiredPermissions = requiredPermissions;
-        return this;
+    public void setHostMention(String hostMention) {
+        this.hostMention = hostMention;
     }
 
     @Override
@@ -52,19 +46,20 @@ public class Host {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Host host = (Host) o;
-        return getHostId().equals(host.getHostId()) && getRequiredPermissions().equals(host.getRequiredPermissions());
+        return getHostId().equals(host.getHostId()) &&
+            getHostMention().equals(host.getHostMention());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getHostId(), getRequiredPermissions());
+        return Objects.hash(getHostId(), getHostMention());
     }
 
     @Override
     public String toString() {
-        return "GameHost{" +
+        return "Host{" +
             "hostId='" + hostId + '\'' +
-            ", requiredPermissions=" + requiredPermissions +
+            ", hostMention='" + hostMention + '\'' +
             '}';
     }
 }

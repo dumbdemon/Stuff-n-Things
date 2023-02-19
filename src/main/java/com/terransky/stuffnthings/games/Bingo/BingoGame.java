@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.terransky.stuffnthings.games.Game;
+import com.terransky.stuffnthings.utilities.command.Formatter;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
@@ -30,9 +31,9 @@ import java.util.*;
 })
 @SuppressWarnings("unused")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BingoGame extends Game<BingoPlayer> { //todo: Implement Letter calls
+public class BingoGame extends Game<BingoPlayer> {
 
-    private List<Integer> calledNumbers;
+    private List<String> calledNumbers;
     private long delay;
     private boolean verbose;
 
@@ -56,11 +57,11 @@ public class BingoGame extends Game<BingoPlayer> { //todo: Implement Letter call
         setPlayersMax(100);
     }
 
-    public List<Integer> getCalledNumbers() {
+    public List<String> getCalledNumbers() {
         return calledNumbers;
     }
 
-    public void setCalledNumbers(List<Integer> calledNumbers) {
+    public void setCalledNumbers(List<String> calledNumbers) {
         this.calledNumbers = new ArrayList<>(calledNumbers);
     }
 
@@ -83,7 +84,7 @@ public class BingoGame extends Game<BingoPlayer> { //todo: Implement Letter call
     public List<BingoPlayer> play(long seed) {
         return new ArrayList<>() {{
             for (int number : getRandomNumbers(seed, 150)) {
-                calledNumbers.add(number);
+                calledNumbers.add(BingoLetter.getLetter(number) + number);
                 for (BingoPlayer player : getPlayers()) {
                     player.loadPlayer();
                     if (player.checkBoard(number)) {
@@ -110,7 +111,7 @@ public class BingoGame extends Game<BingoPlayer> { //todo: Implement Letter call
         Random random = new Random(seed | amount | new Date().getTime());
         int[] numbers = new int[amount];
         for (int i = 0; i < amount; i++) {
-            numbers[i] = random.nextInt(BingoPlayer.getFLOOR(), BingoPlayer.getCEIL());
+            numbers[i] = random.nextInt(BingoLetter.B.getCallFloor(), BingoLetter.O.getCallCeiling());
         }
         return numbers;
     }
@@ -150,5 +151,84 @@ public class BingoGame extends Game<BingoPlayer> { //todo: Implement Letter call
             ", delay=" + delay +
             ", verbose=" + verbose +
             '}';
+    }
+
+    enum BingoLetter {
+        B(0, 20),
+        I(1, 40),
+        N(2, 60),
+        G(3, 80),
+        O(4, 100);
+
+        private final int index;
+        private final int callCeiling;
+
+
+        BingoLetter(int index, int callCeiling) {
+            this.index = index;
+            this.callCeiling = callCeiling;
+        }
+
+        public static BingoLetter getBingoLetterByIndex(int index) {
+            switch (index) {
+                case 0 -> {
+                    return B;
+                }
+                case 1 -> {
+                    return I;
+                }
+                case 2 -> {
+                    return N;
+                }
+                case 3 -> {
+                    return G;
+                }
+                case 4 -> {
+                    return O;
+                }
+                default ->
+                    throw new IndexOutOfBoundsException(String.format("There is not a %s with that index", Formatter.getNameOfClass(BingoLetter.class)));
+            }
+        }
+
+        @NotNull
+        public static String getLetter(int number) {
+            if (number <= 0) return "";
+            List<BingoLetter> letters = EnumSet.allOf(BingoLetter.class).stream().sorted(new SortByCeiling()).toList();
+
+            for (BingoLetter letter : letters) {
+                if (number < letter.getCallCeiling()) {
+                    return letter.get();
+                }
+            }
+
+            return "";
+        }
+
+        @NotNull
+        public String get() {
+            return this.name();
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public int getCallFloor() {
+            return callCeiling - 19;
+        }
+
+        public int getCallCeiling() {
+            return callCeiling;
+        }
+
+        static class SortByCeiling implements Comparator<BingoLetter> {
+            @Override
+            public int compare(BingoLetter firstLetter, BingoLetter secondLetter) {
+                Objects.requireNonNull(firstLetter);
+                Objects.requireNonNull(secondLetter);
+                return Integer.compare(firstLetter.getCallCeiling(), secondLetter.getCallCeiling());
+            }
+        }
     }
 }

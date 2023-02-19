@@ -61,7 +61,7 @@ public class Bingo implements ISlashGame {
             Options with an `*` are required.
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-14T09:59Z"),
-            Metadata.parseDate("2023-02-18T15:25Z")
+            Metadata.parseDate("2023-02-19T15:04Z")
         )
             .addSubcommands(
                 new SubcommandData("new", "Start a new Bingo game in this channel.")
@@ -201,6 +201,7 @@ public class Bingo implements ISlashGame {
                 .addField("Won?", player.checkWinner() ? "Yes." : "No.", true)
                 .addField("Win Method", player.getWinMethod(), true)
                 .addField("When", bingoGame.getCompletedOnAsTimestampWithRelative(true), false)
+                .addField("Host", bingoGame.getHost().getHostMention(), false)
                 .build()
         ).setEphemeral(event.getOption("hide-result", true, OptionMapping::getAsBoolean)).queue();
     }
