@@ -37,7 +37,9 @@ public interface Pojo {
      */
     static ObjectMapper getMapperObject() {
         return new ObjectMapper()
-            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            .disable(
+                SerializationFeature.FAIL_ON_EMPTY_BEANS
+            );
     }
 
     /**

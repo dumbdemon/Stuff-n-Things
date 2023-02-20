@@ -5,8 +5,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.terransky.stuffnthings.interfaces.Pojo;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -17,7 +20,7 @@ import java.util.function.Predicate;
  */
 @SuppressWarnings("unused")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record DatumPojo<T>(List<T> datum) implements Pojo {
+public record DatumPojo<T>(Collection<T> datum) implements Pojo {
 
     /**
      * Get the first element of a filtered stream.
@@ -35,9 +38,38 @@ public record DatumPojo<T>(List<T> datum) implements Pojo {
      *
      * @return An {@link Optional} containing an object of type {@link T}.
      */
+    @NotNull
     public Optional<T> first() {
-        // Both List<> and Optional<> are of type T skipcq: JAVA-W1036
-        return Optional.ofNullable(datum.get(0));
+        return datum.stream().findFirst();
+    }
+
+    /**
+     * Performs the given action for each element of the {@code Iterable}
+     * until all elements have been processed or the action throws an
+     * exception.  Actions are performed in the order of iteration, if that
+     * order is specified.  Exceptions thrown by the action are relayed to the
+     * caller.
+     *
+     * @param action The action to be performed for each element
+     * @return The current instance for chaining purposes
+     * @throws NullPointerException if the specified action is null
+     */
+    public DatumPojo<T> forEach(Consumer<? super T> action) {
+        datum.forEach(action);
+        return this;
+    }
+
+    /**
+     * Convert this DatumPojo into a different data type
+     *
+     * @param mapper a function to apply to each element
+     * @param <R>    The element type of the new DatumPojo
+     * @return The DatumPojo with the new element list
+     */
+    @NotNull
+    public <R> DatumPojo<R> map(Function<? super T, R> mapper) {
+        Objects.requireNonNull(mapper);
+        return new DatumPojo<>(datum.stream().map(mapper).toList());
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.terransky.stuffnthings.dataSources.openWeather;
 
 import com.fasterxml.jackson.annotation.*;
-import com.terransky.stuffnthings.interfaces.Pojo;
 
 import javax.annotation.Generated;
 
@@ -16,7 +15,7 @@ import javax.annotation.Generated;
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Generated("jsonschema2pojo")
-public class OpenWeatherGeoData implements Pojo {
+public class OpenWeatherGeoData {
 
     @JsonProperty("zip")
     private String zip;

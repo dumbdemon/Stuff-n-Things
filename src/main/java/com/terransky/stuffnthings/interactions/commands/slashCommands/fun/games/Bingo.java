@@ -26,7 +26,6 @@ import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -356,11 +355,6 @@ public class Bingo implements ISlashGame {
                         .build()
                 ).queue();
                 bingoGame.setGameCompleted(true);
-                try {
-                    bingoGame.saveAsJsonFile();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
                 return;
             }
 
