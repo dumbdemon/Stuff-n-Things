@@ -81,7 +81,8 @@ public class Bingo implements ISlashGame {
                 new SubcommandData("last", "See your result on that last game on this channel.")
                     .addOptions(
                         new OptionData(OptionType.BOOLEAN, "hide-result", "Hide your results.", true)
-                    )
+                    ),
+                new SubcommandData("cancel", "Cancel a game from running.")
             );
     }
 
@@ -106,7 +107,7 @@ public class Bingo implements ISlashGame {
             return;
         }
 
-        DatabaseManager.INSTANCE.uploadGameData(blob, bingoGame, Property.Games.BINGO);
+        DatabaseManager.INSTANCE.uploadGameData(blob, Property.Games.BINGO, bingoGame);
         event.replyEmbeds(
             response.setDescription(
                 String.format("Player %s has been added! %s players are now playing!", blob.getMember().getAsMention(), bingoGame.getPlayers().size())
@@ -189,7 +190,7 @@ public class Bingo implements ISlashGame {
         reply.queue();
 
         new Timer(getName()).schedule(new StartBingoTask(blob, event.getChannel().asTextChannel()), TimeUnit.MINUTES.toMillis(bingoGame.getDelay()));
-        DatabaseManager.INSTANCE.uploadGameData(blob, bingoGame, Property.Games.BINGO);
+        DatabaseManager.INSTANCE.uploadGameData(blob, Property.Games.BINGO, bingoGame);
     }
 
     @Override
@@ -232,6 +233,46 @@ public class Bingo implements ISlashGame {
                     bingoGame.getHost().getHostMention(), false)
                 .build()
         ).setEphemeral(event.getOption("hide-result", true, OptionMapping::getAsBoolean)).queue();
+    }
+
+    @Override
+    public void cancelGame(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder response) {
+        String channelId = event.getChannel().getId();
+
+        Optional<BingoGame> gameData = DatabaseManager.INSTANCE.getGameData(blob, channelId, Property.Games.BINGO, PropertyMapping::getAsBingoGame);
+
+        if (gameData.isEmpty() || gameData.get().isGameCompleted()) {
+            event.replyEmbeds(noGameHasStartedEmbed(response)).queue();
+            return;
+        }
+
+        BingoGame bingoGame = gameData.get();
+
+        if (!bingoGame.isMemberHost(blob.getMember())) {
+            event.replyEmbeds(
+                response.setDescription("You are not the host. Only the host can cancel the game.")
+                    .setColor(EmbedColors.getError())
+                    .build()
+            ).setEphemeral(true).queue();
+            return;
+        }
+
+        if (bingoGame.isStarted()) {
+            event.replyEmbeds(
+                response.setDescription("You cannot cancel a game in progress.")
+                    .setColor(EmbedColors.getError())
+                    .build()
+            ).queue();
+            return;
+        }
+
+        bingoGame.setGameCompleted(true);
+        DatabaseManager.INSTANCE.uploadGameData(blob, Property.Games.BINGO, bingoGame);
+
+        event.replyEmbeds(
+            response.setDescription("Bingo Game has been canceled!\nStart a new one with `/bingo new`!")
+                .build()
+        ).queue();
     }
 
     private void sendBoardToPlayer(BingoPlayer player, Host host, EventBlob blob, boolean pastTense) {
@@ -357,7 +398,7 @@ public class Bingo implements ISlashGame {
                     .build()
             ).queue();
             bingoGame.setGameCompleted(true);
-            DatabaseManager.INSTANCE.uploadGameData(blob, bingoGame, Property.Games.BINGO);
+            DatabaseManager.INSTANCE.uploadGameData(blob, Property.Games.BINGO, bingoGame);
         }
 
         private void doVerbose(@NotNull EmbedBuilder embedBuilder, @NotNull BingoGame bingoGame) {

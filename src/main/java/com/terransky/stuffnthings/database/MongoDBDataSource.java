@@ -200,7 +200,7 @@ public class MongoDBDataSource implements DatabaseManager {
     }
 
     @Override
-    public <T extends Game<?>> void uploadGameData(@NotNull EventBlob blob, T game, Games games) {
+    public <T extends Game<?>> void uploadGameData(@NotNull EventBlob blob, Games games, T game) {
         if (!Config.isDatabaseEnabled()) return;
         MongoCollection<GuildEntry> guilds = getGuilds();
         if (Games.BINGO.equals(games)) {

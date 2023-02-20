@@ -52,6 +52,7 @@ public interface ISlashGame extends ICommandSlash {
             case "join" -> joinGame(event, blob, response);
             case "start" -> startGame(event, blob, response);
             case "last" -> lastGame(event, blob, response);
+            case "cancel" -> cancelGame(event, blob, response);
         }
     }
 
@@ -90,4 +91,13 @@ public interface ISlashGame extends ICommandSlash {
      * @param response An {@link EmbedBuilder}
      */
     void lastGame(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder response);
+
+    /**
+     * Function to cancel a game
+     *
+     * @param event    A {@link SlashCommandInteractionEvent}
+     * @param blob     An {@link EventBlob}
+     * @param response An {@link EmbedBuilder}
+     */
+    void cancelGame(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder response);
 }

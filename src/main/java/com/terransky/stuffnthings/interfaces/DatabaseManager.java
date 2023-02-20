@@ -121,12 +121,12 @@ public interface DatabaseManager {
     /**
      * Upload game data to the database
      *
-     * @param blob  An {@link EventBlob}
-     * @param game  The game data to upload
-     * @param games The type of game
      * @param <T>   A {@link Game}
+     * @param blob  An {@link EventBlob}
+     * @param games The type of game
+     * @param game  The game data to upload
      */
-    <T extends Game<?>> void uploadGameData(@NotNull EventBlob blob, T game, Property.Games games);
+    <T extends Game<?>> void uploadGameData(@NotNull EventBlob blob, Property.Games games, T game);
 
     /**
      * Get the last game data that happened on a channel

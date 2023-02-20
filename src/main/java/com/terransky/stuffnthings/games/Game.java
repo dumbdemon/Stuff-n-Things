@@ -295,6 +295,13 @@ public class Game<T extends Player<?>> implements Pojo {
         return mentionString.substring(0, mentionString.length() - 2);
     }
 
+    @JsonIgnore
+    @BsonIgnore
+    public boolean isMemberHost(Member member) {
+        if (member == null) return false;
+        return getHost().getHostId().equals(member.getId());
+    }
+
     /**
      * Create a json file of this object with a custom file name.<br />
      * The name of the file follows this convention:<br/><code>{game name}+On+{channelId}.json</code>
