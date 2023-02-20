@@ -10,6 +10,7 @@ import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.DiscordWebhook;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 public class ReportMessage implements ICommandMessage {
@@ -64,11 +66,13 @@ public class ReportMessage implements ICommandMessage {
             return;
         }
 
+        Set<Member> members = message.getMentions().getMembersBag().uniqueSet();
         EmbedBuilder report = new EmbedBuilder()
             .setColor(EmbedColors.getSecondary())
             .setTitle("Message Reported", message.getJumpUrl())
             .setDescription(String.format("The following message has been reported:%n```%s```", message.getContentRaw()))
-            .setFooter(String.format("Reported by %s | %s", blob.getMemberAsTag(), blob.getMemberId()), blob.getMemberEffectiveAvatarUrl());
+            .setFooter(String.format("Reported by %s | %s", blob.getMemberAsTag(), blob.getMemberId()), blob.getMemberEffectiveAvatarUrl())
+            .addField("Mentions", String.format("Mentions %s user%s", members.size(), members.size() > 1 ? "s" : ""), false);
 
         for (Message.Attachment attachment : attachments) {
             int position = attachments.indexOf(attachment) + 1;
