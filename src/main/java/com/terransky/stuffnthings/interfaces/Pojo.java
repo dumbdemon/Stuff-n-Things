@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
@@ -36,10 +38,12 @@ public interface Pojo {
      * @return A configured {@link ObjectMapper}.
      */
     static ObjectMapper getMapperObject() {
-        return new ObjectMapper()
+        return JsonMapper.builder()
+            .addModule(new JavaTimeModule())
             .disable(
                 SerializationFeature.FAIL_ON_EMPTY_BEANS
-            );
+            )
+            .build();
     }
 
     /**
