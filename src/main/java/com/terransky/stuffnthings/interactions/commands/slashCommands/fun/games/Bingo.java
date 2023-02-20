@@ -61,7 +61,7 @@ public class Bingo implements ISlashGame {
             Options with an `*` are required.
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-14T09:59Z"),
-            Metadata.parseDate("2023-02-19T18:16Z")
+            Metadata.parseDate("2023-02-19T19:01Z")
         )
             .addSubcommands(
                 new SubcommandData("new", "Start a new Bingo game in this channel.")
@@ -120,7 +120,7 @@ public class Bingo implements ISlashGame {
 
         boolean sendToDms = event.getOption("dm-board", false, OptionMapping::getAsBoolean);
         if (sendToDms) {
-            sendBoardToPlayer(ifPlayer.get(), bingoGame.getHost(), blob, false);
+            sendBoardToPlayer(ifPlayer.get(), bingoGame.getHost(), blob, true);
             return;
         }
 
@@ -158,7 +158,7 @@ public class Bingo implements ISlashGame {
         if (willHostJoin) {
             BingoPlayer hostPlayer = new BingoPlayer(host);
             bingoGame.addPlayer(hostPlayer);
-            sendBoardToPlayer(hostPlayer, bingoGame.getHost(), blob, true);
+            sendBoardToPlayer(hostPlayer, bingoGame.getHost(), blob, false);
         }
 
         if (Config.isTestingMode())
@@ -325,9 +325,15 @@ public class Bingo implements ISlashGame {
 
             bingoGame.setStarted(true);
             List<BingoPlayer> winners = bingoGame.play(bingoGame.getPlayerSeed());
+            boolean verboseOverride = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.VERBOSE, true, PropertyMapping::getAsBoolean);
 
-            if (bingoGame.isVerbose()) {
+            if (verboseOverride && bingoGame.isVerbose()) {
                 doVerbose(response, bingoGame);
+            } else if (!verboseOverride && bingoGame.isVerbose()) {
+                textChannel.sendMessageEmbeds(
+                    response.setDescription("Host requested verbose, but it is disabled by the server. Skipping...")
+                        .build()
+                ).queue();
             }
 
             boolean plural = winners.size() > 1;

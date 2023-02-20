@@ -14,6 +14,7 @@ public enum Property {
     REPORT_RESPONSE("reportResponse", Table.GUILD),
     JOKE_FLAGS("joke_flags", Table.GUILD),
     LAST_BINGO("bingo_games", Table.GUILD),
+    VERBOSE("doVerbose", Table.GUILD),
     PER_SERVER("killLocks", Table.USER),
     KILL_ATTEMPTS(Table.USER),
     KILL_TIMEOUT(Table.USER),

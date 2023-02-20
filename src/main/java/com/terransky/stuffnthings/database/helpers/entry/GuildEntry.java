@@ -28,6 +28,8 @@ public class GuildEntry {
     private String reportResponse;
     @BsonProperty("joke_flags")
     private Flags jokeFlags;
+    @BsonProperty("doVerbose")
+    private Boolean doVerbose;
     @BsonProperty("bingo_games")
     private List<BingoGame> bingoGames;
 
@@ -40,6 +42,7 @@ public class GuildEntry {
         this.killTimeout = TimeUnit.MINUTES.toMillis(10);
         this.reportResponse = "Got it. Message has been reported.";
         this.bingoGames = new ArrayList<>();
+        this.doVerbose = true;
     }
 
     @BsonProperty("guildId")
@@ -104,6 +107,16 @@ public class GuildEntry {
         this.jokeFlags = jokeFlags;
     }
 
+    @BsonProperty("doVerbose")
+    public Boolean getDoVerbose() {
+        return doVerbose;
+    }
+
+    @BsonProperty("doVerbose")
+    public void setDoVerbose(Boolean doVerbose) {
+        this.doVerbose = doVerbose;
+    }
+
     @BsonProperty("bingo_games")
     public List<BingoGame> getBingoGames() {
         return bingoGames;
@@ -139,6 +152,9 @@ public class GuildEntry {
             }
             case JOKE_FLAGS -> {
                 return Optional.ofNullable(jokeFlags);
+            }
+            case VERBOSE -> {
+                return Optional.ofNullable(doVerbose);
             }
             default -> throw new IllegalArgumentException(String.format("%S is not a guild property.", property));
         }

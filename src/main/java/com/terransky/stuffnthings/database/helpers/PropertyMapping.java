@@ -86,6 +86,12 @@ public class PropertyMapping {
         throw getException("String");
     }
 
+    public static Boolean getAsBoolean(Object property) {
+        if (property instanceof Boolean aBoolean)
+            return aBoolean;
+        throw getException("Boolean");
+    }
+
     /**
      * Converts an object to a {@link Flags} object
      *

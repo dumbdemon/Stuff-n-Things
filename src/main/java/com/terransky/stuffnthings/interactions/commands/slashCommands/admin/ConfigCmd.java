@@ -50,10 +50,15 @@ public class ConfigCmd implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.ADMIN,
             Metadata.parseDate("2022-08-28T21:46Z"),
-            Metadata.parseDate("2022-02-12T20:13Z")
+            Metadata.parseDate("2022-02-19T19:01Z")
         )
             .addDefaultPerms(Permission.MANAGE_SERVER)
             .addSubcommandGroups(
+                new SubcommandGroupData("general", "Change settings shared by some commands.")
+                    .addSubcommands(
+                        new SubcommandData("verbose", "Do not iterate through anything. NO SPAMMING!")
+                            .addOption(OptionType.BOOLEAN, "do-verbose", "Do not iterate through anything. NO SPAMMING!")
+                    ),
                 new SubcommandGroupData("kill", "Change the config settings for the kill command.")
                     .addSubcommands(
                         new SubcommandData("max-kills", "Get the max kills for the `/kill target` command.")
@@ -109,12 +114,42 @@ public class ConfigCmd implements ICommandSlash {
             .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
 
         switch (subcommand) {
+            case "verbose" -> updateVerbose(event, blob, eb);
             case "max-kills" -> updateKillMaxKills(event, blob, eb);
             case "timeout" -> updateKillTimeout(event, blob, eb);
             case "reporting-channel" -> updateReportingWebhook(event, blob, eb);
             case "reporting-response" -> updateReportingResponse(event, blob, eb);
             case "view-flags", "set-flags" -> updateFlags(event, blob, eb, subcommand);
         }
+    }
+
+    private void updateVerbose(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull EmbedBuilder eb) {
+        Optional<Boolean> verbose = Optional.ofNullable(event.getOption("do-verbose", OptionMapping::getAsBoolean));
+        boolean databaseVerbose = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.VERBOSE, true, PropertyMapping::getAsBoolean);
+        eb.setTitle(getNameReadable() + " - Verbose Iteration");
+
+        if (verbose.isEmpty()) {
+            event.replyEmbeds(
+                eb.setDescription("Verbose is set to: **" + (databaseVerbose ? "True" : "False") + "**!")
+                    .build()
+            ).queue();
+            return;
+        }
+
+        if (verbose.get() == databaseVerbose) {
+            event.replyEmbeds(
+                eb.setDescription("No change was made!\nVerbose is set to: **" + (databaseVerbose ? "True" : "False") + "**!")
+                    .build()
+            ).queue();
+            return;
+        }
+
+        DatabaseManager.INSTANCE.updateProperty(blob, Property.VERBOSE, verbose.get());
+
+        event.replyEmbeds(
+            eb.setDescription("Verbose was changed to: **" + (verbose.get() ? "True" : "False") + "**!")
+                .build()
+        ).queue();
     }
 
     private void updateFlags(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull EmbedBuilder eb, @NotNull String subcommand) {
@@ -143,12 +178,14 @@ public class ConfigCmd implements ICommandSlash {
         }
 
         DatabaseManager.INSTANCE.updateProperty(blob, Property.JOKE_FLAGS, serverFlags);
+        String allow = ":white_check_mark: **Allowed**",
+            deny = ":x: ***Denied***";
 
         event.replyEmbeds(
-            eb.addField("Religious", serverFlags.getReligious() ? "***Denied***" : "**Allowed**", false)
-                .addField("Political", serverFlags.getPolitical() ? "***Denied***" : "**Allowed**", false)
-                .addField("Racist", serverFlags.getRacist() ? "***Denied***" : "**Allowed**", false)
-                .addField("Sexist", serverFlags.getSexist() ? "***Denied***" : "**Allowed**", false)
+            eb.addField("Religious", serverFlags.getReligious() ? deny : allow, false)
+                .addField("Political", serverFlags.getPolitical() ? deny : allow, false)
+                .addField("Racist", serverFlags.getRacist() ? deny : allow, false)
+                .addField("Sexist", serverFlags.getSexist() ? deny : allow, false)
                 .build()
         ).queue();
     }
