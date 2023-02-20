@@ -17,6 +17,7 @@ import java.util.*;
     "channelId",
     "channelMention",
     "startTime",
+    "completedOn",
     "verbose",
     "started",
     "delayedStartGame",
@@ -27,6 +28,7 @@ import java.util.*;
     "playersMax",
     "playerSeed",
     "calledNumbers",
+    "called",
     "players"
 })
 @SuppressWarnings("unused")
@@ -84,15 +86,18 @@ public class BingoGame extends Game<BingoPlayer> {
     public List<BingoPlayer> play(long seed) {
         return new ArrayList<>() {{
             for (int number : getRandomNumbers(seed, 150)) {
-                calledNumbers.add(BingoLetter.getLetter(number) + number);
-                for (BingoPlayer player : getPlayers()) {
-                    player.loadPlayer();
-                    if (player.checkBoard(number)) {
-                        add(player);
+                String value = BingoLetter.getLetter(number) + number;
+                if (!calledNumbers.contains(value)) {
+                    calledNumbers.add(value);
+                    for (BingoPlayer player : getPlayers()) {
+                        player.loadPlayer();
+                        if (player.checkBoardForWinner(number)) {
+                            add(player);
+                        }
+                        player.savePlayer();
                     }
-                    player.savePlayer();
+                    if (!isEmpty()) break;
                 }
-                if (!isEmpty()) break;
             }
             setGameCompleted(true);
         }};
@@ -116,16 +121,39 @@ public class BingoGame extends Game<BingoPlayer> {
         return numbers;
     }
 
+    @JsonIgnore
+    @BsonIgnore
+    public LinkedHashMap<String, List<BingoPlayer>> getVerboseOrder() {
+        return new LinkedHashMap<>() {{
+            for (String key : calledNumbers) {
+                int integer = Integer.parseInt(key.substring(1));
+                List<BingoPlayer> value = new ArrayList<>() {{
+                    for (BingoPlayer player : getPlayers()) {
+                        if (player.checkBoard(integer))
+                            add(player);
+                    }
+                }};
+
+                put(key, value);
+            }
+        }};
+    }
+
     @Override
-    public boolean addPlayer(@NotNull Member member) {
-        if (getPlayers().stream().anyMatch(bingoPlayer -> bingoPlayer.getId().equals(member.getId())))
+    public boolean addPlayer(BingoPlayer player) {
+        if (getPlayers().stream().anyMatch(bingoPlayer -> bingoPlayer.getId().equals(player.getId())))
             return false;
 
         if (hasMaxPlayers())
             return false;
 
-        addPlayers(new BingoPlayer(member));
+        addPlayers(player);
         return true;
+    }
+
+    @Override
+    public boolean addPlayer(@NotNull Member member) {
+        return addPlayer(new BingoPlayer(member));
     }
 
     @Override

@@ -101,7 +101,8 @@ public class InteractionListener extends ListenerAdapter {
         if (ifSlash.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
-            .setInteractionType(IInteraction.Type.COMMAND_SLASH);
+            .setInteractionType(IInteraction.Type.COMMAND_SLASH)
+            .setChannelUnion(event.getChannel());
         if (Config.isDatabaseEnabled()) DatabaseManager.INSTANCE.addUser(blob);
 
         ICommandSlash slash = ifSlash.get();
@@ -137,7 +138,8 @@ public class InteractionListener extends ListenerAdapter {
         if (ifMenu.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
-            .setInteractionType(IInteraction.Type.COMMAND_MESSAGE);
+            .setInteractionType(IInteraction.Type.COMMAND_MESSAGE)
+            .setChannelUnion(event.getChannel());
         if (Config.isDatabaseEnabled()) DatabaseManager.INSTANCE.addUser(blob);
 
         ICommandMessage commandMessage = ifMenu.get();
@@ -208,7 +210,8 @@ public class InteractionListener extends ListenerAdapter {
         if (ifButton.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
-            .setInteractionType(IInteraction.Type.BUTTON);
+            .setInteractionType(IInteraction.Type.BUTTON)
+            .setChannelUnion(event.getChannel());
 
         IButton iButton = ifButton.get();
         log.debug("Button {} called on {} [{}]", iButton.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
@@ -231,7 +234,8 @@ public class InteractionListener extends ListenerAdapter {
         if (ifMenu.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
-            .setInteractionType(IInteraction.Type.SELECTION_ENTITY);
+            .setInteractionType(IInteraction.Type.SELECTION_ENTITY)
+            .setChannelUnion(event.getChannel());
         ISelectMenuEntity menu = ifMenu.get();
         log.debug("Select Menu {} called on {} [{}]", menu.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
         try {
@@ -253,7 +257,8 @@ public class InteractionListener extends ListenerAdapter {
         if (ifModal.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
-            .setInteractionType(IInteraction.Type.MODAL);
+            .setInteractionType(IInteraction.Type.MODAL)
+            .setChannelUnion(event.getChannel());
         IModal modal = ifModal.get();
         log.debug("Modal {} called on {} [{}]", modal.getName().toUpperCase(), blob.getGuild().getName(), blob.getGuildIdLong());
         try {
@@ -283,7 +288,8 @@ public class InteractionListener extends ListenerAdapter {
 
         String componentId = event.getComponentId();
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
-            .setInteractionType(IInteraction.Type.SELECTION_STRING);
+            .setInteractionType(IInteraction.Type.SELECTION_STRING)
+            .setChannelUnion(event.getChannel());
 
         for (ISelectMenuString stringMenu : menus) {
             String interactionName = "%s[%s]".formatted(componentId.toUpperCase(), stringMenu.getName().toUpperCase());

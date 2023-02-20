@@ -121,8 +121,26 @@ public class Game<T extends Player<?>> implements Pojo {
     }
 
     /**
-     * Creates a Player object from a {@link Member}<br/>
+     * Adds a Player<br/>
      * This function is intended to be overridden and should not be called directly; otherwise, this function effectively does nothing.
+     *
+     * @param player A player object to add
+     * @return If the player was successfully added
+     */
+    public boolean addPlayer(T player) {
+        return false;
+    }
+
+    /**
+     * Adds a Player object created from a {@link Member}<br/>
+     * This function is intended to be overridden and should not be called directly; otherwise, this function effectively does nothing.<br/>
+     * Example:
+     * <pre><code>
+     * public boolean addPlayer(Member member) {
+     *     return addPlayers(new Player(member));
+     * }
+     * </code></pre>
+     * This example above calls for the return of the {@link #addPlayers(Player[])} function with a single player parameter.
      *
      * @param member A Member to add as a player
      * @return If the player was successfully added

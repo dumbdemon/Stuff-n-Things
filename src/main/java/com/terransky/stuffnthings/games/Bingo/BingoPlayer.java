@@ -30,12 +30,6 @@ public class BingoPlayer extends Player<Number> {
 
     @BsonIgnore
     @JsonIgnore
-    private final static int FLOOR = 1;
-    @BsonIgnore
-    @JsonIgnore
-    private final static int CEIL = 100;
-    @BsonIgnore
-    @JsonIgnore
     private final int GRID_SIZE = 5;
     @BsonIgnore
     private int[][] board;
@@ -80,14 +74,6 @@ public class BingoPlayer extends Player<Number> {
     public void savePlayer() {
         setBoardState(new BoardState(board));
         setChecksState(new ChecksState(checks));
-    }
-
-    public static int getFLOOR() {
-        return FLOOR;
-    }
-
-    public static int getCEIL() {
-        return CEIL;
     }
 
     public int[][] getBoard() {
@@ -184,7 +170,7 @@ public class BingoPlayer extends Player<Number> {
      * @param number A Number to check
      * @return True if the player has won.
      */
-    public boolean checkBoard(int number) {
+    public boolean checkBoardForWinner(int number) {
         if (checkWinner())
             return false;
         for (int i = 0; i < GRID_SIZE; i++) {
@@ -192,6 +178,17 @@ public class BingoPlayer extends Player<Number> {
                 if (board[i][j] == number) {
                     checks[i][j] = true;
                     return checkWinner();
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean checkBoard(int number) {
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                if (board[i][j] == number) {
+                    return true;
                 }
             }
         }

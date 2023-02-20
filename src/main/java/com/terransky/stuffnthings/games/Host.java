@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @JsonPropertyOrder({
     "hostId",
-    "requiredPermissions"
+    "hostMention"
 })
 @SuppressWarnings("unused")
 public class Host {

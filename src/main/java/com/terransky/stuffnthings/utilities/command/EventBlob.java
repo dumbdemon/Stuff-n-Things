@@ -3,6 +3,7 @@ package com.terransky.stuffnthings.utilities.command;
 import com.terransky.stuffnthings.interfaces.IInteraction;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class EventBlob {
 
     private Guild guild;
     private Member member;
+    private MessageChannelUnion channelUnion;
     private IInteraction.Type interactionType;
 
     /**
@@ -154,6 +156,15 @@ public class EventBlob {
 
     public EventBlob setInteractionType(IInteraction.Type interactionType) {
         this.interactionType = interactionType;
+        return this;
+    }
+
+    public MessageChannelUnion getChannelUnion() {
+        return channelUnion;
+    }
+
+    public EventBlob setChannelUnion(MessageChannelUnion channelUnion) {
+        this.channelUnion = channelUnion;
         return this;
     }
 

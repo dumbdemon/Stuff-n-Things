@@ -62,7 +62,7 @@ public interface ISlashGame extends ICommandSlash {
      * @param blob     An {@link EventBlob}
      * @param response An {@link EmbedBuilder}
      */
-    void newGame(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder response);
+    void newGame(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder response) throws ExecutionException, InterruptedException;
 
     /**
      * Function to join a game
@@ -71,7 +71,7 @@ public interface ISlashGame extends ICommandSlash {
      * @param blob     An {@link EventBlob}
      * @param response An {@link EmbedBuilder}
      */
-    void joinGame(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder response);
+    void joinGame(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder response) throws ExecutionException, InterruptedException;
 
     /**
      * Function to start game
