@@ -99,7 +99,6 @@ public class BingoGame extends Game<BingoPlayer> {
                     if (!isEmpty()) break;
                 }
             }
-            setGameCompleted(true);
         }};
     }
 

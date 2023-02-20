@@ -21,7 +21,6 @@ public class BoardState extends State {
         setRow5(toStringArray(matrix[4]));
     }
 
-
     @BsonIgnore
     @JsonIgnore
     public int[][] getBoard(final int size) {
