@@ -231,6 +231,8 @@ public class MongoDBDataSource implements DatabaseManager {
         GuildEntry guildEntry = finder.first().orElse(new GuildEntry(blob.getGuildId()));
 
         if (Games.BINGO.equals(games)) {
+            if (guildEntry.getBingoGames() == null)
+                return Optional.empty();
             return guildEntry.getBingoGames().stream().filter(game -> game.getChannelId().equals(channelId))
                 .findFirst();
         }
