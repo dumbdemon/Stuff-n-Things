@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Kill implements ICommandSlash {
 
@@ -35,12 +36,17 @@ public class Kill implements ICommandSlash {
     public static final String TARGET_MODAL_NAME = "target-kill-suggest";
     public static final String MODAL_TEXT_INPUT_NAME = "kill-suggestion";
 
-    private void killRandom(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull Random random, EmbedBuilder eb) {
+    private void killRandom(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder eb) {
         List<String> randomStrings = DatabaseManager.INSTANCE
             .getFromDatabase(blob, Property.KILL_RANDOM, List.of("just dies by %s's hands."), PropertyMapping::getAsListOfString);
+        AtomicLong seed = new AtomicLong(new Date().getTime());
         List<String> victims = new ArrayList<>() {{
-            blob.getNonBotMembersAndSelf().forEach(member -> add(member.getAsMention()));
+            blob.getNonBotMembersAndSelf().forEach(member -> {
+                seed.updateAndGet(seed -> seed | member.getIdLong());
+                add(member.getAsMention());
+            });
         }};
+        Random random = new Random(seed.get());
 
         String message = randomStrings.get(random.nextInt(randomStrings.size())).formatted(
             victims.get(random.nextInt(victims.size())),
@@ -114,7 +120,7 @@ public class Kill implements ICommandSlash {
             Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
             """, Mastermind.USER, CommandCategory.FUN,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-02-16T13:23Z")
+            Metadata.parseDate("2023-02-21T11:14Z")
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),
@@ -139,7 +145,7 @@ public class Kill implements ICommandSlash {
             .setFooter("Requested by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
 
         switch (subcommand) {
-            case "random" -> killRandom(event, blob, random, eb);
+            case "random" -> killRandom(event, blob, eb);
 
             case "suggest" -> {
                 boolean isRandom = event.getOption("is-random", true, OptionMapping::getAsBoolean);

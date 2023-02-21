@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class KillSuggest {
 
@@ -24,15 +25,19 @@ public class KillSuggest {
     public static final String DENY_BUTTON = "deny-kill";
 
     private static void doExecute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob, boolean isRandom) throws RuntimeException, IOException {
-        java.util.Random rando = new java.util.Random(new Date().getTime());
         event.deferReply().queue();
         Optional<ModalMapping> ifSuggestion = Optional.ofNullable(event.getValue(Kill.MODAL_TEXT_INPUT_NAME));
         String suggestion = ifSuggestion.orElseThrow(DiscordAPIException::new).getAsString();
 
+        AtomicLong seed = new AtomicLong(new Date().getTime());
         List<String> victims = new ArrayList<>() {{
-            blob.getNonBotMembersAndSelf().forEach(member -> add(member.getAsMention()));
+            blob.getNonBotMembersAndSelf().forEach(member -> {
+                seed.updateAndGet(seed -> seed | member.getIdLong());
+                add(member.getAsMention());
+            });
         }};
 
+        java.util.Random rando = new java.util.Random(seed.get());
         TextChannel requestChannel = event.getJDA().getTextChannelById(Config.getRequestChannelID());
 
         if (requestChannel == null)

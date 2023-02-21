@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
-import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
@@ -34,7 +33,6 @@ public class StuffNThings {
             )
             .enableCache(CacheFlag.ONLINE_STATUS)
             .setMemberCachePolicy(MemberCachePolicy.ALL)
-            .setChunkingFilter(ChunkingFilter.ALL)
             .setStatus(OnlineStatus.DO_NOT_DISTURB);
 
         List<String> watchList = DatabaseManager.INSTANCE.getWatchList();

@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.utilities.command;
 
+import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.IInteraction;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -101,40 +102,67 @@ public class EventBlob {
     }
 
     /**
-     * Get a list of all cached members in a guild that are not a bot.
+     * Get a list of all members in a guild.
      *
-     * @return A {@link List} of non-bot {@link Member Members}
+     * @return A list of members
+     */
+    public List<Member> getMembers() {
+        if (guild.getMembers().isEmpty())
+            return new ArrayList<>() {{
+                guild.loadMembers()
+                    .onSuccess(this::addAll)
+                    .onError(DiscordAPIException::new);
+            }};
+        return guild.getMembers();
+    }
+
+    /**
+     * Get a filtered list of all members in a guild.
+     *
+     * @param predicate a predicate to apply to each element to determine if it should be included
+     * @return A list of members
+     */
+    public List<Member> getMembers(Predicate<? super Member> predicate) {
+        return getMembers().stream().filter(predicate).toList();
+    }
+
+    /**
+     * Get a list of all members in a guild that are not a bot.
+     *
+     * @return A list of members
      */
     public List<Member> getNonBotMembers() {
-        return getNonBotMembers(member -> true);
+        return getMembers(EventBlob.this::isNotBot);
     }
 
     /**
      * Get a list of all cached members in a guild that are not a bot and some other filter.
      *
-     * @param predicate An additional predicate for filtering.
-     * @return A {@link List} of non-bot {@link Member Members}
+     * @param predicate a predicate to apply to each element to determine if it should be included
+     * @return A list of members
      */
     public List<Member> getNonBotMembers(Predicate<? super Member> predicate) {
-        return new ArrayList<>() {{
-            guild.getMembers().stream()
-                .filter(EventBlob.this::isNotBot)
-                .filter(predicate)
-                .forEach(this::add);
-        }};
+        return getNonBotMembers().stream().filter(predicate).toList();
     }
 
+    /**
+     * Get a list of all members that are not bots and the bot of this instance
+     *
+     * @return A list of members
+     */
     public List<Member> getNonBotMembersAndSelf() {
         return getNonBotMembersAndSelf(member -> true);
     }
 
+    /**
+     * Get a filtered list of all members that are not bots and the bot of this instance
+     *
+     * @param predicate a predicate to apply to each element to determine if it should be included
+     * @return A list of members
+     */
     public List<Member> getNonBotMembersAndSelf(Predicate<? super Member> predicate) {
-        return new ArrayList<>() {{
-            guild.getMembers().stream()
-                .filter(member -> isNotBot(member) || getSelfMember().equals(member))
-                .filter(predicate)
-                .forEach(this::add);
-        }};
+        return getMembers(member -> isNotBot(member) || getSelfMember().equals(member))
+            .stream().filter(predicate).toList();
     }
 
     /**
