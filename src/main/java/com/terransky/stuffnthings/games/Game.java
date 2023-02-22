@@ -108,7 +108,7 @@ public class Game<T extends Player<?>> implements Pojo {
     }
 
     public void setPlayers(List<T> players) {
-        this.players = List.copyOf(players);
+        this.players = new ArrayList<>(players);
     }
 
     public void addPlayers(Collection<T> players) {

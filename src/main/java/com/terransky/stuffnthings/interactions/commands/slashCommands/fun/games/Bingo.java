@@ -422,7 +422,7 @@ public class Bingo implements ISlashGame {
                 callNumber++;
 
                 try {
-                    TimeUnit.SECONDS.sleep(2);
+                    TimeUnit.SECONDS.sleep(4);
                 } catch (InterruptedException e) {
                     textChannel.sendMessageEmbeds(
                         response.setDescription("Error occurred during verbose!\nSkipping to winner...")
