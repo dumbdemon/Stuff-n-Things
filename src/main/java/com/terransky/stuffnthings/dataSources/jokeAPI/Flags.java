@@ -63,6 +63,11 @@ public class Flags {
         this.nsfw = nsfw;
     }
 
+    public Flags withNsfw(Boolean nsfw) {
+        this.nsfw = nsfw;
+        return this;
+    }
+
     @JsonProperty("religious")
     @BsonProperty("religious")
     public Boolean getReligious() {
@@ -73,6 +78,11 @@ public class Flags {
     @BsonProperty("religious")
     public void setReligious(Boolean religious) {
         this.religious = religious;
+    }
+
+    public Flags withReligoius(Boolean religious) {
+        this.religious = religious;
+        return this;
     }
 
     @JsonProperty("political")
@@ -87,6 +97,11 @@ public class Flags {
         this.political = political;
     }
 
+    public Flags withPolitical(Boolean political) {
+        this.political = political;
+        return this;
+    }
+
     @JsonProperty("racist")
     @BsonProperty("racist")
     public Boolean getRacist() {
@@ -97,6 +112,11 @@ public class Flags {
     @BsonProperty("racist")
     public void setRacist(Boolean racist) {
         this.racist = racist;
+    }
+
+    public Flags withRacist(Boolean racist) {
+        this.racist = racist;
+        return this;
     }
 
     @JsonProperty("sexist")
@@ -111,6 +131,11 @@ public class Flags {
         this.sexist = sexist;
     }
 
+    public Flags withSexist(Boolean sexist) {
+        this.sexist = sexist;
+        return this;
+    }
+
     @JsonProperty("explicit")
     @BsonIgnore
     public Boolean getExplicit() {
@@ -121,6 +146,11 @@ public class Flags {
     @BsonIgnore
     public void setExplicit(Boolean explicit) {
         this.explicit = explicit;
+    }
+
+    public Flags withExplicit(Boolean explicit) {
+        this.explicit = explicit;
+        return this;
     }
 
     @JsonIgnore
