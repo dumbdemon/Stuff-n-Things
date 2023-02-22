@@ -93,7 +93,7 @@ public class Kill implements ICommandSlash {
             }
 
             DatabaseManager.INSTANCE.updateProperty(blob, Property.KILL_ATTEMPTS, attempts + 1);
-            if (!entry.getKillUnderTo())
+            if (entry.getKillUnderTo() == null || !entry.getKillUnderTo())
                 performLockOut(blob, entry.getServerTimeout());
         }
         List<String> targetStrings = DatabaseManager.INSTANCE
@@ -120,7 +120,7 @@ public class Kill implements ICommandSlash {
             Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
             """, Mastermind.USER, CommandCategory.FUN,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-02-21T11:14Z")
+            Metadata.parseDate("2023-02-21T20:08Z")
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),
