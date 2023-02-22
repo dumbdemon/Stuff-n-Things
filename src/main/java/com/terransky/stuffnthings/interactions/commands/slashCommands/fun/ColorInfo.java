@@ -114,7 +114,7 @@ public class ColorInfo implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-09-20T12:10Z"),
-            Metadata.parseDate("2023-01-25T15:04Z")
+            Metadata.parseDate("2023-02-21T17:41Z")
         )
             .addSubcommands(
                 new SubcommandData("hex-triplet", "Get more info on a hex triplet. EX: #663366")
@@ -175,6 +175,8 @@ public class ColorInfo implements ICommandSlash {
                 String G = String.valueOf(hexCode.charAt(1 + offset));
                 String B = String.valueOf(hexCode.charAt(2 + offset));
                 color = Color.decode("#" + R + R + G + G + B + B);
+            } else if (hexCode.length() == 6) {
+                color = Color.decode('#' + hexCode);
             } else color = Color.decode(hexCode);
 
             int[] rgb = new int[]{
@@ -185,10 +187,19 @@ public class ColorInfo implements ICommandSlash {
 
             event.replyEmbeds(runResponse(hsb, eb, rgbToCmyk(rgb), rgb)).queue();
         } else {
+            DecimalFormat format = new DecimalFormat("##,###");
             eb.setTitle("Invalid Hex Triplet!")
-                .setDescription("You've given an invalid hex triplet!\nCorrect example: `#663366` or `#636`")
+                .setDescription(String.format("""
+                    You've given an invalid hex triplet!
+                    Correct example: `#663366` or `#636`
+
+                    **NOTE:** Hex triplets are 3 or 6 characters that uses 0-9 and A-F in various combinations. On another note, `#0055FF` is equivalent to `#05F`.
+
+                    FUN FACT!
+                    > There are %s combinations for 6 character hex triplets and of those combinations, %s are for 3 character hex triplets!
+                    """, format.format(Math.pow(16, 6)), format.format(Math.pow(16, 3))))
                 .setColor(EmbedColors.getError())
-                .addField("Provided", hexCode, false);
+                .addField("Provided", hexCode.toUpperCase(), false);
             event.replyEmbeds(eb.build()).setEphemeral(true).queue();
         }
     }
