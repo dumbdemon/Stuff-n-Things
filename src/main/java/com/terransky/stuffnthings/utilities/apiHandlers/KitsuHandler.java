@@ -55,13 +55,13 @@ public class KitsuHandler {
      * @throws IllegalArgumentException If {@link Config.Credentials#isDefault()} returns true.
      */
     public static boolean upsertAuthorizationToken() throws IllegalArgumentException {
-        ExecutorService service = Executors.newSingleThreadExecutor();
-        HttpClient client = HttpClient.newBuilder()
-            .followRedirects(HttpClient.Redirect.ALWAYS)
-            .connectTimeout(Duration.ofSeconds(5))
-            .executor(service)
-            .build();
-        try {
+        try (ExecutorService service = Executors.newSingleThreadExecutor()) {
+            HttpClient client = HttpClient.newBuilder()
+                .followRedirects(HttpClient.Redirect.ALWAYS)
+                .connectTimeout(Duration.ofSeconds(5))
+                .executor(service)
+                .build();
+
             String requestBody;
             Optional<KitsuAuth> oldAuth = DatabaseManager.INSTANCE.getKitsuAuth();
 
@@ -113,14 +113,12 @@ public class KitsuHandler {
                 log.info("Auth request successful: uploaded to database");
                 auth.saveAsJsonFile(KITSU_AUTH);
                 log.info("Auth file saved: the absolute path of new auth is {}", KITSU_AUTH.getAbsolutePath());
+                return true;
             } else return false;
         } catch (IOException | InterruptedException e) {
             log.error("Auth request failed", e);
             return false;
-        } finally {
-            service.shutdownNow();
         }
-        return true;
     }
 
     /**

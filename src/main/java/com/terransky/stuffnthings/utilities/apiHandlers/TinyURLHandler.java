@@ -44,13 +44,13 @@ public class TinyURLHandler extends TinyURLRequestData {
      */
     @JsonIgnore
     public TinyURLData sendRequest() {
-        ExecutorService service = Executors.newSingleThreadExecutor();
-        HttpClient client = HttpClient.newBuilder()
-            .followRedirects(HttpClient.Redirect.ALWAYS)
-            .connectTimeout(Duration.ofSeconds(5))
-            .executor(service)
-            .build();
-        try {
+        try (ExecutorService service = Executors.newSingleThreadExecutor()) {
+            HttpClient client = HttpClient.newBuilder()
+                .followRedirects(HttpClient.Redirect.ALWAYS)
+                .connectTimeout(Duration.ofSeconds(5))
+                .executor(service)
+                .build();
+
             HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.tinyurl.com/create?api_token=" + Config.Credentials.TINYURL.getPassword()))
                 .setHeader("accept", "application/json")
@@ -67,8 +67,6 @@ public class TinyURLHandler extends TinyURLRequestData {
             return MAPPER.readValue(response.body(), TinyURLData.class);
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            service.shutdownNow();
         }
     }
 }
