@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  * Root POJO for OAUTH requests to Kitsu.io
  */
 @SuppressWarnings({"unused", "SpellCheckingInspection"})
-public class KitsuAuthRequest implements Pojo {
+public class KitsuAuthForm implements Pojo {
 
     @JsonProperty("grant_type")
     private String grantType;
@@ -18,7 +18,7 @@ public class KitsuAuthRequest implements Pojo {
      *
      * @param grantType The type of request
      */
-    protected KitsuAuthRequest(@NotNull GrantType grantType) {
+    protected KitsuAuthForm(@NotNull GrantType grantType) {
         this.grantType = grantType.getType();
     }
 

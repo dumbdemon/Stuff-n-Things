@@ -1,7 +1,10 @@
 package com.terransky.stuffnthings.utilities.apiHandlers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.terransky.stuffnthings.dataSources.kitsu.*;
+import com.terransky.stuffnthings.dataSources.kitsu.Datum;
+import com.terransky.stuffnthings.dataSources.kitsu.KitsuAuth;
+import com.terransky.stuffnthings.dataSources.kitsu.PasswordKitsuAuthForm;
+import com.terransky.stuffnthings.dataSources.kitsu.RefreshKitsuAuthForm;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.anime.AnimeKitsuData;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.manga.MangaKitsuData;
 import com.terransky.stuffnthings.dataSources.kitsu.relationships.Relationships;
@@ -74,7 +77,7 @@ public class KitsuHandler {
                 }
                 log.info("Auth is invalid: requesting new auth");
 
-                requestBody = new RefreshKitsuAuthRequest()
+                requestBody = new RefreshKitsuAuthForm()
                     .setRefreshToken(auth.getRefreshToken())
                     .getAsJsonString();
             } else {
@@ -84,7 +87,7 @@ public class KitsuHandler {
                     return false;
                 }
 
-                requestBody = new PasswordKitsuAuthRequest()
+                requestBody = new PasswordKitsuAuthForm()
                     .setUsername(credentials.getUsername())
                     .setPassword(credentials.getPassword())
                     .getAsJsonString();
@@ -97,17 +100,18 @@ public class KitsuHandler {
                 .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            KitsuAuth auth;
             int code = response.statusCode();
             if (code != 200 && code - 500 < 0) {
-                KitsuAuthError authError = MAPPER.readValue(response.body(), KitsuAuthError.class);
-                log.error("Auth request failed: [{}] {}", authError.getError(), authError.getErrorDescription());
+                auth = MAPPER.readValue(response.body(), KitsuAuth.class);
+                log.error("Auth request failed: [{}] {}", auth.getError(), auth.getErrorDescription());
                 return false;
             } else if (code - 500 >= 0) {
                 log.error("Auth request failed: server error");
                 return false;
             }
 
-            KitsuAuth auth = MAPPER.readValue(response.body(), KitsuAuth.class);
+            auth = MAPPER.readValue(response.body(), KitsuAuth.class);
 
             if (DatabaseManager.INSTANCE.uploadKitsuAuth(auth)) {
                 log.info("Auth request successful: uploaded to database");

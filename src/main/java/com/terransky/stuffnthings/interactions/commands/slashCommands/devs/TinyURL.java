@@ -1,8 +1,8 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.devs;
 
 import com.terransky.stuffnthings.dataSources.tinyURL.Data;
-import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLData;
 import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLLimits;
+import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLResponse;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
@@ -26,7 +26,7 @@ import java.util.Optional;
 
 public class TinyURL implements ICommandSlash {
     private static void validationFailed(@NotNull SlashCommandInteractionEvent event, String url, EmbedBuilder builder,
-                                         @NotNull TinyURLData shortURLData) {
+                                         @NotNull TinyURLResponse shortURLData) {
         StringBuilder stringBuilder = new StringBuilder();
         List<String> errors = shortURLData.getErrors();
         for (String error : errors) {
@@ -65,7 +65,7 @@ public class TinyURL implements ICommandSlash {
         return new Metadata(getName(), "Create short URLs with TinyURL",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
             Metadata.parseDate("2023-01-06T16:04Z"),
-            Metadata.parseDate("2023-02-05T13:16Z")
+            Metadata.parseDate("2023-02-23T10:20Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "url", "A URL to shorten.", true),
@@ -94,7 +94,7 @@ public class TinyURL implements ICommandSlash {
             TinyURLHandler tinyURLHandler = new TinyURLHandler(url);
             tinyURLHandler.withDomain(domain);
             alias.ifPresent(tinyURLHandler::withAlias);
-            TinyURLData shortURLData = tinyURLHandler.sendRequest();
+            TinyURLResponse shortURLData = tinyURLHandler.sendRequest();
             String requestData = tinyURLHandler.getAsJsonString(),
                 reportingURL = Config.getErrorReportingURL();
 

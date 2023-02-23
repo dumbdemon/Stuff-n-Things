@@ -2,8 +2,9 @@ package com.terransky.stuffnthings.utilities.command;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -24,7 +25,6 @@ public class Formatter {
         put(1e33f, " Decillion");
         put(1e36f, " Undecillion");
     }};
-    private static final String ENCODING = "UTF-8";
 
     /**
      * Makes extra large numbers look nice~ <br />
@@ -50,28 +50,24 @@ public class Formatter {
 
     @NotNull
     public static String percentEncode(String s) {
-        return percentEncode(s, ENCODING);
+        return percentEncode(s, StandardCharsets.UTF_8);
     }
 
     @NotNull
-    public static String percentEncode(String s, String encoding) {
+    public static String percentEncode(String s, Charset encoding) {
         if (s == null) {
             return "";
         }
-        try {
-            return URLEncoder.encode(s, encoding)
-                .replaceAll("\\[", "%5B")
-                .replaceAll("]", "%5D")
-                .replaceAll("\\+|\\s", "%20")
-                .replaceAll("\\*", "%2A")
-                .replaceAll("%7E", "~");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return URLEncoder.encode(s, encoding)
+            .replaceAll("\\[", "%5B")
+            .replaceAll("]", "%5D")
+            .replaceAll("\\+|\\s", "%20")
+            .replaceAll("\\*", "%2A")
+            .replaceAll("%7E", "~");
     }
 
-    public static String getNameOfClass(@NotNull Class<?> aClass) {
-        String[] className = aClass.getName().split("\\.");
+    public static String getNameOfClass(@NotNull Class<?> clazz) {
+        String[] className = clazz.getName().split("\\.");
         return className[className.length - 1];
     }
 }

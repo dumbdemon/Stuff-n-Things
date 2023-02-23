@@ -22,7 +22,9 @@ import java.time.temporal.ChronoUnit;
     "expires_in",
     "refresh_token",
     "scope",
-    "token_type"
+    "token_type",
+    "error",
+    "error_description"
 })
 @Generated("jsonschema2pojo")
 public class KitsuAuth implements Pojo {
@@ -48,6 +50,12 @@ public class KitsuAuth implements Pojo {
     @JsonProperty("token_type")
     @BsonProperty("token_type")
     private String tokenType;
+    @JsonProperty("error")
+    @BsonIgnore
+    private String error;
+    @JsonProperty("error_description")
+    @BsonIgnore
+    private String errorDescription;
 
     @JsonIgnore
     @BsonProperty("idReference")
@@ -170,5 +178,29 @@ public class KitsuAuth implements Pojo {
     @BsonIgnore
     public String getBearerString() {
         return String.format("%s %s", tokenType, accessToken);
+    }
+
+    @JsonProperty("error")
+    @BsonIgnore
+    public String getError() {
+        return error;
+    }
+
+    @JsonProperty("error")
+    @BsonIgnore
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    @JsonProperty("error_description")
+    @BsonIgnore
+    public String getErrorDescription() {
+        return errorDescription;
+    }
+
+    @JsonProperty("error_description")
+    @BsonIgnore
+    public void setErrorDescription(String errorDescription) {
+        this.errorDescription = errorDescription;
     }
 }

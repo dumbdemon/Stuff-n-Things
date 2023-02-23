@@ -2,9 +2,8 @@ package com.terransky.stuffnthings.utilities.apiHandlers;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLData;
-import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLNoData;
-import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLRequestData;
+import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLForm;
+import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLResponse;
 import com.terransky.stuffnthings.utilities.general.Config;
 
 import java.io.IOException;
@@ -21,7 +20,7 @@ import java.util.concurrent.Executors;
 /**
  * The handler for TinyURL's API
  */
-public class TinyURLHandler extends TinyURLRequestData {
+public class TinyURLHandler extends TinyURLForm {
 
     @JsonIgnore
     private final ObjectMapper MAPPER = new ObjectMapper();
@@ -40,10 +39,10 @@ public class TinyURLHandler extends TinyURLRequestData {
     /**
      * Get a shorten url
      *
-     * @return A {@link TinyURLData}
+     * @return A {@link TinyURLResponse}
      */
     @JsonIgnore
-    public TinyURLData sendRequest() {
+    public TinyURLResponse sendRequest() {
         try (ExecutorService service = Executors.newSingleThreadExecutor()) {
             HttpClient client = HttpClient.newBuilder()
                 .followRedirects(HttpClient.Redirect.ALWAYS)
@@ -59,12 +58,7 @@ public class TinyURLHandler extends TinyURLRequestData {
                 .build();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            TinyURLNoData data = MAPPER.readValue(response.body(), TinyURLNoData.class);
-            if (data.getCode() != 0)
-                return new TinyURLData().withCode(data.getCode())
-                    .withErrors(data.getErrors());
-
-            return MAPPER.readValue(response.body(), TinyURLData.class);
+            return MAPPER.readValue(response.body(), TinyURLResponse.class);
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }

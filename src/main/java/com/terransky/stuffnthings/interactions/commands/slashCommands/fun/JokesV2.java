@@ -2,7 +2,7 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.stuffnthings.dataSources.jokeAPI.Flags;
-import com.terransky.stuffnthings.dataSources.jokeAPI.JokeAPIError;
+import com.terransky.stuffnthings.dataSources.jokeAPI.JokeAPI;
 import com.terransky.stuffnthings.dataSources.jokeAPI.JokeSubmitForm;
 import com.terransky.stuffnthings.dataSources.jokeAPI.JokeSubmitResponse;
 import com.terransky.stuffnthings.database.helpers.Property;
@@ -58,12 +58,7 @@ public class JokesV2 implements ICommandSlash {
             blacklistFlags.append("explicit,");
         String blacklist = blacklistFlags.isEmpty() ?
             "" : "?blacklistFlags=" + blacklistFlags.substring(0, blacklistFlags.length() - 1) + "&";
-        return "https://v2.jokeapi.dev/joke/" + category + (safeMode ? "?safe-mode&" : "") + blacklist + "?lang=" + lang;
-    }
-
-    @Override
-    public String getName() {
-        return "jokes";
+        return "https://v2.jokeapi.dev/joke/" + category + (safeMode ? "?safe-mode&" : "") + blacklist + "lang=" + lang;
     }
 
     private static void submitJoke(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
@@ -124,6 +119,11 @@ public class JokesV2 implements ICommandSlash {
         ).setEphemeral(true).queue();
     }
 
+    @Override
+    public String getName() {
+        return "jokes";
+    }
+
     // Currently, the API has disabled Joke Submissions. The code wil remain for since I've already written it.
     @Override
     public Metadata getMetadata() {
@@ -159,7 +159,7 @@ public class JokesV2 implements ICommandSlash {
             Admins can use `/config jokes` to limit the specifiers.
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-06T18:34Z"),
-            Metadata.parseDate("2023-02-22T12:10Z")
+            Metadata.parseDate("2023-02-23T10:35Z")
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("get", "Get a random joke.")
@@ -186,7 +186,7 @@ public class JokesV2 implements ICommandSlash {
         URL jokeApi = new URL(URL);
         if (Config.isTestingMode()) LoggerFactory.getLogger(JokesV2.class).debug(URL);
         ObjectMapper mapper = new ObjectMapper();
-        JokeAPIError theJoke = mapper.readValue(jokeApi, JokeAPIError.class);
+        JokeAPI theJoke = mapper.readValue(jokeApi, JokeAPI.class);
         EmbedBuilder comedian = new EmbedBuilder()
             .setTitle(getNameReadable())
             .setColor(EmbedColors.getDefault())

@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "refresh_token"
 })
 @SuppressWarnings("unused")
-public class RefreshKitsuAuthRequest extends KitsuAuthRequest {
+public class RefreshKitsuAuthForm extends KitsuAuthForm {
 
     @JsonProperty("refresh_token")
     private String refreshToken;
@@ -19,7 +19,7 @@ public class RefreshKitsuAuthRequest extends KitsuAuthRequest {
     /**
      * Constructor to request an api token refresh
      */
-    public RefreshKitsuAuthRequest() {
+    public RefreshKitsuAuthForm() {
         super(GrantType.REFRESH);
     }
 
@@ -40,7 +40,7 @@ public class RefreshKitsuAuthRequest extends KitsuAuthRequest {
      * @return the instance for chaining
      */
     @JsonProperty("refresh_token")
-    public RefreshKitsuAuthRequest setRefreshToken(String refreshToken) {
+    public RefreshKitsuAuthForm setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
         return this;
     }

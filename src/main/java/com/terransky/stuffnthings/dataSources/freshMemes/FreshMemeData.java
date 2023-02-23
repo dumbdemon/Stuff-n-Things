@@ -19,7 +19,9 @@ import java.util.List;
     "spoiler",
     "author",
     "ups",
-    "preview"
+    "preview",
+    "code",
+    "message"
 })
 @Generated("jsonschema2pojo")
 public class FreshMemeData implements Pojo {
@@ -33,15 +35,19 @@ public class FreshMemeData implements Pojo {
     @JsonProperty("url")
     private String url;
     @JsonProperty("nsfw")
-    private boolean nsfw;
+    private Boolean nsfw;
     @JsonProperty("spoiler")
-    private boolean spoiler;
+    private Boolean spoiler;
     @JsonProperty("author")
     private String author;
     @JsonProperty("ups")
-    private long ups;
+    private Long ups;
     @JsonProperty("preview")
     private List<String> preview = new ArrayList<>();
+    @JsonProperty("code")
+    private Integer code;
+    @JsonProperty("message")
+    private String message;
 
     @JsonProperty("postLink")
     public String getPostLink() {
@@ -84,22 +90,22 @@ public class FreshMemeData implements Pojo {
     }
 
     @JsonProperty("nsfw")
-    public boolean isExplicit() {
+    public Boolean isExplicit() {
         return nsfw;
     }
 
     @JsonProperty("nsfw")
-    public void setNsfw(boolean nsfw) {
+    public void setNsfw(Boolean nsfw) {
         this.nsfw = nsfw;
     }
 
     @JsonProperty("spoiler")
-    public boolean isSpoiler() {
+    public Boolean isSpoiler() {
         return spoiler;
     }
 
     @JsonProperty("spoiler")
-    public void setSpoiler(boolean spoiler) {
+    public void setSpoiler(Boolean spoiler) {
         this.spoiler = spoiler;
     }
 
@@ -114,12 +120,12 @@ public class FreshMemeData implements Pojo {
     }
 
     @JsonProperty("ups")
-    public long getUps() {
+    public Long getUps() {
         return ups;
     }
 
     @JsonProperty("ups")
-    public void setUps(long ups) {
+    public void setUps(Long ups) {
         this.ups = ups;
     }
 
@@ -131,5 +137,25 @@ public class FreshMemeData implements Pojo {
     @JsonProperty("preview")
     public void setPreview(List<String> preview) {
         this.preview = preview;
+    }
+
+    @JsonProperty("code")
+    public Integer getCode() {
+        return code;
+    }
+
+    @JsonProperty("code")
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
+    @JsonProperty("message")
+    public String getMessage() {
+        return message;
+    }
+
+    @JsonProperty("message")
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

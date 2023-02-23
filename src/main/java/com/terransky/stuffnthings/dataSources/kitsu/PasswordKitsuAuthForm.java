@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "password"
 })
 @SuppressWarnings("unused")
-public class PasswordKitsuAuthRequest extends KitsuAuthRequest {
+public class PasswordKitsuAuthForm extends KitsuAuthForm {
 
     @JsonProperty("username")
     private String username;
@@ -22,7 +22,7 @@ public class PasswordKitsuAuthRequest extends KitsuAuthRequest {
     /**
      * Constructor for a password based request to obtain an API token from Kitsu.io
      */
-    public PasswordKitsuAuthRequest() {
+    public PasswordKitsuAuthForm() {
         super(GrantType.PASSWORD);
     }
 
@@ -43,7 +43,7 @@ public class PasswordKitsuAuthRequest extends KitsuAuthRequest {
      * @return the instance for chaining
      */
     @JsonProperty("username")
-    public PasswordKitsuAuthRequest setUsername(String username) {
+    public PasswordKitsuAuthForm setUsername(String username) {
         this.username = username;
         return this;
     }
@@ -65,7 +65,7 @@ public class PasswordKitsuAuthRequest extends KitsuAuthRequest {
      * @return the instance for chaining
      */
     @JsonProperty("password")
-    public PasswordKitsuAuthRequest setPassword(String password) {
+    public PasswordKitsuAuthForm setPassword(String password) {
         this.password = password;
         return this;
     }

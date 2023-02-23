@@ -14,7 +14,8 @@ import java.util.List;
     "id",
     "metadata",
     "results",
-    "word"
+    "word",
+    "error"
 })
 @Generated("jsonschema2pojo")
 public class OxfordData implements Pojo {
@@ -27,6 +28,8 @@ public class OxfordData implements Pojo {
     private List<Result> results = new ArrayList<>();
     @JsonProperty("word")
     private String word;
+    @JsonProperty("error")
+    private String error;
 
     @JsonProperty("id")
     public String getId() {
@@ -68,4 +71,13 @@ public class OxfordData implements Pojo {
         this.word = word;
     }
 
+    @JsonProperty("error")
+    public String getError() {
+        return error;
+    }
+
+    @JsonProperty("error")
+    public void setError(String error) {
+        this.error = error;
+    }
 }

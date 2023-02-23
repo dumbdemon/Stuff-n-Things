@@ -21,9 +21,8 @@ public class GetInvite implements ICommandSlash {
 
     @Override
     public Metadata getMetadata() {
-        return new Metadata(this.getName(), "Get an invite for the bot."
-            , Mastermind.DEFAULT,
-            CommandCategory.DEVS,
+        return new Metadata(this.getName(), "Get an invite for the bot.",
+            Mastermind.DEFAULT, CommandCategory.DEVS,
             Metadata.parseDate("2022-08-24T11:10Z"),
             Metadata.parseDate("2022-12-21T12:16Z")
         );

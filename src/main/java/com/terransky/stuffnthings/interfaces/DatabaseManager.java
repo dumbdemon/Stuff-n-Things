@@ -161,7 +161,7 @@ public interface DatabaseManager {
     Optional<KitsuAuth> getKitsuAuth();
 
     /**
-     * Add the guild to the database and create a user table.
+     * Add the guild to the database
      *
      * @param guild A {@link Guild} object.
      */

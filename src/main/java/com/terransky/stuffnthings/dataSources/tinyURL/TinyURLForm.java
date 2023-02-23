@@ -23,7 +23,7 @@ import java.time.format.DateTimeFormatter;
     "expires_at"
 })
 @Generated("jsonschema2pojo")
-public class TinyURLRequestData implements Pojo {
+public class TinyURLForm implements Pojo {
 
     @JsonProperty("url")
     private String url;
@@ -43,7 +43,7 @@ public class TinyURLRequestData implements Pojo {
      * @throws MalformedURLException Thrown when the URL is not valid.
      * @throws URISyntaxException    Thrown when the URL is not valid.
      */
-    protected TinyURLRequestData(String url) throws MalformedURLException, URISyntaxException {
+    protected TinyURLForm(String url) throws MalformedURLException, URISyntaxException {
         this.url = new URL(url).toURI().toString();
     }
 
@@ -73,7 +73,7 @@ public class TinyURLRequestData implements Pojo {
     }
 
     @JsonIgnore
-    public TinyURLRequestData withDomain(@NotNull TinyURLLimits.Domain domain) {
+    public TinyURLForm withDomain(@NotNull TinyURLLimits.Domain domain) {
         setDomain(domain.getDomain());
         return this;
     }
@@ -89,7 +89,7 @@ public class TinyURLRequestData implements Pojo {
     }
 
     @JsonIgnore
-    public TinyURLRequestData withAlias(String alias) {
+    public TinyURLForm withAlias(String alias) {
         this.alias = alias;
         return this;
     }
@@ -105,7 +105,7 @@ public class TinyURLRequestData implements Pojo {
     }
 
     @JsonIgnore
-    public TinyURLRequestData withTags(String tags) {
+    public TinyURLForm withTags(String tags) {
         this.tags = tags;
         return this;
     }
@@ -131,7 +131,7 @@ public class TinyURLRequestData implements Pojo {
     }
 
     @JsonIgnore
-    public TinyURLRequestData withExpiresAt(OffsetDateTime expiresAt) {
+    public TinyURLForm withExpiresAt(OffsetDateTime expiresAt) {
         this.expiresAt = expiresAt;
         return this;
     }

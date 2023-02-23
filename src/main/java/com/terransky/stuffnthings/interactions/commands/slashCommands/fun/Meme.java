@@ -6,6 +6,7 @@ import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
+import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -16,8 +17,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.text.DecimalFormat;
+import java.time.Duration;
+import java.time.OffsetDateTime;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Meme implements ICommandSlash {
     private final Logger log = LoggerFactory.getLogger(Meme.class);
@@ -35,7 +43,7 @@ public class Meme implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-01-05T19:47Z")
+            Metadata.parseDate("2023-02-23T10:04Z")
         )
             .addSubcommands(
                 new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, or from r/me_irl.")
@@ -58,9 +66,30 @@ public class Meme implements ICommandSlash {
     private void goForReddit(@NotNull SlashCommandInteractionEvent event, DecimalFormat largeNumber, @NotNull EmbedBuilder eb) {
         String subreddit = event.getOption("subreddit", "", OptionMapping::getAsString);
         String redditLogo = "https://cdn.discordapp.com/attachments/1004795281734377564/1005203741026299954/Reddit_Mark_OnDark.png";
-        try {
-            URL memeURL = new URL("https://meme-api.com/gimme/" + subreddit);
-            FreshMemeData memeData = new ObjectMapper().readValue(memeURL, FreshMemeData.class);
+        try (ExecutorService service = Executors.newSingleThreadExecutor()) {
+            HttpClient client = HttpClient.newBuilder()
+                .followRedirects(HttpClient.Redirect.ALWAYS)
+                .connectTimeout(Duration.ofSeconds(5))
+                .executor(service)
+                .build();
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://meme-api.com/gimme/" + subreddit))
+                .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            FreshMemeData memeData = new ObjectMapper().readValue(response.body(), FreshMemeData.class);
+
+            if (memeData.getCode() != null) {
+                event.getHook().sendMessageEmbeds(
+                    eb.setTitle("Whoops! - Code " + memeData.getCode())
+                        .setDescription(memeData.getMessage())
+                        .setFooter("Reddit", redditLogo)
+                        .setColor(EmbedColors.getError())
+                        .addField("Verify Subreddit", String.format("[**[link]**](https://www.reddit.com/r/%s)", subreddit), false)
+                        .build()
+                ).queue();
+                return;
+            }
+
             eb.setFooter("Reddit | u/%s | r/%s".formatted(memeData.getAuthor(), memeData.getSubreddit()), redditLogo);
 
             if (memeData.isExplicit() && !event.getChannel().asTextChannel().isNSFW()) {
@@ -91,18 +120,13 @@ public class Meme implements ICommandSlash {
                 .addField("<:reddit_upvote:1069025452250890330> Upvotes", largeNumber.format(memeData.getUps()), true);
 
             event.getHook().sendMessageEmbeds(eb.build()).queue();
-        } catch (IOException e) {
+        } catch (InterruptedException | IOException e) {
             event.getHook().sendMessageEmbeds(
                 eb.setTitle("Whoops!")
-                    .setDescription(("""
-                        I wasn't able to grab a meme!
-
-                        This could be either:
-                        A) The subreddit does not exist or no longer exists,
-                        B) The subreddit is set to private and therefore I am unable to access it ([**click here to check**](https://www.reddit.com/r/%s)), or
-                        C) You have been rate limited and you must wait for a few moments and try again.""").formatted(subreddit))
+                    .setDescription(String.format("Error whilst executing code. Please report it [here](%s)", Config.getErrorReportingURL()))
                     .setFooter("Reddit", redditLogo)
                     .setColor(EmbedColors.getError())
+                    .setTimestamp(OffsetDateTime.now())
                     .build()
             ).queue();
             log.error("Unable to get meme", e);
