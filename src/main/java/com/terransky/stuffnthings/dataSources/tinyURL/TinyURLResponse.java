@@ -18,13 +18,12 @@ import java.util.List;
 @Generated("jsonschema2pojo")
 public class TinyURLResponse implements Pojo {
 
-    @JsonProperty("data")
-    private Data data;
     @JsonProperty("code")
     int code;
     @JsonProperty("errors")
     List<String> errors = new ArrayList<>();
-
+    @JsonProperty("data")
+    private Data data;
 
     @JsonProperty("data")
     public Data getData() {

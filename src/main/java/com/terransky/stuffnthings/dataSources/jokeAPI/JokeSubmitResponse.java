@@ -3,12 +3,9 @@ package com.terransky.stuffnthings.dataSources.jokeAPI;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.terransky.stuffnthings.interfaces.Pojo;
 
 import javax.annotation.Generated;
 import javax.validation.Valid;
-import javax.validation.constraints.DecimalMin;
-import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -22,23 +19,16 @@ import java.util.List;
     "additionalInfo"
 })
 @Generated("jsonschema2pojo")
-public class JokeSubmitResponse implements Pojo {
+public class JokeSubmitResponse extends JokeError {
 
     @JsonProperty("error")
     private Boolean isError;
     @JsonProperty("internalError")
     private Boolean internalError;
-    @JsonProperty("code")
-    private Integer code;
-    @JsonProperty("message")
-    private String message;
-    @JsonProperty("causedBy")
-    private List<String> causedBy;
     @JsonProperty("submission")
     @Valid
     private JokeSubmitForm submission;
     @JsonProperty("timestamp")
-    @DecimalMin("9223372036854775807")
     private Long timestamp;
     @JsonProperty("additionalInfo")
     private String additionalInfo;
@@ -68,38 +58,8 @@ public class JokeSubmitResponse implements Pojo {
         this.internalError = internalError;
     }
 
-    @JsonProperty("code")
-    public Integer getCode() {
-        return code;
-    }
-
-    @JsonProperty("code")
-    public void setCode(Integer code) {
-        this.code = code;
-    }
-
-    @JsonProperty("message")
-    public String getMessage() {
-        return message;
-    }
-
-    @JsonProperty("message")
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    @JsonProperty("causedBy")
-    public List<String> getCausedBy() {
-        return causedBy;
-    }
-
-    @JsonProperty("causedBy")
-    public void setCausedBy(List<String> causedBy) {
-        this.causedBy = causedBy;
-    }
-
     public JokeSubmitResponse withMessage(String message) {
-        this.message = message;
+        setMessage(message);
         return this;
     }
 

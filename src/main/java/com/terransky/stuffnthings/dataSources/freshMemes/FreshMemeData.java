@@ -3,7 +3,7 @@ package com.terransky.stuffnthings.dataSources.freshMemes;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.terransky.stuffnthings.interfaces.Pojo;
+import com.terransky.stuffnthings.dataSources.CodesAndMessages;
 
 import javax.annotation.Generated;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import java.util.List;
     "message"
 })
 @Generated("jsonschema2pojo")
-public class FreshMemeData implements Pojo {
+public class FreshMemeData extends CodesAndMessages {
 
     @JsonProperty("postLink")
     private String postLink;
@@ -44,10 +44,6 @@ public class FreshMemeData implements Pojo {
     private Long ups;
     @JsonProperty("preview")
     private List<String> preview = new ArrayList<>();
-    @JsonProperty("code")
-    private Integer code;
-    @JsonProperty("message")
-    private String message;
 
     @JsonProperty("postLink")
     public String getPostLink() {
@@ -137,25 +133,5 @@ public class FreshMemeData implements Pojo {
     @JsonProperty("preview")
     public void setPreview(List<String> preview) {
         this.preview = preview;
-    }
-
-    @JsonProperty("code")
-    public Integer getCode() {
-        return code;
-    }
-
-    @JsonProperty("code")
-    public void setCode(Integer code) {
-        this.code = code;
-    }
-
-    @JsonProperty("message")
-    public String getMessage() {
-        return message;
-    }
-
-    @JsonProperty("message")
-    public void setMessage(String message) {
-        this.message = message;
     }
 }
