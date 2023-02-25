@@ -33,6 +33,11 @@ public class ICanHazDadJokeData implements Pojo {
         this.id = id;
     }
 
+    public ICanHazDadJokeData withId(String id) {
+        this.id = id;
+        return this;
+    }
+
     @JsonProperty("joke")
     public String getJoke() {
         return joke;
@@ -41,6 +46,11 @@ public class ICanHazDadJokeData implements Pojo {
     @JsonProperty("joke")
     public void setJoke(String joke) {
         this.joke = joke;
+    }
+
+    public ICanHazDadJokeData withJoke(String joke) {
+        this.joke = joke;
+        return this;
     }
 
     @JsonProperty("status")
