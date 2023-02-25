@@ -148,7 +148,7 @@ public interface DatabaseManager {
      * @param <T>       A {@link Game}
      * @return An {@link Optional} containing game data
      */
-    default <T> Optional<T> getGameData(@NotNull EventBlob blob, String channelId, @NotNull Property.Games games, Function<? super Game<?>, T> mapper) {
+    default <T extends Game<?>> Optional<T> getGameData(@NotNull EventBlob blob, String channelId, @NotNull Property.Games games, Function<? super Game<?>, T> mapper) {
         return getGameData(blob, channelId, games)
             .map(mapper);
     }
