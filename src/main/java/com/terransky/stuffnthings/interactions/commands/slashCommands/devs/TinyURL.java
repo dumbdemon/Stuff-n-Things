@@ -65,7 +65,7 @@ public class TinyURL implements ICommandSlash {
         return new Metadata(getName(), "Create short URLs with TinyURL",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
             Metadata.parseDate("2023-01-06T16:04Z"),
-            Metadata.parseDate("2023-02-23T10:20Z")
+            Metadata.parseDate("2023-02-26T15:14Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "url", "A URL to shorten.", true),
@@ -101,7 +101,7 @@ public class TinyURL implements ICommandSlash {
             if (Config.isTestingMode())
                 embedBuilder.setDescription(String.format("Data Packet Sent%n```json%n%s%n```", requestData));
 
-            switch (shortURLData.getCode()) {
+            switch ((int) (long) shortURLData.getCode()) {
                 case 0 -> {
                     Data urlData = shortURLData.getData();
                     OffsetDateTime createdAt = urlData.getCreatedAtAsDate();
