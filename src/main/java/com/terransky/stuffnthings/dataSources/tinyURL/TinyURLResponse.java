@@ -3,7 +3,7 @@ package com.terransky.stuffnthings.dataSources.tinyURL;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.terransky.stuffnthings.interfaces.Pojo;
+import com.terransky.stuffnthings.dataSources.CodesAndMessages;
 
 import javax.annotation.Generated;
 import java.util.ArrayList;
@@ -16,10 +16,8 @@ import java.util.List;
     "errors"
 })
 @Generated("jsonschema2pojo")
-public class TinyURLResponse implements Pojo {
+public class TinyURLResponse extends CodesAndMessages {
 
-    @JsonProperty("code")
-    int code;
     @JsonProperty("errors")
     List<String> errors = new ArrayList<>();
     @JsonProperty("data")
@@ -33,16 +31,6 @@ public class TinyURLResponse implements Pojo {
     @JsonProperty("data")
     public void setData(Data data) {
         this.data = data;
-    }
-
-    @JsonProperty("code")
-    public int getCode() {
-        return code;
-    }
-
-    @JsonProperty("code")
-    public void setCode(int code) {
-        this.code = code;
     }
 
     @JsonProperty("errors")
