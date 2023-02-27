@@ -2,7 +2,6 @@ package com.terransky.stuffnthings.interfaces.interactions;
 
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
-import com.terransky.stuffnthings.utilities.command.EmbedColors;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -42,10 +41,7 @@ public interface ISlashGame extends ICommandSlash {
     default void execute(@NotNull SlashCommandInteractionEvent event, EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException {
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given");
-        EmbedBuilder response = new EmbedBuilder()
-            .setColor(EmbedColors.getDefault())
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
-            .setTitle(getNameReadable());
+        EmbedBuilder response = blob.getStandardEmbed(getNameReadable());
 
         switch (subcommand) {
             case "new" -> newGame(event, blob, response);

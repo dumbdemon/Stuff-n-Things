@@ -120,7 +120,7 @@ public class Kill implements ICommandSlash {
             Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
             """, Mastermind.USER, CommandCategory.FUN,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-02-21T20:08Z")
+            Metadata.parseDate("2023-02-27T16:27Z")
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),
@@ -139,9 +139,7 @@ public class Kill implements ICommandSlash {
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 
         Random random = new Random(new Date().getTime());
-        EmbedBuilder eb = new EmbedBuilder()
-            .setColor(EmbedColors.getDefault())
-            .setTitle(blob.getMember().getEffectiveName())
+        EmbedBuilder eb = blob.getStandardEmbed(blob.getMember().getEffectiveName())
             .setFooter("Requested by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
 
         switch (subcommand) {

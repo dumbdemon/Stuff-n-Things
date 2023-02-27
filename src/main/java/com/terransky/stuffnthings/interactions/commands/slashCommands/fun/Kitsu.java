@@ -32,7 +32,7 @@ import java.util.List;
 public class Kitsu {
 
     private static OffsetDateTime getGlobalLastUpdated() {
-        return Metadata.parseDate("2023-02-11T13:17Z");
+        return Metadata.parseDate("2023-02-27T16:31Z");
     }
 
     private static Metadata getStandard(String name) {
@@ -60,10 +60,8 @@ public class Kitsu {
     private static <T extends EntryAttributes> MessageEmbed getResponseEmbed(@NotNull T attributes, @NotNull CategoriesKitsuData categories,
                                                                              @NotNull EventBlob blob) {
         AgeRating ageRating = attributes.getAgeRatingEnum();
-        EmbedBuilder builder = new EmbedBuilder()
-            .setColor(EmbedColors.getDefault())
+        EmbedBuilder builder = blob.getStandardEmbed(attributes.getCanonicalTitle(), attributes.getBaseUrl() + attributes.getSlug())
             .setFooter("Requested by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
-            .setTitle(attributes.getCanonicalTitle(), attributes.getBaseUrl() + attributes.getSlug())
             .setDescription(attributes.getSynopsis())
             .setThumbnail(attributes.getPosterImage().getOriginal())
             .addField(":hourglass_flowing_sand: Status", attributes.getStatusEnum().getState(), true)

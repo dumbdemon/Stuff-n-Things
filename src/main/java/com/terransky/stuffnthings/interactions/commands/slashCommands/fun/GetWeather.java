@@ -39,7 +39,7 @@ public class GetWeather implements ICommandSlash {
             If you don't know your country's code, you can use [this website](https://www.iso.org/obp/ui/#search).
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-01T16:27Z"),
-            Metadata.parseDate("2023-02-05T19:19Z")
+            Metadata.parseDate("2023-02-27T16:25Z")
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("by-coordinates", "Get the weather by coordinates.")
@@ -160,10 +160,7 @@ public class GetWeather implements ICommandSlash {
 
         Current current = weatherData.getCurrent();
         DegreeToQuadrant toQuadrant = new DegreeToQuadrant();
-        EmbedBuilder main = new EmbedBuilder()
-            .setColor(EmbedColors.getDefault())
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
-            .setTitle(String.format("Weather for %s", where))
+        EmbedBuilder main = blob.getStandardEmbed(String.format("Weather for %s", where))
             .addField("Timezone", weatherData.getTimezone(), true)
             .addField("Current Time", current.getDtAsTimeStamp(), false)
             .addField("Sunrise", current.getSunriseAsTimeStamp(Timestamp.SHORT_TIME), true)
@@ -202,11 +199,8 @@ public class GetWeather implements ICommandSlash {
 
     @NotNull
     private MessageEmbed getBadUserCodeEmbed(@NotNull EventBlob blob, String userCode) {
-        return new EmbedBuilder()
-            .setTitle(getNameReadable())
+        return blob.getStandardEmbed(getNameReadable(), EmbedColors.getError())
             .setDescription("Country code given was invalid.")
-            .setColor(EmbedColors.getError())
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
             .addField("Given", userCode, false)
             .build();
     }

@@ -50,7 +50,7 @@ public class ConfigCmd implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.ADMIN,
             Metadata.parseDate("2022-08-28T21:46Z"),
-            Metadata.parseDate("2022-02-19T19:01Z")
+            Metadata.parseDate("2023-02-27T16:14Z")
         )
             .addDefaultPerms(Permission.MANAGE_SERVER)
             .addSubcommandGroups(
@@ -109,24 +109,21 @@ public class ConfigCmd implements ICommandSlash {
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException {
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
-        EmbedBuilder eb = new EmbedBuilder()
-            .setColor(EmbedColors.getDefault())
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
 
         switch (subcommand) {
-            case "verbose" -> updateVerbose(event, blob, eb);
-            case "max-kills" -> updateKillMaxKills(event, blob, eb);
-            case "timeout" -> updateKillTimeout(event, blob, eb);
-            case "reporting-channel" -> updateReportingWebhook(event, blob, eb);
-            case "reporting-response" -> updateReportingResponse(event, blob, eb);
-            case "view-flags", "set-flags" -> updateFlags(event, blob, eb, subcommand);
+            case "verbose" -> updateVerbose(event, blob);
+            case "max-kills" -> updateKillMaxKills(event, blob);
+            case "timeout" -> updateKillTimeout(event, blob);
+            case "reporting-channel" -> updateReportingWebhook(event, blob);
+            case "reporting-response" -> updateReportingResponse(event, blob);
+            case "view-flags", "set-flags" -> updateFlags(event, blob, subcommand);
         }
     }
 
-    private void updateVerbose(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull EmbedBuilder eb) {
+    private void updateVerbose(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
         Optional<Boolean> verbose = Optional.ofNullable(event.getOption("do-verbose", OptionMapping::getAsBoolean));
         boolean databaseVerbose = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.VERBOSE, true, PropertyMapping::getAsBoolean);
-        eb.setTitle(getNameReadable() + " - Verbose Iteration");
+        EmbedBuilder eb = blob.getStandardEmbed(getNameReadable() + " - Verbose Iteration");
 
         if (verbose.isEmpty()) {
             event.replyEmbeds(
@@ -152,8 +149,9 @@ public class ConfigCmd implements ICommandSlash {
         ).queue();
     }
 
-    private void updateFlags(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull EmbedBuilder eb, @NotNull String subcommand) {
+    private void updateFlags(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull String subcommand) {
         Flags serverFlags = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.JOKE_FLAGS, new Flags(), PropertyMapping::getAsFlags);
+        EmbedBuilder eb = blob.getStandardEmbed();
 
         if (subcommand.equals("view-flags")) {
             eb.setTitle(getNameReadable() + " - View Joke Flags");
@@ -190,10 +188,10 @@ public class ConfigCmd implements ICommandSlash {
         ).queue();
     }
 
-    private void updateReportingWebhook(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull EmbedBuilder eb) throws IOException, ExecutionException, InterruptedException {
+    private void updateReportingWebhook(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws IOException, ExecutionException, InterruptedException {
         event.deferReply().queue();
         Optional<GuildChannelUnion> channel = Optional.ofNullable(event.getOption("channel", OptionMapping::getAsChannel));
-        eb.setTitle(getNameReadable() + " - Reporting Channel");
+        EmbedBuilder eb = blob.getStandardEmbed(getNameReadable() + " - Reporting Channel");
 
         if (!blob.getSelfMember().hasPermission(Permission.MANAGE_WEBHOOKS)) {
             event.getHook().sendMessageEmbeds(
@@ -246,10 +244,10 @@ public class ConfigCmd implements ICommandSlash {
         ).queue();
     }
 
-    private void updateReportingResponse(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull EmbedBuilder eb) {
+    private void updateReportingResponse(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
         event.deferReply().queue();
         Optional<String> ifResponse = Optional.ofNullable(event.getOption("report-message", OptionMapping::getAsString));
-        eb.setTitle(getNameReadable() + " - Reporting Message");
+        EmbedBuilder eb = blob.getStandardEmbed(getNameReadable() + " - Reporting Message");
 
         if (ifResponse.isEmpty()) {
             String response = DatabaseManager.INSTANCE
@@ -270,12 +268,12 @@ public class ConfigCmd implements ICommandSlash {
         ).queue();
     }
 
-    private void updateKillTimeout(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull EmbedBuilder eb) {
+    private void updateKillTimeout(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
         event.deferReply().queue();
         Optional<Integer> ifNewTimeout = Optional.ofNullable(event.getOption("set-timeout", OptionMapping::getAsInt));
         long oldTimeout = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILLS_TIMEOUT, TimeUnit.MINUTES.toMillis(10), PropertyMapping::getAsLong);
         long oldTimeoutMinutes = TimeUnit.MILLISECONDS.toMinutes(oldTimeout);
-        eb.setTitle(getNameReadable() + " - Kill Timeout");
+        EmbedBuilder eb = blob.getStandardEmbed(getNameReadable() + " - Kill Timeout");
 
         if (ifNewTimeout.isEmpty()) {
             event.getHook().sendMessageEmbeds(
@@ -309,11 +307,11 @@ public class ConfigCmd implements ICommandSlash {
         event.getHook().sendMessageEmbeds(eb.build()).queue();
     }
 
-    private void updateKillMaxKills(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull EmbedBuilder eb) {
+    private void updateKillMaxKills(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
         event.deferReply().queue();
         Optional<Long> ifNewMax = Optional.ofNullable(event.getOption("set-max", OptionMapping::getAsLong));
         long oldMax = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILLS_MAX, 5L, PropertyMapping::getAsLong);
-        eb.setTitle(getNameReadable() + " - Max Kills");
+        EmbedBuilder eb = blob.getStandardEmbed(getNameReadable() + " - Max Kills");
 
         if (ifNewMax.isEmpty()) {
             event.getHook().sendMessageEmbeds(

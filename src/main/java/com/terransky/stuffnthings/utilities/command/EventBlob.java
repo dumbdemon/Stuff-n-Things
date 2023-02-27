@@ -2,11 +2,14 @@ package com.terransky.stuffnthings.utilities.command;
 
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.IInteraction;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import org.jetbrains.annotations.Contract;
 
+import java.awt.*;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -194,6 +197,36 @@ public class EventBlob {
     public EventBlob setChannelUnion(MessageChannelUnion channelUnion) {
         this.channelUnion = channelUnion;
         return this;
+    }
+
+    public EmbedBuilder getStandardEmbed() {
+        return new EmbedBuilder()
+            .setTimestamp(OffsetDateTime.now())
+            .setFooter(getMemberAsTag(), getMemberEffectiveAvatarUrl());
+    }
+
+    public EmbedBuilder getStandardEmbed(Color color) {
+        return getStandardEmbed()
+            .setColor(color);
+    }
+
+    public EmbedBuilder getStandardEmbed(String embedTitle, String url) {
+        return getStandardEmbed()
+            .setTitle(embedTitle, url);
+    }
+
+    public EmbedBuilder getStandardEmbed(String embedTitle, String url, Color color) {
+        return getStandardEmbed(color)
+            .setTitle(embedTitle, url);
+    }
+
+    public EmbedBuilder getStandardEmbed(String embedTitle) {
+        return getStandardEmbed(embedTitle, EmbedColors.getDefault());
+    }
+
+    public EmbedBuilder getStandardEmbed(String embedTitle, Color color) {
+        return getStandardEmbed(color)
+            .setTitle(embedTitle);
     }
 
     @Override

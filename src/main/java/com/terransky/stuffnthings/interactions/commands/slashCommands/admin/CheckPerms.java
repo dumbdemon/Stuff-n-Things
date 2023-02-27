@@ -65,7 +65,7 @@ public class CheckPerms implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.ADMIN,
             Metadata.parseDate("2022-08-30T16:14Z"),
-            Metadata.parseDate("2023-01-27T21:38Z")
+            Metadata.parseDate("2023-02-27T16:05Z")
         )
             .addDefaultPerms(Permission.MANAGE_ROLES)
             .addSubcommands(
@@ -93,10 +93,7 @@ public class CheckPerms implements ICommandSlash {
         }
 
         List<Permission> doNotHaveThis = new ArrayList<>(getRequiredPerms().stream().filter(permission -> !myPerms.contains(permission)).toList());
-        EmbedBuilder eb = new EmbedBuilder()
-            .setColor(EmbedColors.getDefault())
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
-            .setTitle("Permission Checker");
+        EmbedBuilder eb = blob.getStandardEmbed("Permission Checker");
 
         boolean ifToCheck = toCheck != null,
             adminCheck = doNotHaveThis.size() == 1 && doNotHaveThis.stream().anyMatch(permission -> permission.equals(Permission.ADMINISTRATOR));

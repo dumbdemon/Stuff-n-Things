@@ -2,7 +2,10 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.devs;
 
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
-import com.terransky.stuffnthings.utilities.command.*;
+import com.terransky.stuffnthings.utilities.command.CommandCategory;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.Mastermind;
+import com.terransky.stuffnthings.utilities.command.Metadata;
 import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -100,9 +103,7 @@ public class UserInfo implements ICommandSlash {
         String permissionStatus = setPermissionStatus(member);
         String userPerms = setUserPerms(member);
 
-        EmbedBuilder eb = new EmbedBuilder()
-            .setColor(EmbedColors.getDefault())
-            .setTitle(WordUtils.capitalize(member.getEffectiveName()) + "'s Info")
+        EmbedBuilder eb = blob.getStandardEmbed(WordUtils.capitalize(member.getEffectiveName()) + "'s Info")
             .setThumbnail(member.getEffectiveAvatarUrl())
             .addField("User ID", memberId, false)
             .addField("User Status", permissionStatus, false)

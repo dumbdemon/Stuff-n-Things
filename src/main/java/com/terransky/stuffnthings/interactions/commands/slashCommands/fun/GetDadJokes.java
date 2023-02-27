@@ -4,8 +4,10 @@ import com.terransky.stuffnthings.dataSources.icanhazdadjoke.ICanHazDadJokeData;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.apiHandlers.ICanHazDadJokeHandler;
-import com.terransky.stuffnthings.utilities.command.*;
-import net.dv8tion.jda.api.EmbedBuilder;
+import com.terransky.stuffnthings.utilities.command.CommandCategory;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.Mastermind;
+import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -32,7 +34,7 @@ public class GetDadJokes implements ICommandSlash {
             """, Mastermind.USER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-08-25T20:53Z"),
-            Metadata.parseDate("2023-01-21T16:05Z")
+            Metadata.parseDate("2023-02-27T16:22Z")
         );
     }
 
@@ -40,9 +42,8 @@ public class GetDadJokes implements ICommandSlash {
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         ICanHazDadJokeData theJoke = new ICanHazDadJokeHandler().getDadJoke();
 
-        event.replyEmbeds(new EmbedBuilder()
+        event.replyEmbeds(blob.getStandardEmbed()
             .setDescription(theJoke.getJoke())
-            .setColor(EmbedColors.getDefault())
             .setFooter("Requested by %s | ID #%s".formatted(blob.getMemberAsTag(), theJoke.getId()))
             .build()
         ).addActionRow(

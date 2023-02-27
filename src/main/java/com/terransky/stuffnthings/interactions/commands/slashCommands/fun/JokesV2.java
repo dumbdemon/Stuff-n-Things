@@ -85,9 +85,7 @@ public class JokesV2 implements ICommandSlash {
         JokeSubmitForm submitForm = new JokeSubmitForm(3, category, event.getSubcommandName(), joke, setup, delivery, newFlags, lang);
 
         JokeSubmitResponse response = handler.submitJoke(submitForm);
-        EmbedBuilder reply = new EmbedBuilder()
-            .setTitle("Joke Submission")
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+        EmbedBuilder reply = blob.getStandardEmbed("Joke Submission")
             .setDescription(response.getMessage());
 
         if (response.getError()) {
@@ -159,7 +157,7 @@ public class JokesV2 implements ICommandSlash {
             Admins can use `/config jokes` to limit the specifiers.
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-06T18:34Z"),
-            Metadata.parseDate("2023-02-23T10:35Z")
+            Metadata.parseDate("2023-02-27T16:26Z")
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("get", "Get a random joke.")
@@ -187,10 +185,7 @@ public class JokesV2 implements ICommandSlash {
         if (Config.isTestingMode()) LoggerFactory.getLogger(JokesV2.class).debug(URL);
         ObjectMapper mapper = new ObjectMapper();
         JokeAPI theJoke = mapper.readValue(jokeApi, JokeAPI.class);
-        EmbedBuilder comedian = new EmbedBuilder()
-            .setTitle(getNameReadable())
-            .setColor(EmbedColors.getDefault())
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
+        EmbedBuilder comedian = blob.getStandardEmbed(getNameReadable());
 
         if (theJoke.getError()) {
             StringBuilder message = new StringBuilder(theJoke.getMessage());

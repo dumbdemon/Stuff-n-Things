@@ -110,6 +110,16 @@ public class Metadata implements Comparable<Metadata> {
     }
 
     /**
+     * Obtains the current date-time from the system clock in the default time-zone.
+     *
+     * @return the current date-time using the system clock, not null
+     */
+    @NotNull
+    public static OffsetDateTime now() {
+        return OffsetDateTime.now();
+    }
+
+    /**
      * A temporary {@link Metadata} object for new commands.
      *
      * @return A constructed {@link Metadata} object

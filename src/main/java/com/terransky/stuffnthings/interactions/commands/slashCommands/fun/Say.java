@@ -2,7 +2,10 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
-import com.terransky.stuffnthings.utilities.command.*;
+import com.terransky.stuffnthings.utilities.command.CommandCategory;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.Mastermind;
+import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -29,7 +32,7 @@ public class Say implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2022-12-21T20:03Z")
+            Metadata.parseDate("2023-02-27T16:37Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "message", "The message you want sent.", true),
@@ -40,8 +43,7 @@ public class Say implements ICommandSlash {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
-        EmbedBuilder eb = new EmbedBuilder()
-            .setColor(EmbedColors.getDefault());
+        EmbedBuilder eb = blob.getStandardEmbed();
 
         String message = event.getOption("message", OptionMapping::getAsString);
         MessageChannel channel = (MessageChannel) event.getOption("channel", event.getChannel().asGuildMessageChannel(), OptionMapping::getAsChannel);

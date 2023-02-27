@@ -33,7 +33,7 @@ public class ChannelUnLock implements ICommandSlash {
         return new Metadata(this.getName(), "Lock or unlock a channel for everyone or from a specific role to see.",
             Mastermind.DEVELOPER, CommandCategory.ADMIN,
             Metadata.parseDate("2022-11-23T18:34Z"),
-            Metadata.parseDate("2023-01-21T16:05Z")
+            Metadata.parseDate("2023-02-27T16:05Z")
         )
             .addDefaultPerms(Permission.MANAGE_CHANNEL)
             .addSubcommands(
@@ -61,10 +61,7 @@ public class ChannelUnLock implements ICommandSlash {
         GuildChannel targetChannel = event.getOption("target-channel", event.getGuildChannel(), OptionMapping::getAsChannel);
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
-        EmbedBuilder response = new EmbedBuilder()
-            .setTitle("Channel Control - " + WordUtils.capitalize(subcommand))
-            .setColor(EmbedColors.getDefault())
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
+        EmbedBuilder response = blob.getStandardEmbed("Channel Control - " + WordUtils.capitalize(subcommand));
 
         try {
             ChannelPermsController permsController = new ChannelPermsController(targetChannel);

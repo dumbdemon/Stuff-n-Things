@@ -5,7 +5,10 @@ import com.terransky.stuffnthings.dataSources.NumbersAPI.NumbersAPIData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
-import com.terransky.stuffnthings.utilities.command.*;
+import com.terransky.stuffnthings.utilities.command.CommandCategory;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.Mastermind;
+import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -62,7 +65,7 @@ public class NumbersAPI implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.MATHS,
             Metadata.parseDate("2022-11-10T20:45Z"),
-            Metadata.parseDate("2023-01-21T16:05Z")
+            Metadata.parseDate("2023-02-27T16:41Z")
         )
             .addSubcommands(
                 new SubcommandData("number", "A fact about a number.")
@@ -87,9 +90,7 @@ public class NumbersAPI implements ICommandSlash {
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given");
         String theUrl = "http://numbersapi.com/";
-        EmbedBuilder response = new EmbedBuilder()
-            .setColor(EmbedColors.getDefault())
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
+        EmbedBuilder response = blob.getStandardEmbed();
 
         switch (subcommand) {
             case "number" -> apiNumber(event, theUrl, response);

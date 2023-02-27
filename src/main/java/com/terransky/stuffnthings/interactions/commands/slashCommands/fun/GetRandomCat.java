@@ -40,7 +40,7 @@ public class GetRandomCat implements ICommandSlash {
         return new Metadata(getName(), "Get a random image of a cat",
             Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-09T13:17Z"),
-            Metadata.parseDate("2023-02-09T15:31Z")
+            Metadata.parseDate("2023-02-27T16:23Z")
         )
             .addOptions(
                 new OptionData(OptionType.BOOLEAN, "gif", "Whether not you just want gifs."),
@@ -64,10 +64,7 @@ public class GetRandomCat implements ICommandSlash {
         Optional<String> says = Optional.ofNullable(event.getOption("says", OptionMapping::getAsString));
         Optional<String> filter = Optional.ofNullable(event.getOption("filter", OptionMapping::getAsString));
         String baseURL = "https://cataas.com";
-        EmbedBuilder response = new EmbedBuilder()
-            .setTitle(getNameReadable())
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
-            .setColor(EmbedColors.getDefault());
+        EmbedBuilder response = blob.getStandardEmbed(getNameReadable());
         ObjectMapper mapper = new ObjectMapper();
 
         String url = baseURL + "/c" +

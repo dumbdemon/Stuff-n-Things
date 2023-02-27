@@ -35,16 +35,14 @@ public class UpsertKitsuToken implements ICommandSlash {
         return new Metadata(getName(), "Upsert the Authorization token for `Kitsu.io`.",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
             Metadata.parseDate("2023-01-16T13:00Z"),
-            Metadata.parseDate("2023-01-17T11:48Z")
+            Metadata.parseDate("2023-02-27T16:17Z")
         );
     }
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         boolean isObtained = KitsuHandler.upsertAuthorizationToken();
-        EmbedBuilder builder = new EmbedBuilder()
-            .setTitle(getNameReadable())
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
+        EmbedBuilder builder = blob.getStandardEmbed(getNameReadable());
 
         if (!isObtained) {
             event.replyEmbeds(

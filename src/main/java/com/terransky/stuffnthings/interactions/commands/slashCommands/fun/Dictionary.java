@@ -147,7 +147,7 @@ public class Dictionary implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-10-27T12:46Z"),
-            Metadata.parseDate("2023-01-21T16:05Z")
+            Metadata.parseDate("2023-02-27T16:21Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "word", "The word to look up.", true),
@@ -161,11 +161,8 @@ public class Dictionary implements ICommandSlash {
         event.deferReply().queue();
         String[] userWords = event.getOption("word", "", OptionMapping::getAsString).split(" ");
         Config.Credentials credentials = Config.Credentials.OXFORD;
-        EmbedBuilder eb = new EmbedBuilder()
-            .setTitle(getNameReadable())
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
-            .setImage("https://languages.oup.com/wp-content/uploads/ol-logo-colour-300px-sfw.jpg")
-            .setColor(EmbedColors.getDefault());
+        EmbedBuilder eb = blob.getStandardEmbed(getNameReadable())
+            .setImage("https://languages.oup.com/wp-content/uploads/ol-logo-colour-300px-sfw.jpg");
         if (userWords.length > 1) {
             event.getHook().sendMessageEmbeds(
                 eb.setDescription("Only one word can be looked up at one time. Please try again.")

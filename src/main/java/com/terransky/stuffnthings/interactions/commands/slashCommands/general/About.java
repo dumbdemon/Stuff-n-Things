@@ -58,7 +58,7 @@ public class About implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.GENERAL,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-02-11T18:48Z")
+            Metadata.parseDate("2023-02-27T16:38Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "command-one", "Get more info on a Command.")
@@ -106,8 +106,7 @@ public class About implements ICommandSlash {
         userCount = DatabaseManager.INSTANCE.getUserCount(event.getJDA());
 
         event.getHook().sendMessageEmbeds(
-            new EmbedBuilder()
-                .setColor(EmbedColors.getDefault())
+            blob.getStandardEmbed(event.getJDA().getSelfUser().getName(), Config.getRepositoryURL())
                 .setDescription("""
                     > *Who am I?*
                     I am %s
@@ -116,7 +115,6 @@ public class About implements ICommandSlash {
                     > *I think I need help...*
                     [Then get some](%s)
                     """.formatted(event.getJDA().getSelfUser().getAsMention(), Config.getSupportGuildInvite()))
-                .setTitle(event.getJDA().getSelfUser().getName(), Config.getRepositoryURL())
                 .setThumbnail(Config.getBotLogoURL())
                 .addField("Servers", String.format("%d servers", guildCount), true)
                 .addField("Users" + serviced, String.format("%s user%s", userCount, userCount > 1 ? "s" : ""), true)

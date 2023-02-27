@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -114,7 +113,7 @@ public class ColorInfo implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-09-20T12:10Z"),
-            Metadata.parseDate("2023-02-21T17:41Z")
+            Metadata.parseDate("2023-02-27T16:45Z")
         )
             .addSubcommands(
                 new SubcommandData("hex-triplet", "Get more info on a hex triplet. EX: #663366")
@@ -149,9 +148,7 @@ public class ColorInfo implements ICommandSlash {
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         DecimalFormat hsb = new DecimalFormat("##.##%");
         String subcommand = event.getSubcommandName();
-        EmbedBuilder eb = new EmbedBuilder()
-            .setTitle(WordUtils.capitalize(this.getName().replace("-", " ")))
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
+        EmbedBuilder eb = blob.getStandardEmbed(getNameReadable());
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 
         switch (subcommand) {
@@ -165,28 +162,7 @@ public class ColorInfo implements ICommandSlash {
         String hexCode = event.getOption("triplet", "#636", OptionMapping::getAsString);
         Matcher matcher = pHexTriplet.matcher(hexCode);
 
-        if (matcher.matches()) {
-            char pound = '#';
-            Color color;
-            if (hexCode.length() == 3 || hexCode.length() == 4) {
-                int offset = 0;
-                if (hexCode.charAt(0) == pound) offset++;
-                String R = String.valueOf(hexCode.charAt(offset));
-                String G = String.valueOf(hexCode.charAt(1 + offset));
-                String B = String.valueOf(hexCode.charAt(2 + offset));
-                color = Color.decode("#" + R + R + G + G + B + B);
-            } else if (hexCode.length() == 6) {
-                color = Color.decode('#' + hexCode);
-            } else color = Color.decode(hexCode);
-
-            int[] rgb = new int[]{
-                color.getRed(),
-                color.getGreen(),
-                color.getBlue()
-            };
-
-            event.replyEmbeds(runResponse(hsb, eb, rgbToCmyk(rgb), rgb)).queue();
-        } else {
+        if (!matcher.matches()) {
             DecimalFormat format = new DecimalFormat("##,###");
             eb.setTitle("Invalid Hex Triplet!")
                 .setDescription(String.format("""
@@ -201,6 +177,28 @@ public class ColorInfo implements ICommandSlash {
                 .setColor(EmbedColors.getError())
                 .addField("Provided", hexCode.toUpperCase(), false);
             event.replyEmbeds(eb.build()).setEphemeral(true).queue();
+            return;
         }
+
+        char pound = '#';
+        Color color;
+        if (hexCode.length() == 3 || hexCode.length() == 4) {
+            int offset = 0;
+            if (hexCode.charAt(0) == pound) offset++;
+            String R = String.valueOf(hexCode.charAt(offset));
+            String G = String.valueOf(hexCode.charAt(1 + offset));
+            String B = String.valueOf(hexCode.charAt(2 + offset));
+            color = Color.decode("#" + R + R + G + G + B + B);
+        } else if (hexCode.length() == 6) {
+            color = Color.decode('#' + hexCode);
+        } else color = Color.decode(hexCode);
+
+        int[] rgb = new int[]{
+            color.getRed(),
+            color.getGreen(),
+            color.getBlue()
+        };
+
+        event.replyEmbeds(runResponse(hsb, eb, rgbToCmyk(rgb), rgb)).queue();
     }
 }

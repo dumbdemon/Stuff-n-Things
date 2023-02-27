@@ -51,6 +51,7 @@ public class Managers {
         new ColorInfo(),
         new CypherCmd(),
         new Dictionary(),
+        new EightBall(),
         new GetDadJokes(),
         new GetRandomCat(),
         new GetRandomDog(),

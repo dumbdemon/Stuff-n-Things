@@ -2,8 +2,10 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.general;
 
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
-import com.terransky.stuffnthings.utilities.command.*;
-import net.dv8tion.jda.api.EmbedBuilder;
+import com.terransky.stuffnthings.utilities.command.CommandCategory;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.Mastermind;
+import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +25,7 @@ public class Ping implements ICommandSlash {
             """, Mastermind.DEFAULT,
             CommandCategory.GENERAL,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2022-12-30T16:44Z")
+            Metadata.parseDate("2023-02-27T16:39Z")
         );
     }
 
@@ -31,9 +33,7 @@ public class Ping implements ICommandSlash {
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         JDA jda = event.getJDA();
         jda.getRestPing().queue(ping -> event.replyEmbeds(
-            new EmbedBuilder()
-                .setColor(EmbedColors.getDefault())
-                .setTitle(String.format("Ping Info [Shard %s]", jda.getShardInfo().getShardId()))
+            blob.getStandardEmbed(String.format("Ping Info [Shard %s]", jda.getShardInfo().getShardId()))
                 .setFooter("Requested by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
                 .addField("Rest Ping", ping + "ms", true)
                 .addField("Web Socket Ping", jda.getGatewayPing() + "ms", true)

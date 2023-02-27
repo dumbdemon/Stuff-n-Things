@@ -83,7 +83,7 @@ public class WhatsInStandard implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.MTG,
             Metadata.parseDate("2022-10-27T12:46Z"),
-            Metadata.parseDate("2023-02-05T13:44Z")
+            Metadata.parseDate("2023-02-27T16:43Z")
         )
             .addSubcommands(
                 new SubcommandData("all", "Get all info about the standard format."),
@@ -97,9 +97,7 @@ public class WhatsInStandard implements ICommandSlash {
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         event.deferReply().queue();
-        EmbedBuilder eb = new EmbedBuilder()
-            .setTitle("What's in standard?")
-            .setColor(EmbedColors.getDefault());
+        EmbedBuilder eb = blob.getStandardEmbed("What's in standard?");
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand received");
         int version = 6;

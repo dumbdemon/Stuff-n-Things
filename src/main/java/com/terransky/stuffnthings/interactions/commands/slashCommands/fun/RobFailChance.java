@@ -2,7 +2,10 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
-import com.terransky.stuffnthings.utilities.command.*;
+import com.terransky.stuffnthings.utilities.command.CommandCategory;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.Mastermind;
+import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -30,7 +33,7 @@ public class RobFailChance implements ICommandSlash {
             """.formatted(uBoatInvite), Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2022-12-21T20:02Z")
+            Metadata.parseDate("2023-02-27T16:37Z")
         )
             .addOptions(
                 new OptionData(OptionType.INTEGER, "your-net-worth", "Your net-worth.", true),
@@ -40,15 +43,13 @@ public class RobFailChance implements ICommandSlash {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
-        EmbedBuilder eb = new EmbedBuilder()
-            .setColor(EmbedColors.getDefault());
         DecimalFormat largeNumber = new DecimalFormat("##,###");
 
         double yourNetWorth = event.getOption("your-net-worth", 0d, OptionMapping::getAsDouble),
             theirCash = event.getOption("their-cash", 0d, OptionMapping::getAsDouble);
         String failChance = String.format("%.2f", (yourNetWorth / (theirCash + yourNetWorth)) * 100) + "%";
 
-        eb.setAuthor("Your chance to fail is...")
+        EmbedBuilder eb = blob.getStandardEmbed("Your chance to fail is...")
             .addField("Your Net-Worth", largeNumber.format(yourNetWorth), true)
             .addField("Their Cash", largeNumber.format(theirCash), true)
             .addField("Failure Chance", failChance, true);

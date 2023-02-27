@@ -65,7 +65,7 @@ public class TinyURL implements ICommandSlash {
         return new Metadata(getName(), "Create short URLs with TinyURL",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
             Metadata.parseDate("2023-01-06T16:04Z"),
-            Metadata.parseDate("2023-02-26T15:14Z")
+            Metadata.parseDate("2023-02-27T16:16Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "url", "A URL to shorten.", true),
@@ -85,10 +85,7 @@ public class TinyURL implements ICommandSlash {
         TinyURLLimits.Domain domain = TinyURLLimits.Domain.getDomainByKey(event.getOption("domain", 0, OptionMapping::getAsInt));
 
         String url = ifUrl.orElseThrow(DiscordAPIException::new);
-        EmbedBuilder embedBuilder = new EmbedBuilder()
-            .setTitle(getNameReadable())
-            .setColor(EmbedColors.getDefault())
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
+        EmbedBuilder embedBuilder = blob.getStandardEmbed(getNameReadable());
 
         try {
             TinyURLHandler tinyURLHandler = new TinyURLHandler(url);

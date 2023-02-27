@@ -2,7 +2,10 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.maths;
 
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
-import com.terransky.stuffnthings.utilities.command.*;
+import com.terransky.stuffnthings.utilities.command.CommandCategory;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.Mastermind;
+import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -27,7 +30,7 @@ public class SolveQuadratic implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.MATHS,
             Metadata.parseDate("2022-11-19T13:09Z"),
-            Metadata.parseDate("2023-01-12T20:52Z")
+            Metadata.parseDate("2023-02-27T16:42Z")
         )
             .addOptions(
                 new OptionData(OptionType.NUMBER, "value-a", "A value of Quadratic Formula"),
@@ -38,9 +41,7 @@ public class SolveQuadratic implements ICommandSlash {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
-        EmbedBuilder eb = new EmbedBuilder()
-            .setTitle(WordUtils.capitalize(getName().replace("-", " ")))
-            .setColor(EmbedColors.getDefault());
+        EmbedBuilder eb = blob.getStandardEmbed(WordUtils.capitalize(getName().replace("-", " ")));
         DecimalFormat prettyNum = new DecimalFormat("#.##");
 
         double a = event.getOption("value-a", 1.0, OptionMapping::getAsDouble);

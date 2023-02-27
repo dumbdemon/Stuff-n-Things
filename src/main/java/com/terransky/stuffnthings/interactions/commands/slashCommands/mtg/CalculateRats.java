@@ -46,9 +46,7 @@ public class CalculateRats implements ICommandSlash {
         float triggers = event.getOption("triggers", 100, OptionMapping::getAsInt);
         float finalCNT = startCNT;
         DecimalFormat largeNumber = new DecimalFormat("##,###");
-        EmbedBuilder eb = new EmbedBuilder()
-            .setColor(EmbedColors.getDefault())
-            .setTitle("Is there enough rats?")
+        EmbedBuilder eb = blob.getStandardEmbed("Is there enough rats?")
             .addField("Starting total", "%s rats".formatted(largeNumber.format(startCNT)), true)
             .addField("Iterations", "%s triggers".formatted(largeNumber.format(triggers)), true)
             .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());

@@ -35,7 +35,7 @@ public class FibonacciSequence implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.MATHS,
             Metadata.parseDate("2022-11-11T20:50Z"),
-            Metadata.parseDate("2022-12-29T10:14Z")
+            Metadata.parseDate("2023-02-27T16:40Z")
         )
             .addSubcommands(
                 new SubcommandData("at-nth", "Get a specific value.")
@@ -57,10 +57,7 @@ public class FibonacciSequence implements ICommandSlash {
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 
         int nth = event.getOption("nth", 3, OptionMapping::getAsInt);
-        EmbedBuilder eb = new EmbedBuilder()
-            .setTitle(getNameReadable())
-            .setColor(EmbedColors.getDefault())
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
+        EmbedBuilder eb = blob.getStandardEmbed(getNameReadable());
         MessageEditData messageEditData;
 
         fibonacciCache = new float[nth + 1];

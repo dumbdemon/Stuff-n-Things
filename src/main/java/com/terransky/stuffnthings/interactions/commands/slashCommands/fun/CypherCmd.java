@@ -2,7 +2,10 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
-import com.terransky.stuffnthings.utilities.command.*;
+import com.terransky.stuffnthings.utilities.command.CommandCategory;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.Mastermind;
+import com.terransky.stuffnthings.utilities.command.Metadata;
 import com.terransky.stuffnthings.utilities.cyphers.Base64Cypher;
 import com.terransky.stuffnthings.utilities.cyphers.ReverseCypher;
 import com.terransky.stuffnthings.utilities.cyphers.Rot13Cypher;
@@ -53,7 +56,7 @@ public class CypherCmd implements ICommandSlash {
             ```
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-05T14:41Z"),
-            Metadata.parseDate("2023-02-04T12:00Z")
+            Metadata.parseDate("2023-02-27T16:20Z")
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("base64", "Base64 Cypher")
@@ -73,10 +76,8 @@ public class CypherCmd implements ICommandSlash {
         String loremIpsum = "pulvinar mattis nunc sed blandit libero volutpat sed cras ornare arcu dui vivamus arcu felis" +
             " bibendum ut tristique et egestas quis ipsum suspendisse ultrices gravida dictum fusce ut placerat orci";
         String message = event.getOption("message", loremIpsum, OptionMapping::getAsString);
-        EmbedBuilder response = new EmbedBuilder()
-            .setTitle(String.format("%s - %s %s", getNameReadable(), WordUtils.capitalize(cypher), isEncode ? " Encode" : " Decode"))
-            .setColor(EmbedColors.getDefault())
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
+        EmbedBuilder response =
+            blob.getStandardEmbed(String.format("%s - %s %s", getNameReadable(), WordUtils.capitalize(cypher), isEncode ? " Encode" : " Decode"));
         String enDecodedString;
 
         switch (cypher) {
