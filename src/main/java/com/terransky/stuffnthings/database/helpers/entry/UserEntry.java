@@ -18,6 +18,10 @@ public class UserEntry {
     private String idReference;
     @BsonProperty("killLocks")
     private List<PerServer> perServers;
+    @BsonProperty("isBotBan")
+    private Boolean botBanned;
+    @BsonProperty("isSupportGuildBan")
+    private Boolean supportGuildBan;
 
     /**
      * No-args constructor for Mongo Driver
@@ -55,6 +59,26 @@ public class UserEntry {
         this.perServers = List.copyOf(perServers);
     }
 
+    @BsonProperty("isBotBan")
+    public Boolean getBotBanned() {
+        return botBanned;
+    }
+
+    @BsonProperty("isBotBan")
+    public void setBotBanned(Boolean botBanned) {
+        this.botBanned = botBanned;
+    }
+
+    @BsonProperty("isSupportGuildBan")
+    public Boolean getSupportGuildBan() {
+        return supportGuildBan;
+    }
+
+    @BsonProperty("isSupportGuildBan")
+    public void setSupportGuildBan(Boolean supportGuildBan) {
+        this.supportGuildBan = supportGuildBan;
+    }
+
     @BsonIgnore
     public static UserEntry asUserEntry(Object entry) {
         if (entry instanceof UserEntry userEntry)
@@ -78,6 +102,12 @@ public class UserEntry {
             case KILL_END_DATE -> {
                 return perServers.stream().filter(isItThisOne).findFirst()
                     .map(PerServer::getKillEndTimeAsDate);
+            }
+            case BOT_BAN -> {
+                return Optional.ofNullable(botBanned);
+            }
+            case SUPPORT_BAN -> {
+                return Optional.ofNullable(supportGuildBan);
             }
             case PER_SERVER ->
                 throw new IllegalArgumentException(String.format("%S is not intended to be called.", property));

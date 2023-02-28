@@ -26,6 +26,7 @@ import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.Formatter;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
@@ -506,6 +507,55 @@ public class MongoDBDataSource implements DatabaseManager {
         ifAnErrorOccurs(String.format("A user's %s was removed from the database", THAT_NAME),
             String.format("Unable to remove a user's %s from the database", THAT_NAME),
             updater.await(2, TimeUnit.MINUTES).getError());
+    }
+
+    @Override
+    public boolean botBan(@NotNull User user, boolean isSupportGuildBan) {
+        MongoCollection<UserEntry> users = getUsers();
+        var finder = getSubscriber(users, Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), user.getId()));
+
+        if (finder.await().hasError()) throw finder.getError();
+
+        UserEntry userEntry = finder.first().orElse(new UserEntry(user.getId()));
+        if (userEntry.getBotBanned() || userEntry.getSupportGuildBan())
+            return true;
+
+        if (isSupportGuildBan)
+            userEntry.setSupportGuildBan(true);
+        else
+            userEntry.setBotBanned(true);
+
+        if (finder.first().isEmpty()) {
+            var inserter = new ObjectSubscriber<InsertOneResult>();
+            users.insertOne(userEntry).subscribe(inserter);
+            return inserter.hasNoError(getClass(), String.format("Failed to insert user with id %s", user.getId()));
+        }
+
+        var updater = new ObjectSubscriber<UpdateResult>();
+        userEntry.setPerServers(new ArrayList<>());
+
+        users.replaceOne(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), user.getId()), userEntry)
+            .subscribe(updater);
+        return updater.hasNoError(getClass(), String.format("Failed to replace entry for user with id %s", user.getId()));
+    }
+
+    @Override
+    public void removeBotBan(@NotNull User user) {
+        MongoCollection<UserEntry> users = getUsers();
+        var finder = getSubscriber(users, Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), user.getId()));
+
+        if (finder.await().hasError()) throw finder.getError();
+
+        UserEntry userEntry = finder.first().orElse(new UserEntry(user.getId()));
+        if (userEntry.getBotBanned())
+            return;
+
+        var updater = new ObjectSubscriber<UpdateResult>();
+        userEntry.setSupportGuildBan(false);
+
+        users.replaceOne(Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), user.getId()), userEntry)
+            .subscribe(updater);
+        updater.hasError(getClass(), String.format("Failed to replace entry for user with id %s", user.getId()));
     }
 
     @Override

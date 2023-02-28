@@ -104,6 +104,7 @@ public class InteractionListener extends ListenerAdapter {
             .setInteractionType(IInteraction.Type.COMMAND_SLASH)
             .setChannelUnion(event.getChannel());
         if (Config.isDatabaseEnabled()) DatabaseManager.INSTANCE.addUser(blob);
+        if (DatabaseManager.INSTANCE.isBanned(blob)) return;
 
         ICommandSlash slash = ifSlash.get();
         log.debug("Command {} called on {} [{}]", slash.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
@@ -141,6 +142,7 @@ public class InteractionListener extends ListenerAdapter {
             .setInteractionType(IInteraction.Type.COMMAND_MESSAGE)
             .setChannelUnion(event.getChannel());
         if (Config.isDatabaseEnabled()) DatabaseManager.INSTANCE.addUser(blob);
+        if (DatabaseManager.INSTANCE.isBanned(blob)) return;
 
         ICommandMessage commandMessage = ifMenu.get();
         log.debug("Command \"{}\" called on {} [{}]", commandMessage.getName().toUpperCase(), blob.getGuild().getName(), blob.getGuildIdLong());
@@ -176,6 +178,7 @@ public class InteractionListener extends ListenerAdapter {
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
             .setInteractionType(IInteraction.Type.COMMAND_USER);
         if (Config.isDatabaseEnabled()) DatabaseManager.INSTANCE.addUser(blob);
+        if (DatabaseManager.INSTANCE.isBanned(blob)) return;
 
         ICommandUser commandUser = ifMenu.get();
         log.debug("Command \"{}\" called on {} [{}]", commandUser.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
@@ -212,6 +215,7 @@ public class InteractionListener extends ListenerAdapter {
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
             .setInteractionType(IInteraction.Type.BUTTON)
             .setChannelUnion(event.getChannel());
+        if (DatabaseManager.INSTANCE.isBanned(blob)) return;
 
         IButton iButton = ifButton.get();
         log.debug("Button {} called on {} [{}]", iButton.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
@@ -236,6 +240,7 @@ public class InteractionListener extends ListenerAdapter {
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
             .setInteractionType(IInteraction.Type.SELECTION_ENTITY)
             .setChannelUnion(event.getChannel());
+        if (DatabaseManager.INSTANCE.isBanned(blob)) return;
         ISelectMenuEntity menu = ifMenu.get();
         log.debug("Select Menu {} called on {} [{}]", menu.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
         try {
@@ -259,6 +264,7 @@ public class InteractionListener extends ListenerAdapter {
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
             .setInteractionType(IInteraction.Type.MODAL)
             .setChannelUnion(event.getChannel());
+        if (DatabaseManager.INSTANCE.isBanned(blob)) return;
         IModal modal = ifModal.get();
         log.debug("Modal {} called on {} [{}]", modal.getName().toUpperCase(), blob.getGuild().getName(), blob.getGuildIdLong());
         try {
@@ -290,6 +296,7 @@ public class InteractionListener extends ListenerAdapter {
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
             .setInteractionType(IInteraction.Type.SELECTION_STRING)
             .setChannelUnion(event.getChannel());
+        if (DatabaseManager.INSTANCE.isBanned(blob)) return;
 
         for (ISelectMenuString stringMenu : menus) {
             String interactionName = "%s[%s]".formatted(componentId.toUpperCase(), stringMenu.getName().toUpperCase());

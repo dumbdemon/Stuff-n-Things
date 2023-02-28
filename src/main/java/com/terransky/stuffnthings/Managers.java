@@ -72,6 +72,7 @@ public class Managers {
 
         //Dev commands
         new AddToWatchlist(),
+        new BotBan(),
         new GetInvite(),
         new Test(),
         new TinyURL(),

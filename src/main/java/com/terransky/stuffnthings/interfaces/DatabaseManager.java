@@ -11,6 +11,7 @@ import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -188,6 +189,17 @@ public interface DatabaseManager {
      * @param guild  The guild for the target user table
      */
     void removeUser(String userId, Guild guild);
+
+    boolean botBan(@NotNull User user, boolean isSupportGuildBan);
+
+    void removeBotBan(@NotNull User user);
+
+    default boolean isBanned(EventBlob blob) {
+        boolean botBanned = getFromDatabase(blob, Property.BOT_BAN, false, PropertyMapping::getAsBoolean);
+        boolean supportGuildBan = getFromDatabase(blob, Property.SUPPORT_BAN, false, PropertyMapping::getAsBoolean);
+
+        return botBanned || supportGuildBan;
+    }
 
     /**
      * Get count of users serviced.

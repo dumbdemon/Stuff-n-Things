@@ -14,10 +14,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
-import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
-import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
-import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
+import net.dv8tion.jda.api.events.guild.*;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -106,6 +103,20 @@ public class ListeningForEvents extends ListenerAdapter {
 
         updateAction.queue(commands -> log.info("{} guild commands loaded onto {}[{}]", commands.size(), guild.getName(), guild.getId()),
             DiscordAPIException::new);
+    }
+
+    @Override
+    public void onGuildBan(@NotNull GuildBanEvent event) {
+        if (!Config.getSupportGuildId().equals(event.getGuild().getId()))
+            return;
+        DatabaseManager.INSTANCE.botBan(event.getUser(), true);
+    }
+
+    @Override
+    public void onGuildUnban(@NotNull GuildUnbanEvent event) {
+        if (!Config.getSupportGuildId().equals(event.getGuild().getId()))
+            return;
+        DatabaseManager.INSTANCE.removeBotBan(event.getUser());
     }
 
     public static class SetWatcherTask extends TimerTask {

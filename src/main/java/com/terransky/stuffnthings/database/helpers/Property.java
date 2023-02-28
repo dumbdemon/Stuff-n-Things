@@ -16,6 +16,8 @@ public enum Property {
     LAST_BINGO("bingo_games", Table.GUILD),
     VERBOSE("doVerbose", Table.GUILD),
     PER_SERVER("killLocks", Table.USER),
+    BOT_BAN("isBotBan", Table.USER),
+    SUPPORT_BAN("isSupportGuildBan", Table.USER),
     KILL_ATTEMPTS(Table.USER),
     KILL_TIMEOUT(Table.USER),
     KILL_END_DATE(Table.USER),
