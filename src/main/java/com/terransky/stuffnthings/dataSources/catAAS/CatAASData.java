@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.terransky.stuffnthings.interfaces.Pojo;
+import com.terransky.stuffnthings.dataSources.CodesAndMessages;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
 
 import java.time.OffsetDateTime;
@@ -30,12 +30,8 @@ import java.util.List;
     "url"
 })
 @SuppressWarnings("unused")
-public class CatAASData implements Pojo {
+public class CatAASData extends CodesAndMessages {
 
-    @JsonProperty("message")
-    private String message;
-    @JsonProperty("code")
-    private Integer code;
     @JsonProperty("tags")
     private List<String> tags = new ArrayList<>();
     @JsonProperty("createdAt")
@@ -57,29 +53,9 @@ public class CatAASData implements Pojo {
     @JsonProperty("url")
     private String url;
 
-    @JsonProperty("message")
-    public String getMessage() {
-        return message;
-    }
-
-    @JsonProperty("message")
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    @JsonProperty("code")
-    public Integer getCode() {
-        return code;
-    }
-
-    @JsonProperty("code")
-    public void setCode(Integer code) {
-        this.code = code;
-    }
-
     @JsonIgnore
     public boolean hasError() {
-        return message != null || code != null;
+        return getMessage() != null || getCode() != null;
     }
 
     @JsonProperty("tags")
