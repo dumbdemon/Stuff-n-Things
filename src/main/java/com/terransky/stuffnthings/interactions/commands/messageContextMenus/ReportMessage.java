@@ -8,7 +8,7 @@ import com.terransky.stuffnthings.interfaces.interactions.ICommandMessage;
 import com.terransky.stuffnthings.utilities.command.EmbedColors;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.Config;
-import com.terransky.stuffnthings.utilities.general.DiscordWebhook;
+import com.terransky.stuffnthings.utilities.jda.DiscordWebhook;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;

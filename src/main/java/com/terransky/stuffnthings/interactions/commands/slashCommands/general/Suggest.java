@@ -3,7 +3,7 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.general;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
-import com.terransky.stuffnthings.utilities.general.DiscordWebhook;
+import com.terransky.stuffnthings.utilities.jda.DiscordWebhook;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;

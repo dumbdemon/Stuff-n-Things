@@ -1,8 +1,9 @@
-package com.terransky.stuffnthings.utilities.general;
+package com.terransky.stuffnthings.utilities.jda;
 
 import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
+import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Webhook;
 import org.jetbrains.annotations.NotNull;

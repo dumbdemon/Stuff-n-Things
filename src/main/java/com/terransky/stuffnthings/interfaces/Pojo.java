@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.terransky.stuffnthings.utilities.general.FileOperations;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,8 @@ import java.nio.charset.StandardCharsets;
  * The interface for all Jackson POJOs
  */
 public interface Pojo {
+
+    String JSON_PATH = "json/";
 
     /**
      * Get a file safe name to save
@@ -52,8 +55,6 @@ public interface Pojo {
      *
      * @throws IOException Is thrown if the file could not be saved or if {@link #getAsJsonString()} failed to parse.
      */
-    @JsonIgnore
-    @BsonIgnore
     @SuppressWarnings("unused")
     default void saveAsJsonFile() throws IOException {
         String[] className = this.getClass().getName().split("\\.");
@@ -67,10 +68,12 @@ public interface Pojo {
      * @param name The name of the file
      * @throws IOException Is thrown if the file could not be saved or if {@link #getAsJsonString()} failed to parse.
      */
-    @JsonIgnore
-    @BsonIgnore
     default void saveAsJsonFile(String name) throws IOException {
-        saveAsJsonFile(new File("jsons/" + toSafeFileName(name) + ".json"));
+        if (FileOperations.makeDirectory(JSON_PATH)) {
+            saveAsJsonFile(new File(JSON_PATH + toSafeFileName(name) + ".json"));
+            return;
+        }
+        LoggerFactory.getLogger(Pojo.class).error("Unable to create directory.");
     }
 
     /**
@@ -80,8 +83,6 @@ public interface Pojo {
      * @param file A {@link File} to save to.
      * @throws IOException Is thrown if the file could not be saved or if {@link #getAsJsonString()} failed to parse.
      */
-    @JsonIgnore
-    @BsonIgnore
     default void saveAsJsonFile(@NotNull final File file) throws IOException {
         LoggerFactory.getLogger(Pojo.class).info("Saving to -> \"{}\"", file.getAbsolutePath());
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
