@@ -15,13 +15,10 @@ import java.util.Set;
 })
 
 @SuppressWarnings("unused")
-public class StuffGuild {
+public class StuffGuild extends StuffShared {
 
     private boolean isLoaded;
     private int memberCount;
-    private String name;
-    private String id;
-    private Long idLong;
     private String iconId;
     private String iconUrl;
     private Set<String> features;
@@ -35,7 +32,6 @@ public class StuffGuild {
     private String bannerUrl;
     private Guild.BoostTier boostTier;
     private int boostCount;
-    private int boosterCount;
     private int maxBitRate;
     private long maxFileSize;
     private int maxMembers;
@@ -54,9 +50,9 @@ public class StuffGuild {
         Objects.requireNonNull(guild);
         this.isLoaded = guild.isLoaded();
         this.memberCount = guild.getMemberCount();
-        this.name = guild.getName();
-        this.id = guild.getId();
-        this.idLong = guild.getIdLong();
+        setName(guild.getName());
+        setId(guild.getId());
+        setIdLong(guild.getIdLong());
         this.iconId = guild.getIconId();
         this.iconUrl = guild.getIconUrl();
         this.features = guild.getFeatures();
@@ -70,7 +66,6 @@ public class StuffGuild {
         this.bannerUrl = guild.getBannerUrl();
         this.boostTier = guild.getBoostTier();
         this.boostCount = guild.getBoostCount();
-        this.boosterCount = guild.getBoosters().size();
         this.maxBitRate = guild.getMaxBitrate();
         this.maxFileSize = guild.getMaxFileSize();
         this.maxMembers = guild.getMaxMembers();
@@ -100,30 +95,6 @@ public class StuffGuild {
 
     public void setMemberCount(int memberCount) {
         this.memberCount = memberCount;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Long getIdLong() {
-        return idLong;
-    }
-
-    public void setIdLong(Long idLong) {
-        this.idLong = idLong;
     }
 
     public String getIconId() {
@@ -228,14 +199,6 @@ public class StuffGuild {
 
     public void setBoostCount(int boostCount) {
         this.boostCount = boostCount;
-    }
-
-    public int getBoosterCount() {
-        return boosterCount;
-    }
-
-    public void setBoosterCount(int boosterCount) {
-        this.boosterCount = boosterCount;
     }
 
     public int getMaxBitRate() {
@@ -383,46 +346,21 @@ public class StuffGuild {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         StuffGuild that = (StuffGuild) o;
-        return isLoaded() == that.isLoaded() &&
-            getMemberCount() == that.getMemberCount() &&
-            isInvitesDisabled() == that.isInvitesDisabled() &&
+        return getMemberCount() == that.getMemberCount() &&
             getBoostCount() == that.getBoostCount() &&
-            getBoosterCount() == that.getBoosterCount() &&
-            getMaxBitRate() == that.getMaxBitRate() &&
-            getMaxFileSize() == that.getMaxFileSize() &&
-            getMaxMembers() == that.getMaxMembers() &&
-            getOwnerIdLong() == that.getOwnerIdLong() &&
-            isBoostProgressBarEnabled() == that.isBoostProgressBarEnabled() &&
             getName().equals(that.getName()) &&
             getId().equals(that.getId()) &&
-            getIdLong().equals(that.getIdLong()) &&
-            getIconId().equals(that.getIconId()) &&
-            getIconUrl().equals(that.getIconUrl()) &&
             getFeatures().equals(that.getFeatures()) &&
-            Objects.equals(getSplashId(), that.getSplashId()) &&
-            Objects.equals(getSplashUrl(), that.getSplashUrl()) &&
-            Objects.equals(getVanityCode(), that.getVanityCode()) &&
-            Objects.equals(getVanityUrl(), that.getVanityUrl()) &&
-            Objects.equals(getDescription(), that.getDescription()) &&
-            Objects.equals(getBannerId(), that.getBannerId()) &&
-            Objects.equals(getBannerUrl(), that.getBannerUrl()) &&
             getBoostTier() == that.getBoostTier() &&
-            getOwner().equals(that.getOwner()) &&
-            getOwnerId().equals(that.getOwnerId()) &&
-            getNsfwLevel() == that.getNsfwLevel() &&
-            getRoles().equals(that.getRoles()) &&
-            getVerificationLevel() == that.getVerificationLevel() &&
-            getDefaultNotificationLevel() == that.getDefaultNotificationLevel() &&
-            getRequiredMFALevel() == that.getRequiredMFALevel() &&
-            getExplicitContentLevel() == that.getExplicitContentLevel();
+            getOwner().equals(that.getOwner());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(isLoaded(), getMemberCount(), getName(), getId(), getIdLong(), getIconId(), getIconUrl(), getFeatures(),
             isInvitesDisabled(), getSplashId(), getSplashUrl(), getVanityCode(), getVanityUrl(), getDescription(), getBannerId(),
-            getBannerUrl(), getBoostTier(), getBoostCount(), getBoosterCount(), getMaxBitRate(), getMaxFileSize(), getMaxMembers(),
-            getOwner(), getOwnerIdLong(), getOwnerId(), getNsfwLevel(), getRoles(), isBoostProgressBarEnabled(), getVerificationLevel(),
+            getBannerUrl(), getBoostTier(), getBoostCount(), getMaxBitRate(), getMaxFileSize(), getMaxMembers(), getOwner(),
+            getOwnerIdLong(), getOwnerId(), getNsfwLevel(), getRoles(), isBoostProgressBarEnabled(), getVerificationLevel(),
             getDefaultNotificationLevel(), getRequiredMFALevel(), getExplicitContentLevel());
     }
 
@@ -431,8 +369,8 @@ public class StuffGuild {
         return "StuffGuild{" +
             "isLoaded=" + isLoaded +
             ", memberCount=" + memberCount +
-            ", name='" + name + '\'' +
-            ", id='" + id + '\'' +
+            ", name='" + getName() + '\'' +
+            ", id='" + getId() + '\'' +
             ", iconId='" + iconId + '\'' +
             ", iconUrl='" + iconUrl + '\'' +
             ", features=" + features +
@@ -446,7 +384,6 @@ public class StuffGuild {
             ", bannerUrl='" + bannerUrl + '\'' +
             ", boostTier=" + boostTier +
             ", boostCount=" + boostCount +
-            ", boosterCount=" + boosterCount +
             ", maxBitRate=" + maxBitRate +
             ", maxFileSize=" + maxFileSize +
             ", maxMembers=" + maxMembers +

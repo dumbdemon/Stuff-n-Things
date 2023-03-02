@@ -13,7 +13,7 @@ import java.util.Objects;
     "bot", "system", "avatarId", "effectiveAvatarUrl", "roles", "roleIds", "owner", "flags", "flagsRaw"
 })
 @SuppressWarnings("unused")
-public class StuffMember {
+public class StuffMember extends StuffEntity {
 
     private StuffUser user;
     private String timeBoosted;
@@ -21,8 +21,6 @@ public class StuffMember {
     private boolean isTimedOut;
     private String nickname;
     private String effectiveName;
-    private String id;
-    private long idLong;
     private String avatarId;
     private String effectiveAvatarUrl;
     private List<String> roles;
@@ -37,6 +35,8 @@ public class StuffMember {
         this.isTimedOut = member.isTimedOut();
         this.nickname = member.getNickname();
         this.effectiveName = member.getEffectiveName();
+        setId(member.getId());
+        setIdLong(member.getIdLong());
         this.avatarId = member.getAvatarId();
         this.effectiveAvatarUrl = member.getEffectiveAvatarUrl();
         this.roles = member.getRoles().stream().map(Role::getName).toList();
@@ -92,22 +92,6 @@ public class StuffMember {
         this.effectiveName = effectiveName;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public long getIdLong() {
-        return idLong;
-    }
-
-    public void setIdLong(long idLong) {
-        this.idLong = idLong;
-    }
-
     public String getAvatarId() {
         return avatarId;
     }
@@ -153,18 +137,13 @@ public class StuffMember {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         StuffMember that = (StuffMember) o;
-        return isBoosting() == that.isBoosting() &&
-            isTimedOut() == that.isTimedOut() &&
-            getIdLong() == that.getIdLong() &&
-            isOwner() == that.isOwner() &&
+        return isTimedOut() == that.isTimedOut() &&
             getUser().equals(that.getUser()) &&
             Objects.equals(getTimeBoosted(), that.getTimeBoosted()) &&
             getNickname().equals(that.getNickname()) &&
             getEffectiveName().equals(that.getEffectiveName()) &&
             getId().equals(that.getId()) &&
-            Objects.equals(getAvatarId(), that.getAvatarId()) &&
             getEffectiveAvatarUrl().equals(that.getEffectiveAvatarUrl()) &&
-            getRoles().equals(that.getRoles()) &&
             getRoleIds().equals(that.getRoleIds());
     }
 
@@ -183,7 +162,6 @@ public class StuffMember {
             ", isTimedOut=" + isTimedOut +
             ", nickname='" + nickname + '\'' +
             ", effectiveName='" + effectiveName + '\'' +
-            ", id='" + id + '\'' +
             ", avatarId='" + avatarId + '\'' +
             ", effectiveAvatarUrl='" + effectiveAvatarUrl + '\'' +
             ", roles=" + roles +

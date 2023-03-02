@@ -11,11 +11,8 @@ import java.util.Objects;
     "defaultAvatarUrl", "effectiveAvatarUrl", "asTag", "bot", "system", "flags", "flagsRaw"
 })
 @SuppressWarnings("unused")
-public class StuffUser {
+public class StuffUser extends StuffShared {
 
-    private String name;
-    private String id;
-    private Long idLong;
     private String discriminator;
     private String avatarId;
     private String avatarUrl;
@@ -30,9 +27,9 @@ public class StuffUser {
 
     public StuffUser(User user) {
         Objects.requireNonNull(user);
-        this.name = user.getName();
-        this.id = user.getId();
-        this.idLong = user.getIdLong();
+        setName(user.getName());
+        setId(user.getId());
+        setIdLong(user.getIdLong());
         this.discriminator = user.getDiscriminator();
         this.avatarId = user.getAvatarId();
         this.defaultAvatarId = user.getDefaultAvatarId();
@@ -43,30 +40,6 @@ public class StuffUser {
         this.isSystem = user.isSystem();
         this.flags = user.getFlags();
         this.flagsRaw = user.getFlagsRaw();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Long getIdLong() {
-        return idLong;
-    }
-
-    public void setIdLong(Long idLong) {
-        this.idLong = idLong;
     }
 
     public String getDiscriminator() {
@@ -167,15 +140,9 @@ public class StuffUser {
             getFlagsRaw() == stuffUser.getFlagsRaw() &&
             getName().equals(stuffUser.getName()) &&
             getId().equals(stuffUser.getId()) &&
-            getIdLong().equals(stuffUser.getIdLong()) &&
             getDiscriminator().equals(stuffUser.getDiscriminator()) &&
-            getAvatarId().equals(stuffUser.getAvatarId()) &&
-            Objects.equals(getAvatarUrl(), stuffUser.getAvatarUrl()) &&
             getDefaultAvatarId().equals(stuffUser.getDefaultAvatarId()) &&
-            getDefaultAvatarUrl().equals(stuffUser.getDefaultAvatarUrl()) &&
-            getEffectiveAvatarUrl().equals(stuffUser.getEffectiveAvatarUrl()) &&
-            getAsTag().equals(stuffUser.getAsTag()) &&
-            getFlags().equals(stuffUser.getFlags());
+            getEffectiveAvatarUrl().equals(stuffUser.getEffectiveAvatarUrl());
     }
 
     @Override
@@ -187,8 +154,6 @@ public class StuffUser {
     @Override
     public String toString() {
         return "StuffUser{" +
-            "name='" + name + '\'' +
-            ", id='" + id + '\'' +
             ", discriminator='" + discriminator + '\'' +
             ", avatarId='" + avatarId + '\'' +
             ", avatarUrl='" + avatarUrl + '\'' +
