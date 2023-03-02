@@ -45,7 +45,7 @@ public class KitsuAuthForm implements Pojo {
     /**
      * The types of grants for Kitsu.io
      */
-    public enum GrantType {
+    protected enum GrantType {
         REFRESH("refresh_token"),
         PASSWORD("password"),
         AUTHORIZATION_CODE() {

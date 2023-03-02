@@ -43,7 +43,7 @@ public class TinyURLForm implements Pojo {
      * @throws MalformedURLException Thrown when the URL is not valid.
      * @throws URISyntaxException    Thrown when the URL is not valid.
      */
-    protected TinyURLForm(String url) throws MalformedURLException, URISyntaxException {
+    public TinyURLForm(String url) throws MalformedURLException, URISyntaxException {
         this.url = new URL(url).toURI().toString();
     }
 

@@ -1,6 +1,5 @@
 package com.terransky.stuffnthings.utilities.apiHandlers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.stuffnthings.dataSources.kitsu.Datum;
 import com.terransky.stuffnthings.dataSources.kitsu.KitsuAuth;
 import com.terransky.stuffnthings.dataSources.kitsu.PasswordKitsuAuthForm;
@@ -22,7 +21,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,10 +29,9 @@ import java.util.concurrent.Executors;
  * Handler for Kitsu.io API requests
  */
 @SuppressWarnings("SpellCheckingInspection")
-public class KitsuHandler {
+public class KitsuHandler extends Handler {
 
     public static final String FILE_NAME = "kitsuToken.json";
-    private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final Logger log = LoggerFactory.getLogger(KitsuHandler.class);
     private static final File KITSU_AUTH = new File(FILE_NAME);
     private static final Config.Credentials credentials = Config.Credentials.KITSU_IO;
@@ -45,6 +42,7 @@ public class KitsuHandler {
      * API handler for Kitsu.io's API
      */
     public KitsuHandler() {
+        super("KitsuDotIO");
         Optional<KitsuAuth> kitsuAuth = DatabaseManager.INSTANCE.getKitsuAuth();
         token = kitsuAuth.map(KitsuAuth::getBearerString).orElse(null);
     }
@@ -55,13 +53,9 @@ public class KitsuHandler {
      * @return True if the process was successful.
      * @throws IllegalArgumentException If {@link Config.Credentials#isDefault()} returns true.
      */
-    public static boolean upsertAuthorizationToken() throws IllegalArgumentException {
-        try (ExecutorService service = Executors.newSingleThreadExecutor()) {
-            HttpClient client = HttpClient.newBuilder()
-                .followRedirects(HttpClient.Redirect.ALWAYS)
-                .connectTimeout(Duration.ofSeconds(5))
-                .executor(service)
-                .build();
+    public boolean upsertAuthorizationToken() throws IllegalArgumentException {
+        try (ExecutorService service = Executors.newSingleThreadExecutor(getThreadFactory())) {
+            HttpClient client = getHttpClient(service);
 
             String requestBody;
             Optional<KitsuAuth> oldAuth = DatabaseManager.INSTANCE.getKitsuAuth();
@@ -97,11 +91,11 @@ public class KitsuHandler {
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
             KitsuAuth auth;
             int code = response.statusCode();
             if (code != 200 && code - 500 < 0) {
-                auth = MAPPER.readValue(response.body(), KitsuAuth.class);
+                auth = getObjectMapper().readValue(response.body(), KitsuAuth.class);
                 log.error("Auth request failed: [{}] {}", auth.getError(), auth.getErrorDescription());
                 return false;
             } else if (code - 500 >= 0) {
@@ -109,7 +103,7 @@ public class KitsuHandler {
                 return false;
             }
 
-            auth = MAPPER.readValue(response.body(), KitsuAuth.class);
+            auth = getObjectMapper().readValue(response.body(), KitsuAuth.class);
 
             if (DatabaseManager.INSTANCE.uploadKitsuAuth(auth)) {
                 log.info("Auth request successful: uploaded to database");
@@ -132,7 +126,7 @@ public class KitsuHandler {
      */
     public MangaKitsuData getManga(@NotNull String search) throws IOException {
         URI manga = URI.create(BASE_URL + "manga?filter%5Btext%5D=" + search.toLowerCase().replaceAll(" ", "%20"));
-        return MAPPER.readValue(getResponseBody(manga), MangaKitsuData.class);
+        return getObjectMapper().readValue(getInputStreamOf(manga), MangaKitsuData.class);
     }
 
     /**
@@ -144,7 +138,7 @@ public class KitsuHandler {
      */
     public AnimeKitsuData getAnime(@NotNull String search) throws IOException {
         URI anime = URI.create(BASE_URL + "anime?filter%5Btext%5D=" + search.toLowerCase().replaceAll(" ", "%20"));
-        return MAPPER.readValue(getResponseBody(anime), AnimeKitsuData.class);
+        return getObjectMapper().readValue(getInputStreamOf(anime), AnimeKitsuData.class);
     }
 
     /**
@@ -156,7 +150,7 @@ public class KitsuHandler {
      */
     public CategoriesKitsuData getCategories(@NotNull Relationships relationships) throws IOException {
         URI genres = URI.create(relationships.getCategories().getLinks().getRelated());
-        return MAPPER.readValue(getResponseBody(genres), CategoriesKitsuData.class);
+        return getObjectMapper().readValue(getInputStreamOf(genres), CategoriesKitsuData.class);
     }
 
     /**
@@ -166,13 +160,9 @@ public class KitsuHandler {
      * @return An {@link InputStream}
      */
     @NotNull
-    private InputStream getResponseBody(@NotNull URI uri) {
-        try (ExecutorService service = Executors.newSingleThreadExecutor()) {
-            HttpClient client = HttpClient.newBuilder()
-                .followRedirects(HttpClient.Redirect.ALWAYS)
-                .connectTimeout(Duration.ofSeconds(5))
-                .executor(service)
-                .build();
+    private InputStream getInputStreamOf(@NotNull URI uri) {
+        try (ExecutorService service = Executors.newSingleThreadExecutor(getThreadFactory())) {
+            HttpClient client = getHttpClient(service);
             HttpRequest.Builder request = HttpRequest.newBuilder(uri)
                 .setHeader("Accept", "application/vnd.api+json");
             if (token != null)

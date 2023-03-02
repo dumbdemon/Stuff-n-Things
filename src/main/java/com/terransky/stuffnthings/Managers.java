@@ -76,7 +76,6 @@ public class Managers {
         new GetInvite(),
         new Test(),
         new TinyURL(),
-        new UpsertKitsuToken(),
         new UserInfo()
     );
 

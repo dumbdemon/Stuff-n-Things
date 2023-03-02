@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.devs;
 
 import com.terransky.stuffnthings.dataSources.tinyURL.Data;
+import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLForm;
 import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLLimits;
 import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLResponse;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
@@ -65,7 +66,7 @@ public class TinyURL implements ICommandSlash {
         return new Metadata(getName(), "Create short URLs with TinyURL",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
             Metadata.parseDate("2023-01-06T16:04Z"),
-            Metadata.parseDate("2023-02-27T16:16Z")
+            Metadata.parseDate("2023-03-02T16:38Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "url", "A URL to shorten.", true),
@@ -88,19 +89,21 @@ public class TinyURL implements ICommandSlash {
         EmbedBuilder embedBuilder = blob.getStandardEmbed(getNameReadable());
 
         try {
-            TinyURLHandler tinyURLHandler = new TinyURLHandler(url);
-            tinyURLHandler.withDomain(domain);
-            alias.ifPresent(tinyURLHandler::withAlias);
-            TinyURLResponse shortURLData = tinyURLHandler.sendRequest();
-            String requestData = tinyURLHandler.getAsJsonString(),
+            TinyURLForm tinyURLForm = new TinyURLForm(url)
+                .withDomain(domain);
+            alias.ifPresent(tinyURLForm::withAlias);
+
+            TinyURLHandler tinyURLHandler = new TinyURLHandler();
+            TinyURLResponse response = tinyURLHandler.sendRequest(tinyURLForm);
+            String requestData = tinyURLForm.getAsJsonString(),
                 reportingURL = Config.getErrorReportingURL();
 
             if (Config.isTestingMode())
                 embedBuilder.setDescription(String.format("Data Packet Sent%n```json%n%s%n```", requestData));
 
-            switch ((int) (long) shortURLData.getCode()) {
+            switch ((int) (long) response.getCode()) {
                 case 0 -> {
-                    Data urlData = shortURLData.getData();
+                    Data urlData = response.getData();
                     OffsetDateTime createdAt = urlData.getCreatedAtAsDate();
                     OffsetDateTime expiresAt = urlData.getExpiresAtAsDate();
 
@@ -115,7 +118,7 @@ public class TinyURL implements ICommandSlash {
                 }
                 case 1, 4, 7 -> event.getHook().sendMessageEmbeds(
                     embedBuilder.appendDescription(String.format("An error occurred during %s.",
-                            shortURLData.getCode() == 7 ? "server operations. Please try again in a few moments" :
+                            response.getCode() == 7 ? "server operations. Please try again in a few moments" :
                                 String.format("authorization. Please report it [here](%s)", reportingURL)))
                         .setColor(EmbedColors.getError())
                         .build()
@@ -127,7 +130,7 @@ public class TinyURL implements ICommandSlash {
                         .setColor(EmbedColors.getError())
                         .build()
                 ).queue();
-                case 5 -> validationFailed(event, url, embedBuilder, shortURLData);
+                case 5 -> validationFailed(event, url, embedBuilder, response);
                 default -> event.getHook().sendMessageEmbeds(
                     embedBuilder.appendDescription(String.format("An unknown operation occurred on bot side. Please report it [here](%s).",
                             reportingURL))

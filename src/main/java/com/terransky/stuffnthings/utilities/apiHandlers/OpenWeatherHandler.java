@@ -1,7 +1,6 @@
 package com.terransky.stuffnthings.utilities.apiHandlers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.neovisionaries.i18n.CountryCode;
 import com.terransky.stuffnthings.dataSources.DatumPojo;
 import com.terransky.stuffnthings.dataSources.openWeather.OpenWeatherData;
@@ -11,20 +10,29 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
+import java.net.URI;
 import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * The handler for OpenWeather's API
  */
-public class OpenWeatherHandler {
+public class OpenWeatherHandler extends Handler {
 
     private final Config.Credentials CREDENTIALS = Config.Credentials.OPEN_WEATHER;
     private final String BASE_URL = String.format("https://api.openweathermap.org/data/3.0/onecall?lat={}&lon={}&exclude=minutely,hourly,daily&appid=%s",
         CREDENTIALS.getPassword()).replaceAll("\\{}", "%s");
-    private final ObjectMapper MAPPER = new ObjectMapper();
+
+    public OpenWeatherHandler() {
+        super("OpenWeather");
+    }
 
     /**
      * Get weather date from geo coordinates
@@ -32,11 +40,18 @@ public class OpenWeatherHandler {
      * @param lat The latitude
      * @param lon The longitude
      * @return An {@link OpenWeatherData}
-     * @throws IOException If an i/o exception occurs
      */
-    public OpenWeatherData getWeatherData(double lat, double lon) throws IOException {
-        URL request = new URL(String.format(BASE_URL, lat, lon));
-        return MAPPER.readValue(request, OpenWeatherData.class);
+    public OpenWeatherData getWeatherData(double lat, double lon) {
+        try (ExecutorService service = Executors.newSingleThreadExecutor(getThreadFactory())) {
+            HttpClient client = getHttpClient(service);
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(String.format(BASE_URL, lat, lon)))
+                .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return getObjectMapper().readValue(response.body(), OpenWeatherData.class);
+        } catch (InterruptedException | IOException e) {
+            throw new RuntimeException("Failed to get weather data", e);
+        }
     }
 
     /**
@@ -58,17 +73,24 @@ public class OpenWeatherHandler {
      * @param zipcode     A zipcode
      * @param countryCode A {@link CountryCode} enum
      * @return An {@link OpenWeatherData}
-     * @throws IOException If an i/o exception occurs
      */
-    public OpenWeatherData getWeatherData(String zipcode, @NotNull CountryCode countryCode) throws IOException {
-        URL request = new URL(String.format("http://api.openweathermap.org/geo/1.0/zip?zip=%s,%s&appid=%s",
-            URLEncoder.encode(zipcode, StandardCharsets.UTF_8),
-            countryCode.getAlpha2(),
-            CREDENTIALS.getPassword()
-        ));
-        OpenWeatherGeoData geoData = MAPPER.readValue(request, OpenWeatherGeoData.class);
-        return getWeatherData(geoData.getLat(), geoData.getLon())
-            .setGeoData(geoData);
+    public OpenWeatherData getWeatherData(String zipcode, @NotNull CountryCode countryCode) {
+        try (ExecutorService service = Executors.newSingleThreadExecutor(getThreadFactory())) {
+            HttpClient client = getHttpClient(service);
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(String.format("http://api.openweathermap.org/geo/1.0/zip?zip=%s,%s&appid=%s",
+                    URLEncoder.encode(zipcode, StandardCharsets.UTF_8),
+                    countryCode.getAlpha2(),
+                    CREDENTIALS.getPassword()
+                )))
+                .build();
+            HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+            OpenWeatherGeoData geoData = getObjectMapper().readValue(response.body(), OpenWeatherGeoData.class);
+            return getWeatherData(geoData.getLat(), geoData.getLon())
+                .setGeoData(geoData);
+        } catch (InterruptedException | IOException e) {
+            throw new RuntimeException("Failed to get weather data", e);
+        }
     }
 
     /**
@@ -82,17 +104,25 @@ public class OpenWeatherHandler {
      */
     @Nullable
     public OpenWeatherData getWeatherData(String city, String state, @NotNull CountryCode code) throws IOException {
-        URL request = new URL("http://api.openweathermap.org/geo/1.0/direct?q=" + city + "," + (state != null ? state + "," : "") + code.getAlpha2() +
-            "&limit=1&appid=" + CREDENTIALS.getPassword());
-        DatumPojo<OpenWeatherGeoData> locations = new DatumPojo<>(MAPPER.readValue(request, new TypeReference<>() {
-        }));
-        Optional<OpenWeatherGeoData> firstGeoData = locations.first(location -> code.getAlpha2().equals(location.getCountry()));
+        try (ExecutorService service = Executors.newSingleThreadExecutor(getThreadFactory())) {
+            HttpClient client = getHttpClient(service);
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://api.openweathermap.org/geo/1.0/direct?q=" + city + "," + (state != null ? state + "," : "") + code.getAlpha2() +
+                    "&limit=1&appid=" + CREDENTIALS.getPassword()))
+                .build();
+            HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+            DatumPojo<OpenWeatherGeoData> locations = new DatumPojo<>(getObjectMapper().readValue(response.body(), new TypeReference<>() {
+            }));
+            Optional<OpenWeatherGeoData> firstGeoData = locations.first(location -> code.getAlpha2().equals(location.getCountry()));
 
-        if (firstGeoData.isEmpty())
-            return null;
+            if (firstGeoData.isEmpty())
+                return null;
 
-        OpenWeatherGeoData geoData = firstGeoData.get();
-        return getWeatherData(geoData.getLat(), geoData.getLon())
-            .setGeoData(geoData);
+            OpenWeatherGeoData geoData = firstGeoData.get();
+            return getWeatherData(geoData.getLat(), geoData.getLon())
+                .setGeoData(geoData);
+        } catch (InterruptedException | IOException e) {
+            throw new RuntimeException("Failed to get weather data", e);
+        }
     }
 }
