@@ -37,11 +37,11 @@ public class JokesV2 implements ICommandSlash {
         String lang = event.getOption("language", "en", OptionMapping::getAsString);
         String category = event.getOption("category", "Any", OptionMapping::getAsString);
         boolean nsfw = event.getChannel().asTextChannel().isNSFW();
-        boolean religious = serverFlags.getReligious() ? !serverFlags.getReligious() : event.getOption("religious", true, OptionMapping::getAsBoolean);
-        boolean political = serverFlags.getPolitical() ? !serverFlags.getPolitical() : event.getOption("political", true, OptionMapping::getAsBoolean);
-        boolean racist = serverFlags.getRacist() ? !serverFlags.getRacist() : event.getOption("racist", true, OptionMapping::getAsBoolean);
-        boolean sexist = serverFlags.getSexist() ? !serverFlags.getSexist() : event.getOption("sexist", true, OptionMapping::getAsBoolean);
-        boolean safeMode = serverFlags.getSafeMode() ? serverFlags.getSafeMode() : "safe".equals(command);
+        boolean religious = !serverFlags.getReligious() && event.getOption("religious", true, OptionMapping::getAsBoolean);
+        boolean political = !serverFlags.getPolitical() && event.getOption("political", true, OptionMapping::getAsBoolean);
+        boolean racist = !serverFlags.getRacist() && event.getOption("racist", true, OptionMapping::getAsBoolean);
+        boolean sexist = !serverFlags.getSexist() && event.getOption("sexist", true, OptionMapping::getAsBoolean);
+        boolean safeMode = !serverFlags.getSafeMode() && "safe".equals(command);
 
         StringBuilder blacklistFlags = new StringBuilder();
         if (!nsfw)
@@ -157,7 +157,7 @@ public class JokesV2 implements ICommandSlash {
             Admins can use `/config jokes` to limit the specifiers.
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-06T18:34Z"),
-            Metadata.parseDate("2023-02-27T16:26Z")
+            Metadata.parseDate("2023-03-02T09:31Z")
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("get", "Get a random joke.")
