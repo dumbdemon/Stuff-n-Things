@@ -5,10 +5,12 @@ import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.managers.SlashIManager;
-import com.terransky.stuffnthings.utilities.command.*;
+import com.terransky.stuffnthings.utilities.command.CommandCategory;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.Mastermind;
+import com.terransky.stuffnthings.utilities.command.Metadata;
 import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -58,7 +60,7 @@ public class About implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.GENERAL,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-02-27T16:38Z")
+            Metadata.parseDate("2023-03-02T10:12Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "command-one", "Get more info on a Command.")
@@ -138,10 +140,8 @@ public class About implements ICommandSlash {
 
         if (!metadata.getDefaultPerms().isEmpty() && !blob.getMember().hasPermission(metadata.getDefaultPerms())) {
             event.replyEmbeds(
-                new EmbedBuilder()
-                    .setTitle("About Command - %s".formatted(commandName))
+                blob.getStandardEmbed("About Command - %s".formatted(commandName))
                     .setDescription("You don't have access to this command to see its details.")
-                    .setColor(EmbedColors.getDefault())
                     .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
                     .build()
             ).queue();
@@ -156,11 +156,8 @@ public class About implements ICommandSlash {
         };
 
         event.getHook().sendMessageEmbeds(
-            new EmbedBuilder()
-                .setTitle("About Command - %s".formatted(commandName))
+            blob.getStandardEmbed("About Command - %s".formatted(commandName))
                 .setDescription(metadata.getLongDescription())
-                .setColor(EmbedColors.getDefault())
-                .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
                 .addField("Mastermind", metadata.getMastermind().getWho(), true)
                 .addField("Module", metadata.getCategory().getName(), true)
                 .addField("Implementation Date", "%s (%s)".formatted(timestamps[0], timestamps[1]), false)

@@ -102,8 +102,7 @@ public class JokesV2 implements ICommandSlash {
 
             String yes = "**Yes**";
             String no = "***No***";
-            reply.setColor(EmbedColors.getDefault())
-                .addField("NSFW?", returnedFlags.getNsfw() ? yes : no, false)
+            reply.addField("NSFW?", returnedFlags.getNsfw() ? yes : no, false)
                 .addField("Religious?", returnedFlags.getReligious() ? yes : no, false)
                 .addField("Political?", returnedFlags.getPolitical() ? yes : no, false)
                 .addField("Racist?", returnedFlags.getRacist() ? yes : no, false)
@@ -157,7 +156,7 @@ public class JokesV2 implements ICommandSlash {
             Admins can use `/config jokes` to limit the specifiers.
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-06T18:34Z"),
-            Metadata.parseDate("2023-03-02T09:31Z")
+            Metadata.parseDate("2023-03-02T10:12Z")
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("get", "Get a random joke.")

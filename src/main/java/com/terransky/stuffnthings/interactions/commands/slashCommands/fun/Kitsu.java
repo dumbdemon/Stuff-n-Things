@@ -32,7 +32,7 @@ import java.util.List;
 public class Kitsu {
 
     private static OffsetDateTime getGlobalLastUpdated() {
-        return Metadata.parseDate("2023-02-27T16:31Z");
+        return Metadata.parseDate("2023-03-02T10:12Z");
     }
 
     private static Metadata getStandard(String name) {
@@ -98,20 +98,16 @@ public class Kitsu {
 
     @NotNull
     private static MessageEmbed getNSFWMessage(@NotNull EventBlob blob, String keyword) {
-        return new EmbedBuilder()
-            .setColor(EmbedColors.getDefault())
+        return blob.getStandardEmbed(String.format("%s Search", keyword))
             .setFooter("Requested by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
-            .setTitle(String.format("%s Search", keyword))
             .setDescription(String.format("%s recieved was rated for abults and this channel is not NSFW. Verify with your admins that this is correct.", keyword))
             .build();
     }
 
     @NotNull
     private static MessageEmbed getNoResultsMessage(@NotNull EventBlob blob, String keyword) {
-        return new EmbedBuilder()
-            .setColor(EmbedColors.getError())
+        return blob.getStandardEmbed(String.format("%s Search", keyword))
             .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
-            .setTitle(String.format("%s Search", keyword))
             .setDescription("Your search returned nothing. Try searching something else?")
             .build();
     }
@@ -126,9 +122,7 @@ public class Kitsu {
         @Override
         public Metadata getMetadata() {
             OffsetDateTime animeLastUpdated = Metadata.parseDate("2023-01-18T16:19Z"),
-                lastUpdated = getGlobalLastUpdated();
-            if (animeLastUpdated.isAfter(getGlobalLastUpdated()))
-                lastUpdated = animeLastUpdated;
+                lastUpdated = animeLastUpdated.isAfter(getGlobalLastUpdated()) ? animeLastUpdated : getGlobalLastUpdated();
             return getStandard(getName())
                 .setLastUpdated(lastUpdated)
                 .setDescripstions("Search for an anime using Kitsu.io");
@@ -168,9 +162,7 @@ public class Kitsu {
         @Override
         public Metadata getMetadata() {
             OffsetDateTime mangaLastUpdated = Metadata.parseDate("2023-02-05T11:52Z"),
-                lastUpdated = getGlobalLastUpdated();
-            if (mangaLastUpdated.isAfter(getGlobalLastUpdated()))
-                lastUpdated = mangaLastUpdated;
+                lastUpdated = mangaLastUpdated.isAfter(getGlobalLastUpdated()) ? mangaLastUpdated : getGlobalLastUpdated();
             return getStandard(getName())
                 .setLastUpdated(lastUpdated)
                 .setDescripstions("Search for a manga using Kitsu.io");

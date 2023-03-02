@@ -60,7 +60,7 @@ public class Bingo implements ISlashGame {
             Options with an `*` are required.
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-14T09:59Z"),
-            Metadata.parseDate("2023-02-19T19:01Z")
+            Metadata.parseDate("2023-03-02T10:12Z")
         )
             .addSubcommands(
                 new SubcommandData("new", "Start a new Bingo game in this channel.")
@@ -125,9 +125,7 @@ public class Bingo implements ISlashGame {
         }
 
         event.getHook().sendMessageEmbeds(
-            new EmbedBuilder()
-                .setColor(EmbedColors.getDefault())
-                .setTitle("Bingo Game")
+            blob.getStandardEmbed("Bingo Game")
                 .setDescription(ifPlayer.get().getPrettyBoard())
                 .addField("Host", bingoGame.getHost().getHostMention(), false)
                 .addField("Guild", blob.getGuild().getName(), false)
@@ -285,9 +283,7 @@ public class Bingo implements ISlashGame {
             PrivateChannel userChannel = blob.getMember().getUser().openPrivateChannel().submit().get();
 
             userChannel.sendMessageEmbeds(
-                new EmbedBuilder()
-                    .setColor(EmbedColors.getDefault())
-                    .setTitle("Your Board")
+                blob.getStandardEmbed("Your Board")
                     .setDescription(player.getPrettyBoard())
                     .appendDescription("Check channel for start time.")
                     .addField("Host", host.getHostId().equals(blob.getMemberId()) ? String.format("You %s the Host :star:", pastTense ?
@@ -332,10 +328,7 @@ public class Bingo implements ISlashGame {
         @Override
         public void run() {
             Optional<BingoGame> serverGame = DatabaseManager.INSTANCE.getGameData(blob, textChannel.getId(), Property.Games.BINGO, PropertyMapping::getAsBingoGame);
-            EmbedBuilder response = new EmbedBuilder()
-                .setTitle(new Bingo().getNameReadable())
-                .setColor(EmbedColors.getDefault())
-                .setFooter(selfMember.getUser().getAsTag(), selfMember.getEffectiveAvatarUrl());
+            EmbedBuilder response = blob.getStandardEmbed(new Bingo().getNameReadable());
 
             if (serverGame.isEmpty()) {
                 if (isForced) textChannel.sendMessageEmbeds(noGameHasStartedEmbed(response)).queue();
@@ -398,8 +391,7 @@ public class Bingo implements ISlashGame {
         private void doVerbose(@NotNull EmbedBuilder embedBuilder, @NotNull BingoGame bingoGame) {
             EmbedBuilder response = new EmbedBuilder(embedBuilder);
             textChannel.sendMessageEmbeds(
-                response
-                    .setDescription("Verbose Enabled! Calling out numbers...")
+                response.setDescription("Verbose Enabled! Calling out numbers...")
                     .build()
             ).queue();
 

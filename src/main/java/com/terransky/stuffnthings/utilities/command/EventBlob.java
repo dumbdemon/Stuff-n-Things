@@ -201,8 +201,14 @@ public class EventBlob {
 
     public EmbedBuilder getStandardEmbed() {
         return new EmbedBuilder()
+            .setColor(EmbedColors.getDefault())
             .setTimestamp(OffsetDateTime.now())
             .setFooter(getMemberAsTag(), getMemberEffectiveAvatarUrl());
+    }
+
+    public EmbedBuilder getStandardEmbed(String embedTitle) {
+        return getStandardEmbed()
+            .setTitle(embedTitle);
     }
 
     public EmbedBuilder getStandardEmbed(Color color) {
@@ -215,18 +221,14 @@ public class EventBlob {
             .setTitle(embedTitle, url);
     }
 
-    public EmbedBuilder getStandardEmbed(String embedTitle, String url, Color color) {
-        return getStandardEmbed(color)
-            .setTitle(embedTitle, url);
-    }
-
-    public EmbedBuilder getStandardEmbed(String embedTitle) {
-        return getStandardEmbed(embedTitle, EmbedColors.getDefault());
-    }
-
     public EmbedBuilder getStandardEmbed(String embedTitle, Color color) {
         return getStandardEmbed(color)
             .setTitle(embedTitle);
+    }
+
+    public EmbedBuilder getStandardEmbed(String embedTitle, String url, Color color) {
+        return getStandardEmbed(color)
+            .setTitle(embedTitle, url);
     }
 
     @Override
@@ -234,12 +236,15 @@ public class EventBlob {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EventBlob eventBlob = (EventBlob) o;
-        return getGuild().equals(eventBlob.getGuild()) && getMember().equals(eventBlob.getMember()) && getInteractionType() == eventBlob.getInteractionType();
+        return getGuild().equals(eventBlob.getGuild()) &&
+            getMember().equals(eventBlob.getMember()) &&
+            getChannelUnion().equals(eventBlob.getChannelUnion()) &&
+            getInteractionType() == eventBlob.getInteractionType();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getGuild(), getMember(), getInteractionType());
+        return Objects.hash(getGuild(), getMember(), getChannelUnion(), getInteractionType());
     }
 
     @Override
@@ -247,6 +252,7 @@ public class EventBlob {
         return "EventBlob{" +
             "guild=" + guild +
             ", member=" + member +
+            ", channelUnion=" + channelUnion +
             ", interactionType=" + interactionType +
             '}';
     }

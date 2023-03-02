@@ -7,7 +7,10 @@ import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
-import com.terransky.stuffnthings.utilities.command.*;
+import com.terransky.stuffnthings.utilities.command.CommandCategory;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.Mastermind;
+import com.terransky.stuffnthings.utilities.command.Metadata;
 import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -26,8 +29,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Kill implements ICommandSlash {
@@ -58,8 +61,7 @@ public class Kill implements ICommandSlash {
         if (message.contains(blob.getSelfMember().getAsMention()))
             message += " :O";
 
-        eb.setColor(EmbedColors.getDefault())
-            .setDescription("… " + message);
+        eb.setDescription("… " + message);
 
         event.replyEmbeds(eb.build()).queue();
     }
@@ -105,7 +107,7 @@ public class Kill implements ICommandSlash {
 
     private void performLockOut(EventBlob blob, long timeout) {
         DatabaseManager.INSTANCE.updateProperty(blob, Property.KILL_TIMEOUT, true);
-        DatabaseManager.INSTANCE.updateProperty(blob, Property.KILL_END_DATE, OffsetDateTime.now().plusSeconds(TimeUnit.MILLISECONDS.toSeconds(timeout)));
+        DatabaseManager.INSTANCE.updateProperty(blob, Property.KILL_END_DATE, OffsetDateTime.now().plus(timeout, ChronoUnit.MILLIS));
         new Timer().schedule(new ResetKillProperties(blob, getClass()), timeout);
     }
 
@@ -120,7 +122,7 @@ public class Kill implements ICommandSlash {
             Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
             """, Mastermind.USER, CommandCategory.FUN,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-02-27T16:27Z")
+            Metadata.parseDate("2023-03-02T10:21Z")
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),

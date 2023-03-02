@@ -82,11 +82,8 @@ public class ReportMessage implements ICommandMessage {
         new DiscordWebhook("Report-Message", webhook)
             .sendMessage(report.build());
 
-        event.replyEmbeds(new EmbedBuilder()
-            .setColor(EmbedColors.getDefault())
-            .setTitle(getName())
+        event.replyEmbeds(blob.getStandardEmbed(getName())
             .setDescription(reportResponse)
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build()
         ).setEphemeral(true).queue();
     }

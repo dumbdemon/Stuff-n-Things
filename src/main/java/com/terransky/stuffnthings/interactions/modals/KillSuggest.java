@@ -15,7 +15,10 @@ import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class KillSuggest {
@@ -57,15 +60,11 @@ public class KillSuggest {
         );
 
         event.getHook().sendMessageEmbeds(
-            new EmbedBuilder()
-                .setColor(EmbedColors.getSecondary())
-                .setTitle("Suggestion received!")
+            new EmbedBuilder(blob.getStandardEmbed("Suggestion received!", EmbedColors.getSecondary()))
                 .setDescription("The next embed will show what your suggestion will look like!\n" +
                     "***Note: Will not show up automatically!***")
                 .build(),
-            new EmbedBuilder()
-                .setColor(EmbedColors.getDefault())
-                .setTitle(Objects.requireNonNull(event.getMember()).getEffectiveName())
+            new EmbedBuilder(blob.getStandardEmbed(blob.getMember().getEffectiveName()))
                 .setDescription("… " + testKillString)
                 .setFooter("Suggestion by " + event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
                 .build()

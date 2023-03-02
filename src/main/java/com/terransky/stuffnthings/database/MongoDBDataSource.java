@@ -133,9 +133,9 @@ public class MongoDBDataSource implements DatabaseManager {
             .orElse(new KillStrings(idReference));
         List<String> killStringsList;
         if (property == KILL_RANDOM) {
-            killStringsList = killStrings.getKillRandoms();
+            killStringsList = new ArrayList<>(killStrings.getKillRandoms());
         } else {
-            killStringsList = killStrings.getKillTargets();
+            killStringsList = new ArrayList<>(killStrings.getKillTargets());
         }
         killStringsList.add(killString);
 

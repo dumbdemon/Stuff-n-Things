@@ -35,7 +35,7 @@ public class UpsertKitsuToken implements ICommandSlash {
         return new Metadata(getName(), "Upsert the Authorization token for `Kitsu.io`.",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
             Metadata.parseDate("2023-01-16T13:00Z"),
-            Metadata.parseDate("2023-02-27T16:17Z")
+            Metadata.parseDate("2023-03-02T10:12Z")
         );
     }
 
@@ -54,8 +54,7 @@ public class UpsertKitsuToken implements ICommandSlash {
         }
 
         event.replyEmbeds(
-            builder.setColor(EmbedColors.getDefault())
-                .setDescription(String.format("Token has been upserted. Saved into `%s` on bot root directory.", KitsuHandler.FILE_NAME))
+            builder.setDescription(String.format("Token has been upserted. Saved into `%s` on bot root directory.", KitsuHandler.FILE_NAME))
                 .build()
         ).setEphemeral(true).queue();
     }
