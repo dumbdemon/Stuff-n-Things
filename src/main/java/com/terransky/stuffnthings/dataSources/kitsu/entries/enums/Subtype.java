@@ -1,8 +1,6 @@
 package com.terransky.stuffnthings.dataSources.kitsu.entries.enums;
 
-import org.jetbrains.annotations.NotNull;
-
-@SuppressWarnings("SpellCheckingInspection")
+@SuppressWarnings({"SpellCheckingInspection", "unused"})
 public enum Subtype {
 
     UNKNOWN("Unknown"),
@@ -30,50 +28,14 @@ public enum Subtype {
         this.code = code;
     }
 
-    public static Subtype getSubtypeByCode(@NotNull String code) {
-        switch (code) {
-            case "ONA" -> {
-                return ONA;
-            }
-            case "OVA" -> {
-                return OVA;
-            }
-            case "TV" -> {
-                return TV;
-            }
-            case "movie" -> {
-                return MOVIE;
-            }
-            case "music" -> {
-                return MUSIC;
-            }
-            case "special" -> {
-                return SPECIAL;
-            }
-            case "doujin" -> {
-                return DOUJIN;
-            }
-            case "manga" -> {
-                return MANGA;
-            }
-            case "manhua" -> {
-                return MANHUA;
-            }
-            case "manhwa" -> {
-                return MANHWA;
-            }
-            case "novel" -> {
-                return NOVEL;
-            }
-            case "oel" -> {
-                return OEL;
-            }
-            case "oneshot" -> {
-                return ONESHOT;
-            }
-            default -> {
-                return UNKNOWN;
-            }
+    public static Subtype getSubtypeByCode(String code) {
+        if (code == null || code.isEmpty())
+            return UNKNOWN;
+
+        try {
+            return Enum.valueOf(Subtype.class, code.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return UNKNOWN;
         }
     }
 

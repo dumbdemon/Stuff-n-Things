@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.dataSources.kitsu.entries.enums;
 
+@SuppressWarnings("unused")
 public enum Status {
 
     UNKNOWN("UNKNOWN"),
@@ -16,27 +17,13 @@ public enum Status {
     }
 
     public static Status getStatusByState(String state) {
-        if (state == null)
+        if (state == null || state.isEmpty())
             return UNKNOWN;
-        switch (state) {
-            case "current" -> {
-                return CURRENT;
-            }
-            case "finished" -> {
-                return FINISHED;
-            }
-            case "tba" -> {
-                return TBA;
-            }
-            case "unreleased" -> {
-                return UNRELEASED;
-            }
-            case "upcoming" -> {
-                return UPCOMING;
-            }
-            default -> {
-                return UNKNOWN;
-            }
+
+        try {
+            return Enum.valueOf(Status.class, state.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return UNKNOWN;
         }
     }
 

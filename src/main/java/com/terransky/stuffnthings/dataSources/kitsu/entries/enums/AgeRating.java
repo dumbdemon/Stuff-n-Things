@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.dataSources.kitsu.entries.enums;
 
+@SuppressWarnings("unused")
 public enum AgeRating {
 
     /**
@@ -26,24 +27,13 @@ public enum AgeRating {
     }
 
     public static AgeRating getAgeRatingByCode(String code) {
-        if (code == null)
+        if (code == null || code.isEmpty())
             return NR;
-        switch (code) {
-            case "G" -> {
-                return G;
-            }
-            case "PG" -> {
-                return PG;
-            }
-            case "R" -> {
-                return R;
-            }
-            case "R18" -> {
-                return R18;
-            }
-            default -> {
-                return NR;
-            }
+
+        try {
+            return Enum.valueOf(AgeRating.class, code.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return NR;
         }
     }
 
