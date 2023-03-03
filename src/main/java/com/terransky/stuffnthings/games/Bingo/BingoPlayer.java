@@ -26,7 +26,7 @@ import java.util.*;
 })
 @SuppressWarnings("unused")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BingoPlayer extends Player<Number> {
+public class BingoPlayer extends Player {
 
     @BsonIgnore
     @JsonIgnore
@@ -306,11 +306,6 @@ public class BingoPlayer extends Player<Number> {
         return checkColumn(4);
     }
 
-    /**
-     * Checks if the player won diagonally, horizontally, or vertically.
-     *
-     * @return True if the player has won
-     */
     public boolean checkWinner() {
         return checkDiagonalWin() || checkHorizontalWin() || checkVerticalWin();
     }
@@ -334,7 +329,7 @@ public class BingoPlayer extends Player<Number> {
     }
 
     /**
-     * Made to satisfy Bongo Driver. Ignore.
+     * Made to satisfy Mongo Driver. Ignore.
      */
     public void setWinMethod(String winMethod) {
     }

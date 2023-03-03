@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @SuppressWarnings("unused")
-public class Game<T extends Player<?>> implements Pojo {
+public class Game<T extends Player> implements Pojo {
 
     private int playersMin;
     private String channelId;
@@ -37,14 +37,14 @@ public class Game<T extends Player<?>> implements Pojo {
         this.players = new ArrayList<>();
     }
 
-    protected Game(Channel channel, Member member, Permission... requiredPermissions) {
-        this(channel, member, List.of(requiredPermissions));
+    protected Game(Channel channel, Member host, Permission... requiredPermissions) {
+        this(channel, host, List.of(requiredPermissions));
     }
 
-    protected Game(@NotNull Channel channel, @NotNull Member member, Collection<Permission> requiredPermissions) {
+    protected Game(@NotNull Channel channel, @NotNull Member host, Collection<Permission> requiredPermissions) {
         this.channelId = channel.getId();
         this.channelMention = channel.getAsMention();
-        this.host = new Host(member);
+        this.host = new Host(host);
         this.players = new ArrayList<>();
         this.isGameCompleted = false;
     }

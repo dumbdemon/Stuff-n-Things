@@ -44,12 +44,12 @@ public class BingoGame extends Game<BingoPlayer> {
         this.calledNumbers = new ArrayList<>();
     }
 
-    public BingoGame(Channel channel, Member member) {
-        this(channel, member, 10);
+    public BingoGame(Channel channel, Member host) {
+        this(channel, host, 10);
     }
 
-    public BingoGame(Channel channel, Member member, long minutesToDelay) {
-        super(channel, member);
+    public BingoGame(Channel channel, Member host, long minutesToDelay) {
+        super(channel, host);
         this.calledNumbers = new ArrayList<>();
         this.delay = minutesToDelay;
         setMultiplayer(true);
