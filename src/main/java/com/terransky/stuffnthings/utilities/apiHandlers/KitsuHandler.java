@@ -126,7 +126,7 @@ public class KitsuHandler extends Handler {
      */
     public MangaKitsuData getManga(@NotNull String search) throws IOException {
         URI manga = URI.create(BASE_URL + "manga?filter%5Btext%5D=" + search.toLowerCase().replaceAll(" ", "%20"));
-        return getObjectMapper().readValue(getInputStreamOf(manga), MangaKitsuData.class);
+        return getObjectMapper().readValue(getResponse(manga), MangaKitsuData.class);
     }
 
     /**
@@ -138,7 +138,7 @@ public class KitsuHandler extends Handler {
      */
     public AnimeKitsuData getAnime(@NotNull String search) throws IOException {
         URI anime = URI.create(BASE_URL + "anime?filter%5Btext%5D=" + search.toLowerCase().replaceAll(" ", "%20"));
-        return getObjectMapper().readValue(getInputStreamOf(anime), AnimeKitsuData.class);
+        return getObjectMapper().readValue(getResponse(anime), AnimeKitsuData.class);
     }
 
     /**
@@ -150,7 +150,7 @@ public class KitsuHandler extends Handler {
      */
     public CategoriesKitsuData getCategories(@NotNull Relationships relationships) throws IOException {
         URI genres = URI.create(relationships.getCategories().getLinks().getRelated());
-        return getObjectMapper().readValue(getInputStreamOf(genres), CategoriesKitsuData.class);
+        return getObjectMapper().readValue(getResponse(genres), CategoriesKitsuData.class);
     }
 
     /**
@@ -160,7 +160,7 @@ public class KitsuHandler extends Handler {
      * @return An {@link InputStream}
      */
     @NotNull
-    private InputStream getInputStreamOf(@NotNull URI uri) {
+    private String getResponse(@NotNull URI uri) {
         try (ExecutorService service = Executors.newSingleThreadExecutor(getThreadFactory())) {
             HttpClient client = getHttpClient(service);
             HttpRequest.Builder request = HttpRequest.newBuilder(uri)
@@ -168,7 +168,7 @@ public class KitsuHandler extends Handler {
             if (token != null)
                 request.setHeader("Authorization", token);
 
-            HttpResponse<InputStream> response = client.send(request.build(), HttpResponse.BodyHandlers.ofInputStream());
+            HttpResponse<String> response = client.send(request.build(), HttpResponse.BodyHandlers.ofString());
             switch (response.statusCode()) {
                 case 200 -> {
                     return response.body();

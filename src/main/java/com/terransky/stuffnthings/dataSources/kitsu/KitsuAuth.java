@@ -96,7 +96,7 @@ public class KitsuAuth implements Pojo {
         this.createdAt = createdAt;
     }
 
-    @JsonInclude
+    @JsonIgnore
     @BsonIgnore
     public OffsetDateTime getCreatedAtAsDate() {
         return OffsetDateTime.ofInstant(Instant.ofEpochSecond(createdAt), ZoneId.systemDefault());

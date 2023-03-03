@@ -15,6 +15,8 @@ public class FileOperations {
     public static boolean makeDirectory(@NotNull String pathName) {
         File file = new File(pathName);
         if (!file.isDirectory()) return false;
+        if (file.exists())
+            return true;
         return file.mkdir();
     }
 }
