@@ -19,6 +19,7 @@ import com.terransky.stuffnthings.interactions.commands.slashCommands.maths.Numb
 import com.terransky.stuffnthings.interactions.commands.slashCommands.maths.SolveQuadratic;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.CalculateRats;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.WhatsInStandard;
+import com.terransky.stuffnthings.interactions.commands.userContextMenus.UserInfoMenu;
 import com.terransky.stuffnthings.interactions.modals.KillSuggest;
 import com.terransky.stuffnthings.interfaces.interactions.*;
 import com.terransky.stuffnthings.managers.CommandIManager;
@@ -96,7 +97,9 @@ public class Managers {
         new ReportMessage()
     );
 
-    private final CommandIManager<ICommandUser> userCommandIManager = new CommandIManager<>();
+    private final CommandIManager<ICommandUser> userCommandIManager = new CommandIManager<>(
+        new UserInfoMenu()
+    );
 
     private final IManager<ISelectMenuEntity> entitySelectMenuIManager = new IManager<>();
 
