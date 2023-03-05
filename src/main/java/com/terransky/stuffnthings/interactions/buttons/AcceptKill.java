@@ -5,10 +5,9 @@ import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interactions.modals.KillSuggest;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.IButton;
-import com.terransky.stuffnthings.utilities.command.EmbedColors;
+import com.terransky.stuffnthings.utilities.command.EmbedColor;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.Config;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -29,12 +28,9 @@ public class AcceptKill {
 
     @NotNull
     public static MessageEmbed youAreNotAllowed(@NotNull GenericInteractionCreateEvent event, @NotNull EventBlob blob) {
-        return new EmbedBuilder()
-            .setTitle("Action Denied")
+        return blob.getStandardEmbed("Action Denied", EmbedColor.ERROR)
             .setDescription(String.format("You're not allowed to do that, %s", event.getUser().getAsMention()))
             .setImage("https://media.tenor.com/KkRrym9X09EAAAAd/i-dont-think-thats-allowed-ryan-bailey.gif")
-            .setColor(EmbedColors.getError())
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();
     }
 
@@ -46,11 +42,8 @@ public class AcceptKill {
 
         if (!DatabaseManager.INSTANCE.addKillString(isRandom ? KillStorage.RANDOM : KillStorage.TARGET, "0", event.getMessage().getContentRaw())) {
             event.replyEmbeds(
-                new EmbedBuilder()
-                    .setTitle(isRandom ? RANDOM_NAME_READABLE : TARGET_NAME_READABLE)
+                blob.getStandardEmbed(isRandom ? RANDOM_NAME_READABLE : TARGET_NAME_READABLE, EmbedColor.ERROR)
                     .setDescription("Unable to upload suggestion to Database. Please check logs.")
-                    .setColor(EmbedColors.getError())
-                    .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
                     .build()
             ).setEphemeral(true).queue();
             return;

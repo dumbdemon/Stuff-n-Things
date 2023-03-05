@@ -35,7 +35,7 @@ public class Bingo implements ISlashGame {
     @NotNull
     private static MessageEmbed noGameHasStartedEmbed(@NotNull EmbedBuilder response) {
         return response.setDescription("No game has started. Start one with `/bingo new`.")
-            .setColor(EmbedColors.getError())
+            .setColor(EmbedColor.ERROR.getColor())
             .build();
     }
 
@@ -102,7 +102,7 @@ public class Bingo implements ISlashGame {
                 response.setDescription("Max players reach! You cannot join this game! Start a new one in a different channel?");
             } else
                 response.setDescription("You're already playing! Please wait until the timer runs out or until the host starts the game.");
-            event.replyEmbeds(response.setColor(EmbedColors.getError()).build()).queue();
+            event.replyEmbeds(response.setColor(EmbedColor.ERROR.getColor()).build()).queue();
             return;
         }
 
@@ -248,7 +248,7 @@ public class Bingo implements ISlashGame {
         if (!bingoGame.isMemberHost(blob.getMember())) {
             event.replyEmbeds(
                 response.setDescription("You are not the host. Only the host can cancel the game.")
-                    .setColor(EmbedColors.getError())
+                    .setColor(EmbedColor.ERROR.getColor())
                     .build()
             ).setEphemeral(true).queue();
             return;
@@ -257,7 +257,7 @@ public class Bingo implements ISlashGame {
         if (bingoGame.isStarted()) {
             event.replyEmbeds(
                 response.setDescription("You cannot cancel a game in progress.")
-                    .setColor(EmbedColors.getError())
+                    .setColor(EmbedColor.ERROR.getColor())
                     .build()
             ).queue();
             return;
@@ -418,7 +418,7 @@ public class Bingo implements ISlashGame {
                 } catch (InterruptedException e) {
                     textChannel.sendMessageEmbeds(
                         response.setDescription("Error occurred during verbose!\nSkipping to winner...")
-                            .setColor(EmbedColors.getError())
+                            .setColor(EmbedColor.ERROR.getColor())
                             .build()
                     ).queue();
                     LoggerFactory.getLogger(Bingo.class)

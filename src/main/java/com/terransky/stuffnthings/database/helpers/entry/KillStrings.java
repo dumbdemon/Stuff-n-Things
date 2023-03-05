@@ -29,6 +29,13 @@ public class KillStrings {
         this.killTargets = new ArrayList<>();
     }
 
+    @BsonIgnore
+    public static KillStrings asKillStrings(Object obj) {
+        if (obj instanceof KillStrings killStrings)
+            return killStrings;
+        throw new IllegalArgumentException(String.format("Object is not %s", Formatter.getNameOfClass(KillStrings.class)));
+    }
+
     @BsonProperty("guildId")
     public String getIdReference() {
         return idReference;
@@ -57,13 +64,6 @@ public class KillStrings {
     @BsonProperty("killRandoms")
     public void setKillRandoms(List<String> killRandoms) {
         this.killRandoms = List.copyOf(killRandoms);
-    }
-
-    @BsonIgnore
-    public static KillStrings asKillStrings(Object obj) {
-        if (obj instanceof KillStrings killStrings)
-            return killStrings;
-        throw new IllegalArgumentException(String.format("Object is not %s", Formatter.getNameOfClass(KillStrings.class)));
     }
 
     @BsonIgnore

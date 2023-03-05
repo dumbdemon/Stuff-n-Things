@@ -5,7 +5,7 @@ import com.terransky.stuffnthings.database.helpers.PropertyMapping;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandMessage;
-import com.terransky.stuffnthings.utilities.command.EmbedColors;
+import com.terransky.stuffnthings.utilities.command.EmbedColor;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.jda.DiscordWebhook;
@@ -40,12 +40,11 @@ public class ReportMessage implements ICommandMessage {
             .getFromDatabase(blob, Property.REPORT_RESPONSE, "Got it. Message has been reported.", PropertyMapping::getAsString);
 
         if (ifWebhookId.isEmpty()) {
-            event.replyEmbeds(new EmbedBuilder()
-                .setColor(EmbedColors.getError())
-                .setTitle(getName())
-                .setDescription("Message reporting has not been set up yet!\nTell your server admins to set up with `/config report`!")
-                .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
-                .build()
+            event.replyEmbeds(
+                blob.getStandardEmbed(getName(), EmbedColor.ERROR)
+                    .setDescription("Message reporting has not been set up yet!\nTell your server admins to set up with `/config report`!")
+                    .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+                    .build()
             ).setEphemeral(true).queue();
             return;
         }
@@ -55,21 +54,18 @@ public class ReportMessage implements ICommandMessage {
         Webhook webhook = event.getJDA().retrieveWebhookById(ifWebhookId.get()).submit().get();
 
         if (message.getAuthor().isBot()) {
-            event.replyEmbeds(new EmbedBuilder()
-                .setTitle(getName())
-                .setDescription("Bot messages should be reported to either the developers or to" +
-                    " [Discord Trust & Safety](https://support.discord.com/hc/en-us/requests/new).")
-                .setColor(EmbedColors.getError())
-                .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
-                .build()
+            event.replyEmbeds(
+                blob.getStandardEmbed(getName(), EmbedColor.ERROR)
+                    .setDescription("Bot messages should be reported to either the developers or to" +
+                        " [Discord Trust & Safety](https://support.discord.com/hc/en-us/requests/new).")
+                    .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+                    .build()
             ).setEphemeral(true).queue();
             return;
         }
 
         Set<Member> members = message.getMentions().getMembersBag().uniqueSet();
-        EmbedBuilder report = new EmbedBuilder()
-            .setColor(EmbedColors.getSecondary())
-            .setTitle("Message Reported", message.getJumpUrl())
+        EmbedBuilder report = blob.getStandardEmbed("Message Reported", message.getJumpUrl(), EmbedColor.SUB_DEFAULT)
             .setDescription(String.format("The following message has been reported:%n```%s```", message.getContentRaw()))
             .setFooter(String.format("Reported by %s | %s", blob.getMemberAsTag(), blob.getMemberId()), blob.getMemberEffectiveAvatarUrl())
             .addField("Mentions", String.format("Mentions %s user%s", members.size(), members.size() > 1 ? "s" : ""), false);

@@ -24,7 +24,7 @@ import java.util.Optional;
 public class GetRandomCat implements ICommandSlash {
     @NotNull
     private static MessageEmbed getMessageEmbed(@NotNull EmbedBuilder response, @NotNull CatAASData catAASData) {
-        return response.setColor(EmbedColors.getError())
+        return response.setColor(EmbedColor.ERROR.getColor())
             .setDescription(String.format("I couldn't get a cat because: `%s`", catAASData.getMessage()))
             .appendDescription("\nTry using different options?")
             .build();
@@ -40,7 +40,7 @@ public class GetRandomCat implements ICommandSlash {
         return new Metadata(getName(), "Get a random image of a cat",
             Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-09T13:17Z"),
-            Metadata.parseDate("2023-02-27T16:23Z")
+            Metadata.parseDate("2023-03-05T16:18Z")
         )
             .addOptions(
                 new OptionData(OptionType.BOOLEAN, "gif", "Whether not you just want gifs."),

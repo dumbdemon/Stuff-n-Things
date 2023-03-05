@@ -50,7 +50,7 @@ public class ConfigCmd implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.ADMIN,
             Metadata.parseDate("2022-08-28T21:46Z"),
-            Metadata.parseDate("2023-02-27T16:14Z")
+            Metadata.parseDate("2023-03-05T16:18Z")
         )
             .addDefaultPerms(Permission.MANAGE_SERVER)
             .addSubcommandGroups(
@@ -195,7 +195,7 @@ public class ConfigCmd implements ICommandSlash {
 
         if (!blob.getSelfMember().hasPermission(Permission.MANAGE_WEBHOOKS)) {
             event.getHook().sendMessageEmbeds(
-                eb.setColor(EmbedColors.getError())
+                eb.setColor(EmbedColor.ERROR.getColor())
                     .setDescription("Unable to proceed. Missing permission to manage webhooks.")
                     .build()
             ).queue();
@@ -210,7 +210,7 @@ public class ConfigCmd implements ICommandSlash {
             if (webhook.isEmpty()) {
                 event.getHook().sendMessageEmbeds(
                     eb.setDescription("Reporting has not been set up yet.")
-                        .setColor(EmbedColors.getError())
+                        .setColor(EmbedColor.ERROR.getColor())
                         .build()
                 ).queue();
                 return;

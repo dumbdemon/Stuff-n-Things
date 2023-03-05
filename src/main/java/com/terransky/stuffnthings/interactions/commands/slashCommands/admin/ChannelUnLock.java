@@ -33,7 +33,7 @@ public class ChannelUnLock implements ICommandSlash {
         return new Metadata(this.getName(), "Lock or unlock a channel for everyone or from a specific role to see.",
             Mastermind.DEVELOPER, CommandCategory.ADMIN,
             Metadata.parseDate("2022-11-23T18:34Z"),
-            Metadata.parseDate("2023-02-27T16:05Z")
+            Metadata.parseDate("2023-03-05T16:18Z")
         )
             .addDefaultPerms(Permission.MANAGE_CHANNEL)
             .addSubcommands(
@@ -72,7 +72,7 @@ public class ChannelUnLock implements ICommandSlash {
                         event.replyEmbeds(
                             response
                                 .setDescription("%s is already set to not be viewed by %s.".formatted(targetChannel.getAsMention(), targetRole.getAsMention()))
-                                .setColor(EmbedColors.getError())
+                                .setColor(EmbedColor.ERROR.getColor())
                                 .build()
                         ).queue();
                         return;
@@ -83,7 +83,7 @@ public class ChannelUnLock implements ICommandSlash {
                         event.replyEmbeds(
                             response
                                 .setDescription("%s is already set to be viewable by %s.".formatted(targetChannel.getAsMention(), targetRole.getAsMention()))
-                                .setColor(EmbedColors.getError())
+                                .setColor(EmbedColor.ERROR.getColor())
                                 .build()
                         ).queue();
                         return;
@@ -94,7 +94,7 @@ public class ChannelUnLock implements ICommandSlash {
                         event.replyEmbeds(
                             response
                                 .setDescription("%s is not in the permissions list for %s.".formatted(targetRole.getAsMention(), targetChannel.getAsMention()))
-                                .setColor(EmbedColors.getError())
+                                .setColor(EmbedColor.ERROR.getColor())
                                 .build()
                         ).queue();
                         return;
@@ -108,7 +108,7 @@ public class ChannelUnLock implements ICommandSlash {
                     .setDescription(("Either I do not have access to modify the permissions for %s, or something else has happened and it should be reported." +
                         " Head [here](%s) to report.")
                         .formatted(targetChannel.getAsMention(), Config.getErrorReportingURL()))
-                    .setColor(EmbedColors.getError())
+                    .setColor(EmbedColor.ERROR.getColor())
                     .build()
             ).queue();
             return;

@@ -42,7 +42,7 @@ public class TinyURL implements ICommandSlash {
                     url,
                     errors.size() > 1 ? "s" : "",
                     stringBuilder))
-                .setColor(EmbedColors.getError())
+                .setColor(EmbedColor.ERROR.getColor())
                 .build()
         ).queue();
     }
@@ -66,7 +66,7 @@ public class TinyURL implements ICommandSlash {
         return new Metadata(getName(), "Create short URLs with TinyURL",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
             Metadata.parseDate("2023-01-06T16:04Z"),
-            Metadata.parseDate("2023-03-02T16:38Z")
+            Metadata.parseDate("2023-03-05T16:18Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "url", "A URL to shorten.", true),
@@ -120,21 +120,21 @@ public class TinyURL implements ICommandSlash {
                     embedBuilder.appendDescription(String.format("An error occurred during %s.",
                             response.getCode() == 7 ? "server operations. Please try again in a few moments" :
                                 String.format("authorization. Please report it [here](%s)", reportingURL)))
-                        .setColor(EmbedColors.getError())
+                        .setColor(EmbedColor.ERROR.getColor())
                         .build()
                 ).queue();
                 case 3 -> event.getHook().sendMessageEmbeds(
                     embedBuilder.appendDescription(
                             String.format("Unable to access TinyURL servers. If this continues, please report this [here](%s).",
                                 reportingURL))
-                        .setColor(EmbedColors.getError())
+                        .setColor(EmbedColor.ERROR.getColor())
                         .build()
                 ).queue();
                 case 5 -> validationFailed(event, url, embedBuilder, response);
                 default -> event.getHook().sendMessageEmbeds(
                     embedBuilder.appendDescription(String.format("An unknown operation occurred on bot side. Please report it [here](%s).",
                             reportingURL))
-                        .setColor(EmbedColors.getError())
+                        .setColor(EmbedColor.ERROR.getColor())
                         .build()
                 ).queue();
             }

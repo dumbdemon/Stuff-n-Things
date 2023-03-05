@@ -45,6 +45,14 @@ public class GuildEntry {
         this.doVerbose = true;
     }
 
+    @BsonIgnore
+    public static GuildEntry asGuildEntry(Object entry) {
+        if (entry instanceof GuildEntry guildEntry)
+            return guildEntry;
+        throw new IllegalArgumentException(String.format("Object is not %s. Is it %s?",
+            Formatter.getNameOfClass(GuildEntry.class), Formatter.getNameOfClass(UserEntry.class)));
+    }
+
     @BsonProperty("guildId")
     public String getIdReference() {
         return idReference;
@@ -125,14 +133,6 @@ public class GuildEntry {
     @BsonProperty("bingo_games")
     public void setBingoGames(List<BingoGame> bingoGames) {
         this.bingoGames = bingoGames;
-    }
-
-    @BsonIgnore
-    public static GuildEntry asGuildEntry(Object entry) {
-        if (entry instanceof GuildEntry guildEntry)
-            return guildEntry;
-        throw new IllegalArgumentException(String.format("Object is not %s. Is it %s?",
-            Formatter.getNameOfClass(GuildEntry.class), Formatter.getNameOfClass(UserEntry.class)));
     }
 
     @BsonIgnore

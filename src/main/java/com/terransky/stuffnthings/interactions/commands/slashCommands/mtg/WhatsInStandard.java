@@ -83,7 +83,7 @@ public class WhatsInStandard implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.MTG,
             Metadata.parseDate("2022-10-27T12:46Z"),
-            Metadata.parseDate("2023-02-27T16:43Z")
+            Metadata.parseDate("2023-03-05T16:18Z")
         )
             .addSubcommands(
                 new SubcommandData("all", "Get all info about the standard format."),
@@ -108,7 +108,7 @@ public class WhatsInStandard implements ICommandSlash {
         if (wisData.isDeprecated()) {
             event.getHook().sendMessageEmbeds(
                 eb.setDescription("Version %s has been deprecated. Please create an issue [here](%s).".formatted(version, Config.getErrorReportingURL()))
-                    .setColor(EmbedColors.getError())
+                    .setColor(EmbedColor.ERROR.getColor())
                     .build()
             ).queue();
             return;

@@ -113,7 +113,7 @@ public class ColorInfo implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-09-20T12:10Z"),
-            Metadata.parseDate("2023-02-27T16:45Z")
+            Metadata.parseDate("2023-03-05T16:18Z")
         )
             .addSubcommands(
                 new SubcommandData("hex-triplet", "Get more info on a hex triplet. EX: #663366")
@@ -174,7 +174,7 @@ public class ColorInfo implements ICommandSlash {
                     FUN FACT!
                     > There are %s combinations for 6 character hex triplets and of those combinations, %s are for 3 character hex triplets!
                     """, format.format(Math.pow(16, 6)), format.format(Math.pow(16, 3))))
-                .setColor(EmbedColors.getError())
+                .setColor(EmbedColor.ERROR.getColor())
                 .addField("Provided", hexCode.toUpperCase(), false);
             event.replyEmbeds(eb.build()).setEphemeral(true).queue();
             return;

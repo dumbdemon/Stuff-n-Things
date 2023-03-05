@@ -65,7 +65,7 @@ public class CheckPerms implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.ADMIN,
             Metadata.parseDate("2022-08-30T16:14Z"),
-            Metadata.parseDate("2023-02-27T16:05Z")
+            Metadata.parseDate("2023-03-05T16:18Z")
         )
             .addDefaultPerms(Permission.MANAGE_ROLES)
             .addSubcommands(
@@ -115,7 +115,7 @@ public class CheckPerms implements ICommandSlash {
         }
         eb.appendDescription(sb.substring(0, sb.length() - 2))
             .appendDescription("\n]```")
-            .setColor(EmbedColors.getError());
+            .setColor(EmbedColor.ERROR.getColor());
         event.replyEmbeds(eb.build()).queue();
     }
 }

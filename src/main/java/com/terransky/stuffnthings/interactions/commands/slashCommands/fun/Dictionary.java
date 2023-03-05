@@ -85,7 +85,7 @@ public class Dictionary implements ICommandSlash {
 
         if (wordCount > MAX_FIELDS) {
             EmbedBuilder ebOverflow = new EmbedBuilder(embedBuilder)
-                .setColor(EmbedColors.getSecondary());
+                .setColor(EmbedColor.SUB_DEFAULT.getColor());
             for (int i = MAX_FIELDS; i < wordCount; i++) {
                 ebOverflow.addField(definitionFields.get(i));
             }
@@ -147,7 +147,7 @@ public class Dictionary implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-10-27T12:46Z"),
-            Metadata.parseDate("2023-03-01T10:26Z")
+            Metadata.parseDate("2023-03-05T16:18Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "word", "The word to look up.", true),
@@ -192,7 +192,7 @@ public class Dictionary implements ICommandSlash {
                             " If this message continues to appear, please report this incident [here](%s).")
                             .formatted(toLookUp.toUpperCase(language.getValue()), Config.getErrorReportingURL())
                         )
-                        .setColor(EmbedColors.getError())
+                        .setColor(EmbedColor.ERROR.getColor())
                         .build()
                 ).queue();
 
@@ -202,7 +202,7 @@ public class Dictionary implements ICommandSlash {
             case 403 -> {
                 event.getHook().sendMessageEmbeds(
                     eb.setDescription("")
-                        .setColor(EmbedColors.getError())
+                        .setColor(EmbedColor.ERROR.getColor())
                         .build()
                 ).queue();
 
@@ -213,14 +213,14 @@ public class Dictionary implements ICommandSlash {
                 eb.setTitle("Definition - %s".formatted(toLookUp.toUpperCase(language.getValue())))
                     .setDescription("There are no *%s* definitions for [%s].\n\nEither the word does not exist or you have mistyped."
                         .formatted(language.getKey(), toLookUp.toUpperCase(language.getValue())))
-                    .setColor(EmbedColors.getError())
+                    .setColor(EmbedColor.ERROR.getColor())
                     .build()
             ).queue();
             case 500 -> {
                 event.getHook().sendMessageEmbeds(
                     eb.setDescription("Looks like something went wrong with the API. Please report this incident [here](%s)"
                             .formatted(Config.getErrorReportingURL()))
-                        .setColor(EmbedColors.getError())
+                        .setColor(EmbedColor.ERROR.getColor())
                         .build()
                 ).queue();
 
@@ -229,13 +229,13 @@ public class Dictionary implements ICommandSlash {
             }
             case 414 -> event.getHook().sendMessageEmbeds(
                 eb.setDescription("Your word can be at most 128 characters. Please look up a different word.")
-                    .setColor(EmbedColors.getError())
+                    .setColor(EmbedColor.ERROR.getColor())
                     .build()
             ).queue();
             case 502 -> {
                 event.getHook().sendMessageEmbeds(
                     eb.setDescription("The API server is currently down or being upgraded. Please try this command later.\n\n[Click me to check.](https://downforeveryoneorjustme.com/languages.oup.com?proto=https)")
-                        .setColor(EmbedColors.getError())
+                        .setColor(EmbedColor.ERROR.getColor())
                         .build()
                 ).queue();
 
@@ -248,7 +248,7 @@ public class Dictionary implements ICommandSlash {
                 String gatewayTimeout = "something went wrong while in queue";
                 event.getHook().sendMessageEmbeds(
                     eb.setDescription("The API servers are up, but %s. Please wait a couple moments and try again.".formatted(isIt503 ? serviceUnavailable : gatewayTimeout))
-                        .setColor(EmbedColors.getError())
+                        .setColor(EmbedColor.ERROR.getColor())
                         .build()
                 ).queue();
 

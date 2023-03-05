@@ -6,7 +6,7 @@ import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.interfaces.interactions.*;
 import com.terransky.stuffnthings.utilities.cannedAgenda.GuildOnly;
 import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
-import com.terransky.stuffnthings.utilities.command.EmbedColors;
+import com.terransky.stuffnthings.utilities.command.EmbedColor;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -38,11 +38,8 @@ public class InteractionListener extends ListenerAdapter {
 
     @NotNull
     private MessageEmbed getFailedInteractionMessage(@NotNull EventBlob blob) {
-        return new EmbedBuilder()
-            .setTitle("Oops!")
+        return blob.getStandardEmbed("Oops!", EmbedColor.ERROR)
             .setDescription(Responses.INTERACTION_FAILED.getMessage(blob.getInteractionType()))
-            .setColor(EmbedColors.getError())
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
             .build();
     }
 
