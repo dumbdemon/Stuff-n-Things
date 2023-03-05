@@ -43,7 +43,7 @@ public class Meme implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-02-27T16:36Z")
+            Metadata.parseDate("2023-03-05T16:18Z")
         )
             .addSubcommands(
                 new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, or from r/me_irl.")
@@ -81,7 +81,7 @@ public class Meme implements ICommandSlash {
                     eb.setTitle("Whoops! - Code " + memeData.getCode())
                         .setDescription(memeData.getMessage())
                         .setFooter("Reddit", redditLogo)
-                        .setColor(EmbedColors.getError())
+                        .setColor(EmbedColor.ERROR.getColor())
                         .addField("Verify Subreddit", String.format("[**[link]**](https://www.reddit.com/r/%s)", subreddit), false)
                         .build()
                 ).queue();
@@ -94,7 +94,7 @@ public class Meme implements ICommandSlash {
                 event.getHook().sendMessageEmbeds(
                     eb.setTitle("Whoops!")
                         .setDescription("The meme presented was marked NSFW and this channel is not an NSFW channel.\nPlease check with your server's admins if this channel's settings are correct.")
-                        .setColor(EmbedColors.getError())
+                        .setColor(EmbedColor.ERROR.getColor())
                         .build()
                 ).queue();
                 return;
@@ -105,7 +105,7 @@ public class Meme implements ICommandSlash {
                     eb.setTitle("Spoilers!")
                         .setDescription("The fresh meme I got was marked as a spoiler! [Go look if you dare!](" + memeData.getPostLink() + ")")
                         .setImage("https://media1.giphy.com/media/sYs8CsuIRBYfp2H9Ie/giphy.gif?cid=ecf05e4773n58x026pqkk7lzacutjm13jxvkkfv4z5j0gsc9&rid=giphy.gif&ct=g")
-                        .setColor(EmbedColors.getSecondary())
+                        .setColor(EmbedColor.SUB_DEFAULT.getColor())
                         .build()
                 ).queue();
                 return;
@@ -123,7 +123,7 @@ public class Meme implements ICommandSlash {
                 eb.setTitle("Whoops!")
                     .setDescription(String.format("Error whilst executing code. Please report it [here](%s)", Config.getErrorReportingURL()))
                     .setFooter("Reddit", redditLogo)
-                    .setColor(EmbedColors.getError())
+                    .setColor(EmbedColor.ERROR.getColor())
                     .setTimestamp(OffsetDateTime.now())
                     .build()
             ).queue();

@@ -89,7 +89,7 @@ public class JokesV2 implements ICommandSlash {
             .setDescription(response.getMessage());
 
         if (response.getError()) {
-            reply.setColor(EmbedColors.getError());
+            reply.setColor(EmbedColor.ERROR.getColor());
             if (response.getAdditionalInfo() != null)
                 reply.addField("Additional Info (From API)", response.getAdditionalInfo(), false);
         } else {
@@ -156,7 +156,7 @@ public class JokesV2 implements ICommandSlash {
             Admins can use `/config jokes` to limit the specifiers.
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-06T18:34Z"),
-            Metadata.parseDate("2023-03-02T10:12Z")
+            Metadata.parseDate("2023-03-05T16:18Z")
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("get", "Get a random joke.")
@@ -197,7 +197,7 @@ public class JokesV2 implements ICommandSlash {
 
             event.replyEmbeds(
                 new EmbedBuilder(comedian)
-                    .setColor(EmbedColors.getError())
+                    .setColor(EmbedColor.ERROR.getColor())
                     .setDescription(message)
                     .build()
             ).queue();

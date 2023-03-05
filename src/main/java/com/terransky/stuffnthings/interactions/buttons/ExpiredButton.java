@@ -2,9 +2,8 @@ package com.terransky.stuffnthings.interactions.buttons;
 
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.IButton;
-import com.terransky.stuffnthings.utilities.command.EmbedColors;
+import com.terransky.stuffnthings.utilities.command.EmbedColor;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,10 +18,8 @@ public class ExpiredButton implements IButton {
     @Override
     public void execute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         event.replyEmbeds(
-            new EmbedBuilder()
-                .setTitle("Button Expired")
+            blob.getStandardEmbed("Button Expired", EmbedColor.ERROR)
                 .setDescription("This button has expired. Please issue the command again.")
-                .setColor(EmbedColors.getError())
                 .build()
         ).setEphemeral(true).queue();
     }

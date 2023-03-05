@@ -4,7 +4,7 @@ import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.Kill;
 import com.terransky.stuffnthings.interfaces.interactions.IModal;
-import com.terransky.stuffnthings.utilities.command.EmbedColors;
+import com.terransky.stuffnthings.utilities.command.EmbedColor;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -60,7 +60,7 @@ public class KillSuggest {
         );
 
         event.getHook().sendMessageEmbeds(
-            new EmbedBuilder(blob.getStandardEmbed("Suggestion received!", EmbedColors.getSecondary()))
+            new EmbedBuilder(blob.getStandardEmbed("Suggestion received!", EmbedColor.SUB_DEFAULT))
                 .setDescription("The next embed will show what your suggestion will look like!\n" +
                     "***Note: Will not show up automatically!***")
                 .build(),

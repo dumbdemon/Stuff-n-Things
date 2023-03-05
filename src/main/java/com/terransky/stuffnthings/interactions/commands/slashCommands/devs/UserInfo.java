@@ -78,7 +78,7 @@ public class UserInfo implements ICommandSlash {
         String permissionStatus = setPermissionStatus(member, blob.getSelfMember());
         String userPerms = setUserPerms(member);
         User.Profile profile = member.getUser().retrieveProfile().submit().get();
-        Color embedColor = profile.getAccentColor() == null ? EmbedColors.getSecondary() : profile.getAccentColor();
+        Color embedColor = profile.getAccentColor() == null ? EmbedColor.SUB_DEFAULT.getColor() : profile.getAccentColor();
 
         EmbedBuilder infoEmbed = blob.getStandardEmbed(WordUtils.capitalize(member.getEffectiveName()) + "'s Info", embedColor)
             .setThumbnail(member.getEffectiveAvatarUrl())
@@ -122,7 +122,7 @@ public class UserInfo implements ICommandSlash {
             """, Mastermind.DEFAULT,
             CommandCategory.DEVS,
             Metadata.parseDate("2023-08-24T11:10Z"),
-            Metadata.parseDate("2023-03-04T19:48Z")
+            Metadata.parseDate("2023-03-05T16:18Z")
         )
             .addOptions(
                 new OptionData(OptionType.USER, "user", "Who you want to know about.")

@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.utilities.cannedAgenda;
 
 import com.terransky.stuffnthings.interfaces.IInteraction;
-import com.terransky.stuffnthings.utilities.command.EmbedColors;
+import com.terransky.stuffnthings.utilities.command.EmbedColor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
@@ -12,7 +12,7 @@ public class GuildOnly {
 
     private static final EmbedBuilder BOT_IS_GUILD_ONLY = new EmbedBuilder()
         .setTitle("This bot is a server only bot.")
-        .setColor(EmbedColors.getError());
+        .setColor(EmbedColor.ERROR.getColor());
 
     private GuildOnly() {
     }

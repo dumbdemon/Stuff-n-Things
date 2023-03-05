@@ -27,7 +27,7 @@ public class Suggest implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.GENERAL,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2022-01-01T18:23Z")
+            Metadata.parseDate("2023-03-05T16:18Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "suggestion", "What do you want the bot to do?", true),
@@ -40,7 +40,7 @@ public class Suggest implements ICommandSlash {
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         String suggestion = event.getOption("suggestion", OptionMapping::getAsString);
         int importance = event.getOption("importance", 50, OptionMapping::getAsInt);
-        EmbedBuilder callReply = new EmbedBuilder().setColor(EmbedColors.getDefault());
+        EmbedBuilder callReply = new EmbedBuilder().setColor(EmbedColor.DEFAULT.getColor());
         String description = "```\n" + suggestion + "\n```";
 
         new DiscordWebhook("Suggestion")

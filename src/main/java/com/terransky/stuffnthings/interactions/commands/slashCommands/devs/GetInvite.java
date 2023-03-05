@@ -24,7 +24,7 @@ public class GetInvite implements ICommandSlash {
         return new Metadata(this.getName(), "Get an invite for the bot.",
             Mastermind.DEFAULT, CommandCategory.DEVS,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2022-12-21T12:16Z")
+            Metadata.parseDate("2023-03-05T16:18Z")
         );
     }
 
@@ -42,7 +42,7 @@ public class GetInvite implements ICommandSlash {
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         event.replyEmbeds(
             new EmbedBuilder()
-                .setColor(EmbedColors.getDefault())
+                .setColor(EmbedColor.DEFAULT.getColor())
                 .setTitle("You can't even use this.", event.getJDA().getInviteUrl(CheckPerms.getRequiredPerms()))
                 .build()
         ).queue();

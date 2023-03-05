@@ -7,7 +7,7 @@ import com.terransky.stuffnthings.interfaces.interactions.ICommandMessage;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandUser;
 import com.terransky.stuffnthings.managers.CommandIManager;
 import com.terransky.stuffnthings.managers.SlashIManager;
-import com.terransky.stuffnthings.utilities.command.EmbedColors;
+import com.terransky.stuffnthings.utilities.command.EmbedColor;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -59,7 +59,7 @@ public class ListeningForEvents extends ListenerAdapter {
         DatabaseManager.INSTANCE.addGuild(event.getGuild());
 
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(EmbedColors.getDefault())
+            .setColor(EmbedColor.DEFAULT.getColor())
             .setAuthor(theBot.getName(), null, theBot.getAvatarUrl())
             .setDescription("> *What am I doing here?*\n> *Why am I here?*\n> *Am I supposed to be here?*");
         Objects.requireNonNull(event.getGuild().getDefaultChannel()).asTextChannel().sendMessageEmbeds(eb.build()).queue();

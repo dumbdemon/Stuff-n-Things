@@ -39,7 +39,7 @@ public class GetWeather implements ICommandSlash {
             If you don't know your country's code, you can use [this website](https://www.iso.org/obp/ui/#search).
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-01T16:27Z"),
-            Metadata.parseDate("2023-02-27T16:25Z")
+            Metadata.parseDate("2023-03-05T16:18Z")
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("by-coordinates", "Get the weather by coordinates.")
@@ -128,11 +128,8 @@ public class GetWeather implements ICommandSlash {
                     weatherData = handler.getWeatherData(city, state, code);
                     if (weatherData == null) {
                         event.getHook().sendMessageEmbeds(
-                            new EmbedBuilder()
-                                .setTitle(getNameReadable())
+                            blob.getStandardEmbed(getNameReadable(), EmbedColor.ERROR)
                                 .setDescription("No location data returned from API. Did you type the location right?")
-                                .setColor(EmbedColors.getError())
-                                .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
                                 .addField("City", city, true)
                                 .addField("State", state != null ? state : "*None Provided*", true)
                                 .addField("Country", code.getAlpha2(), true)
@@ -147,12 +144,9 @@ public class GetWeather implements ICommandSlash {
         } catch (IOException e) {
             LoggerFactory.getLogger(GetWeather.class).error("Couldn't get location data.", e);
             event.getHook().sendMessageEmbeds(
-                new EmbedBuilder()
-                    .setTitle(getName())
+                blob.getStandardEmbed(getNameReadable(), EmbedColor.ERROR)
                     .setDescription(String.format("Location provided is invalid. Please try again.%nIf this continues, [please make a report](%s).",
                         Config.getErrorReportingURL()))
-                    .setColor(EmbedColors.getError())
-                    .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
                     .build()
             ).queue();
             return;
@@ -199,7 +193,7 @@ public class GetWeather implements ICommandSlash {
 
     @NotNull
     private MessageEmbed getBadUserCodeEmbed(@NotNull EventBlob blob, String userCode) {
-        return blob.getStandardEmbed(getNameReadable(), EmbedColors.getError())
+        return blob.getStandardEmbed(getNameReadable(), EmbedColor.ERROR)
             .setDescription("Country code given was invalid.")
             .addField("Given", userCode, false)
             .build();

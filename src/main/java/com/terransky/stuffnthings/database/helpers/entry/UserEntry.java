@@ -39,6 +39,14 @@ public class UserEntry {
         this.perServers = new ArrayList<>();
     }
 
+    @BsonIgnore
+    public static UserEntry asUserEntry(Object entry) {
+        if (entry instanceof UserEntry userEntry)
+            return userEntry;
+        throw new IllegalArgumentException(String.format("Object is not %s. Is it %s?",
+            Formatter.getNameOfClass(UserEntry.class), Formatter.getNameOfClass(GuildEntry.class)));
+    }
+
     @BsonProperty("userId")
     public String getIdReference() {
         return idReference;
@@ -77,14 +85,6 @@ public class UserEntry {
     @BsonProperty("isSupportGuildBan")
     public void setSupportGuildBan(Boolean supportGuildBan) {
         this.supportGuildBan = supportGuildBan;
-    }
-
-    @BsonIgnore
-    public static UserEntry asUserEntry(Object entry) {
-        if (entry instanceof UserEntry userEntry)
-            return userEntry;
-        throw new IllegalArgumentException(String.format("Object is not %s. Is it %s?",
-            Formatter.getNameOfClass(UserEntry.class), Formatter.getNameOfClass(GuildEntry.class)));
     }
 
     @BsonIgnore
