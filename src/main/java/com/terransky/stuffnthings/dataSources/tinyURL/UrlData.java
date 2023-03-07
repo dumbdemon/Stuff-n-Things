@@ -24,7 +24,7 @@ import java.util.List;
     "url"
 })
 @Generated("jsonschema2pojo")
-public class Data {
+public class UrlData {
 
     @JsonProperty("domain")
     private String domain;

@@ -1,8 +1,10 @@
 package com.terransky.stuffnthings.utilities.apiHandlers;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.terransky.stuffnthings.dataSources.tinyURL.ErrorTinyURLResponse;
 import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLForm;
 import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLResponse;
+import com.terransky.stuffnthings.dataSources.tinyURL.ValidTinyURLResponse;
 import com.terransky.stuffnthings.utilities.general.Config;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,8 +44,11 @@ public class TinyURLHandler extends Handler {
                 .POST(HttpRequest.BodyPublishers.ofString(tinyURLForm.getAsJsonString()))
                 .build();
             HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+            if (response.statusCode() != 200) {
+                return getObjectMapper().readValue(response.body(), ErrorTinyURLResponse.class);
+            }
 
-            return getObjectMapper().readValue(response.body(), TinyURLResponse.class);
+            return getObjectMapper().readValue(response.body(), ValidTinyURLResponse.class);
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }

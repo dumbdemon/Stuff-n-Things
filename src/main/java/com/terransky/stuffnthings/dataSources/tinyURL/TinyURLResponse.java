@@ -20,18 +20,6 @@ public class TinyURLResponse extends CodesAndMessages {
 
     @JsonProperty("errors")
     List<String> errors = new ArrayList<>();
-    @JsonProperty("data")
-    private Data data;
-
-    @JsonProperty("data")
-    public Data getData() {
-        return data;
-    }
-
-    @JsonProperty("data")
-    public void setData(Data data) {
-        this.data = data;
-    }
 
     @JsonProperty("errors")
     public List<String> getErrors() {

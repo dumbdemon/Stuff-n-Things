@@ -1,9 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.devs;
 
-import com.terransky.stuffnthings.dataSources.tinyURL.Data;
-import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLForm;
-import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLLimits;
-import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLResponse;
+import com.terransky.stuffnthings.dataSources.tinyURL.*;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
@@ -66,7 +63,7 @@ public class TinyURL implements ICommandSlash {
         return new Metadata(getName(), "Create short URLs with TinyURL",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
             Metadata.parseDate("2023-01-06T16:04Z"),
-            Metadata.parseDate("2023-03-05T16:18Z")
+            Metadata.parseDate("2023-03-07T14:15Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "url", "A URL to shorten.", true),
@@ -103,7 +100,7 @@ public class TinyURL implements ICommandSlash {
 
             switch ((int) (long) response.getCode()) {
                 case 0 -> {
-                    Data urlData = response.getData();
+                    UrlData urlData = ((ValidTinyURLResponse) response).getData();
                     OffsetDateTime createdAt = urlData.getCreatedAtAsDate();
                     OffsetDateTime expiresAt = urlData.getExpiresAtAsDate();
 
