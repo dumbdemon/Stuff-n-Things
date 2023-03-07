@@ -82,8 +82,10 @@ public class UserInfo implements ICommandSlash {
 
         EmbedBuilder infoEmbed = blob.getStandardEmbed(WordUtils.capitalize(member.getEffectiveName()) + "'s Info", embedColor)
             .setThumbnail(member.getEffectiveAvatarUrl())
-            .addField("User ID", member.getId(), false)
-            .addField("User Status", permissionStatus, false)
+            .addField("User ID", member.getId(), true);
+        if (member.getUser().isBot())
+            infoEmbed.addField("Is System?", member.getUser().isSystem() ? "Yes" : "No", true);
+        infoEmbed.addField("User Status", permissionStatus, false)
             .addField("Total Roles", "%d role%s".formatted(roleCount, roleCount > 1 ? "s" : ""), true)
             .addField("Top Role", topRole.getAsMention(), true)
             .addField("Server Permissions", "```%s```".formatted(userPerms), false)
@@ -122,7 +124,7 @@ public class UserInfo implements ICommandSlash {
             """, Mastermind.DEFAULT,
             CommandCategory.DEVS,
             Metadata.parseDate("2023-08-24T11:10Z"),
-            Metadata.parseDate("2023-03-05T16:18Z")
+            Metadata.parseDate("2023-03-07T10:46Z")
         )
             .addOptions(
                 new OptionData(OptionType.USER, "user", "Who you want to know about.")
