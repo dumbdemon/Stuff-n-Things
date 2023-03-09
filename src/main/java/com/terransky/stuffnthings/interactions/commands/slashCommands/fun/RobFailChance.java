@@ -33,11 +33,13 @@ public class RobFailChance implements ICommandSlash {
             """.formatted(uBoatInvite), Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-02-27T16:37Z")
+            Metadata.parseDate("2023-03-09T12:20Z")
         )
             .addOptions(
-                new OptionData(OptionType.INTEGER, "your-net-worth", "Your net-worth.", true),
+                new OptionData(OptionType.INTEGER, "your-net-worth", "Your net-worth.", true)
+                    .setMaxValue(1),
                 new OptionData(OptionType.INTEGER, "their-cash", "The amount of cash for the person you are trying to rob", true)
+                    .setMinValue(1)
             );
     }
 
@@ -47,9 +49,9 @@ public class RobFailChance implements ICommandSlash {
 
         double yourNetWorth = event.getOption("your-net-worth", 0d, OptionMapping::getAsDouble),
             theirCash = event.getOption("their-cash", 0d, OptionMapping::getAsDouble);
-        String failChance = String.format("%.2f", (yourNetWorth / (theirCash + yourNetWorth)) * 100) + "%";
+        String failChance = String.format("%.2f%%", (yourNetWorth / (theirCash + yourNetWorth)) * 100);
 
-        EmbedBuilder eb = blob.getStandardEmbed("Your chance to fail is...")
+        EmbedBuilder eb = blob.getStandardEmbed("Your chance to fail is... " + failChance)
             .addField("Your Net-Worth", largeNumber.format(yourNetWorth), true)
             .addField("Their Cash", largeNumber.format(theirCash), true)
             .addField("Failure Chance", failChance, true);
