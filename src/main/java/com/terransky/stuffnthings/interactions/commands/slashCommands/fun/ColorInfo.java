@@ -21,8 +21,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ColorInfo implements ICommandSlash {
-    private final String HEX_TRIPLET_PATTERN = "^#?(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$";
-    private final Pattern pHexTriplet = Pattern.compile(HEX_TRIPLET_PATTERN);
+    private static final DecimalFormat HSB = new DecimalFormat("##.##%");
+    private final String HEX_TRIPLET_REGEX = "^#?(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$";
+    private final Pattern HEX_TRIPLET_PATTERN = Pattern.compile(HEX_TRIPLET_REGEX);
 
     @NotNull
     @Contract(pure = true)
@@ -54,51 +55,89 @@ public class ColorInfo implements ICommandSlash {
         return new int[]{c, m, y, (int) Math.floor(k)};
     }
 
-    private static void runCMYK(@NotNull SlashCommandInteractionEvent event, @NotNull DecimalFormat hsb, @NotNull EmbedBuilder eb) {
+    private void runHexTriplet(@NotNull SlashCommandInteractionEvent event, EmbedBuilder eb) {
+        String hexCode = event.getOption("triplet", "#636", OptionMapping::getAsString);
+        Matcher matcher = HEX_TRIPLET_PATTERN.matcher(hexCode);
+
+        if (!matcher.matches()) {
+            DecimalFormat bigNumber = new DecimalFormat("##,###");
+            eb.setTitle("Invalid Hex Triplet!")
+                .setDescription(String.format("""
+                    You've given an invalid hex triplet!
+                    Correct example: `#663366` or `#636`
+
+                    **NOTE:** Hex triplets are 3 or 6 characters that uses 0-9 and A-F in various combinations. On another note, `#0055FF` is equivalent to `#05F`.
+
+                    FUN FACT!
+                    > There are %s combinations for 6 character hex triplets and of those combinations, %s are for 3 character hex triplets!
+                    """, bigNumber.format(Math.pow(16, 6)), bigNumber.format(Math.pow(16, 3))))
+                .setColor(EmbedColor.ERROR.getColor())
+                .addField("Provided", hexCode.toUpperCase(), false);
+            event.replyEmbeds(eb.build()).setEphemeral(true).queue();
+            return;
+        }
+
+        Color color;
+        switch (hexCode.length()) {
+            case 3, 4 -> {
+                int offset = 0;
+                if (hexCode.charAt(0) == '#') offset++;
+                String R = String.valueOf(hexCode.charAt(offset));
+                String G = String.valueOf(hexCode.charAt(1 + offset));
+                String B = String.valueOf(hexCode.charAt(2 + offset));
+                color = Color.decode("#" + R + R + G + G + B + B);
+            }
+            case 6 -> color = Color.decode('#' + hexCode);
+            default -> color = Color.decode(hexCode);
+        }
+
+        int[] rgb = new int[]{
+            color.getRed(),
+            color.getGreen(),
+            color.getBlue()
+        };
+
+        event.replyEmbeds(getResponse(eb, rgbToCmyk(rgb), rgb)).queue();
+    }
+
+    private void runRGB(@NotNull SlashCommandInteractionEvent event, @NotNull EmbedBuilder eb) {
+        int[] rgb = {
+            event.getOption("red", 102, OptionMapping::getAsInt),
+            event.getOption("blue", 51, OptionMapping::getAsInt),
+            event.getOption("green", 102, OptionMapping::getAsInt)
+        };
+        event.replyEmbeds(getResponse(eb, rgbToCmyk(rgb), rgb)).queue();
+    }
+
+    private void runCMYK(@NotNull SlashCommandInteractionEvent event, @NotNull EmbedBuilder eb) {
         int[] cmyk = {
             event.getOption("cyan", 0, OptionMapping::getAsInt),
             event.getOption("magenta", 50, OptionMapping::getAsInt),
             event.getOption("yellow", 0, OptionMapping::getAsInt),
             event.getOption("black", 60, OptionMapping::getAsInt)
         };
-        event.replyEmbeds(
-            runResponse(hsb, eb, cmyk, cmykToRgb(cmyk))
-        ).queue();
+        event.replyEmbeds(getResponse(eb, cmyk, cmykToRgb(cmyk))).queue();
     }
 
     @NotNull
-    private static MessageEmbed runResponse(@NotNull DecimalFormat hsb, @NotNull EmbedBuilder eb, @NotNull int[] cmyk, @NotNull int[] rgb) {
-        int r = rgb[0],
-            g = rgb[1],
-            b = rgb[2],
-            c = cmyk[0],
-            m = cmyk[1],
-            y = cmyk[2],
-            k = cmyk[3];
+    private MessageEmbed getResponse(@NotNull EmbedBuilder eb, @NotNull int[] cmyk, @NotNull int[] rgb) {
+        int r = rgb[0];
+        int g = rgb[1];
+        int b = rgb[2];
         float[] hsv = Color.RGBtoHSB(r, g, b, null);
-        String h = hsb.format(hsv[0]).replace("%", "°"),
-            s = hsb.format(hsv[1]),
-            v = hsb.format(hsv[2]);
         String hexTriplet = "#%02X%02X%02X".formatted(r, g, b);
 
         return eb.addField("Hex Triplet", hexTriplet, true)
             .addField("RGB", "rgb(**%d**, **%d**, **%d**)".formatted(r, g, b), true)
-            .addField("CMYK", "**%d**, **%d**, **%d**, **%d**".formatted(c, m, y, k), true)
-            .addField("HSB/HSV", "Hue **%s**\nSaturation **%s**\nBrightness **%s**".formatted(h, s, v), false)
+            .addField("CMYK", "**%d**, **%d**, **%d**, **%d**".formatted(cmyk[0], cmyk[1], cmyk[2], cmyk[3]), true)
+            .addField("HSB/HSV", String.format("Hue **%s**\nSaturation **%s**\nBrightness **%s**",
+                HSB.format(hsv[0]).replace("%", "°"),
+                HSB.format(hsv[1]),
+                HSB.format(hsv[2])
+            ), false)
             .addField("More Info", "[link](https://www.colorhexa.com/%s)".formatted(hexTriplet.substring(1)), false)
             .setColor(new Color(r, g, b))
             .build();
-    }
-
-    private static void runRGB(@NotNull SlashCommandInteractionEvent event, @NotNull DecimalFormat hsb, @NotNull EmbedBuilder eb) {
-        int[] rgb = {
-            event.getOption("red", 102, OptionMapping::getAsInt),
-            event.getOption("blue", 51, OptionMapping::getAsInt),
-            event.getOption("green", 102, OptionMapping::getAsInt)
-        };
-        event.replyEmbeds(
-            runResponse(hsb, eb, rgbToCmyk(rgb), rgb)
-        ).queue();
     }
 
     @Override
@@ -113,7 +152,7 @@ public class ColorInfo implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-09-20T12:10Z"),
-            Metadata.parseDate("2023-03-05T16:18Z")
+            Metadata.parseDate("2023-03-09T10:35Z")
         )
             .addSubcommands(
                 new SubcommandData("hex-triplet", "Get more info on a hex triplet. EX: #663366")
@@ -146,59 +185,14 @@ public class ColorInfo implements ICommandSlash {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
-        DecimalFormat hsb = new DecimalFormat("##.##%");
         String subcommand = event.getSubcommandName();
         EmbedBuilder eb = blob.getStandardEmbed(getNameReadable());
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 
         switch (subcommand) {
-            case "hex-triplet" -> runHexTriplet(event, hsb, eb);
-            case "rgb" -> runRGB(event, hsb, eb);
-            case "cmyk" -> runCMYK(event, hsb, eb);
+            case "hex-triplet" -> runHexTriplet(event, eb);
+            case "rgb" -> runRGB(event, eb);
+            case "cmyk" -> runCMYK(event, eb);
         }
-    }
-
-    private void runHexTriplet(@NotNull SlashCommandInteractionEvent event, DecimalFormat hsb, EmbedBuilder eb) {
-        String hexCode = event.getOption("triplet", "#636", OptionMapping::getAsString);
-        Matcher matcher = pHexTriplet.matcher(hexCode);
-
-        if (!matcher.matches()) {
-            DecimalFormat format = new DecimalFormat("##,###");
-            eb.setTitle("Invalid Hex Triplet!")
-                .setDescription(String.format("""
-                    You've given an invalid hex triplet!
-                    Correct example: `#663366` or `#636`
-
-                    **NOTE:** Hex triplets are 3 or 6 characters that uses 0-9 and A-F in various combinations. On another note, `#0055FF` is equivalent to `#05F`.
-
-                    FUN FACT!
-                    > There are %s combinations for 6 character hex triplets and of those combinations, %s are for 3 character hex triplets!
-                    """, format.format(Math.pow(16, 6)), format.format(Math.pow(16, 3))))
-                .setColor(EmbedColor.ERROR.getColor())
-                .addField("Provided", hexCode.toUpperCase(), false);
-            event.replyEmbeds(eb.build()).setEphemeral(true).queue();
-            return;
-        }
-
-        char pound = '#';
-        Color color;
-        if (hexCode.length() == 3 || hexCode.length() == 4) {
-            int offset = 0;
-            if (hexCode.charAt(0) == pound) offset++;
-            String R = String.valueOf(hexCode.charAt(offset));
-            String G = String.valueOf(hexCode.charAt(1 + offset));
-            String B = String.valueOf(hexCode.charAt(2 + offset));
-            color = Color.decode("#" + R + R + G + G + B + B);
-        } else if (hexCode.length() == 6) {
-            color = Color.decode('#' + hexCode);
-        } else color = Color.decode(hexCode);
-
-        int[] rgb = new int[]{
-            color.getRed(),
-            color.getGreen(),
-            color.getBlue()
-        };
-
-        event.replyEmbeds(runResponse(hsb, eb, rgbToCmyk(rgb), rgb)).queue();
     }
 }
