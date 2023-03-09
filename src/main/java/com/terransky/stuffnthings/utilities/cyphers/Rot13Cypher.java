@@ -22,16 +22,15 @@ import org.jetbrains.annotations.NotNull;
 public class Rot13Cypher implements Cypher {
     @Override
     public String encode(@NotNull String str) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < str.length(); i++) {
-            char c = str.charAt(i);
+        StringBuilder message = new StringBuilder();
+        for (char c : str.toCharArray()) {
             if ((c >= 'a' && c <= 'm') || (c >= 'A' && c <= 'M')) {
                 c += 13;
             } else if ((c >= 'n' && c <= 'z') || (c >= 'N' && c <= 'Z')) {
                 c -= 13;
             }
-            stringBuilder.append(c);
+            message.append(c);
         }
-        return stringBuilder.toString();
+        return message.toString();
     }
 }

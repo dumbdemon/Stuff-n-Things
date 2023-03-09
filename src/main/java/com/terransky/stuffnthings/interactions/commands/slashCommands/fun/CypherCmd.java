@@ -7,9 +7,10 @@ import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.Mastermind;
 import com.terransky.stuffnthings.utilities.command.Metadata;
 import com.terransky.stuffnthings.utilities.cyphers.Base64Cypher;
+import com.terransky.stuffnthings.utilities.cyphers.HexCypher;
 import com.terransky.stuffnthings.utilities.cyphers.ReverseCypher;
 import com.terransky.stuffnthings.utilities.cyphers.Rot13Cypher;
-import net.dv8tion.jda.api.EmbedBuilder;
+import com.thedeanda.lorem.LoremIpsum;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -56,7 +57,7 @@ public class CypherCmd implements ICommandSlash {
             ```
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-05T14:41Z"),
-            Metadata.parseDate("2023-02-27T16:20Z")
+            Metadata.parseDate("2023-03-09T12:05Z")
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("base64", "Base64 Cypher")
@@ -64,6 +65,8 @@ public class CypherCmd implements ICommandSlash {
                 new SubcommandGroupData("rot13", "Rot13 Cypher")
                     .addSubcommands(enDeCode),
                 new SubcommandGroupData("reverse", "Reverse Cypher")
+                    .addSubcommands(enDeCode),
+                new SubcommandGroupData("hexadecimal", "Hexadecimal Cypher")
                     .addSubcommands(enDeCode)
             );
     }
@@ -73,11 +76,7 @@ public class CypherCmd implements ICommandSlash {
         String[] fullCommandName = event.getFullCommandName().split(" ");
         String cypher = fullCommandName[1] != null ? fullCommandName[1] : "base64";
         boolean isEncode = fullCommandName[2] != null && "encode".equals(fullCommandName[2]);
-        String loremIpsum = "pulvinar mattis nunc sed blandit libero volutpat sed cras ornare arcu dui vivamus arcu felis" +
-            " bibendum ut tristique et egestas quis ipsum suspendisse ultrices gravida dictum fusce ut placerat orci";
-        String message = event.getOption("message", loremIpsum, OptionMapping::getAsString);
-        EmbedBuilder response =
-            blob.getStandardEmbed(String.format("%s - %s %s", getNameReadable(), WordUtils.capitalize(cypher), isEncode ? " Encode" : " Decode"));
+        String message = event.getOption("message", LoremIpsum.getInstance().getWords(10), OptionMapping::getAsString);
         String enDecodedString;
 
         switch (cypher) {
@@ -87,12 +86,18 @@ public class CypherCmd implements ICommandSlash {
             }
             case "rot13" -> enDecodedString = new Rot13Cypher().encode(message);
             case "reverse" -> enDecodedString = new ReverseCypher().encode(message);
+            case "hexadecimal" -> {
+                HexCypher hexadecimal = new HexCypher();
+                enDecodedString = isEncode ? hexadecimal.encode(message) : hexadecimal.decode(message);
+            }
             default -> throw new IllegalStateException("Unexpected value: " + cypher);
         }
 
-        event.replyEmbeds(response.addField("Original", String.format("```%s```", message), false)
-            .addField(isEncode ? "Encoded Message" : "Decoded Message", String.format("```%s```", enDecodedString), false)
-            .build()
+        event.replyEmbeds(
+            blob.getStandardEmbed(String.format("%s - %s %s", getNameReadable(), WordUtils.capitalize(cypher), isEncode ? " Encode" : " Decode"))
+                .addField("Original", String.format("```%s```", message), false)
+                .addField(isEncode ? "Encoded Message" : "Decoded Message", String.format("```%s```", enDecodedString), false)
+                .build()
         ).queue();
     }
 }

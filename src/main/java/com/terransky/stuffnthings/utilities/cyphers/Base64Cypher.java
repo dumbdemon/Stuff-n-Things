@@ -19,6 +19,10 @@ public class Base64Cypher implements Cypher {
 
     @Override
     public String decode(@NotNull String str) {
-        return new String(Base64.getMimeDecoder().decode(str));
+        try {
+            return new String(Base64.getMimeDecoder().decode(str));
+        } catch (IllegalArgumentException e) {
+            return "Decoding Failed: message was not encoded.";
+        }
     }
 }
