@@ -6,8 +6,9 @@ import com.terransky.stuffnthings.utilities.command.CommandCategory;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.Mastermind;
 import com.terransky.stuffnthings.utilities.command.Metadata;
-import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -32,7 +33,7 @@ public class Say implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-02-27T16:37Z")
+            Metadata.parseDate("2023-03-09T12:40Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "message", "The message you want sent.", true),
@@ -43,15 +44,20 @@ public class Say implements ICommandSlash {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
-        EmbedBuilder eb = blob.getStandardEmbed();
-
         String message = event.getOption("message", OptionMapping::getAsString);
         MessageChannel channel = (MessageChannel) event.getOption("channel", event.getChannel().asGuildMessageChannel(), OptionMapping::getAsChannel);
 
-        eb.setDescription(message)
-            .setFooter("Sent by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
+        if (!blob.getSelfMember().hasPermission((GuildChannel) channel, Permission.MESSAGE_SEND)) {
+            event.reply("I do not have access to that channel.").setEphemeral(true).queue();
+            return;
+        }
 
-        channel.sendMessageEmbeds(eb.build()).queue();
+        channel.sendMessageEmbeds(
+            blob.getStandardEmbed()
+                .setDescription(message)
+                .setFooter("Sent by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+                .build()
+        ).queue();
         event.reply("Your message has been sent.").setEphemeral(true).queue();
     }
 }
