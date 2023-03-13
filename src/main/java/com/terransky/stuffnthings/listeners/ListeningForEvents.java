@@ -41,7 +41,7 @@ public class ListeningForEvents extends ListenerAdapter {
             return;
         }
 
-        event.getJDA().updateCommands()
+        jda.updateCommands()
             .addCommands(slashManager.getCommandData())
             .addCommands(messageManager.getCommandData())
             .addCommands(userManager.getCommandData())
