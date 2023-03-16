@@ -12,6 +12,7 @@ import com.terransky.stuffnthings.dataSources.kitsu.relationships.categories.Cat
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.apiHandlers.KitsuHandler;
+import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
 import com.terransky.stuffnthings.utilities.command.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -20,6 +21,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -32,7 +34,7 @@ import java.util.List;
 public class Kitsu {
 
     private static OffsetDateTime getGlobalLastUpdated() {
-        return Metadata.parseDate("2023-03-02T10:12Z");
+        return Metadata.parseDate("2023-03-16T12:51Z");
     }
 
     private static Metadata getStandard(String name) {
@@ -133,22 +135,32 @@ public class Kitsu {
             event.deferReply().queue();
             String query = event.getOption("search", "dragon maid", OptionMapping::getAsString);
 
-            KitsuHandler handler = new KitsuHandler();
-            List<AnimeDatum> animeData = handler.getAnime(query).getData();
-            if (animeData.isEmpty()) {
-                event.getHook().sendMessageEmbeds(getNoResultsMessage(blob, "Anime")).queue();
-                return;
+            try {
+                KitsuHandler handler = new KitsuHandler();
+                List<AnimeDatum> animeData = handler.getAnime(query).getData();
+                if (animeData.isEmpty()) {
+                    event.getHook().sendMessageEmbeds(getNoResultsMessage(blob, "Anime")).queue();
+                    return;
+                }
+                AnimeDatum animeDatum = animeData.get(0);
+                CategoriesKitsuData categories = handler.getCategories(animeDatum.getRelationships());
+                AnimeAttributes attributes = animeDatum.getAttributes();
+                MessageEmbed message;
+
+                if (attributes.getNsfw() && !event.getChannel().asTextChannel().isNSFW())
+                    message = getNSFWMessage(blob, "Anime");
+                else message = getResponseEmbed(attributes, categories, blob);
+
+                event.getHook().sendMessageEmbeds(message).queue();
+            } catch (InterruptedException e) {
+                LoggerFactory.getLogger(getClass()).error("error during network operation", e);
+                event.getHook().sendMessageEmbeds(
+                    blob.getStandardEmbed("Anime Search", EmbedColor.ERROR)
+                        .setDescription(Responses.NETWORK_OPERATION.getMessage())
+                        .setColor(EmbedColor.ERROR.getColor())
+                        .build()
+                ).queue();
             }
-            AnimeDatum animeDatum = animeData.get(0);
-            CategoriesKitsuData categories = handler.getCategories(animeDatum.getRelationships());
-            AnimeAttributes attributes = animeDatum.getAttributes();
-            MessageEmbed message;
-
-            if (attributes.getNsfw() && !event.getChannel().asTextChannel().isNSFW())
-                message = getNSFWMessage(blob, "Anime");
-            else message = getResponseEmbed(attributes, categories, blob);
-
-            event.getHook().sendMessageEmbeds(message).queue();
         }
     }
 
@@ -173,22 +185,32 @@ public class Kitsu {
             event.deferReply().queue();
             String query = event.getOption("search", "dragon maid", OptionMapping::getAsString);
 
-            KitsuHandler handler = new KitsuHandler();
-            List<MangaDatum> mangaData = handler.getManga(query).getData();
-            if (mangaData.isEmpty()) {
-                event.getHook().sendMessageEmbeds(getNoResultsMessage(blob, "Manga")).queue();
-                return;
+            try {
+                KitsuHandler handler = new KitsuHandler();
+                List<MangaDatum> mangaData = handler.getManga(query).getData();
+                if (mangaData.isEmpty()) {
+                    event.getHook().sendMessageEmbeds(getNoResultsMessage(blob, "Manga")).queue();
+                    return;
+                }
+                MangaDatum mangaDatum = mangaData.get(0);
+                CategoriesKitsuData categories = handler.getCategories(mangaDatum.getRelationships());
+                MangaAttributes attributes = mangaDatum.getAttributes();
+                MessageEmbed message;
+
+                if (attributes.getAgeRatingEnum().isAdult() && !event.getChannel().asTextChannel().isNSFW())
+                    message = getNSFWMessage(blob, "Manga");
+                else message = getResponseEmbed(attributes, categories, blob);
+
+                event.getHook().sendMessageEmbeds(message).queue();
+            } catch (InterruptedException e) {
+                LoggerFactory.getLogger(getClass()).error("error during network operation", e);
+                event.getHook().sendMessageEmbeds(
+                    blob.getStandardEmbed("Manga Search", EmbedColor.ERROR)
+                        .setDescription(Responses.NETWORK_OPERATION.getMessage())
+                        .setColor(EmbedColor.ERROR.getColor())
+                        .build()
+                ).queue();
             }
-            MangaDatum mangaDatum = mangaData.get(0);
-            CategoriesKitsuData categories = handler.getCategories(mangaDatum.getRelationships());
-            MangaAttributes attributes = mangaDatum.getAttributes();
-            MessageEmbed message;
-
-            if (attributes.getAgeRatingEnum().isAdult() && !event.getChannel().asTextChannel().isNSFW())
-                message = getNSFWMessage(blob, "Manga");
-            else message = getResponseEmbed(attributes, categories, blob);
-
-            event.getHook().sendMessageEmbeds(message).queue();
         }
     }
 }

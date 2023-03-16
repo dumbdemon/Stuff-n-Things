@@ -7,7 +7,7 @@ import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadFactory;
 
-public class Handler {
+class Handler {
 
     private final ThreadFactory threadFactory;
 

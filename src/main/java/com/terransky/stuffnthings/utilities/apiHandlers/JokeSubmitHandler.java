@@ -22,7 +22,7 @@ public class JokeSubmitHandler extends Handler {
         super("JokeSubmission");
     }
 
-    public JokeSubmitResponse submitJoke(JokeSubmitForm submission) {
+    public JokeSubmitResponse submitJoke(JokeSubmitForm submission) throws InterruptedException {
         Objects.requireNonNull(submission);
         try (ExecutorService service = Executors.newSingleThreadExecutor(getThreadFactory())) {
             HttpClient client = getHttpClient(service);
@@ -33,7 +33,7 @@ public class JokeSubmitHandler extends Handler {
             HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
 
             return getObjectMapper().readValue(response.body(), JokeSubmitResponse.class);
-        } catch (InterruptedException | IOException e) {
+        } catch (IOException e) {
             LoggerFactory.getLogger(getClass()).error("Error in submitting joke", e);
             return new JokeSubmitResponse()
                 .withError(true)

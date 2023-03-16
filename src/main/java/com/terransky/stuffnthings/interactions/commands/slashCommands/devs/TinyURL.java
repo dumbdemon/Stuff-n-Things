@@ -5,6 +5,7 @@ import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.apiHandlers.TinyURLHandler;
+import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
@@ -14,6 +15,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -63,7 +65,7 @@ public class TinyURL implements ICommandSlash {
         return new Metadata(getName(), "Create short URLs with TinyURL",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
             Metadata.parseDate("2023-01-06T16:04Z"),
-            Metadata.parseDate("2023-03-07T14:15Z")
+            Metadata.parseDate("2023-03-16T12:47Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "url", "A URL to shorten.", true),
@@ -135,7 +137,7 @@ public class TinyURL implements ICommandSlash {
                         .build()
                 ).queue();
             }
-        } catch (MalformedURLException | URISyntaxException ignored) {
+        } catch (MalformedURLException | URISyntaxException e) {
             event.getHook().sendMessageEmbeds(
                 embedBuilder.setDescription("""
                         URL is not valid.
@@ -143,7 +145,15 @@ public class TinyURL implements ICommandSlash {
                                             
                         Note: Valid URls start with `http://` or `https://` and must end with a domain such as `.com`, `.gov`, `.xyz`, etc.
                         """)
+                    .setColor(EmbedColor.ERROR.getColor())
                     .addField("URL Given", String.format("```%n%s%n```", url), false)
+                    .build()
+            ).queue();
+        } catch (InterruptedException e) {
+            LoggerFactory.getLogger(getClass()).error("error during network operation", e);
+            event.getHook().sendMessageEmbeds(
+                embedBuilder.setDescription(Responses.NETWORK_OPERATION.getMessage())
+                    .setColor(EmbedColor.ERROR.getColor())
                     .build()
             ).queue();
         }

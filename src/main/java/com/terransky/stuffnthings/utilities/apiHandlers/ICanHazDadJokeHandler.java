@@ -19,7 +19,7 @@ public class ICanHazDadJokeHandler extends Handler {
         super("GetDadJoke");
     }
 
-    public ICanHazDadJokeData getDadJoke() {
+    public ICanHazDadJokeData getDadJoke() throws InterruptedException {
         try (ExecutorService service = Executors.newSingleThreadExecutor(getThreadFactory())) {
             HttpClient client = getHttpClient(service);
             HttpRequest request = HttpRequest.newBuilder()
@@ -30,7 +30,7 @@ public class ICanHazDadJokeHandler extends Handler {
             HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
 
             return getObjectMapper().readValue(response.body(), ICanHazDadJokeData.class);
-        } catch (InterruptedException | IOException e) {
+        } catch (IOException e) {
             LoggerFactory.getLogger(getClass()).error("Unable to get joke", e);
             return new ICanHazDadJokeData()
                 .withId("-1")

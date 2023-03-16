@@ -11,6 +11,7 @@ import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.apiHandlers.JokeSubmitHandler;
+import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -61,7 +62,7 @@ public class JokesV2 implements ICommandSlash {
         return "https://v2.jokeapi.dev/joke/" + category + (safeMode ? "?safe-mode&" : "") + blacklist + "lang=" + lang;
     }
 
-    private static void submitJoke(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
+    private static void submitJoke(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws InterruptedException {
         String lang = event.getOption("language", "en", OptionMapping::getAsString);
         String category = event.getOption("category", "Misc", OptionMapping::getAsString);
         String joke = event.getOption("joke", OptionMapping::getAsString);
@@ -156,7 +157,7 @@ public class JokesV2 implements ICommandSlash {
             Admins can use `/config jokes` to limit the specifiers.
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-06T18:34Z"),
-            Metadata.parseDate("2023-03-05T16:18Z")
+            Metadata.parseDate("2023-03-16T12:56Z")
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("get", "Get a random joke.")
@@ -175,7 +176,15 @@ public class JokesV2 implements ICommandSlash {
         String[] command = event.getFullCommandName().split(" ");
 
         if ("submit".equals(command[1])) {
-            submitJoke(event, blob);
+            try {
+                submitJoke(event, blob);
+            } catch (InterruptedException e) {
+                event.replyEmbeds(
+                    blob.getStandardEmbed(getNameReadable(), EmbedColor.ERROR)
+                        .setDescription(Responses.NETWORK_OPERATION.getMessage())
+                        .build()
+                ).queue();
+            }
             return;
         }
 

@@ -124,7 +124,7 @@ public class KitsuHandler extends Handler {
      * @return A {@link MangaKitsuData}
      * @throws IOException If an i/o exception occurs
      */
-    public MangaKitsuData getManga(@NotNull String search) throws IOException {
+    public MangaKitsuData getManga(@NotNull String search) throws IOException, InterruptedException {
         URI manga = URI.create(BASE_URL + "manga?filter%5Btext%5D=" + search.toLowerCase().replaceAll(" ", "%20"));
         return getObjectMapper().readValue(getResponse(manga), MangaKitsuData.class);
     }
@@ -136,7 +136,7 @@ public class KitsuHandler extends Handler {
      * @return A {@link AnimeKitsuData}
      * @throws IOException If an i/o exception occurs
      */
-    public AnimeKitsuData getAnime(@NotNull String search) throws IOException {
+    public AnimeKitsuData getAnime(@NotNull String search) throws IOException, InterruptedException {
         URI anime = URI.create(BASE_URL + "anime?filter%5Btext%5D=" + search.toLowerCase().replaceAll(" ", "%20"));
         return getObjectMapper().readValue(getResponse(anime), AnimeKitsuData.class);
     }
@@ -148,7 +148,7 @@ public class KitsuHandler extends Handler {
      * @return A {@link CategoriesKitsuData}
      * @throws IOException If an i/o exception occurs
      */
-    public CategoriesKitsuData getCategories(@NotNull Relationships relationships) throws IOException {
+    public CategoriesKitsuData getCategories(@NotNull Relationships relationships) throws IOException, InterruptedException {
         URI genres = URI.create(relationships.getCategories().getLinks().getRelated());
         return getObjectMapper().readValue(getResponse(genres), CategoriesKitsuData.class);
     }
@@ -160,7 +160,7 @@ public class KitsuHandler extends Handler {
      * @return An {@link InputStream}
      */
     @NotNull
-    private String getResponse(@NotNull URI uri) {
+    private String getResponse(@NotNull URI uri) throws InterruptedException, IOException {
         try (ExecutorService service = Executors.newSingleThreadExecutor(getThreadFactory())) {
             HttpClient client = getHttpClient(service);
             HttpRequest.Builder request = HttpRequest.newBuilder(uri)
@@ -179,8 +179,6 @@ public class KitsuHandler extends Handler {
                 case 406 -> throw new IllegalArgumentException("Not Acceptable - invalid Accept header");
                 default -> throw new IOException("Server Error");
             }
-        } catch (InterruptedException | IOException e) {
-            throw new RuntimeException("Unable to get response from Kistu.io", e);
         }
     }
 }

@@ -33,7 +33,7 @@ public class TinyURLHandler extends Handler {
      * @return A {@link TinyURLResponse}
      */
     @JsonIgnore
-    public TinyURLResponse sendRequest(@NotNull TinyURLForm tinyURLForm) {
+    public TinyURLResponse sendRequest(@NotNull TinyURLForm tinyURLForm) throws InterruptedException, IOException {
         try (ExecutorService service = Executors.newSingleThreadExecutor(getThreadFactory())) {
             HttpClient client = getHttpClient(service);
 
@@ -49,8 +49,6 @@ public class TinyURLHandler extends Handler {
             }
 
             return getObjectMapper().readValue(response.body(), ValidTinyURLResponse.class);
-        } catch (InterruptedException | IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }

@@ -9,7 +9,10 @@ public enum Responses {
 
     INTERACTION_FAILED(true,
         "An error occurred whilst executing this interaction, please submit an issue [here](%s).".formatted(Config.getErrorReportingURL())),
-    GUILD_ONLY(true, "This interaction is guild only. Please use this interaction in a guild.");
+    GUILD_ONLY(true, "This interaction is guild only. Please use this interaction in a guild."),
+    NETWORK_OPERATION(false,
+        String.format("An error occurred during network operation. Please try again in a few moments. If this continues, please submit an issue [here](%s).",
+            Config.getErrorReportingURL()));
 
     private final String message;
     private final boolean isInteractionReplaceable;

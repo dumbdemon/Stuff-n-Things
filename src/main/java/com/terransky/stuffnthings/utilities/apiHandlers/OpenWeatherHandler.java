@@ -103,7 +103,7 @@ public class OpenWeatherHandler extends Handler {
      * @throws IOException If an i/o exception occurs
      */
     @Nullable
-    public OpenWeatherData getWeatherData(String city, String state, @NotNull CountryCode code) throws IOException {
+    public OpenWeatherData getWeatherData(String city, String state, @NotNull CountryCode code) throws IOException, InterruptedException {
         try (ExecutorService service = Executors.newSingleThreadExecutor(getThreadFactory())) {
             HttpClient client = getHttpClient(service);
             HttpRequest request = HttpRequest.newBuilder()
@@ -121,8 +121,6 @@ public class OpenWeatherHandler extends Handler {
             OpenWeatherGeoData geoData = firstGeoData.get();
             return getWeatherData(geoData.getLat(), geoData.getLon())
                 .setGeoData(geoData);
-        } catch (InterruptedException | IOException e) {
-            throw new RuntimeException("Failed to get weather data", e);
         }
     }
 }

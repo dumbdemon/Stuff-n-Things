@@ -8,6 +8,7 @@ import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.apiHandlers.OpenWeatherHandler;
+import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.DegreeToQuadrant;
@@ -39,7 +40,7 @@ public class GetWeather implements ICommandSlash {
             If you don't know your country's code, you can use [this website](https://www.iso.org/obp/ui/#search).
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-01T16:27Z"),
-            Metadata.parseDate("2023-03-05T16:18Z")
+            Metadata.parseDate("2023-03-16T12:48Z")
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("by-coordinates", "Get the weather by coordinates.")
@@ -147,6 +148,15 @@ public class GetWeather implements ICommandSlash {
                 blob.getStandardEmbed(getNameReadable(), EmbedColor.ERROR)
                     .setDescription(String.format("Location provided is invalid. Please try again.%nIf this continues, [please make a report](%s).",
                         Config.getErrorReportingURL()))
+                    .build()
+            ).queue();
+            return;
+        } catch (InterruptedException e) {
+            LoggerFactory.getLogger(getClass()).error("error during network operation", e);
+            event.getHook().sendMessageEmbeds(
+                blob.getStandardEmbed(getNameReadable(), EmbedColor.ERROR)
+                    .setDescription(Responses.NETWORK_OPERATION.getMessage())
+                    .setColor(EmbedColor.ERROR.getColor())
                     .build()
             ).queue();
             return;
