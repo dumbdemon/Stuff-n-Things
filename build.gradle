@@ -7,7 +7,7 @@ plugins {
 mainClassName = 'com.terransky.stuffnthings.StuffNThings'
 
 group 'com.terransky.stuffnthings'
-version '23.01'
+version '23.02'
 compileJava.options.encoding = 'UTF-8'
 
 shadowJar {
