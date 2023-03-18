@@ -1,11 +1,11 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.mtg;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.Ban;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.MtGSet;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.WhatsInStandardData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
+import com.terransky.stuffnthings.interfaces.Pojo;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.net.URL;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -43,18 +42,9 @@ public class WhatsInStandard implements ICommandSlash {
         return theSets.toString();
     }
 
-    @NotNull
-    private List<String> getSetCodesOfCurrent(@NotNull List<MtGSet> mtgSets) {
-        return new ArrayList<>() {{
-            for (MtGSet mtgSet : mtgSets.stream().filter(IS_VALID_SET).toList()) {
-                add(mtgSet.getCode());
-            }
-        }};
-    }
-
     private @NotNull String getBans(@NotNull List<Ban> banList, @NotNull List<MtGSet> mtgSets, boolean withReason) {
         StringBuilder theBans = new StringBuilder();
-        List<String> setCodes = getSetCodesOfCurrent(mtgSets);
+        List<String> setCodes = mtgSets.stream().filter(IS_VALID_SET).map(MtGSet::getCode).toList();
         for (Ban card : banList.stream().filter(card -> setCodes.stream().anyMatch(set -> set.equals(card.getSetCode()))).toList()) {
             theBans.append("[```%s (%s)%s```](%s)".formatted(
                     card.getCardName(),
@@ -83,7 +73,7 @@ public class WhatsInStandard implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.MTG,
             Metadata.parseDate("2022-10-27T12:46Z"),
-            Metadata.parseDate("2023-03-05T16:18Z")
+            Metadata.parseDate("2023-03-18T16:48Z")
         )
             .addSubcommands(
                 new SubcommandData("all", "Get all info about the standard format."),
@@ -101,10 +91,9 @@ public class WhatsInStandard implements ICommandSlash {
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand received");
         int version = 6;
-        ObjectMapper om = new ObjectMapper();
 
         URL wis = new URL("https://whatsinstandard.com/api/v%s/standard.json".formatted(version));
-        WhatsInStandardData wisData = om.readValue(wis, WhatsInStandardData.class);
+        WhatsInStandardData wisData = Pojo.getMapperObject().readValue(wis, WhatsInStandardData.class);
         if (wisData.isDeprecated()) {
             event.getHook().sendMessageEmbeds(
                 eb.setDescription("Version %s has been deprecated. Please create an issue [here](%s).".formatted(version, Config.getErrorReportingURL()))
