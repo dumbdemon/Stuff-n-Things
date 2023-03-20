@@ -27,6 +27,7 @@ import java.util.*;
     "playersMin",
     "playersMax",
     "playerSeed",
+    "permissionRaw",
     "calledNumbers",
     "called",
     "players"
@@ -84,6 +85,7 @@ public class BingoGame extends Game<BingoPlayer> {
     }
 
     public List<BingoPlayer> play(long seed) {
+        setInOperation(true);
         return new ArrayList<>() {{
             for (int number : getRandomNumbers(seed, 150)) {
                 String value = BingoLetter.getLetter(number) + number;

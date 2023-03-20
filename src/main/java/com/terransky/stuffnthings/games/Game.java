@@ -25,6 +25,7 @@ public class Game<T extends Player> implements Pojo {
     private String channelMention;
     private boolean isMultiplayer;
     private int playersMax;
+    private Long permissionRaw;
     private Host host;
     private List<T> players;
     private String startTime;
@@ -32,9 +33,14 @@ public class Game<T extends Player> implements Pojo {
     private boolean isStarted;
     private boolean isGameCompleted;
     private boolean isDelayedStartGame;
+    @BsonIgnore
+    @JsonIgnore
+    private volatile boolean isInOperation;
 
     protected Game() {
         this.players = new ArrayList<>();
+        this.permissionRaw = 0L;
+        this.isInOperation = false;
     }
 
     protected Game(Channel channel, Member host, Permission... requiredPermissions) {
@@ -47,12 +53,28 @@ public class Game<T extends Player> implements Pojo {
         this.host = new Host(host);
         this.players = new ArrayList<>();
         this.isGameCompleted = false;
+        this.isInOperation = false;
+        this.permissionRaw = Permission.getRaw(requiredPermissions);
     }
 
     @JsonIgnore
     @BsonIgnore
     public int getMinimumPlayers() {
         return playersMin;
+    }
+
+    public Long getPermissionRaw() {
+        return permissionRaw;
+    }
+
+    public void setPermissionRaw(Long permissionRaw) {
+        this.permissionRaw = permissionRaw;
+    }
+
+    @BsonIgnore
+    @JsonIgnore
+    public EnumSet<Permission> getPermissionEnums() {
+        return Permission.getPermissions(permissionRaw);
     }
 
     public String getChannelId() {
@@ -274,8 +296,23 @@ public class Game<T extends Player> implements Pojo {
     }
 
     public void setGameCompleted(boolean gameCompleted) {
-        setCompletedOn(OffsetDateTime.now().format(DateTimeFormatter.ISO_INSTANT));
+        if (isInOperation()) {
+            setCompletedOn(OffsetDateTime.now().format(DateTimeFormatter.ISO_INSTANT));
+            setInOperation(false);
+        }
         isGameCompleted = gameCompleted;
+    }
+
+    @BsonIgnore
+    @JsonIgnore
+    public boolean isInOperation() {
+        return isInOperation;
+    }
+
+    @BsonIgnore
+    @JsonIgnore
+    public void setInOperation(boolean inOperation) {
+        isInOperation = inOperation;
     }
 
     @JsonIgnore
