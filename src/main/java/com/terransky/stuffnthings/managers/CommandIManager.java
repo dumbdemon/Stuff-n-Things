@@ -24,7 +24,7 @@ public class CommandIManager<T extends ICommand<?>> extends IManager<T> {
     }
 
     @Override
-    void addInteraction(@NotNull T command) {
+    public void addInteraction(@NotNull T command) {
         if (command.getInteractionType() == IInteraction.Type.COMMAND_SLASH)
             throw new IllegalArgumentException(String.format("Please use %s for slash commands", Formatter.getNameOfClass(SlashIManager.class)));
         noTypeCheckAddInteraction(command);

@@ -117,6 +117,7 @@ public class Config {
          */
         KITSU_IO(config.get("KITSU_USERNAME", DEFAULT_USERNAME), Formatter.percentEncode(config.get("KITSU_PASSWORD", DEFAULT_PASSWORD))),
         OPEN_WEATHER(config.get("OPEN_WEATHER_KEY", DEFAULT_PASSWORD)),
+        MEME_GENERATOR(config.get("MEME_GENERATOR_KEY", DEFAULT_PASSWORD))
         ;
 
         private final String username;

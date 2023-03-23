@@ -43,11 +43,12 @@ public class Meme implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-03-05T16:18Z")
+            Metadata.parseDate("2023-03-23T10:35Z")
         )
             .addSubcommands(
                 new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, or from r/me_irl.")
-                    .addOption(OptionType.STRING, "subreddit", "You can specify a subreddit outside of the default.")
+                    .addOption(OptionType.STRING, "subreddit", "You can specify a subreddit outside of the default."),
+                new SubcommandData("create", "Create an original meme")
             );
     }
 
@@ -58,10 +59,28 @@ public class Meme implements ICommandSlash {
         event.deferReply().queue();
         DecimalFormat largeNumber = new DecimalFormat("##,###");
 
-        if (subcommand.equals("reddit")) goForReddit(event, largeNumber, blob.getStandardEmbed());
+        switch (subcommand) {
+            case "reddit" -> goForReddit(event, largeNumber, blob.getStandardEmbed());
+            case "create" -> goCreate(event, blob.getStandardEmbed());
+            default -> event.replyEmbeds(
+                blob.getStandardEmbed(getNameReadable(), EmbedColor.ERROR)
+                    .setDescription(String.format("Unknown subcommand received!%n%n[***Please report this event!***](%s)", Config.getErrorReportingURL()))
+                    .addField("Subcommand Received", "`" + subcommand + "`", false)
+                    .build()
+            ).queue();
+        }
     }
 
-    private void goForReddit(@NotNull SlashCommandInteractionEvent event, DecimalFormat largeNumber, @NotNull EmbedBuilder eb) {
+    private void goCreate(@NotNull SlashCommandInteractionEvent event, @NotNull EmbedBuilder embed) {
+        event.replyEmbeds(
+            embed.setTitle("Create Not Ready")
+                .setDescription("Meme Creation system is not yet been fully implemented.")
+                .setColor(EmbedColor.ERROR.getColor())
+                .build()
+        ).queue();
+    }
+
+    private void goForReddit(@NotNull SlashCommandInteractionEvent event, DecimalFormat largeNumber, @NotNull EmbedBuilder embed) {
         String subreddit = event.getOption("subreddit", "", OptionMapping::getAsString);
         String redditLogo = "https://cdn.discordapp.com/attachments/1004795281734377564/1005203741026299954/Reddit_Mark_OnDark.png";
         try (ExecutorService service = Executors.newSingleThreadExecutor()) {
@@ -78,7 +97,7 @@ public class Meme implements ICommandSlash {
 
             if (memeData.getCode() != null) {
                 event.getHook().sendMessageEmbeds(
-                    eb.setTitle("Whoops! - Code " + memeData.getCode())
+                    embed.setTitle("Whoops! - Code " + memeData.getCode())
                         .setDescription(memeData.getMessage())
                         .setFooter("Reddit", redditLogo)
                         .setColor(EmbedColor.ERROR.getColor())
@@ -88,11 +107,11 @@ public class Meme implements ICommandSlash {
                 return;
             }
 
-            eb.setFooter("Reddit | u/%s | r/%s".formatted(memeData.getAuthor(), memeData.getSubreddit()), redditLogo);
+            embed.setFooter("Reddit | u/%s | r/%s".formatted(memeData.getAuthor(), memeData.getSubreddit()), redditLogo);
 
             if (memeData.isExplicit() && !event.getChannel().asTextChannel().isNSFW()) {
                 event.getHook().sendMessageEmbeds(
-                    eb.setTitle("Whoops!")
+                    embed.setTitle("Whoops!")
                         .setDescription("The meme presented was marked NSFW and this channel is not an NSFW channel.\nPlease check with your server's admins if this channel's settings are correct.")
                         .setColor(EmbedColor.ERROR.getColor())
                         .build()
@@ -102,7 +121,7 @@ public class Meme implements ICommandSlash {
 
             if (memeData.isSpoiler()) {
                 event.getHook().sendMessageEmbeds(
-                    eb.setTitle("Spoilers!")
+                    embed.setTitle("Spoilers!")
                         .setDescription("The fresh meme I got was marked as a spoiler! [Go look if you dare!](" + memeData.getPostLink() + ")")
                         .setImage("https://media1.giphy.com/media/sYs8CsuIRBYfp2H9Ie/giphy.gif?cid=ecf05e4773n58x026pqkk7lzacutjm13jxvkkfv4z5j0gsc9&rid=giphy.gif&ct=g")
                         .setColor(EmbedColor.SUB_DEFAULT.getColor())
@@ -111,16 +130,16 @@ public class Meme implements ICommandSlash {
                 return;
             }
 
-            eb.setAuthor(memeData.getTitle() + (memeData.isExplicit() ? " [NSFW]" : ""), memeData.getPostLink())
+            embed.setAuthor(memeData.getTitle() + (memeData.isExplicit() ? " [NSFW]" : ""), memeData.getPostLink())
                 .setImage(memeData.getUrl())
                 .addField("Author", "[" + memeData.getAuthor() + "](https://www.reddit.com/user/" + memeData.getAuthor() + ")", true)
                 .addField("Subreddit", "[" + memeData.getSubreddit() + "](https://www.reddit.com/r/" + memeData.getSubreddit() + ")", true)
                 .addField("<:reddit_upvote:1069025452250890330> Upvotes", largeNumber.format(memeData.getUps()), true);
 
-            event.getHook().sendMessageEmbeds(eb.build()).queue();
+            event.getHook().sendMessageEmbeds(embed.build()).queue();
         } catch (InterruptedException | IOException e) {
             event.getHook().sendMessageEmbeds(
-                eb.setTitle("Whoops!")
+                embed.setTitle("Whoops!")
                     .setDescription(String.format("Error whilst executing code. Please report it [here](%s)", Config.getErrorReportingURL()))
                     .setFooter("Reddit", redditLogo)
                     .setColor(EmbedColor.ERROR.getColor())

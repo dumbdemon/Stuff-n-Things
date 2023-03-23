@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +24,16 @@ public class SlashIManager extends CommandIManager<ICommandSlash> {
         for (ICommandSlash iCommandSlash : interactions) {
             noTypeCheckAddInteraction(iCommandSlash);
         }
+    }
+
+    @Override
+    public void addInteraction(@NotNull ICommandSlash command) {
+        noTypeCheckAddInteraction(command);
+    }
+
+    @Override
+    public void addInteractions(@NotNull Collection<ICommandSlash> interactions) {
+        interactions.forEach(this::noTypeCheckAddInteraction);
     }
 
     /**

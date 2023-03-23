@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,10 +28,19 @@ public class IManager<T extends IInteraction<?>> {
      * @param interaction An {@link IInteraction}
      * @throws IllegalArgumentException Thrown if the {@link IInteraction} type has a dedicated manager.
      */
-    void addInteraction(@NotNull T interaction) {
+    public void addInteraction(@NotNull T interaction) {
         if (interaction.getInteractionType().hasDedicatedManager())
             throw new IllegalArgumentException("Please use the appropriate manager for this type.");
         noTypeCheckAddInteraction(interaction);
+    }
+
+    /**
+     * Add interactions to this {@link IManager}
+     *
+     * @param interactions A List of {@link IInteraction IInteractions}
+     */
+    public void addInteractions(@NotNull Collection<T> interactions) {
+        interactions.forEach(this::addInteraction);
     }
 
     /**
