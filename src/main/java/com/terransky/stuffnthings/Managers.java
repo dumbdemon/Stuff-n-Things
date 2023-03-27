@@ -21,6 +21,7 @@ import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.Calcul
 import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.WhatsInStandard;
 import com.terransky.stuffnthings.interactions.commands.userContextMenus.UserInfoMenu;
 import com.terransky.stuffnthings.interactions.modals.KillSuggest;
+import com.terransky.stuffnthings.interactions.modals.RandomMemeBuilder;
 import com.terransky.stuffnthings.interfaces.interactions.*;
 import com.terransky.stuffnthings.managers.CommandIManager;
 import com.terransky.stuffnthings.managers.IManager;
@@ -90,7 +91,8 @@ public class Managers {
 
     private final IManager<IModal> modalIManager = new IManager<>(
         new KillSuggest.Random(),
-        new KillSuggest.Target()
+        new KillSuggest.Target(),
+        new RandomMemeBuilder()
     );
 
     private final CommandIManager<ICommandMessage> messageCommandIManager = new CommandIManager<>(

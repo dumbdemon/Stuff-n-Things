@@ -3,14 +3,17 @@ package com.terransky.stuffnthings.utilities.apiHandlers;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.terransky.stuffnthings.dataSources.DatumPojo;
 import com.terransky.stuffnthings.utilities.general.Config;
-import net.dv8tion.jda.api.utils.ImageProxy;
+import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
@@ -25,11 +28,11 @@ public class MemeGeneratorHandler extends Handler {
         X_RapidAPI_Key = Config.Credentials.MEME_GENERATOR.getPassword();
     }
 
-    public ImageProxy generateMeme(String meme, String bottomText, String topText) throws InterruptedException, IOException {
-        return generateMeme(meme, bottomText, topText, 50);
+    public FileUpload generateMeme(String meme, String topText, String bottomText) throws InterruptedException, IOException {
+        return generateMeme(meme, topText, bottomText, 50);
     }
 
-    public ImageProxy generateMeme(String meme, String bottomText, String topText, int fontSize) throws InterruptedException, IOException {
+    public FileUpload generateMeme(String meme, String topText, String bottomText, int fontSize) throws InterruptedException, IOException {
         try (ExecutorService service = Executors.newSingleThreadExecutor(getThreadFactory())) {
             URI generatorURI = URI.create("https://ronreiter-meme-generator.p.rapidapi.com/meme?meme=" + meme +
                 "&bottom=" + URLEncoder.encode(bottomText, StandardCharsets.UTF_8) +
@@ -42,8 +45,8 @@ public class MemeGeneratorHandler extends Handler {
                 .header("X-RapidAPI-Host", "ronreiter-meme-generator.p.rapidapi.com")
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
-            HttpResponse<String> response = getHttpClient(service).send(request, HttpResponse.BodyHandlers.ofString());
-            return new ImageProxy(response.body());
+            HttpResponse<InputStream> response = getHttpClient(service).send(request, HttpResponse.BodyHandlers.ofInputStream());
+            return FileUpload.fromData(response.body(), "meme-" + OffsetDateTime.now().format(DateTimeFormatter.ISO_INSTANT) + ".png");
         }
     }
 

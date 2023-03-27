@@ -5,6 +5,7 @@ import com.terransky.stuffnthings.database.helpers.PropertyMapping;
 import com.terransky.stuffnthings.database.helpers.entry.UserGuildEntry;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
+import com.terransky.stuffnthings.interactions.modals.KillSuggest;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.CommandCategory;
@@ -14,14 +15,11 @@ import com.terransky.stuffnthings.utilities.command.Metadata;
 import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -34,10 +32,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Kill implements ICommandSlash {
-
-    public static final String RANDOM_MODAL_NAME = "random-kill-suggest";
-    public static final String TARGET_MODAL_NAME = "target-kill-suggest";
-    public static final String MODAL_TEXT_INPUT_NAME = "kill-suggestion";
 
     private void killRandom(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder eb) {
         List<String> randomStrings = DatabaseManager.INSTANCE
@@ -122,7 +116,7 @@ public class Kill implements ICommandSlash {
             Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
             """, Mastermind.USER, CommandCategory.FUN,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-03-02T10:21Z")
+            Metadata.parseDate("2023-03-27T14:20Z")
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),
@@ -149,18 +143,8 @@ public class Kill implements ICommandSlash {
 
             case "suggest" -> {
                 boolean isRandom = event.getOption("is-random", true, OptionMapping::getAsBoolean);
-                String placeholder = isRandom ? "up to four targets! There could be more, but I don't wanna!" : "your target.";
 
-                TextInput suggestion = TextInput.create(MODAL_TEXT_INPUT_NAME, "Suggestion", TextInputStyle.PARAGRAPH)
-                    .setRequired(true)
-                    .setRequiredRange(10, MessageEmbed.DESCRIPTION_MAX_LENGTH / 4)
-                    .setPlaceholder("Use \"%s\" to represent " + placeholder)
-                    .build();
-
-
-                Modal modal = Modal.create(isRandom ? RANDOM_MODAL_NAME : TARGET_MODAL_NAME, "Suggest Kill-String")
-                    .addActionRow(suggestion)
-                    .build();
+                Modal modal = isRandom ? new KillSuggest.Random().getConstructedModal() : new KillSuggest.Target().getConstructedModal();
 
                 event.replyModal(modal).queue();
             }

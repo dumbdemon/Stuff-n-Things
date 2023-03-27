@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.stuffnthings.dataSources.freshMemes.FreshMemeData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
+import com.terransky.stuffnthings.interactions.modals.RandomMemeBuilder;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Config;
@@ -43,12 +44,13 @@ public class Meme implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-03-23T10:35Z")
+            Metadata.parseDate("2023-03-27T14:57Z")
         )
             .addSubcommands(
                 new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, or from r/me_irl.")
                     .addOption(OptionType.STRING, "subreddit", "You can specify a subreddit outside of the default."),
                 new SubcommandData("create", "Create an original meme")
+                    .addOption(OptionType.BOOLEAN, "random", "Get a random base!")
             );
     }
 
@@ -56,7 +58,6 @@ public class Meme implements ICommandSlash {
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
-        event.deferReply().queue();
         DecimalFormat largeNumber = new DecimalFormat("##,###");
 
         switch (subcommand) {
@@ -72,6 +73,13 @@ public class Meme implements ICommandSlash {
     }
 
     private void goCreate(@NotNull SlashCommandInteractionEvent event, @NotNull EmbedBuilder embed) {
+        boolean isRandom = event.getOption("random", true, OptionMapping::getAsBoolean);
+
+        if (isRandom && Config.isTestingMode()) {
+            event.replyModal(new RandomMemeBuilder().getConstructedModal()).queue();
+            return;
+        }
+
         event.replyEmbeds(
             embed.setTitle("Create Not Ready")
                 .setDescription("Meme Creation system is not yet been fully implemented.")
@@ -81,6 +89,7 @@ public class Meme implements ICommandSlash {
     }
 
     private void goForReddit(@NotNull SlashCommandInteractionEvent event, DecimalFormat largeNumber, @NotNull EmbedBuilder embed) {
+        event.deferReply().queue();
         String subreddit = event.getOption("subreddit", "", OptionMapping::getAsString);
         String redditLogo = "https://cdn.discordapp.com/attachments/1004795281734377564/1005203741026299954/Reddit_Mark_OnDark.png";
         try (ExecutorService service = Executors.newSingleThreadExecutor()) {
