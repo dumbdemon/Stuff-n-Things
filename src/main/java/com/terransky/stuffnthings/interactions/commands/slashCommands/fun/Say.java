@@ -33,7 +33,7 @@ public class Say implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-03-09T12:40Z")
+            Metadata.parseDate("2023-07-02T21:02Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "message", "The message you want sent.", true),
@@ -55,7 +55,7 @@ public class Say implements ICommandSlash {
         channel.sendMessageEmbeds(
             blob.getStandardEmbed()
                 .setDescription(message)
-                .setFooter("Sent by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+                .setFooter("Sent by " + blob.getMemberName(), blob.getMemberEffectiveAvatarUrl())
                 .build()
         ).queue();
         event.reply("Your message has been sent.").setEphemeral(true).queue();

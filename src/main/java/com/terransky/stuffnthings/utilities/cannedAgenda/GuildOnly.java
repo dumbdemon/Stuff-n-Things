@@ -19,7 +19,7 @@ public class GuildOnly {
 
     public static void interactionResponse(@NotNull GenericCommandInteractionEvent event, IInteraction.Type type) {
         event.replyEmbeds(
-            BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+            BOT_IS_GUILD_ONLY.setFooter(event.getUser().getName(), event.getUser().getEffectiveAvatarUrl())
                 .setDescription(Responses.GUILD_ONLY.getMessage(type))
                 .build()
         ).queue();
@@ -27,7 +27,7 @@ public class GuildOnly {
 
     public static void interactionResponse(@NotNull GenericComponentInteractionCreateEvent event, IInteraction.Type type) {
         event.replyEmbeds(
-            BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+            BOT_IS_GUILD_ONLY.setFooter(event.getUser().getName(), event.getUser().getEffectiveAvatarUrl())
                 .setDescription(Responses.GUILD_ONLY.getMessage(type))
                 .build()
         ).queue();
@@ -35,7 +35,7 @@ public class GuildOnly {
 
     public static void interactionResponse(@NotNull ModalInteractionEvent event) {
         event.replyEmbeds(
-            BOT_IS_GUILD_ONLY.setFooter(event.getUser().getAsTag(), event.getUser().getEffectiveAvatarUrl())
+            BOT_IS_GUILD_ONLY.setFooter(event.getUser().getName(), event.getUser().getEffectiveAvatarUrl())
                 .setDescription(Responses.GUILD_ONLY.getMessage(IInteraction.Type.MODAL))
                 .build()
         ).queue();

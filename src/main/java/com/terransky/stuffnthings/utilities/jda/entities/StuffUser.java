@@ -13,13 +13,12 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public class StuffUser extends StuffShared {
 
-    private String discriminator;
     private String avatarId;
     private String avatarUrl;
     private String defaultAvatarId;
     private String defaultAvatarUrl;
     private String effectiveAvatarUrl;
-    private String asTag;
+    private final String asTag;
     private boolean isBot;
     private boolean isSystem;
     private EnumSet<User.UserFlag> flags;
@@ -30,24 +29,15 @@ public class StuffUser extends StuffShared {
         setName(user.getName());
         setId(user.getId());
         setIdLong(user.getIdLong());
-        this.discriminator = user.getDiscriminator();
         this.avatarId = user.getAvatarId();
         this.defaultAvatarId = user.getDefaultAvatarId();
         this.defaultAvatarUrl = user.getDefaultAvatarUrl();
         this.effectiveAvatarUrl = user.getEffectiveAvatarUrl();
-        this.asTag = user.getAsTag();
+        this.asTag = user.getName();
         this.isBot = user.isBot();
         this.isSystem = user.isSystem();
         this.flags = user.getFlags();
         this.flagsRaw = user.getFlagsRaw();
-    }
-
-    public String getDiscriminator() {
-        return discriminator;
-    }
-
-    public void setDiscriminator(String discriminator) {
-        this.discriminator = discriminator;
     }
 
     public String getAvatarId() {
@@ -88,14 +78,6 @@ public class StuffUser extends StuffShared {
 
     public void setEffectiveAvatarUrl(String effectiveAvatarUrl) {
         this.effectiveAvatarUrl = effectiveAvatarUrl;
-    }
-
-    public String getAsTag() {
-        return asTag;
-    }
-
-    public void setAsTag(String asTag) {
-        this.asTag = asTag;
     }
 
     public boolean isBot() {
@@ -140,21 +122,19 @@ public class StuffUser extends StuffShared {
             getFlagsRaw() == stuffUser.getFlagsRaw() &&
             getName().equals(stuffUser.getName()) &&
             getId().equals(stuffUser.getId()) &&
-            getDiscriminator().equals(stuffUser.getDiscriminator()) &&
             getDefaultAvatarId().equals(stuffUser.getDefaultAvatarId()) &&
             getEffectiveAvatarUrl().equals(stuffUser.getEffectiveAvatarUrl());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getId(), getIdLong(), getDiscriminator(), getAvatarId(), getAvatarUrl(), getDefaultAvatarId(),
-            getDefaultAvatarUrl(), getEffectiveAvatarUrl(), getAsTag(), isBot(), isSystem(), getFlags(), getFlagsRaw());
+        return Objects.hash(getName(), getId(), getIdLong(), getAvatarId(), getAvatarUrl(), getDefaultAvatarId(),
+            getDefaultAvatarUrl(), getEffectiveAvatarUrl(), isBot(), isSystem(), getFlags(), getFlagsRaw());
     }
 
     @Override
     public String toString() {
         return "StuffUser{" +
-            ", discriminator='" + discriminator + '\'' +
             ", avatarId='" + avatarId + '\'' +
             ", avatarUrl='" + avatarUrl + '\'' +
             ", defaultAvatarId='" + defaultAvatarId + '\'' +

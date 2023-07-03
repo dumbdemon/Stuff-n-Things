@@ -70,7 +70,7 @@ public class KillSuggest {
                 .build(),
             new EmbedBuilder(blob.getStandardEmbed(blob.getMember().getEffectiveName()))
                 .setDescription("… " + testKillString)
-                .setFooter("Suggestion by " + event.getUser().getAsTag(), blob.getMemberEffectiveAvatarUrl())
+                .setFooter("Suggestion by " + event.getUser().getName(), blob.getMemberEffectiveAvatarUrl())
                 .build()
         ).queue();
     }

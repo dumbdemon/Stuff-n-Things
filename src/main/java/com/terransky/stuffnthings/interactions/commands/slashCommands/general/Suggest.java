@@ -27,7 +27,7 @@ public class Suggest implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.GENERAL,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-03-05T16:18Z")
+            Metadata.parseDate("2023-07-02T21:02Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "suggestion", "What do you want the bot to do?", true),
@@ -48,7 +48,7 @@ public class Suggest implements ICommandSlash {
                 .setTitle("Command Suggestion")
                 .setDescription(description)
                 .addField("Importance Value", "[" + importance + "/100]", false)
-                .addField("From", "@" + blob.getMemberAsTag(), false)
+                .addField("From", "@" + blob.getMemberName(), false)
                 .build()
             );
 

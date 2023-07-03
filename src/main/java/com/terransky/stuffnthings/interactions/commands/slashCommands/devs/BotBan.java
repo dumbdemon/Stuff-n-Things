@@ -39,7 +39,7 @@ public class BotBan implements ICommandSlash {
         if (DatabaseManager.INSTANCE.botBan(banned.get(), false)) {
             event.replyEmbeds(
                 blob.getStandardEmbed(getNameReadable(), EmbedColor.ERROR)
-                    .setDescription("Couldn't ban " + banned.get().getAsTag() + ". Please check logs or try again.")
+                    .setDescription("Couldn't ban " + banned.get().getName() + ". Please check logs or try again.")
                     .build()
             ).setEphemeral(true).queue();
             return;
@@ -47,7 +47,7 @@ public class BotBan implements ICommandSlash {
 
         event.replyEmbeds(
             blob.getStandardEmbed(getNameReadable())
-                .setDescription(banned.get().getAsTag() + " was bot banned.")
+                .setDescription(banned.get().getName() + " was bot banned.")
                 .build()
         ).setEphemeral(true).queue();
     }
@@ -57,7 +57,7 @@ public class BotBan implements ICommandSlash {
         return new Metadata(getName(), "Ban a user from ever using the bot again.",
             Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-28T12:47Z"),
-            Metadata.parseDate("2023-03-05T16:18Z")
+            Metadata.parseDate("2023-07-02T21:05Z")
         )
             .addOptions(
                 new OptionData(OptionType.USER, "user", "This person does not deserve to use this bot...", true)

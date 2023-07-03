@@ -82,6 +82,7 @@ public class UserInfo implements ICommandSlash {
 
         EmbedBuilder infoEmbed = blob.getStandardEmbed(WordUtils.capitalize(member.getEffectiveName()) + "'s Info", embedColor)
             .setThumbnail(member.getEffectiveAvatarUrl())
+            .addField("Username", member.getUser().getName(), false)
             .addField("User ID", member.getId(), true);
         if (member.getUser().isBot())
             infoEmbed.addField("Is System?", member.getUser().isSystem() ? "Yes" : "No", true);
@@ -91,7 +92,7 @@ public class UserInfo implements ICommandSlash {
             .addField("Server Permissions", "```%s```".formatted(userPerms), false)
             .addField("Joined Discord on", Timestamp.getDateAsTimestamp(member.getUser().getTimeCreated()), true)
             .addField("Joined Server on", Timestamp.getDateAsTimestamp(member.getTimeJoined()), true)
-            .setFooter("Requested by " + blob.getMemberAsTag() + " | " + blob.getMemberId(), blob.getMemberEffectiveAvatarUrl());
+            .setFooter("Requested by " + blob.getMemberName() + " | " + blob.getMemberId(), blob.getMemberEffectiveAvatarUrl());
 
         if (!member.getUser().isBot()) {
             String boostedText = (member.getTimeBoosted() != null) ?
@@ -124,7 +125,7 @@ public class UserInfo implements ICommandSlash {
             """, Mastermind.DEFAULT,
             CommandCategory.DEVS,
             Metadata.parseDate("2023-08-24T11:10Z"),
-            Metadata.parseDate("2023-03-07T10:46Z")
+            Metadata.parseDate("2023-07-02T21:02Z")
         )
             .addOptions(
                 new OptionData(OptionType.USER, "user", "Who you want to know about.")

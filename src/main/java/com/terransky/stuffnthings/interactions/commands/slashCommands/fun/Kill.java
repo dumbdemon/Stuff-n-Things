@@ -116,7 +116,7 @@ public class Kill implements ICommandSlash {
             Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
             """, Mastermind.USER, CommandCategory.FUN,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-03-27T14:20Z")
+            Metadata.parseDate("2023-07-02T21:02Z")
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),
@@ -136,7 +136,7 @@ public class Kill implements ICommandSlash {
 
         Random random = new Random(new Date().getTime());
         EmbedBuilder eb = blob.getStandardEmbed(blob.getMember().getEffectiveName())
-            .setFooter("Requested by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
+            .setFooter("Requested by " + blob.getMemberName(), blob.getMemberEffectiveAvatarUrl());
 
         switch (subcommand) {
             case "random" -> killRandom(event, blob, eb);

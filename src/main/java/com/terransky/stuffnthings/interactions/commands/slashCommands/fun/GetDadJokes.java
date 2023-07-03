@@ -32,7 +32,7 @@ public class GetDadJokes implements ICommandSlash {
             """, Mastermind.USER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-08-25T20:53Z"),
-            Metadata.parseDate("2023-03-16T13:00Z")
+            Metadata.parseDate("2023-07-02T21:02Z")
         );
     }
 
@@ -53,7 +53,7 @@ public class GetDadJokes implements ICommandSlash {
 
         event.replyEmbeds(blob.getStandardEmbed()
             .setDescription(theJoke.getJoke())
-            .setFooter("%s | ID #%s".formatted(blob.getMemberAsTag(), theJoke.getId()), blob.getMemberEffectiveAvatarUrl())
+            .setFooter("%s | ID #%s".formatted(blob.getMemberName(), theJoke.getId()), blob.getMemberEffectiveAvatarUrl())
             .build()
         ).addActionRow(
             Button.primary("get-dad-joke", "Get new Dad Joke!")

@@ -60,7 +60,7 @@ public class About implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.GENERAL,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-03-02T10:12Z")
+            Metadata.parseDate("2023-07-02T21:02Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "command-one", "Get more info on a Command.")
@@ -142,7 +142,7 @@ public class About implements ICommandSlash {
             event.replyEmbeds(
                 blob.getStandardEmbed("About Command - %s".formatted(commandName))
                     .setDescription("You don't have access to this command to see its details.")
-                    .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+                    .setFooter(blob.getMemberName(), blob.getMemberEffectiveAvatarUrl())
                     .build()
             ).queue();
             return;

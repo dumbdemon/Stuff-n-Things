@@ -39,7 +39,7 @@ public class GetMoreDadJokes implements IButton {
         MessageEditData message = new MessageEditBuilder()
             .setEmbeds(blob.getStandardEmbed()
                 .setDescription(theJoke.getJoke())
-                .setFooter("%s | ID#%s".formatted(event.getUser().getAsTag(), theJoke.getId()), blob.getMemberEffectiveAvatarUrl())
+                .setFooter("%s | ID#%s".formatted(event.getUser().getName(), theJoke.getId()), blob.getMemberEffectiveAvatarUrl())
                 .build()
             ).build();
 

@@ -344,7 +344,7 @@ public class Bingo implements ISlashGame {
             if (bingoGame.isPlayerCountUnderMin()) {
                 textChannel.sendMessageEmbeds(
                     response.setDescription("Bingo game was cancelled! Not Enough players joined!")
-                        .setFooter(selfMember.getUser().getAsTag(), selfMember.getEffectiveAvatarUrl())
+                        .setFooter(selfMember.getUser().getName(), selfMember.getEffectiveAvatarUrl())
                         .build()
                 ).queue();
                 bingoGame.setGameCompleted(true);

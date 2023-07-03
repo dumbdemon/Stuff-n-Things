@@ -63,7 +63,7 @@ public class Kitsu {
                                                                              @NotNull EventBlob blob) {
         AgeRating ageRating = attributes.getAgeRatingEnum();
         EmbedBuilder builder = blob.getStandardEmbed(attributes.getCanonicalTitle(), attributes.getBaseUrl() + attributes.getSlug())
-            .setFooter("Requested by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+            .setFooter("Requested by " + blob.getMemberName(), blob.getMemberEffectiveAvatarUrl())
             .setDescription(attributes.getSynopsis())
             .setThumbnail(attributes.getPosterImage().getOriginal())
             .addField(":hourglass_flowing_sand: Status", attributes.getStatusEnum().getState(), true)
@@ -101,7 +101,7 @@ public class Kitsu {
     @NotNull
     private static MessageEmbed getNSFWMessage(@NotNull EventBlob blob, String keyword) {
         return blob.getStandardEmbed(String.format("%s Search", keyword))
-            .setFooter("Requested by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+            .setFooter("Requested by " + blob.getMemberName(), blob.getMemberEffectiveAvatarUrl())
             .setDescription(String.format("%s recieved was rated for abults and this channel is not NSFW. Verify with your admins that this is correct.", keyword))
             .build();
     }
@@ -109,7 +109,7 @@ public class Kitsu {
     @NotNull
     private static MessageEmbed getNoResultsMessage(@NotNull EventBlob blob, String keyword) {
         return blob.getStandardEmbed(String.format("%s Search", keyword))
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+            .setFooter(blob.getMemberName(), blob.getMemberEffectiveAvatarUrl())
             .setDescription("Your search returned nothing. Try searching something else?")
             .build();
     }

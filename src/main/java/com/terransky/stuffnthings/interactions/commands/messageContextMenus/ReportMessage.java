@@ -64,7 +64,7 @@ public class ReportMessage implements ICommandMessage {
             event.replyEmbeds(
                 blob.getStandardEmbed(getName(), EmbedColor.ERROR)
                     .setDescription("Message reporting has not been set up yet!\nTell your server admins to set up with `/config report`!")
-                    .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+                    .setFooter(blob.getMemberName(), blob.getMemberEffectiveAvatarUrl())
                     .build()
             ).setEphemeral(true).queue();
             return;
@@ -90,7 +90,7 @@ public class ReportMessage implements ICommandMessage {
 
         EmbedBuilder report = blob.getStandardEmbed("Message Reported", message.getJumpUrl(), EmbedColor.SUB_DEFAULT)
             .setDescription(String.format("The following message has been reported:%n```%s```", message.getContentRaw()))
-            .setFooter(String.format("Reported by %s | %s", blob.getMemberAsTag(), blob.getMemberId()), blob.getMemberEffectiveAvatarUrl())
+            .setFooter(String.format("Reported by %s | %s", blob.getMemberName(), blob.getMemberId()), blob.getMemberEffectiveAvatarUrl())
             .addField("Mentions",
                 String.format("%s channel%s, %s custom emoji%s, %s role%s, %s user%s",
                     channels.size(), getPlural(channels.size()),

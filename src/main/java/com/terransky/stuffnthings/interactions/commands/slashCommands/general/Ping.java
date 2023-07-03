@@ -25,7 +25,7 @@ public class Ping implements ICommandSlash {
             """, Mastermind.DEFAULT,
             CommandCategory.GENERAL,
             Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-02-27T16:39Z")
+            Metadata.parseDate("2023-07-02T21:02Z")
         );
     }
 
@@ -34,7 +34,7 @@ public class Ping implements ICommandSlash {
         JDA jda = event.getJDA();
         jda.getRestPing().queue(ping -> event.replyEmbeds(
             blob.getStandardEmbed(String.format("Ping Info [Shard %s]", jda.getShardInfo().getShardId()))
-                .setFooter("Requested by " + blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+                .setFooter("Requested by " + blob.getMemberName(), blob.getMemberEffectiveAvatarUrl())
                 .addField("Rest Ping", ping + "ms", true)
                 .addField("Web Socket Ping", jda.getGatewayPing() + "ms", true)
                 .build()

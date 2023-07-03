@@ -85,10 +85,10 @@ public class EventBlob {
     }
 
     /**
-     * @see net.dv8tion.jda.api.entities.User#getAsTag()
+     * @see net.dv8tion.jda.api.entities.User#getName()
      */
-    public String getMemberAsTag() {
-        return member.getUser().getAsTag();
+    public String getMemberName() {
+        return member.getUser().getName();
     }
 
     /**
@@ -204,7 +204,7 @@ public class EventBlob {
         return new EmbedBuilder()
             .setColor(EmbedColor.DEFAULT.getColor())
             .setTimestamp(OffsetDateTime.now())
-            .setFooter(getMemberAsTag(), getMemberEffectiveAvatarUrl());
+            .setFooter(getMemberName(), getMemberEffectiveAvatarUrl());
     }
 
     public EmbedBuilder getStandardEmbed(String embedTitle) {

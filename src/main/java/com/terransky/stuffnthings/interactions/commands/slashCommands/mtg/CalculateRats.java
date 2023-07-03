@@ -29,7 +29,7 @@ public class CalculateRats implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.MTG,
             Metadata.parseDate("2022-10-05T11:48Z"),
-            Metadata.parseDate("2022-12-29T10:14Z")
+            Metadata.parseDate("2023-07-02T21:02Z")
         )
             .addOptions(
                 new OptionData(OptionType.INTEGER, "start-count", "How many do you have right now?", true)
@@ -49,7 +49,7 @@ public class CalculateRats implements ICommandSlash {
         EmbedBuilder eb = blob.getStandardEmbed("Is there enough rats?")
             .addField("Starting total", "%s rats".formatted(largeNumber.format(startCNT)), true)
             .addField("Iterations", "%s triggers".formatted(largeNumber.format(triggers)), true)
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl());
+            .setFooter(blob.getMemberName(), blob.getMemberEffectiveAvatarUrl());
 
         for (float i = 0; i < triggers; i++) {
             finalCNT = (finalCNT - 1f) * 2f;

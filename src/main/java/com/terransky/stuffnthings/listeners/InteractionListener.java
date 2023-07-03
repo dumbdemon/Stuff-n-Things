@@ -70,7 +70,7 @@ public class InteractionListener extends ListenerAdapter {
         event.replyEmbeds(new EmbedBuilder()
             .setTitle(String.format("%s is Owner Only", typeName))
             .setDescription(String.format("This %s can only be ran by the Owner.", typeName))
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+            .setFooter(blob.getMemberName(), blob.getMemberEffectiveAvatarUrl())
             .build()
         ).setEphemeral(true).queue();
     }
@@ -80,7 +80,7 @@ public class InteractionListener extends ListenerAdapter {
         event.replyEmbeds(new EmbedBuilder()
             .setTitle(String.format("%s is for Devs Only", typeName))
             .setDescription(String.format("This %s can only be ran by Developers.", typeName))
-            .setFooter(blob.getMemberAsTag(), blob.getMemberEffectiveAvatarUrl())
+            .setFooter(blob.getMemberName(), blob.getMemberEffectiveAvatarUrl())
             .build()
         ).setEphemeral(true).queue();
     }
