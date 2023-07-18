@@ -9,12 +9,16 @@ import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.TimeZone;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class Metadata implements Comparable<Metadata> {
@@ -94,8 +98,11 @@ public class Metadata implements Comparable<Metadata> {
      * @param date Date string
      * @return An {@link OffsetDateTime}
      */
+    @NotNull
     public static OffsetDateTime parseDate(@NotNull String date) {
-        return OffsetDateTime.parse(date.replace("Z", "-0600"),
+        ZoneId here = TimeZone.getDefault().toZoneId();
+        ZonedDateTime hereAndNow = Instant.now().atZone(here);
+        return OffsetDateTime.parse(date.replace("Z", String.format("%tz", hereAndNow)),
             new DateTimeFormatterBuilder()
                 .parseCaseInsensitive()
                 .append(DateTimeFormatter.ISO_LOCAL_DATE)
