@@ -96,11 +96,12 @@ public class Metadata implements Comparable<Metadata> {
      * Get an {@link OffsetDateTime} from a string
      *
      * @param date     Date string
-     * @param timeZone The current timee zone
+     * @param timeZone The current time zone
      * @return An {@link OffsetDateTime}
      */
     @NotNull
-    public static OffsetDateTime parseDate(@NotNull String date, @NotNull TimeZone timeZone) {
+    public static OffsetDateTime parseDate(@NotNull String date, TimeZone timeZone) {
+        if (timeZone == null) return parseDate(date, TimeZone.getDefault());
         ZoneId here = timeZone.toZoneId();
         ZonedDateTime hereAndNow = Instant.now().atZone(here);
         return OffsetDateTime.parse(date.replace("Z", String.format("%tz", hereAndNow)),
