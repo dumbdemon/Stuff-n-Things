@@ -37,7 +37,7 @@ dependencies {
     implementation 'org.mongodb:mongodb-driver-reactivestreams:4.10.2'
     implementation 'javax.validation:validation-api:2.0.1.Final'
     implementation('com.neovisionaries:nv-i18n:1.29')
-    implementation('com.thedeanda:lorem:2.1')
+    implementation('com.thedeanda:lorem:2.2')
 }
 
 test {
