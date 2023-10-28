@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -186,7 +186,7 @@ public class Bingo implements ISlashGame {
 
         reply.queue();
 
-        new Timer(getName()).schedule(new StartBingoTask(blob, event.getChannel().asTextChannel()), TimeUnit.MINUTES.toMillis(bingoGame.getDelay()));
+        new Timer(getName()).schedule(new StartBingoTask(blob, event.getChannel()), TimeUnit.MINUTES.toMillis(bingoGame.getDelay()));
         DatabaseManager.INSTANCE.uploadGameData(blob, Property.Games.BINGO, bingoGame);
     }
 
@@ -194,7 +194,7 @@ public class Bingo implements ISlashGame {
     public void startGame(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder response) {
         event.reply("Attempting to start game…").setEphemeral(true).queue();
 
-        new Timer(getName()).schedule(new StartBingoTask(blob, event.getChannel().asTextChannel(), true), 0);
+        new Timer(getName()).schedule(new StartBingoTask(blob, event.getChannel(), true), 0);
     }
 
     @Override
@@ -310,39 +310,39 @@ public class Bingo implements ISlashGame {
     static class StartBingoTask extends TimerTask {
 
         private final EventBlob blob;
-        private final TextChannel textChannel;
+        private final MessageChannelUnion channelUnion;
         private final Member selfMember;
         private final boolean isForced;
 
-        protected StartBingoTask(@NotNull EventBlob blob, TextChannel textChannel) {
-            this(blob, textChannel, false);
+        protected StartBingoTask(@NotNull EventBlob blob, MessageChannelUnion channelUnion) {
+            this(blob, channelUnion, false);
         }
 
-        protected StartBingoTask(@NotNull EventBlob blob, TextChannel textChannel, boolean isForced) {
+        protected StartBingoTask(@NotNull EventBlob blob, MessageChannelUnion channelUnion, boolean isForced) {
             this.blob = blob;
-            this.textChannel = textChannel;
+            this.channelUnion = channelUnion;
             this.selfMember = blob.getSelfMember();
             this.isForced = isForced;
         }
 
         @Override
         public void run() {
-            Optional<BingoGame> serverGame = DatabaseManager.INSTANCE.getGameData(blob, textChannel.getId(), Property.Games.BINGO, PropertyMapping::getAsBingoGame);
+            Optional<BingoGame> serverGame = DatabaseManager.INSTANCE.getGameData(blob, channelUnion.getId(), Property.Games.BINGO, PropertyMapping::getAsBingoGame);
             EmbedBuilder response = blob.getStandardEmbed(new Bingo().getNameReadable());
 
             if (serverGame.isEmpty()) {
-                if (isForced) textChannel.sendMessageEmbeds(noGameHasStartedEmbed(response)).queue();
+                if (isForced) channelUnion.sendMessageEmbeds(noGameHasStartedEmbed(response)).queue();
                 return;
             }
 
             BingoGame bingoGame = serverGame.get();
             if (bingoGame.isGameCompleted()) {
-                if (isForced) textChannel.sendMessageEmbeds(noGameHasStartedEmbed(response)).queue();
+                if (isForced) channelUnion.sendMessageEmbeds(noGameHasStartedEmbed(response)).queue();
                 return;
             }
 
             if (bingoGame.isPlayerCountUnderMin()) {
-                textChannel.sendMessageEmbeds(
+                channelUnion.sendMessageEmbeds(
                     response.setDescription("Bingo game was cancelled! Not Enough players joined!")
                         .setFooter(selfMember.getUser().getName(), selfMember.getEffectiveAvatarUrl())
                         .build()
@@ -358,7 +358,7 @@ public class Bingo implements ISlashGame {
             if (verboseOverride && bingoGame.isVerbose()) {
                 doVerbose(response, bingoGame);
             } else if (!verboseOverride && bingoGame.isVerbose()) {
-                textChannel.sendMessageEmbeds(
+                channelUnion.sendMessageEmbeds(
                     response.setDescription("Host requested verbose, but it is disabled by the server. Skipping...")
                         .build()
                 ).queue();
@@ -373,7 +373,7 @@ public class Bingo implements ISlashGame {
                     .append("]")
                     .append("\n");
             }
-            textChannel.sendMessageEmbeds(
+            channelUnion.sendMessageEmbeds(
                 response.setDescription(String.format("There %s %s winner%s after %s called numbers!",
                         plural ? "were" : "was",
                         winners.isEmpty() ? "no" : winners.size(),
@@ -390,7 +390,7 @@ public class Bingo implements ISlashGame {
 
         private void doVerbose(@NotNull EmbedBuilder embedBuilder, @NotNull BingoGame bingoGame) {
             EmbedBuilder response = new EmbedBuilder(embedBuilder);
-            textChannel.sendMessageEmbeds(
+            channelUnion.sendMessageEmbeds(
                 response.setDescription("Verbose Enabled! Calling out numbers...")
                     .build()
             ).queue();
@@ -403,7 +403,7 @@ public class Bingo implements ISlashGame {
                 List<BingoPlayer> value = entry.getValue();
                 value.forEach(player -> players.append(player.getMention()).append(", "));
                 boolean plural = value.size() != 1;
-                textChannel.sendMessageEmbeds(
+                channelUnion.sendMessageEmbeds(
                     new EmbedBuilder(embedBuilder)
                         .setTitle("Call #" + callNumber)
                         .addField("Number Called", entry.getKey(), false)
@@ -416,7 +416,7 @@ public class Bingo implements ISlashGame {
                 try {
                     TimeUnit.SECONDS.sleep(4);
                 } catch (InterruptedException e) {
-                    textChannel.sendMessageEmbeds(
+                    channelUnion.sendMessageEmbeds(
                         response.setDescription("Error occurred during verbose!\nSkipping to winner...")
                             .setColor(EmbedColor.ERROR.getColor())
                             .build()
