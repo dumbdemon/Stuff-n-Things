@@ -300,7 +300,7 @@ public class Bingo implements ISlashGame {
     @NotNull
     private Optional<BingoGame> getBingoGame(@NotNull SlashCommandInteractionEvent event, EventBlob blob, EmbedBuilder response) {
         Optional<BingoGame> bingoGame = DatabaseManager.INSTANCE
-            .getGameData(blob, event.getChannel().asTextChannel().getId(), Property.Games.BINGO, PropertyMapping::getAsBingoGame);
+            .getGameData(blob, event.getChannel().getId(), Property.Games.BINGO, PropertyMapping::getAsBingoGame);
         if (bingoGame.isPresent()) return bingoGame;
 
         event.replyEmbeds(noGameHasStartedEmbed(response)).setEphemeral(true).queue();
