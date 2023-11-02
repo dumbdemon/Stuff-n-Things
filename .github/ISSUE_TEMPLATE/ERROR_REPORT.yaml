@@ -57,8 +57,8 @@ body:
     id: discord-contact
     attributes:
       label: Discord Username
-      description: If you need contact, type or paste your Discord username here. Expect a friend request from "Love And War II#5340".
-      placeholder: Ex. Love And War II#5340
+      description: If you need contact, type or paste your Discord username here. Expect a friend request from "thesuperbutt".
+      placeholder: Ex. thesuperbutt
     validations:
       required: false
   - type: markdown

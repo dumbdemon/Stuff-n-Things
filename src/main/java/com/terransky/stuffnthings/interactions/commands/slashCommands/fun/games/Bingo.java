@@ -60,7 +60,7 @@ public class Bingo implements ISlashGame {
             Options with an `*` are required.
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate("2023-02-14T09:59Z"),
-            Metadata.parseDate("2023-03-02T10:12Z")
+            Metadata.parseDate("2023-10-28T18:52Z")
         )
             .addSubcommands(
                 new SubcommandData("new", "Start a new Bingo game in this channel.")
