@@ -46,13 +46,15 @@ public class WhatsInStandard implements ICommandSlash {
         StringBuilder theBans = new StringBuilder();
         List<String> setCodes = mtgSets.stream().filter(IS_VALID_SET).map(MtGSet::getCode).toList();
         for (Ban card : banList.stream().filter(card -> setCodes.stream().anyMatch(set -> set.equals(card.getSetCode()))).toList()) {
-            theBans.append("[```%s (%s)%s```](%s)".formatted(
+            theBans.append("""
+                - [**%s (%s)**](%s)%s
+                """.formatted(
                     card.getCardName(),
                     card.getSetCode(),
-                    withReason ? "\n Reason :: " + card.getReason() : "",
-                    "https://scryfall.com/search?q=!\"%s\" set:%s"
+                "https://scryfall.com/search?q=\"%s\" set:%s"
                         .formatted(card.getCardName(), card.getSetCode())
-                        .replaceAll(" ", "%20")
+                    .replaceAll(" ", "%20"),
+                withReason ? "\n - " + card.getReason() : ""
                 )
             );
         }
@@ -73,7 +75,7 @@ public class WhatsInStandard implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.MTG,
             Metadata.parseDate("2022-10-27T12:46Z"),
-            Metadata.parseDate("2023-03-18T16:48Z")
+            Metadata.parseDate("2023-11-01T22:53Z")
         )
             .addSubcommands(
                 new SubcommandData("all", "Get all info about the standard format."),
