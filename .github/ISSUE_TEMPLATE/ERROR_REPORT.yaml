@@ -15,22 +15,37 @@ body:
       label: Command
       description: Which command were you attempting to run? If it wasn't a command, choose an "NAC" option.
       options:
+        - 8ball
         - about
+        - anime
+        - bingo
+        - channel-lock
         - check-perms
         - color-info
+        - config
+        - cypher
         - dad-jokes
         - dictionary
         - fibonacci
         - get-invite
+        - jokes
         - kill
         - lmgtfy
+        - manga
         - meme
-        - mtg-standard
-        - ner
+        - not-enough-rats
         - number-facts
         - ping
+        - random-cat
+        - random-dog
+        - rob-fail-chance
+        - say
+        - solve-quadratic
         - suggest-command
+        - tinyurl
         - user-info
+        - weather
+        - whats-in-standard
         - NAC/button
         - NAC/modal
         - NAC/User_Context
