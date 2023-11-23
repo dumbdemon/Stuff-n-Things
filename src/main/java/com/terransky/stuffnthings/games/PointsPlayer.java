@@ -5,6 +5,8 @@ import net.dv8tion.jda.api.entities.Member;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 @SuppressWarnings("unused")
 public class PointsPlayer<T extends Number> extends Player {
 
@@ -37,5 +39,19 @@ public class PointsPlayer<T extends Number> extends Player {
     @BsonIgnore
     public T addToScore(T toAdd) {
         return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        PointsPlayer<?> that = (PointsPlayer<?>) o;
+        return Objects.equals(getScore(), that.getScore());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getScore());
     }
 }

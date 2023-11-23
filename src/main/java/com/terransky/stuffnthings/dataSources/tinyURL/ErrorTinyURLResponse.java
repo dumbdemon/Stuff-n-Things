@@ -12,7 +12,7 @@ public class ErrorTinyURLResponse extends TinyURLResponse {
 
     @JsonProperty("data")
     public Object[] getData() {
-        return data;
+        return Arrays.copyOf(data, data.length);
     }
 
     @JsonProperty("data")

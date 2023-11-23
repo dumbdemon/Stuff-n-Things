@@ -77,7 +77,7 @@ public class BingoPlayer extends Player {
     }
 
     public int[][] getBoard() {
-        return board;
+        return Arrays.copyOf(board, board.length);
     }
 
     public void setBoard(int[][] board) {
@@ -196,7 +196,7 @@ public class BingoPlayer extends Player {
     }
 
     public boolean[][] getChecks() {
-        return checks;
+        return Arrays.copyOf(checks, checks.length);
     }
 
     public void setChecks(boolean[][] checks) {
