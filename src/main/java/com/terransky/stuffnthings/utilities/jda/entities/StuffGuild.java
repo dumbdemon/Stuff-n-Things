@@ -118,7 +118,7 @@ public class StuffGuild extends StuffShared {
     }
 
     public void setFeatures(Set<String> features) {
-        this.features = features;
+        this.features = Set.copyOf(features);
     }
 
     public boolean isInvitesDisabled() {
@@ -262,7 +262,7 @@ public class StuffGuild extends StuffShared {
     }
 
     public void setRoles(List<String> roles) {
-        this.roles = roles;
+        this.roles = List.copyOf(roles);
     }
 
     public boolean isBoostProgressBarEnabled() {

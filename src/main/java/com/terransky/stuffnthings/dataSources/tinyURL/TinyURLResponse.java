@@ -28,6 +28,6 @@ public class TinyURLResponse extends CodesAndMessages {
 
     @JsonProperty("errors")
     public void setErrors(List<String> errors) {
-        this.errors = errors;
+        this.errors = List.copyOf(errors);
     }
 }

@@ -11,7 +11,7 @@ import java.util.Objects;
 public class PerServer implements Comparable<PerServer> {
 
     @BsonIgnore
-    public static OffsetDateTime DEFAULT_DT = OffsetDateTime.parse("2023-02-11T14:27Z");
+    private final OffsetDateTime DEFAULT_DT = OffsetDateTime.parse("2023-02-11T14:27Z");
     private String guildReference;
     private Long killAttempts;
     private Boolean killUnderTo;

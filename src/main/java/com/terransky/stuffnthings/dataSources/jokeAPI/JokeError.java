@@ -20,6 +20,6 @@ public class JokeError extends CodesAndMessages {
     @JsonProperty("causedBy")
     @SuppressWarnings("unused")
     public void setCausedBy(List<String> causedBy) {
-        this.causedBy = causedBy;
+        this.causedBy = List.copyOf(causedBy);
     }
 }

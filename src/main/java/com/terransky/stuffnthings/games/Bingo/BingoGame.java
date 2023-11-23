@@ -124,7 +124,7 @@ public class BingoGame extends Game<BingoPlayer> {
 
     @JsonIgnore
     @BsonIgnore
-    public LinkedHashMap<String, List<BingoPlayer>> getVerboseOrder() {
+    public LinkedHashMap<String, List<BingoPlayer>> getVerboseOrder() { // skipcq: JAVA-W1065
         return new LinkedHashMap<>() {{
             for (String key : calledNumbers) {
                 int integer = Integer.parseInt(key.substring(1));

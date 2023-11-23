@@ -81,7 +81,7 @@ public class BingoPlayer extends Player {
     }
 
     public void setBoard(int[][] board) {
-        this.board = board;
+        this.board = Arrays.copyOf(board, board.length);
     }
 
     public State getBoardState() {
@@ -200,7 +200,7 @@ public class BingoPlayer extends Player {
     }
 
     public void setChecks(boolean[][] checks) {
-        this.checks = checks;
+        this.checks = Arrays.copyOf(checks, checks.length);
     }
 
     /**

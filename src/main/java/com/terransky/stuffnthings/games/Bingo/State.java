@@ -26,7 +26,7 @@ public class State {
     protected String toStringArray(boolean[] booleans) {
         Objects.requireNonNull(booleans);
         StringBuilder response = new StringBuilder();
-        for (Boolean aBoolean : booleans) {
+        for (boolean aBoolean : booleans) {
             response.append(aBoolean ? "1" : "0").append(" ");
         }
 

@@ -130,7 +130,7 @@ public class ColorInfo implements ICommandSlash {
         return eb.addField("Hex Triplet", hexTriplet, true)
             .addField("RGB", "rgb(**%d**, **%d**, **%d**)".formatted(r, g, b), true)
             .addField("CMYK", "**%d**, **%d**, **%d**, **%d**".formatted(cmyk[0], cmyk[1], cmyk[2], cmyk[3]), true)
-            .addField("HSB/HSV", String.format("Hue **%s**\nSaturation **%s**\nBrightness **%s**",
+            .addField("HSB/HSV", String.format("Hue **%s**%nSaturation **%s**%nBrightness **%s**",
                 HSB.format(hsv[0]).replace("%", "°"),
                 HSB.format(hsv[1]),
                 HSB.format(hsv[2])
@@ -152,7 +152,7 @@ public class ColorInfo implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-09-20T12:10Z"),
-            Metadata.parseDate("2023-03-09T10:35Z")
+            Metadata.parseDate("2023-11-23T16:48Z")
         )
             .addSubcommands(
                 new SubcommandData("hex-triplet", "Get more info on a hex triplet. EX: #663366")

@@ -132,6 +132,6 @@ public class FreshMemeData extends CodesAndMessages {
 
     @JsonProperty("preview")
     public void setPreview(List<String> preview) {
-        this.preview = preview;
+        this.preview = List.copyOf(preview);
     }
 }

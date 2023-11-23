@@ -113,7 +113,7 @@ public class StuffMember extends StuffEntity {
     }
 
     public void setRoles(List<String> roles) {
-        this.roles = roles;
+        this.roles = List.copyOf(roles);
     }
 
     public List<Long> getRoleIds() {
@@ -121,7 +121,7 @@ public class StuffMember extends StuffEntity {
     }
 
     public void setRoleIds(List<Long> roleIds) {
-        this.roleIds = roleIds;
+        this.roleIds = List.copyOf(roleIds);
     }
 
     public boolean isOwner() {

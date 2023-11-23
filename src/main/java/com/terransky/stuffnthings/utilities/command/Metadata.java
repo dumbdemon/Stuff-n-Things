@@ -363,18 +363,12 @@ public class Metadata implements Comparable<Metadata> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Metadata metadata = (Metadata) o;
-        return isNsfw() == metadata.isNsfw() &&
-            getDefaultPerms().equals(metadata.getDefaultPerms()) &&
-            getSubcommandGroups().equals(metadata.getSubcommandGroups()) &&
-            getSubcommands().equals(metadata.getSubcommands()) &&
-            getOptions().equals(metadata.getOptions()) &&
-            getCommandName().equals(metadata.getCommandName()) &&
+        return getCommandName().equals(metadata.getCommandName()) &&
             getShortDescription().equals(metadata.getShortDescription()) &&
             getLongDescription().equals(metadata.getLongDescription()) &&
             getMastermind() == metadata.getMastermind() &&
             getCategory() == metadata.getCategory() &&
-            getCreatedDate().equals(metadata.getCreatedDate()) &&
-            getLastUpdated().equals(metadata.getLastUpdated());
+            getCreatedDate().equals(metadata.getCreatedDate());
     }
 
     @Override

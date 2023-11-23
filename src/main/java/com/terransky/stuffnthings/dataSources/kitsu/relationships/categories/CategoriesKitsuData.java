@@ -28,7 +28,7 @@ public class CategoriesKitsuData extends KitsuData {
 
     @JsonProperty("data")
     public void setData(List<CategoriesDatum> data) {
-        this.data = data;
+        this.data = List.copyOf(data);
     }
 
     public List<String> getCategoriesList() {

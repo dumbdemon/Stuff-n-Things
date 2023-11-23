@@ -28,14 +28,12 @@ public class HexCypher implements Cypher {
             splitBySpace = new String[str.length() / 2];
             int position = 0;
             for (int i = 0; i < str.length(); i += 2) {
-                String hex;
                 try {
-                    hex = str.substring(i, i + 2);
+                    splitBySpace[position] = str.substring(i, i + 2);
+                    position++;
                 } catch (IndexOutOfBoundsException e) {
                     return error.formatted(str.substring(i));
                 }
-                splitBySpace[position] = hex;
-                position++;
             }
         }
 

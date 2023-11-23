@@ -132,7 +132,7 @@ public class GuildEntry {
 
     @BsonProperty("bingo_games")
     public void setBingoGames(List<BingoGame> bingoGames) {
-        this.bingoGames = bingoGames;
+        this.bingoGames = List.copyOf(bingoGames);
     }
 
     @BsonIgnore
