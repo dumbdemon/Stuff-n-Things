@@ -137,6 +137,17 @@ public class Dictionary implements ICommandSlash {
         return "dictionary";
     }
 
+    @NotNull
+    private static HttpURLConnection getHttpURLConnection(@NotNull Map.Entry<String, Locale> language, String toLookUp, @NotNull Config.Credentials credentials) throws IOException {
+        URL dictionary = new URL("https://od-api.oxforddictionaries.com/api/v2/entries/%s/%s?fields=definitions&strictMatch=false"
+            .formatted(language.getValue().toLanguageTag().toLowerCase(), toLookUp));
+        HttpURLConnection oxfordConnection = (HttpURLConnection) dictionary.openConnection();
+        oxfordConnection.addRequestProperty("Accept", "application/json");
+        oxfordConnection.addRequestProperty("app_id", credentials.getUsername());
+        oxfordConnection.addRequestProperty("app_key", credentials.getPassword());
+        return oxfordConnection;
+    }
+
     @Override
     public Metadata getMetadata() {
         return new Metadata(this.getName(), "Look up a word in the dictionary in up to 9 different languages.", """
@@ -147,13 +158,18 @@ public class Dictionary implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate("2022-10-27T12:46Z"),
-            Metadata.parseDate("2023-03-05T16:18Z")
+            Metadata.parseDate("2023-11-23T17:29Z")
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "word", "The word to look up.", true),
                 new OptionData(OptionType.STRING, "language", "The source language to look up. US English is default.", false)
                     .addChoices(langChoices)
             );
+    }
+
+    @Override
+    public String getDisabledReason() {
+        return "API is/will be deprecated.";
     }
 
     @Override
@@ -170,17 +186,12 @@ public class Dictionary implements ICommandSlash {
             ).queue();
             return;
         }
-        if (userWords[0].equals(""))
+        if (userWords[0].isEmpty())
             throw new DiscordAPIException("Required option [%s] was not given".formatted("word"));
         Map.Entry<String, Locale> language = langCodes.floorEntry(event.getOption("language", "US English", OptionMapping::getAsString));
         String toLookUp = userWords[0].toLowerCase(language.getValue());
 
-        URL dictionary = new URL("https://od-api.oxforddictionaries.com/api/v2/entries/%s/%s?fields=definitions&strictMatch=false"
-            .formatted(language.getValue().toLanguageTag().toLowerCase(), toLookUp));
-        HttpURLConnection oxfordConnection = (HttpURLConnection) dictionary.openConnection();
-        oxfordConnection.addRequestProperty("Accept", "application/json");
-        oxfordConnection.addRequestProperty("app_id", credentials.getUsername());
-        oxfordConnection.addRequestProperty("app_key", credentials.getPassword());
+        HttpURLConnection oxfordConnection = getHttpURLConnection(language, toLookUp, credentials);
         int responseCode = oxfordConnection.getResponseCode();
         ObjectMapper om = new ObjectMapper();
 
