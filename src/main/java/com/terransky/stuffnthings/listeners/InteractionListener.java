@@ -38,8 +38,8 @@ public class InteractionListener extends ListenerAdapter {
 
     @NotNull
     private MessageEmbed getDisabledMessage(@NotNull EventBlob blob, String message) {
-        return new EmbedBuilder(blob.getStandardEmbed(EmbedColor.ERROR))
-            .setDescription("This command has been disabled!")
+        return new EmbedBuilder(blob.getStandardEmbed("This command has been disabled!", EmbedColor.ERROR))
+            .setDescription("There is an issue with this command and will need to be disabled until further notice.")
             .addField("Reason", message, false)
             .build();
     }
