@@ -35,6 +35,19 @@ public interface ICommand<T extends GenericCommandInteractionEvent> extends IInt
     }
 
     /**
+     * Where a command is disabled due to some issue or another and cannot be used until it is fixed
+     *
+     * @return False unless otherwise
+     */
+    default boolean isDisabled() {
+        return !getDisabledReason().isEmpty();
+    }
+
+    default String getDisabledReason() {
+        return "";
+    }
+
+    /**
      * Whether this command can only be run by the Server's Owner or by anyone.
      *
      * @return False unless otherwise.

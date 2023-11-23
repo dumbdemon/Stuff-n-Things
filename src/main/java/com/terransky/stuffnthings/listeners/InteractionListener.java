@@ -37,6 +37,14 @@ public class InteractionListener extends ListenerAdapter {
     private final Managers manager = Managers.getInstance();
 
     @NotNull
+    private MessageEmbed getDisabledMessage(@NotNull EventBlob blob, String message) {
+        return new EmbedBuilder(blob.getStandardEmbed(EmbedColor.ERROR))
+            .setDescription("This command has been disabled!")
+            .addField("Reason", message, false)
+            .build();
+    }
+
+    @NotNull
     private MessageEmbed getFailedInteractionMessage(@NotNull EventBlob blob) {
         return blob.getStandardEmbed("Oops!", EmbedColor.ERROR)
             .setDescription(Responses.INTERACTION_FAILED.getMessage(blob.getInteractionType()))
@@ -116,6 +124,13 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
+        if (slash.isDisabled()) {
+            event.replyEmbeds(getDisabledMessage(blob, slash.getDisabledReason()))
+                .setEphemeral(true)
+                .queue();
+            return;
+        }
+
         try {
             slash.execute(event, blob);
         } catch (RuntimeException | IOException | ExecutionException | InterruptedException e) {
@@ -154,6 +169,13 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
+        if (commandMessage.isDisabled()) {
+            event.replyEmbeds(getDisabledMessage(blob, commandMessage.getDisabledReason()))
+                .setEphemeral(true)
+                .queue();
+            return;
+        }
+
         try {
             commandMessage.execute(event, blob);
         } catch (RuntimeException | IOException | ExecutionException | InterruptedException e) {
@@ -189,6 +211,14 @@ public class InteractionListener extends ListenerAdapter {
             commandIsDevsOnly(event, blob);
             return;
         }
+
+        if (commandUser.isDisabled()) {
+            event.replyEmbeds(getDisabledMessage(blob, commandUser.getDisabledReason()))
+                .setEphemeral(true)
+                .queue();
+            return;
+        }
+
 
         try {
             commandUser.execute(event, blob);
