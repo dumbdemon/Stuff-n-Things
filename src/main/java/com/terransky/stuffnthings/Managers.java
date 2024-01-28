@@ -8,7 +8,7 @@ import com.terransky.stuffnthings.interactions.commands.messageContextMenus.Repo
 import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.ChannelUnLock;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.CheckPerms;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.ConfigCmd;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.RolesManager;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.RolesController;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.devs.*;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.*;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.games.Bingo;
@@ -37,7 +37,7 @@ public class Managers {
         new ChannelUnLock(),
         new CheckPerms(),
         new ConfigCmd(),
-        new RolesManager(),
+        new RolesController(),
 
         //Math Commands
         new FibonacciSequence(),

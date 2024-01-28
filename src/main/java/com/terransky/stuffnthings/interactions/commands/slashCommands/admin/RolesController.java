@@ -21,7 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-public class RolesManager implements ICommandSlash {
+public class RolesController implements ICommandSlash {
     private static void addRole(@NotNull SlashCommandInteractionEvent event, EventBlob blob, @NotNull Member targetMember,
                                 Role roleToGive, String errorEmbedTitle) {
         if (targetMember.getRoles().contains(roleToGive)) {
@@ -48,7 +48,7 @@ public class RolesManager implements ICommandSlash {
                         .build())
                     .setEphemeral(true)
                     .queue();
-                LoggerFactory.getLogger(RolesManager.class).error("Error in assigning role.", error);
+                LoggerFactory.getLogger(RolesController.class).error("Error in assigning role.", error);
             }
         );
     }
@@ -79,7 +79,7 @@ public class RolesManager implements ICommandSlash {
                         .build())
                     .setEphemeral(true)
                     .queue();
-                LoggerFactory.getLogger(RolesManager.class).error("Error in removing role.", error);
+                LoggerFactory.getLogger(RolesController.class).error("Error in removing role.", error);
             }
         );
     }
