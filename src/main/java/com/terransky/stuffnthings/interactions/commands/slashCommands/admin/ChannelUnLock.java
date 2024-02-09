@@ -32,8 +32,8 @@ public class ChannelUnLock implements ICommandSlash {
     public Metadata getMetadata() {
         return new Metadata(this.getName(), "Lock or unlock a channel for everyone or from a specific role to see.",
             Mastermind.DEVELOPER, CommandCategory.ADMIN,
-            Metadata.parseDate("2022-11-23T18:34Z"),
-            Metadata.parseDate("2023-03-05T16:18Z")
+            Metadata.parseDate(2022, 11, 23, 18, 34),
+            Metadata.parseDate(2024, 2, 9, 16, 11)
         )
             .addDefaultPerms(Permission.MANAGE_CHANNEL)
             .addSubcommands(

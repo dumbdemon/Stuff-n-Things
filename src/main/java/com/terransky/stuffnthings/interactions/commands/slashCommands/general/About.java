@@ -59,8 +59,8 @@ public class About implements ICommandSlash {
             **NOTE:** If you choose from more than one, the command will prioritize from highest to lowest: `command-one`, `command-two`, `command-three`, and then `command-four`.
             """, Mastermind.DEVELOPER,
             CommandCategory.GENERAL,
-            Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-07-02T21:02Z")
+            Metadata.parseDate(2022, 8, 24, 11, 10),
+            Metadata.parseDate(2024, 2, 9, 16, 11)
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "command-one", "Get more info on a Command.")

@@ -96,4 +96,18 @@ public interface ISlashGame extends ICommandSlash {
      * @param response An {@link EmbedBuilder}
      */
     void cancelGame(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder response);
+
+    enum GameAction {
+        NEW,
+        JOIN,
+        START,
+        LAST,
+        CANCEL
+        ;
+
+        @NotNull
+        public String getName() {
+            return this.name().toLowerCase();
+        }
+    }
 }

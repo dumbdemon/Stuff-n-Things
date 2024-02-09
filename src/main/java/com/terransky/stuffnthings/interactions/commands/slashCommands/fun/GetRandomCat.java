@@ -39,8 +39,8 @@ public class GetRandomCat implements ICommandSlash {
     public Metadata getMetadata() {
         return new Metadata(getName(), "Get a random image of a cat",
             Mastermind.DEVELOPER, CommandCategory.FUN,
-            Metadata.parseDate("2023-02-09T13:17Z"),
-            Metadata.parseDate("2023-03-05T16:18Z")
+            Metadata.parseDate(2023, 2, 9, 13, 17),
+            Metadata.parseDate(2024, 2, 9, 16, 11)
         )
             .addOptions(
                 new OptionData(OptionType.BOOLEAN, "gif", "Whether not you just want gifs."),

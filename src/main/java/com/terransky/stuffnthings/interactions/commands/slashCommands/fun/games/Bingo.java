@@ -59,11 +59,11 @@ public class Bingo implements ISlashGame {
 
             Options with an `*` are required.
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
-            Metadata.parseDate("2023-02-14T09:59Z"),
-            Metadata.parseDate("2023-10-28T18:52Z")
+            Metadata.parseDate(2023, 2, 14, 9, 59),
+            Metadata.parseDate(2024, 2, 9, 17, 22)
         )
             .addSubcommands(
-                new SubcommandData("new", "Start a new Bingo game in this channel.")
+                new SubcommandData(GameAction.NEW.getName(), "Start a new Bingo game in this channel.")
                     .addOptions(
                         new OptionData(OptionType.BOOLEAN, "join-game", "Join the game you started?", true),
                         new OptionData(OptionType.INTEGER, "max-players", "Change the max player count for this game. DEFAULT: 100")
@@ -74,14 +74,14 @@ public class Bingo implements ISlashGame {
                         new OptionData(OptionType.ROLE, "to-ping", "If ping is true, mention this role."),
                         new OptionData(OptionType.BOOLEAN, "verbose", "Iterate through all called numbers into chat. WARNING: POTENTIAL SPAM!")
                     ),
-                new SubcommandData("join", "Join in a game. You cannot join a game that has already started.")
+                new SubcommandData(GameAction.JOIN.getName(), "Join in a game. You cannot join a game that has already started.")
                     .addOption(OptionType.BOOLEAN, "dm-board", "Whether to send your board here or in you DMs. NOTE: DMs must be open!", true),
-                new SubcommandData("start", "No waiting! Start the game now!"),
-                new SubcommandData("last", "See your result on that last game on this channel.")
+                new SubcommandData(GameAction.START.getName(), "No waiting! Start the game now!"),
+                new SubcommandData(GameAction.LAST.getName(), "See your result on that last game on this channel.")
                     .addOptions(
                         new OptionData(OptionType.BOOLEAN, "hide-result", "Hide your results.", true)
                     ),
-                new SubcommandData("cancel", "Cancel a game from running.")
+                new SubcommandData(GameAction.CANCEL.getName(), "Cancel a game from running.")
             );
     }
 

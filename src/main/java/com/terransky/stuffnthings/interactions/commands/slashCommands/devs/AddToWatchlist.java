@@ -30,8 +30,8 @@ public class AddToWatchlist implements ICommandSlash {
     public Metadata getMetadata() {
         return new Metadata(getName(), "Add something to the watchlist",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
-            Metadata.parseDate("2023-01-27T22:35Z"),
-            Metadata.parseDate("2023-01-30T16:06Z")
+            Metadata.parseDate(2023, 1, 27, 22, 35),
+            Metadata.parseDate(2024, 2, 9, 16, 11)
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "watch-this", "What to watch...", true)

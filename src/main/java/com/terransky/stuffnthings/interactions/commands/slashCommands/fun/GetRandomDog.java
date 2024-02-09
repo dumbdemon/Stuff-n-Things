@@ -24,8 +24,8 @@ public class GetRandomDog implements ICommandSlash {
     public Metadata getMetadata() {
         return new Metadata(getName(), "Random Dogs! Go!",
             Mastermind.DEVELOPER, CommandCategory.FUN,
-            Metadata.parseDate("2023-02-06T17:31Z"),
-            Metadata.parseDate("2023-02-06T17:31Z")
+            Metadata.parseDate(2023, 2, 6, 17, 34),
+            Metadata.parseDate(2024, 2, 9, 16, 11)
         );
     }
 

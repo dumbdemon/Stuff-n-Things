@@ -2,21 +2,7 @@
   <profile version="1.0">
     <option name="myName" value="Project Default" />
     <inspection_tool class="AutoCloseableResource" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="METHOD_MATCHER_CONFIG" value="java.util.Formatter,format,java.io.Writer,append,com.google.common.base.Preconditions,checkNotNull,org.hibernate.Session,close,java.io.PrintWriter,printf,java.io.PrintStream,printf,club.minnced.discord.webhook.WebhookClientBuilder,build,net.dv8tion.jda.api.utils.messages.MessageEditBuilder,build,net.dv8tion.jda.api.utils.messages.MessageCreateBuilder,build,java.net.URL,openStream,com.mongodb.reactivestreams.client.MongoClients,create,net.dv8tion.jda.api.utils.FileUpload,fromData" />
-    </inspection_tool>
-    <inspection_tool class="FieldCanBeLocal" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="EXCLUDE_ANNOS">
-        <value>
-          <list size="2">
-            <item index="0" class="java.lang.String" itemvalue="com.fasterxml.jackson.annotation.JsonIgnore" />
-            <item index="1" class="java.lang.String" itemvalue="org.bson.codecs.pojo.annotations.BsonProperty" />
-          </list>
-        </value>
-      </option>
-      <option name="IGNORE_FIELDS_USED_IN_MULTIPLE_METHODS" value="true" />
-    </inspection_tool>
-    <inspection_tool class="ShellCheck" enabled="true" level="ERROR" enabled_by_default="true">
-      <shellcheck_settings value="SC2046,SC2116" />
+      <option name="METHOD_MATCHER_CONFIG" value="java.util.Formatter,format,java.io.Writer,append,com.google.common.base.Preconditions,checkNotNull,org.hibernate.Session,close,java.io.PrintWriter,printf,java.io.PrintStream,printf,com.mongodb.reactivestreams.client.MongoClients,create" />
     </inspection_tool>
   </profile>
 </component>

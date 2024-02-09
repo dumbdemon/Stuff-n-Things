@@ -40,8 +40,8 @@ public class GetWeather implements ICommandSlash {
             Examples of Country Codes: US (United States), GB (United Kingdom), FR (France), DE (Germany), etc.
             If you don't know your country's code, you can use [this website](https://www.iso.org/obp/ui/#search).
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
-            Metadata.parseDate("2023-02-01T16:27Z"),
-            Metadata.parseDate("2023-03-16T13:30Z")
+            Metadata.parseDate(2023, 2, 1, 16, 27),
+            Metadata.parseDate(2024, 2, 9, 16, 11)
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("by-coordinates", "Get the weather by coordinates.")

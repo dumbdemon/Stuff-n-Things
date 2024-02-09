@@ -115,8 +115,8 @@ public class Kill implements ICommandSlash {
         return new Metadata(this.getName(), "Time to un-alive random members!", """
             Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
             """, Mastermind.USER, CommandCategory.FUN,
-            Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-07-02T21:02Z")
+            Metadata.parseDate(2022, 8, 24, 11, 10),
+            Metadata.parseDate(2024, 2, 9, 16, 11)
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),

@@ -56,8 +56,8 @@ public class BotBan implements ICommandSlash {
     public Metadata getMetadata() {
         return new Metadata(getName(), "Ban a user from ever using the bot again.",
             Mastermind.DEVELOPER, CommandCategory.FUN,
-            Metadata.parseDate("2023-02-28T12:47Z"),
-            Metadata.parseDate("2023-07-02T21:05Z")
+            Metadata.parseDate(2023, 2, 28, 12, 47),
+            Metadata.parseDate(2024, 2, 9, 16, 11)
         )
             .addOptions(
                 new OptionData(OptionType.USER, "user", "This person does not deserve to use this bot...", true)

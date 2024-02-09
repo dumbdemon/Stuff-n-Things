@@ -32,8 +32,8 @@ public class RobFailChance implements ICommandSlash {
             Returns the chance of failure of the `/rob` command of the bot UnbelievaBoat. If you don't have the bot, you can ask your admins to invite it [here](%s).
             """.formatted(uBoatInvite), Mastermind.DEVELOPER,
             CommandCategory.FUN,
-            Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-03-09T12:20Z")
+            Metadata.parseDate(2022, 8, 24, 11, 10),
+            Metadata.parseDate(2024, 2, 9, 16, 11)
         )
             .addOptions(
                 new OptionData(OptionType.INTEGER, "your-net-worth", "Your net-worth.", true)

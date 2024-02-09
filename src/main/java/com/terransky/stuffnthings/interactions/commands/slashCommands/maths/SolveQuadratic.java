@@ -29,8 +29,8 @@ public class SolveQuadratic implements ICommandSlash {
             Given a, b, and/or c, solve for when the parabola intersects the x-axis.
             """, Mastermind.DEVELOPER,
             CommandCategory.MATHS,
-            Metadata.parseDate("2022-11-19T13:09Z"),
-            Metadata.parseDate("2023-02-27T16:42Z")
+            Metadata.parseDate(2022, 11, 19, 13, 9),
+            Metadata.parseDate(2024, 2, 9, 16, 11)
         )
             .addOptions(
                 new OptionData(OptionType.NUMBER, "value-a", "A value of Quadratic Formula"),

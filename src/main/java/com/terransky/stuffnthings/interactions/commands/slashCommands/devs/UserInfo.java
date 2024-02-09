@@ -124,8 +124,8 @@ public class UserInfo implements ICommandSlash {
             • Boosting Status (if user)
             """, Mastermind.DEFAULT,
             CommandCategory.DEVS,
-            Metadata.parseDate("2023-08-24T11:10Z"),
-            Metadata.parseDate("2023-07-02T21:02Z")
+            Metadata.parseDate(2023, 8, 24, 11, 10),
+            Metadata.parseDate(2024, 2, 9, 16, 11)
         )
             .addOptions(
                 new OptionData(OptionType.USER, "user", "Who you want to know about.")

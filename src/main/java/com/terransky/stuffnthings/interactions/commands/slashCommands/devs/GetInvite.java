@@ -23,8 +23,8 @@ public class GetInvite implements ICommandSlash {
     public Metadata getMetadata() {
         return new Metadata(this.getName(), "Get an invite for the bot.",
             Mastermind.DEFAULT, CommandCategory.DEVS,
-            Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-03-05T16:18Z")
+            Metadata.parseDate(2022, 8, 24, 11, 10),
+            Metadata.parseDate(2024, 2, 9, 16, 11)
         );
     }
 

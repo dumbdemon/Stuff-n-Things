@@ -149,8 +149,8 @@ public class RolesController implements ICommandSlash {
             new OptionData(OptionType.ROLE, "role", "Role to give/remove a user", true)
         );
         return new Metadata(getName(), "Adds or Removes a role from a user.", Mastermind.USER, CommandCategory.ADMIN,
-            Metadata.parseDate("2024-01-28T12:34Z"),
-            Metadata.parseDate("2024-01-28T13:50Z"))
+            Metadata.parseDate(2024, 1, 28, 12, 34),
+            Metadata.parseDate(2024, 2, 9, 16, 11))
             .addDefaultPerms(Permission.MANAGE_ROLES)
             .addSubcommands(
                 new SubcommandData("add", "Adds a role to a user.")

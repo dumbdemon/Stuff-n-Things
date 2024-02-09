@@ -49,8 +49,8 @@ public class ConfigCmd implements ICommandSlash {
             """,
             Mastermind.DEVELOPER,
             CommandCategory.ADMIN,
-            Metadata.parseDate("2022-08-28T21:46Z"),
-            Metadata.parseDate("2023-03-05T16:18Z")
+            Metadata.parseDate(2022, 8, 28, 21, 46),
+            Metadata.parseDate(2024, 2, 9, 16, 11)
         )
             .addDefaultPerms(Permission.MANAGE_SERVER)
             .addSubcommandGroups(

@@ -33,8 +33,9 @@ import java.util.List;
 @SuppressWarnings("SpellCheckingInspection")
 public class Kitsu {
 
+    @NotNull
     private static OffsetDateTime getGlobalLastUpdated() {
-        return Metadata.parseDate("2023-03-16T12:51Z");
+        return Metadata.parseDate(2024, 2, 9, 16, 11);
     }
 
     private static Metadata getStandard(String name) {
@@ -42,7 +43,7 @@ public class Kitsu {
             .setCommandName(name)
             .setMastermind(Mastermind.DEVELOPER)
             .setCategory(CommandCategory.FUN)
-            .setCreatedDate(Metadata.parseDate("2023-01-17T12:43Z"))
+            .setCreatedDate(Metadata.parseDate(2023, 1, 17, 12, 43))
             .addOptions(
                 new OptionData(OptionType.STRING, "search", "Queary for search", true)
             );
@@ -123,7 +124,7 @@ public class Kitsu {
 
         @Override
         public Metadata getMetadata() {
-            OffsetDateTime animeLastUpdated = Metadata.parseDate("2023-01-18T16:19Z"),
+            OffsetDateTime animeLastUpdated = Metadata.parseDate(2023, 1, 18, 16, 19),
                 lastUpdated = animeLastUpdated.isAfter(getGlobalLastUpdated()) ? animeLastUpdated : getGlobalLastUpdated();
             return getStandard(getName())
                 .setLastUpdated(lastUpdated)
@@ -173,7 +174,7 @@ public class Kitsu {
 
         @Override
         public Metadata getMetadata() {
-            OffsetDateTime mangaLastUpdated = Metadata.parseDate("2023-02-05T11:52Z"),
+            OffsetDateTime mangaLastUpdated = Metadata.parseDate(2023, 2, 5, 11, 52),
                 lastUpdated = mangaLastUpdated.isAfter(getGlobalLastUpdated()) ? mangaLastUpdated : getGlobalLastUpdated();
             return getStandard(getName())
                 .setLastUpdated(lastUpdated)

@@ -4,7 +4,6 @@ import com.terransky.stuffnthings.interfaces.IInteraction;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface ICommand<T extends GenericCommandInteractionEvent> extends IInteraction<T> {
@@ -71,6 +70,6 @@ public interface ICommand<T extends GenericCommandInteractionEvent> extends IInt
      * @return {@link List} of Guild IDs.
      */
     default List<Long> getServerRestrictions() {
-        return new ArrayList<>();
+        return List.of();
     }
 }

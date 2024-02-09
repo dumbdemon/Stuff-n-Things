@@ -31,8 +31,8 @@ public class GetDadJokes implements ICommandSlash {
             An unoriginal or unfunny joke of a type supposedly told by middle-aged or older men.
             """, Mastermind.USER,
             CommandCategory.FUN,
-            Metadata.parseDate("2022-08-25T20:53Z"),
-            Metadata.parseDate("2023-07-02T21:02Z")
+            Metadata.parseDate(2022, 8, 25, 20, 53),
+            Metadata.parseDate(2024, 2, 9, 16, 11)
         );
     }
 

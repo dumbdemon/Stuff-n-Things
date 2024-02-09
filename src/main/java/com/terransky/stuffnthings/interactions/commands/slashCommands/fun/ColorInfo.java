@@ -151,8 +151,8 @@ public class ColorInfo implements ICommandSlash {
             Given a hex triplet, RGB, or CMYK code, it will return the other values and give a link to more info.
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
-            Metadata.parseDate("2022-09-20T12:10Z"),
-            Metadata.parseDate("2023-11-23T16:48Z")
+            Metadata.parseDate(2022, 9, 20, 12, 10),
+            Metadata.parseDate(2024, 2, 9, 16, 11)
         )
             .addSubcommands(
                 new SubcommandData("hex-triplet", "Get more info on a hex triplet. EX: #663366")

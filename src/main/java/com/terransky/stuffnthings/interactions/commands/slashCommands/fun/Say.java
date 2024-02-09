@@ -32,8 +32,8 @@ public class Say implements ICommandSlash {
             ~~Subject to your server's rules and [Discord Community Guidelines](https://discord.com/guidelines).~~
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
-            Metadata.parseDate("2022-08-24T11:10Z"),
-            Metadata.parseDate("2023-07-02T21:02Z")
+            Metadata.parseDate(2022, 8, 24, 11, 10),
+            Metadata.parseDate(2024, 2, 9, 16, 11)
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "message", "The message you want sent.", true),

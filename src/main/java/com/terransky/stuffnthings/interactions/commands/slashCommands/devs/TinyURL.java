@@ -57,15 +57,15 @@ public class TinyURL implements ICommandSlash {
      */
     @Override
     public boolean isDeveloperCommand() {
-        return !Config.getTinyURlDomain().equals("");
+        return !Config.getTinyURlDomain().isEmpty();
     }
 
     @Override
     public Metadata getMetadata() {
         return new Metadata(getName(), "Create short URLs with TinyURL",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
-            Metadata.parseDate("2023-01-06T16:04Z"),
-            Metadata.parseDate("2023-03-16T12:47Z")
+            Metadata.parseDate(2023, 1, 6, 16, 4),
+            Metadata.parseDate(2024, 2, 9, 16, 11)
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "url", "A URL to shorten.", true),

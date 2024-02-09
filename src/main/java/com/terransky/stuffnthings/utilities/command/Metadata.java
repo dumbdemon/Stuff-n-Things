@@ -9,10 +9,7 @@ import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
@@ -116,6 +113,81 @@ public class Metadata implements Comparable<Metadata> {
                 .parseStrict()
                 .toFormatter()
         );
+    }
+
+    /**
+     * Create an {@link OffsetDateTime} based on provided dighit of tha day.
+     * This will assume the time zone the server is currently in.
+     *
+     * @param year  The year
+     * @param month The month
+     * @param day   The day
+     * @param hour  Hour of the day.
+     * @param min   Minute  of the hour.
+     * @param time  A {@link TimeZone} to add the appropriate offset.
+     * @return An {@link OffsetDateTime}
+     */
+    @NotNull
+    public static OffsetDateTime parseDate(int year, int month, int day, int hour, int min, Time time) {
+        return parseDate(year, month, day, hour, min, time, TimeZone.getDefault());
+    }
+
+    /**
+     * Create an {@link OffsetDateTime} based on provided dighit of tha day.
+     * This will assume the time zone the server is currently in.
+     *
+     * @param year     The year
+     * @param month    The month
+     * @param day      The day
+     * @param hour     Hour of the day.
+     * @param min      Minute of the hour.
+     * @param time     A {@link TimeZone} to add the appropriate offset.
+     * @param timeZone A {@link TimeZone} to add the appropriate offset.
+     * @return An {@link OffsetDateTime}
+     */
+    @NotNull
+    public static OffsetDateTime parseDate(int year, int month, int day, int hour, int min, Time time, TimeZone timeZone) {
+        if (time == Time.PM) {
+            hour += 12;
+        }
+        return parseDate(year, month, day, hour, min, timeZone);
+    }
+
+    /**
+     * Create an {@link OffsetDateTime} based on provided dighit of tha day.
+     * This will assume the time zone the server is currently in.
+     *
+     * @param year  The year
+     * @param month The month
+     * @param day   The day
+     * @param hour  Hour of a 24 day.
+     * @param min   Minute  of the hour.
+     * @return An {@link OffsetDateTime}
+     */
+    @NotNull
+    public static OffsetDateTime parseDate(int year, int month, int day, int hour, int min) {
+        return parseDate(year, month, day, hour, min, TimeZone.getDefault());
+    }
+
+    /**
+     * Create an {@link OffsetDateTime} based on provided dighit of tha day.
+     *
+     * @param year     The year
+     * @param month    The month
+     * @param day      The day
+     * @param hour     Hour of a 24 day.
+     * @param min      Minute  of the hour.
+     * @param timeZone A {@link TimeZone} to add the appropriate offset.
+     * @return An {@link OffsetDateTime}
+     */
+    @NotNull
+    public static OffsetDateTime parseDate(int year, int month, int day, int hour, int min, TimeZone timeZone) {
+        return parseDate(String.format("%d-%02d-%02dT%02d:%02dZ", year,
+            Math.min(month, Month.values().length),
+            Math.min(day, Month.of(month).maxLength()),
+            Math.min(hour, 24),
+            Math.min(min, 59)
+        ), timeZone);
     }
 
     /**
@@ -412,5 +484,10 @@ public class Metadata implements Comparable<Metadata> {
             String.CASE_INSENSITIVE_ORDER.compare(getShortDescription(), metadata.getShortDescription()) |
             String.CASE_INSENSITIVE_ORDER.compare(getLongDescription(), metadata.getLongDescription()) |
             createdDate.compareTo(metadata.getCreatedDate());
+    }
+
+    public enum Time {
+        AM,
+        PM
     }
 }

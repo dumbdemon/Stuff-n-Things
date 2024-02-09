@@ -76,8 +76,8 @@ public class EightBall implements ICommandSlash {
             "Divinate a yes or no question to the 8Ball!"
             ||This 8Ball totally wasn't jerry rigged together from trash at the nearby park's dumpster!||
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
-            Metadata.parseDate("2023-02-27T15:17Z"),
-            Metadata.parseDate("2023-02-28T12:47Z")
+            Metadata.parseDate(2023, 2, 27, 15, 17),
+            Metadata.parseDate(2024, 2, 9, 16, 11)
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "query", "And what shall you ask the 8Ball?", true)
