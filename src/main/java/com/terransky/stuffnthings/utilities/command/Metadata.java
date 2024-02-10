@@ -133,7 +133,7 @@ public class Metadata implements Comparable<Metadata> {
     }
 
     /**
-     * Create an {@link OffsetDateTime} based on provided dighit of tha day.
+     * Create an {@link OffsetDateTime} based on provided digit of tha day.
      * This will assume the time zone the server is currently in.
      *
      * @param year     The year
@@ -141,7 +141,7 @@ public class Metadata implements Comparable<Metadata> {
      * @param day      The day
      * @param hour     Hour of the day.
      * @param min      Minute of the hour.
-     * @param time     A {@link TimeZone} to add the appropriate offset.
+     * @param time     Whether the hour is {@link Time#AM AM} or {@link Time#PM PM}
      * @param timeZone A {@link TimeZone} to add the appropriate offset.
      * @return An {@link OffsetDateTime}
      */
