@@ -83,7 +83,7 @@ public class ChannelPermsController {
         PermissionOverride permissionOverride = getPermissionOverride(iPermissionHolder, guildChannel.getPermissionContainer())
             .orElse(guildChannel.getPermissionContainer().upsertPermissionOverride(iPermissionHolder).submit().get());
 
-        permissionOverride = permissionOverride.getManager().grant(permissions).submit().get();
+        permissionOverride = permissionOverride.getManager().deny(permissions).submit().get();
         return !Objects.requireNonNull(permissionOverride.getPermissionHolder()).hasPermission(guildChannel, permissions);
     }
 }
