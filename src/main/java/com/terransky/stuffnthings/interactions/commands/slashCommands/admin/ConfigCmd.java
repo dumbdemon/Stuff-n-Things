@@ -50,7 +50,7 @@ public class ConfigCmd implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.ADMIN,
             Metadata.parseDate(2022, 8, 28, 21, 46),
-            Metadata.parseDate(2024, 2, 9, 16, 11)
+            Metadata.parseDate(2024, 2, 10, 13, 17)
         )
             .addDefaultPerms(Permission.MANAGE_SERVER)
             .addSubcommandGroups(
@@ -177,7 +177,7 @@ public class ConfigCmd implements ICommandSlash {
 
         DatabaseManager.INSTANCE.updateProperty(blob, Property.JOKE_FLAGS, serverFlags);
         String allow = ":white_check_mark: **Allowed**",
-            deny = ":x: ***Denied***";
+            deny = ":ripx: ***Denied***";
 
         event.replyEmbeds(
             eb.addField("Religious", serverFlags.getReligious() ? deny : allow, false)
