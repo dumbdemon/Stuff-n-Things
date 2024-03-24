@@ -34,7 +34,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1'
     implementation('org.apache.commons:commons-text:1.11.0')
     implementation 'org.apache.commons:commons-lang3:3.14.0'
-    implementation 'org.mongodb:mongodb-driver-reactivestreams:4.11.1'
+    implementation 'org.mongodb:mongodb-driver-reactivestreams:5.0.0'
     implementation 'javax.validation:validation-api:2.0.1.Final'
     implementation('com.neovisionaries:nv-i18n:1.29')
     implementation('com.thedeanda:lorem:2.2')
