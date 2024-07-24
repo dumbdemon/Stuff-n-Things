@@ -5,6 +5,7 @@ import com.terransky.stuffnthings.interactions.commands.slashCommands.devs.UserI
 import com.terransky.stuffnthings.interfaces.interactions.ICommandUser;
 import com.terransky.stuffnthings.utilities.cannedAgenda.GuildOnly;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.general.InteractionType;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +21,7 @@ public class UserInfoMenu implements ICommandUser {
     @Override
     public void execute(@NotNull UserContextInteractionEvent event, EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException {
         if (event.getTargetMember() == null) {
-            GuildOnly.interactionResponse(event, Type.COMMAND_USER);
+            GuildOnly.interactionResponse(event, InteractionType.COMMAND_USER);
             return;
         }
         event.replyEmbeds(UserInfo.getUserInfo(event.getTargetMember(), blob))

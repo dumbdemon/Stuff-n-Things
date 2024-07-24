@@ -1,8 +1,8 @@
 package com.terransky.stuffnthings.managers;
 
-import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.interfaces.interactions.ICommand;
 import com.terransky.stuffnthings.utilities.command.Formatter;
+import com.terransky.stuffnthings.utilities.general.InteractionType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ public class CommandIManager<T extends ICommand<?>> extends IManager<T> {
 
     @Override
     public void addInteraction(@NotNull T command) {
-        if (command.getInteractionType() == IInteraction.Type.COMMAND_SLASH)
+        if (command.getInteractionType() == InteractionType.COMMAND_SLASH)
             throw new IllegalArgumentException(String.format("Please use %s for slash commands", Formatter.getNameOfClass(SlashIManager.class)));
         noTypeCheckAddInteraction(command);
     }

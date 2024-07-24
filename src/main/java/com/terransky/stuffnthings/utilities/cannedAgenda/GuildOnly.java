@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.utilities.cannedAgenda;
 
-import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.utilities.command.EmbedColor;
+import com.terransky.stuffnthings.utilities.general.InteractionType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
@@ -17,7 +17,7 @@ public class GuildOnly {
     private GuildOnly() {
     }
 
-    public static void interactionResponse(@NotNull GenericCommandInteractionEvent event, IInteraction.Type type) {
+    public static void interactionResponse(@NotNull GenericCommandInteractionEvent event, InteractionType type) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getName(), event.getUser().getEffectiveAvatarUrl())
                 .setDescription(Responses.GUILD_ONLY.getMessage(type))
@@ -25,7 +25,7 @@ public class GuildOnly {
         ).queue();
     }
 
-    public static void interactionResponse(@NotNull GenericComponentInteractionCreateEvent event, IInteraction.Type type) {
+    public static void interactionResponse(@NotNull GenericComponentInteractionCreateEvent event, InteractionType type) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getName(), event.getUser().getEffectiveAvatarUrl())
                 .setDescription(Responses.GUILD_ONLY.getMessage(type))
@@ -36,7 +36,7 @@ public class GuildOnly {
     public static void interactionResponse(@NotNull ModalInteractionEvent event) {
         event.replyEmbeds(
             BOT_IS_GUILD_ONLY.setFooter(event.getUser().getName(), event.getUser().getEffectiveAvatarUrl())
-                .setDescription(Responses.GUILD_ONLY.getMessage(IInteraction.Type.MODAL))
+                .setDescription(Responses.GUILD_ONLY.getMessage(InteractionType.MODAL))
                 .build()
         ).queue();
     }

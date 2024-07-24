@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.utilities.command;
 
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
-import com.terransky.stuffnthings.interfaces.IInteraction;
+import com.terransky.stuffnthings.utilities.general.InteractionType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -21,7 +21,7 @@ public class EventBlob {
     private Guild guild;
     private Member member;
     private MessageChannelUnion channelUnion;
-    private IInteraction.Type interactionType;
+    private InteractionType interactionType;
 
     /**
      * An object containing checked non-null {@link Guild} object and {@link Member} object.
@@ -182,11 +182,11 @@ public class EventBlob {
         return !member.getUser().isBot();
     }
 
-    public IInteraction.Type getInteractionType() {
+    public InteractionType getInteractionType() {
         return interactionType;
     }
 
-    public EventBlob setInteractionType(IInteraction.Type interactionType) {
+    public EventBlob setInteractionType(InteractionType interactionType) {
         this.interactionType = interactionType;
         return this;
     }

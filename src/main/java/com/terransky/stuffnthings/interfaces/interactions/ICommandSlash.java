@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interfaces.interactions;
 
+import com.terransky.stuffnthings.utilities.general.InteractionType;
 import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -29,7 +30,7 @@ public interface ICommandSlash extends ICommand<SlashCommandInteractionEvent> {
     Metadata getMetadata();
 
     @Override
-    default Type getInteractionType() {
-        return Type.COMMAND_SLASH;
+    default InteractionType getInteractionType() {
+        return InteractionType.COMMAND_SLASH;
     }
 }

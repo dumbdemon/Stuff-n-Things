@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.managers;
 
 import com.terransky.stuffnthings.interfaces.IInteraction;
+import com.terransky.stuffnthings.utilities.general.InteractionType;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,14 +72,40 @@ public class IManager<T extends IInteraction<?>> {
     }
 
     /**
+     * Removes a {@link IInteraction} from the list.
+     *
+     * @param interaction An {@link IInteraction}
+     * @return True if the list contained the {@link IInteraction}.
+     */
+    public boolean removeInteraction(T interaction) {
+        return interactions.remove(interaction);
+    }
+
+    /**
+     * Removes a {@link Collection} of {@link IInteraction IInteractions}.
+     *
+     * @param interactions A {@link Collection} of {@link IInteraction IInteractions}
+     * @return True if the list contained <b>all</b>  {@link IInteraction} in the {@link Collection}.
+     */
+    public boolean removeInteraction(@NotNull Collection<T> interactions) {
+        int count = 0;
+        for (T interaction : interactions) {
+            if (removeInteraction(interaction)) {
+                count++;
+            }
+        }
+        return interactions.size() == count;
+    }
+
+    /**
      * Get the effective amount of {@link IInteraction}.
      *
      * @param interactions A {@link List} of {@link IInteraction}s.
-     * @param type         An {@link IInteraction.Type}.
+     * @param type         An {@link InteractionType}.
      * @return A {@link List} of {@link IInteraction}s that does not exceed their maximum count.
      */
     @NotNull
-    List<T> getEffectiveCounts(@NotNull List<T> interactions, @NotNull IInteraction.Type type) {
+    List<T> getEffectiveCounts(@NotNull List<T> interactions, @NotNull InteractionType type) {
         int max = type.getMaximum();
         log.info("Checking quantity of {}s against maximum of {}...", type.getName(), max);
         if (interactions.size() > max) {

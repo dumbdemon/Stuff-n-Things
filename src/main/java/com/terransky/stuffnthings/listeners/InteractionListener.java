@@ -8,6 +8,7 @@ import com.terransky.stuffnthings.utilities.cannedAgenda.GuildOnly;
 import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
 import com.terransky.stuffnthings.utilities.command.EmbedColor;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.general.InteractionType;
 import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -97,7 +98,7 @@ public class InteractionListener extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getUser().isBot()) return;
         else if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, IInteraction.Type.COMMAND_SLASH);
+            GuildOnly.interactionResponse(event, InteractionType.COMMAND_SLASH);
             return;
         }
 
@@ -106,7 +107,7 @@ public class InteractionListener extends ListenerAdapter {
         if (ifSlash.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
-            .setInteractionType(IInteraction.Type.COMMAND_SLASH)
+            .setInteractionType(InteractionType.COMMAND_SLASH)
             .setChannelUnion(event.getChannel());
         if (Config.isDatabaseEnabled()) DatabaseManager.INSTANCE.addUser(blob);
         if (DatabaseManager.INSTANCE.isBanned(blob)) return;
@@ -142,7 +143,7 @@ public class InteractionListener extends ListenerAdapter {
     @Override
     public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, IInteraction.Type.COMMAND_MESSAGE);
+            GuildOnly.interactionResponse(event, InteractionType.COMMAND_MESSAGE);
             return;
         }
 
@@ -151,7 +152,7 @@ public class InteractionListener extends ListenerAdapter {
         if (ifMenu.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
-            .setInteractionType(IInteraction.Type.COMMAND_MESSAGE)
+            .setInteractionType(InteractionType.COMMAND_MESSAGE)
             .setChannelUnion(event.getChannel());
         if (Config.isDatabaseEnabled()) DatabaseManager.INSTANCE.addUser(blob);
         if (DatabaseManager.INSTANCE.isBanned(blob)) return;
@@ -186,7 +187,7 @@ public class InteractionListener extends ListenerAdapter {
     @Override
     public void onUserContextInteraction(@NotNull UserContextInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, IInteraction.Type.COMMAND_USER);
+            GuildOnly.interactionResponse(event, InteractionType.COMMAND_USER);
             return;
         }
 
@@ -195,7 +196,7 @@ public class InteractionListener extends ListenerAdapter {
         if (ifMenu.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
-            .setInteractionType(IInteraction.Type.COMMAND_USER);
+            .setInteractionType(InteractionType.COMMAND_USER);
         if (Config.isDatabaseEnabled()) DatabaseManager.INSTANCE.addUser(blob);
         if (DatabaseManager.INSTANCE.isBanned(blob)) return;
 
@@ -231,7 +232,7 @@ public class InteractionListener extends ListenerAdapter {
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         if (event.getButton().getId() == null) return;
         else if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, IInteraction.Type.BUTTON);
+            GuildOnly.interactionResponse(event, InteractionType.BUTTON);
             return;
         }
 
@@ -240,7 +241,7 @@ public class InteractionListener extends ListenerAdapter {
         if (ifButton.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
-            .setInteractionType(IInteraction.Type.BUTTON)
+            .setInteractionType(InteractionType.BUTTON)
             .setChannelUnion(event.getChannel());
         if (DatabaseManager.INSTANCE.isBanned(blob)) return;
 
@@ -256,7 +257,7 @@ public class InteractionListener extends ListenerAdapter {
     @Override
     public void onEntitySelectInteraction(@NotNull EntitySelectInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, IInteraction.Type.SELECTION_ENTITY);
+            GuildOnly.interactionResponse(event, InteractionType.SELECTION_ENTITY);
             return;
         }
 
@@ -265,7 +266,7 @@ public class InteractionListener extends ListenerAdapter {
         if (ifMenu.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
-            .setInteractionType(IInteraction.Type.SELECTION_ENTITY)
+            .setInteractionType(InteractionType.SELECTION_ENTITY)
             .setChannelUnion(event.getChannel());
         if (DatabaseManager.INSTANCE.isBanned(blob)) return;
         ISelectMenuEntity menu = ifMenu.get();
@@ -289,7 +290,7 @@ public class InteractionListener extends ListenerAdapter {
         if (ifModal.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
-            .setInteractionType(IInteraction.Type.MODAL)
+            .setInteractionType(InteractionType.MODAL)
             .setChannelUnion(event.getChannel());
         if (DatabaseManager.INSTANCE.isBanned(blob)) return;
         IModal modal = ifModal.get();
@@ -308,7 +309,7 @@ public class InteractionListener extends ListenerAdapter {
     @Override
     public void onStringSelectInteraction(@NotNull StringSelectInteractionEvent event) {
         if (event.getGuild() == null) {
-            GuildOnly.interactionResponse(event, IInteraction.Type.SELECTION_STRING);
+            GuildOnly.interactionResponse(event, InteractionType.SELECTION_STRING);
             return;
         }
 
@@ -321,7 +322,7 @@ public class InteractionListener extends ListenerAdapter {
 
         String componentId = event.getComponentId();
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
-            .setInteractionType(IInteraction.Type.SELECTION_STRING)
+            .setInteractionType(InteractionType.SELECTION_STRING)
             .setChannelUnion(event.getChannel());
         if (DatabaseManager.INSTANCE.isBanned(blob)) return;
 
