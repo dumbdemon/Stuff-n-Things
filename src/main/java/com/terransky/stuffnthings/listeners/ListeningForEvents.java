@@ -29,9 +29,6 @@ import java.util.concurrent.TimeUnit;
 
 public class ListeningForEvents extends ListenerAdapter {
     private final Logger log = LoggerFactory.getLogger(ListeningForEvents.class);
-    private final SlashIManager slashManager = Managers.getInstance().getSlashManager();
-    private final CommandIManager<ICommandMessage> messageManager = Managers.getInstance().getMessageContextManager();
-    private final CommandIManager<ICommandUser> userManager = Managers.getInstance().getUserContextManager();
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
@@ -42,9 +39,9 @@ public class ListeningForEvents extends ListenerAdapter {
         }
 
         jda.updateCommands()
-            .addCommands(slashManager.getCommandData())
-            .addCommands(messageManager.getCommandData())
-            .addCommands(userManager.getCommandData())
+            .addCommands(Managers.INSTANCE.getSlashManager().getCommandData())
+            .addCommands(Managers.INSTANCE.getMessageContextManager().getCommandData())
+            .addCommands(Managers.INSTANCE.getUserContextManager().getCommandData())
             .queue(commands -> log.info("{} global commands loaded!", commands.size()), DiscordAPIException::new);
 
         long timer = TimeUnit.MINUTES.toMillis(10);
@@ -86,6 +83,10 @@ public class ListeningForEvents extends ListenerAdapter {
     }
 
     private void upsertGuildCommands(@NotNull GenericGuildEvent event) {
+        SlashIManager slashManager = Managers.INSTANCE.getSlashManager();
+        CommandIManager<ICommandMessage> messageManager = Managers.INSTANCE.getMessageContextManager();
+        CommandIManager<ICommandUser> userManager = Managers.INSTANCE.getUserContextManager();
+
         Guild guild = event.getGuild();
         CommandListUpdateAction updateAction = guild.updateCommands()
             .addCommands(slashManager.getCommandData(guild))

@@ -27,8 +27,6 @@ import com.terransky.stuffnthings.interfaces.interactions.*;
 import com.terransky.stuffnthings.managers.CommandIManager;
 import com.terransky.stuffnthings.managers.IManager;
 import com.terransky.stuffnthings.managers.SlashIManager;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 public class Managers {
 
@@ -109,11 +107,7 @@ public class Managers {
 
     private final IManager<ISelectMenuString> stringSelectMenuIManager = new IManager<>();
 
-    @NotNull
-    @Contract(" -> new")
-    public static Managers getInstance() {
-        return new Managers();
-    }
+    public static Managers INSTANCE = new Managers();
 
     public SlashIManager getSlashManager() {
         return slashIManager;

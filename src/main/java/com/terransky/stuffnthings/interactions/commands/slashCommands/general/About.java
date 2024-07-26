@@ -52,7 +52,7 @@ public class About implements ICommandSlash {
 
     @Override
     public Metadata getMetadata() {
-        SlashIManager slashManager = Managers.getInstance().getSlashManager();
+        SlashIManager slashManager = Managers.INSTANCE.getSlashManager();
         return new Metadata(this.getName(), "What am I? Who am I?", """
             The about command. What else did you expect?
 
@@ -96,7 +96,7 @@ public class About implements ICommandSlash {
         RuntimeMXBean mxBean = ManagementFactory.getRuntimeMXBean();
         String uptime = getUptime(mxBean);
 
-        SlashIManager manager = Managers.getInstance().getSlashManager();
+        SlashIManager manager = Managers.INSTANCE.getSlashManager();
         int commandCnt = manager.getSlashCommandCount();
         int guildCommandCnt = manager.getSlashCommandCount(blob.getGuildIdLong());
         commandCnt += guildCommandCnt;
@@ -134,7 +134,7 @@ public class About implements ICommandSlash {
     }
 
     private void getCommandInfo(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, String command) {
-        Optional<Metadata> ifMetadata = Managers.getInstance().getSlashManager().getMetadata(command);
+        Optional<Metadata> ifMetadata = Managers.INSTANCE.getSlashManager().getMetadata(command);
         Metadata metadata = ifMetadata.orElse(getMetadata());
         String commandName = metadata.getCommandNameReadable();
 

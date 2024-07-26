@@ -35,7 +35,6 @@ import java.util.concurrent.ExecutionException;
 public class InteractionListener extends ListenerAdapter {
 
     private final Logger log = LoggerFactory.getLogger(InteractionListener.class);
-    private final Managers manager = Managers.getInstance();
 
     @NotNull
     private MessageEmbed getDisabledMessage(@NotNull EventBlob blob, String message) {
@@ -102,7 +101,7 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        var slashManager = manager.getSlashManager();
+        var slashManager = Managers.INSTANCE.getSlashManager();
         Optional<ICommandSlash> ifSlash = slashManager.getInteraction(event.getName());
         if (ifSlash.isEmpty()) return;
 
@@ -147,7 +146,7 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        var contextManager = manager.getMessageContextManager();
+        var contextManager = Managers.INSTANCE.getMessageContextManager();
         Optional<ICommandMessage> ifMenu = contextManager.getInteraction(event.getName());
         if (ifMenu.isEmpty()) return;
 
@@ -191,7 +190,7 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        var contextManager = manager.getUserContextManager();
+        var contextManager = Managers.INSTANCE.getUserContextManager();
         Optional<ICommandUser> ifMenu = contextManager.getInteraction(event.getName());
         if (ifMenu.isEmpty()) return;
 
@@ -236,7 +235,7 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        var buttonManager = manager.getButtonManager();
+        var buttonManager = Managers.INSTANCE.getButtonManager();
         Optional<IButton> ifButton = buttonManager.getInteraction(event.getButton().getId());
         if (ifButton.isEmpty()) return;
 
@@ -261,7 +260,7 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        var selectMenuManager = manager.getEntitySelectMenuManager();
+        var selectMenuManager = Managers.INSTANCE.getEntitySelectMenuManager();
         Optional<ISelectMenuEntity> ifMenu = selectMenuManager.getInteraction(event.getInteraction().getComponentId());
         if (ifMenu.isEmpty()) return;
 
@@ -285,7 +284,7 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        var modalManager = manager.getModalManager();
+        var modalManager = Managers.INSTANCE.getModalManager();
         Optional<IModal> ifModal = modalManager.getInteraction(event.getModalId());
         if (ifModal.isEmpty()) return;
 
@@ -314,7 +313,7 @@ public class InteractionListener extends ListenerAdapter {
         }
 
         List<ISelectMenuString> menus = new ArrayList<>() {{
-            var selectMenuManager = manager.getStringSelectMenuManager();
+            var selectMenuManager = Managers.INSTANCE.getStringSelectMenuManager();
             for (String menuName : event.getInteraction().getValues()) {
                 selectMenuManager.getInteraction(menuName).ifPresent(this::add);
             }
