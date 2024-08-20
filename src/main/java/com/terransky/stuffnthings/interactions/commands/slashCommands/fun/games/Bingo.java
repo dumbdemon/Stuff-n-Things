@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun.games;
 
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.database.helpers.PropertyMapping;
 import com.terransky.stuffnthings.games.Bingo.BingoGame;
@@ -8,7 +9,6 @@ import com.terransky.stuffnthings.games.Host;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ISlashGame;
 import com.terransky.stuffnthings.utilities.command.*;
-import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.IMentionable;
@@ -60,7 +60,7 @@ public class Bingo implements ISlashGame {
             Options with an `*` are required.
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate(2023, 2, 14, 9, 59),
-            Metadata.parseDate(2024, 2, 9, 17, 22)
+            Metadata.parseDate(2024, 8, 20, 12, 3)
         )
             .addSubcommands(
                 new SubcommandData(GameAction.NEW.getName(), "Start a new Bingo game in this channel.")
@@ -159,7 +159,7 @@ public class Bingo implements ISlashGame {
             sendBoardToPlayer(hostPlayer, bingoGame.getHost(), blob, false);
         }
 
-        if (Config.isTestingMode())
+        if (StuffNThings.getConfig().getCore().getTestingMode())
             blob.getNonBotMembers(member -> !member.equals(host)).forEach(bingoGame::addPlayer);
 
         int maxPlayers = event.getOption("max-players", bingoGame.getPlayersMax(), OptionMapping::getAsInt);

@@ -1,10 +1,10 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.admin;
 
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
-import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.jda.ChannelPermsController;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -33,7 +33,7 @@ public class ChannelUnLock implements ICommandSlash {
         return new Metadata(this.getName(), "Lock or unlock a channel for everyone or from a specific role to see.",
             Mastermind.DEVELOPER, CommandCategory.ADMIN,
             Metadata.parseDate(2022, 11, 23, 18, 34),
-            Metadata.parseDate(2024, 2, 9, 16, 11)
+            Metadata.parseDate(2024, 8, 20, 12, 3)
         )
             .addDefaultPerms(Permission.MANAGE_CHANNEL)
             .addSubcommands(
@@ -107,7 +107,7 @@ public class ChannelUnLock implements ICommandSlash {
                 response
                     .setDescription(("Either I do not have access to modify the permissions for %s, or something else has happened and it should be reported." +
                         " Head [here](%s) to report.")
-                        .formatted(targetChannel.getAsMention(), Config.getErrorReportingURL()))
+                        .formatted(targetChannel.getAsMention(), StuffNThings.getConfig().getCore().getReportingUrl()))
                     .setColor(EmbedColor.ERROR.getColor())
                     .build()
             ).queue();

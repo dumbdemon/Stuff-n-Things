@@ -48,3 +48,4 @@ bin/
 logs/
 kitsuToken.json
 json/
+/config.yaml

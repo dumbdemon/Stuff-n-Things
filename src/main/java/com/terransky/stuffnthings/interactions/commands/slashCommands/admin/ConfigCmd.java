@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.admin;
 
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.dataSources.jokeAPI.Flags;
 import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.database.helpers.PropertyMapping;
@@ -8,7 +9,7 @@ import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
-import com.terransky.stuffnthings.utilities.general.Config;
+import com.terransky.stuffnthings.utilities.general.configobjects.CoreConfig;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Icon;
@@ -36,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ConfigCmd implements ICommandSlash {
     private final Logger log = LoggerFactory.getLogger(ConfigCmd.class);
+    private final CoreConfig CORE_CONFIG = StuffNThings.getConfig().getCore();
 
     @Override
     public String getName() {
@@ -50,7 +52,7 @@ public class ConfigCmd implements ICommandSlash {
             Mastermind.DEVELOPER,
             CommandCategory.ADMIN,
             Metadata.parseDate(2022, 8, 28, 21, 46),
-            Metadata.parseDate(2024, 2, 10, 13, 17)
+            Metadata.parseDate(2024, 8, 20, 12, 3)
         )
             .addDefaultPerms(Permission.MANAGE_SERVER)
             .addSubcommandGroups(
@@ -102,7 +104,7 @@ public class ConfigCmd implements ICommandSlash {
 
     @Override
     public boolean isWorking() {
-        return Config.isDatabaseEnabled();
+        return CORE_CONFIG.getEnableDatabase();
     }
 
     @Override
@@ -234,7 +236,7 @@ public class ConfigCmd implements ICommandSlash {
             });
 
         Webhook hook = textChannel.createWebhook("Message Reporting")
-            .setAvatar(Icon.from(new URL(Config.getBotLogoURL()).openStream()))
+            .setAvatar(Icon.from(new URL(CORE_CONFIG.getLogoUrl()).openStream()))
             .submit().get();
         DatabaseManager.INSTANCE.updateProperty(blob, Property.REPORT_WEBHOOK, hook.getId());
 

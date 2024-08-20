@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.general;
 
 import com.terransky.stuffnthings.Managers;
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
@@ -9,8 +10,8 @@ import com.terransky.stuffnthings.utilities.command.CommandCategory;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.Mastermind;
 import com.terransky.stuffnthings.utilities.command.Metadata;
-import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
+import com.terransky.stuffnthings.utilities.general.configobjects.CoreConfig;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -25,6 +26,9 @@ import java.util.Date;
 import java.util.Optional;
 
 public class About implements ICommandSlash {
+
+    private final CoreConfig CORE_CONFIG = StuffNThings.getConfig().getCore();
+
     @NotNull
     private static String getUptime(@NotNull RuntimeMXBean mxBean) {
         Duration duration = Duration.ofMillis(mxBean.getUptime());
@@ -60,7 +64,7 @@ public class About implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.GENERAL,
             Metadata.parseDate(2022, 8, 24, 11, 10),
-            Metadata.parseDate(2024, 2, 9, 16, 11)
+            Metadata.parseDate(2024, 8, 20, 12, 3)
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "command-one", "Get more info on a Command.")
@@ -102,13 +106,13 @@ public class About implements ICommandSlash {
         commandCnt += guildCommandCnt;
         long guildCount;
         long userCount;
-        String serviced = Config.isDatabaseEnabled() ? " Serviced" : "";
+        String serviced = CORE_CONFIG.getEnableDatabase() ? " Serviced" : "";
 
         guildCount = DatabaseManager.INSTANCE.getGuildsCount(event.getJDA());
         userCount = DatabaseManager.INSTANCE.getUserCount(event.getJDA());
 
         event.getHook().sendMessageEmbeds(
-            blob.getStandardEmbed(event.getJDA().getSelfUser().getName(), Config.getRepositoryURL())
+            blob.getStandardEmbed(event.getJDA().getSelfUser().getName(), CORE_CONFIG.getRepoLink())
                 .setDescription("""
                     > *Who am I?*
                     I am %s
@@ -116,8 +120,8 @@ public class About implements ICommandSlash {
                     An entertainment bot.
                     > *I think I need help...*
                     [Then get some](%s)
-                    """.formatted(event.getJDA().getSelfUser().getAsMention(), Config.getSupportGuildInvite()))
-                .setThumbnail(Config.getBotLogoURL())
+                    """.formatted(event.getJDA().getSelfUser().getAsMention(), CORE_CONFIG.getSupportGuild().getInvite()))
+                .setThumbnail(CORE_CONFIG.getLogoUrl())
                 .addField("Servers", String.format("%d servers", guildCount), true)
                 .addField("Users" + serviced, String.format("%s user%s", userCount, userCount > 1 ? "s" : ""), true)
                 .addField("Your Shard", event.getJDA().getShardInfo().getShardString(), true)

@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.dataSources.jokeAPI.Flags;
 import com.terransky.stuffnthings.dataSources.jokeAPI.JokeAPI;
 import com.terransky.stuffnthings.dataSources.jokeAPI.JokeSubmitForm;
@@ -13,7 +14,6 @@ import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.apiHandlers.JokeSubmitHandler;
 import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
 import com.terransky.stuffnthings.utilities.command.*;
-import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -157,7 +157,7 @@ public class JokesV2 implements ICommandSlash {
             Admins can use `/config jokes` to limit the specifiers.
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate(2023, 2, 6, 18, 34),
-            Metadata.parseDate(2024, 2, 9, 16, 11)
+            Metadata.parseDate(2024, 8, 20, 12, 3)
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("get", "Get a random joke.")
@@ -190,7 +190,7 @@ public class JokesV2 implements ICommandSlash {
 
         String URL = getEffectiveURL(event, blob, command[2]);
         URL jokeApi = new URL(URL);
-        if (Config.isTestingMode()) LoggerFactory.getLogger(JokesV2.class).debug(URL);
+        if (StuffNThings.getConfig().getCore().getTestingMode()) LoggerFactory.getLogger(JokesV2.class).debug(URL);
         ObjectMapper mapper = new ObjectMapper();
         JokeAPI theJoke = mapper.readValue(jokeApi, JokeAPI.class);
         EmbedBuilder comedian = blob.getStandardEmbed(getNameReadable());

@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.utilities.apiHandlers;
 
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.dataSources.kitsu.Datum;
 import com.terransky.stuffnthings.dataSources.kitsu.KitsuAuth;
 import com.terransky.stuffnthings.dataSources.kitsu.PasswordKitsuAuthForm;
@@ -9,7 +10,7 @@ import com.terransky.stuffnthings.dataSources.kitsu.entries.manga.MangaKitsuData
 import com.terransky.stuffnthings.dataSources.kitsu.relationships.Relationships;
 import com.terransky.stuffnthings.dataSources.kitsu.relationships.categories.CategoriesKitsuData;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
-import com.terransky.stuffnthings.utilities.general.Config;
+import com.terransky.stuffnthings.utilities.general.configobjects.UserPassword;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ public class KitsuHandler extends Handler {
     public static final String FILE_NAME = "kitsuToken.json";
     private static final Logger log = LoggerFactory.getLogger(KitsuHandler.class);
     private static final File KITSU_AUTH = new File(FILE_NAME);
-    private static final Config.Credentials credentials = Config.Credentials.KITSU_IO;
+    private static final UserPassword credentials = StuffNThings.getConfig().getTokens().getKitsuIo();
     private final String BASE_URL = "https://kitsu.io/api/edge/";
     private final String token;
 
@@ -51,7 +52,7 @@ public class KitsuHandler extends Handler {
      * Obtain or update an authorization token for <a href="">Kitsu.io</a> API.
      *
      * @return True if the process was successful.
-     * @throws IllegalArgumentException If {@link Config.Credentials#isDefault()} returns true.
+     * @throws IllegalArgumentException If {@link UserPassword#isEmpty()} returns true.
      */
     public boolean upsertAuthorizationToken() throws IllegalArgumentException {
         try (ExecutorService service = Executors.newSingleThreadExecutor(getThreadFactory())) {
@@ -74,7 +75,7 @@ public class KitsuHandler extends Handler {
                     .getAsJsonString();
             } else {
                 log.info("Auth not found: creating new auth");
-                if (credentials.isDefault()) {
+                if (credentials.isEmpty()) {
                     log.warn("Auth request canceled: no credentials present");
                     return false;
                 }

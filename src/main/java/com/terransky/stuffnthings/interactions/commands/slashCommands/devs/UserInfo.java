@@ -1,9 +1,9 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.devs;
 
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
-import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -58,7 +58,7 @@ public class UserInfo implements ICommandSlash {
             }
         } else permText.append("Member");
 
-        if (member.getId().equals(Config.getDeveloperId())) {
+        if (member.getId().equals(StuffNThings.getConfig().getCore().getOwnerId())) {
             permText.append(", Developer");
         }
 
@@ -125,7 +125,7 @@ public class UserInfo implements ICommandSlash {
             """, Mastermind.DEFAULT,
             CommandCategory.DEVS,
             Metadata.parseDate(2023, 8, 24, 11, 10),
-            Metadata.parseDate(2024, 2, 9, 16, 11)
+            Metadata.parseDate(2024, 8, 20, 12, 3)
         )
             .addOptions(
                 new OptionData(OptionType.USER, "user", "Who you want to know about.")

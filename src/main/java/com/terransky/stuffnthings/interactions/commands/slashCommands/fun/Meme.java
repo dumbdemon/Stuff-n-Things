@@ -1,13 +1,14 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.dataSources.freshMemes.FreshMemeData;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interactions.modals.RandomMemeBuilder;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
-import com.terransky.stuffnthings.utilities.general.Config;
+import com.terransky.stuffnthings.utilities.general.configobjects.CoreConfig;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -30,6 +31,7 @@ import java.util.concurrent.Executors;
 
 public class Meme implements ICommandSlash {
     private final Logger log = LoggerFactory.getLogger(Meme.class);
+    private final CoreConfig CORE_CONFIG = StuffNThings.getConfig().getCore();
 
     @Override
     public String getName() {
@@ -44,7 +46,7 @@ public class Meme implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate(2022, 8, 24, 11, 10),
-            Metadata.parseDate(2024, 2, 9, 16, 11)
+            Metadata.parseDate(2024, 8, 20, 12, 3)
         )
             .addSubcommands(
                 new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, or from r/me_irl.")
@@ -65,7 +67,7 @@ public class Meme implements ICommandSlash {
             case "create" -> goCreate(event, blob.getStandardEmbed());
             default -> event.replyEmbeds(
                 blob.getStandardEmbed(getNameReadable(), EmbedColor.ERROR)
-                    .setDescription(String.format("Unknown subcommand received!%n%n[***Please report this event!***](%s)", Config.getErrorReportingURL()))
+                    .setDescription(String.format("Unknown subcommand received!%n%n[***Please report this event!***](%s)", CORE_CONFIG.getReportingUrl()))
                     .addField("Subcommand Received", "`" + subcommand + "`", false)
                     .build()
             ).queue();
@@ -75,7 +77,7 @@ public class Meme implements ICommandSlash {
     private void goCreate(@NotNull SlashCommandInteractionEvent event, @NotNull EmbedBuilder embed) {
         boolean isRandom = event.getOption("random", true, OptionMapping::getAsBoolean);
 
-        if (isRandom && Config.isTestingMode()) {
+        if (isRandom && CORE_CONFIG.getTestingMode()) {
             event.replyModal(new RandomMemeBuilder().getConstructedModal()).queue();
             return;
         }
@@ -149,7 +151,7 @@ public class Meme implements ICommandSlash {
         } catch (InterruptedException | IOException e) {
             event.getHook().sendMessageEmbeds(
                 embed.setTitle("Whoops!")
-                    .setDescription(String.format("Error whilst executing code. Please report it [here](%s)", Config.getErrorReportingURL()))
+                    .setDescription(String.format("Error whilst executing code. Please report it [here](%s)", CORE_CONFIG.getReportingUrl()))
                     .setFooter("Reddit", redditLogo)
                     .setColor(EmbedColor.ERROR.getColor())
                     .setTimestamp(OffsetDateTime.now())

@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.listeners;
 
 import com.terransky.stuffnthings.Managers;
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.interfaces.interactions.*;
@@ -9,7 +10,6 @@ import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
 import com.terransky.stuffnthings.utilities.command.EmbedColor;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.InteractionType;
-import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
@@ -108,7 +108,7 @@ public class InteractionListener extends ListenerAdapter {
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
             .setInteractionType(InteractionType.COMMAND_SLASH)
             .setChannelUnion(event.getChannel());
-        if (Config.isDatabaseEnabled()) DatabaseManager.INSTANCE.addUser(blob);
+        if (StuffNThings.getConfig().getCore().getEnableDatabase()) DatabaseManager.INSTANCE.addUser(blob);
         if (DatabaseManager.INSTANCE.isBanned(blob)) return;
 
         ICommandSlash slash = ifSlash.get();
@@ -119,7 +119,7 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        if (slash.isDeveloperCommand() && !blob.getMemberId().equals(Config.getDeveloperId())) {
+        if (slash.isDeveloperCommand() && !blob.getMemberId().equals(StuffNThings.getConfig().getCore().getOwnerId())) {
             commandIsDevsOnly(event, blob);
             return;
         }
@@ -153,7 +153,7 @@ public class InteractionListener extends ListenerAdapter {
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
             .setInteractionType(InteractionType.COMMAND_MESSAGE)
             .setChannelUnion(event.getChannel());
-        if (Config.isDatabaseEnabled()) DatabaseManager.INSTANCE.addUser(blob);
+        if (StuffNThings.getConfig().getCore().getEnableDatabase()) DatabaseManager.INSTANCE.addUser(blob);
         if (DatabaseManager.INSTANCE.isBanned(blob)) return;
 
         ICommandMessage commandMessage = ifMenu.get();
@@ -164,7 +164,7 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        if (commandMessage.isDeveloperCommand() && !blob.getMemberId().equals(Config.getDeveloperId())) {
+        if (commandMessage.isDeveloperCommand() && !blob.getMemberId().equals(StuffNThings.getConfig().getCore().getOwnerId())) {
             commandIsDevsOnly(event, blob);
             return;
         }
@@ -196,7 +196,7 @@ public class InteractionListener extends ListenerAdapter {
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
             .setInteractionType(InteractionType.COMMAND_USER);
-        if (Config.isDatabaseEnabled()) DatabaseManager.INSTANCE.addUser(blob);
+        if (StuffNThings.getConfig().getCore().getEnableDatabase()) DatabaseManager.INSTANCE.addUser(blob);
         if (DatabaseManager.INSTANCE.isBanned(blob)) return;
 
         ICommandUser commandUser = ifMenu.get();
@@ -207,7 +207,7 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        if (commandUser.isDeveloperCommand() && !blob.getMemberId().equals(Config.getDeveloperId())) {
+        if (commandUser.isDeveloperCommand() && !blob.getMemberId().equals(StuffNThings.getConfig().getCore().getOwnerId())) {
             commandIsDevsOnly(event, blob);
             return;
         }

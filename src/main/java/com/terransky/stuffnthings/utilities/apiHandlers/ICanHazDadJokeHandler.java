@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.utilities.apiHandlers;
 
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.dataSources.icanhazdadjoke.ICanHazDadJokeData;
-import com.terransky.stuffnthings.utilities.general.Config;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class ICanHazDadJokeHandler extends Handler {
             HttpClient client = getHttpClient(service);
             HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://icanhazdadjoke.com/"))
-                .setHeader("User-Agent", Config.getBotUserAgent())  //https://icanhazdadjoke.com/api#custom-user-agent
+                .setHeader("User-Agent", StuffNThings.getConfig().getCore().getUserAgent())  //https://icanhazdadjoke.com/api#custom-user-agent
                 .setHeader("Accept", "application/json")
                 .build();
             HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());

@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.dataSources.oxfordDictionary.OxfordData;
 import com.terransky.stuffnthings.dataSources.oxfordDictionary.OxfordError;
 import com.terransky.stuffnthings.dataSources.oxfordDictionary.Result;
@@ -8,7 +9,6 @@ import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
-import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -26,6 +26,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 
+@SuppressWarnings("unused")
 public class Dictionary implements ICommandSlash {
     private static final int MAX_FIELDS = 25;
     private final Logger log = LoggerFactory.getLogger(Dictionary.class);
@@ -132,27 +133,27 @@ public class Dictionary implements ICommandSlash {
         );
     }
 
-    @Override
-    public String getName() {
-        return "dictionary";
-    }
-
     @NotNull
-    private static HttpURLConnection getHttpURLConnection(@NotNull Map.Entry<String, Locale> language, String toLookUp, @NotNull Config.Credentials credentials) throws IOException {
+    private static HttpURLConnection getHttpURLConnection(@NotNull Map.Entry<String, Locale> language, String toLookUp, @NotNull Object credentials) throws IOException {
         URL dictionary = new URL("https://od-api.oxforddictionaries.com/api/v2/entries/%s/%s?fields=definitions&strictMatch=false"
             .formatted(language.getValue().toLanguageTag().toLowerCase(), toLookUp));
         HttpURLConnection oxfordConnection = (HttpURLConnection) dictionary.openConnection();
         oxfordConnection.addRequestProperty("Accept", "application/json");
-        oxfordConnection.addRequestProperty("app_id", credentials.getUsername());
-        oxfordConnection.addRequestProperty("app_key", credentials.getPassword());
+        oxfordConnection.addRequestProperty("app_id", null);
+        oxfordConnection.addRequestProperty("app_key", null);
         return oxfordConnection;
+    }
+
+    @Override
+    public String getName() {
+        return "dictionary";
     }
 
     @Override
     public Metadata getMetadata() {
         return new Metadata(this.getName(), "Look up a word in the dictionary in up to 9 different languages.", """
             Powered by Oxford Languages, this command returns all definitions of a given word in up to %d languages as long as it is within that language's lexicon.
-                        
+            
             WARNING: depending on the word it may return no definitions. Try a different variation of that word if it happens.
             """.formatted(langCodes.size()),
             Mastermind.DEVELOPER,
@@ -176,7 +177,7 @@ public class Dictionary implements ICommandSlash {
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         event.deferReply().queue();
         String[] userWords = event.getOption("word", "", OptionMapping::getAsString).split(" ");
-        Config.Credentials credentials = Config.Credentials.OXFORD;
+        Object credentials = new Object();
         EmbedBuilder eb = blob.getStandardEmbed(getNameReadable())
             .setImage("https://languages.oup.com/wp-content/uploads/ol-logo-colour-300px-sfw.jpg");
         if (userWords.length > 1) {
@@ -201,7 +202,7 @@ public class Dictionary implements ICommandSlash {
                 event.getHook().sendMessageEmbeds(
                     eb.setDescription(("Unable to get the definition of [%s]. Make sure you have typed the word correctly," +
                             " If this message continues to appear, please report this incident [here](%s).")
-                            .formatted(toLookUp.toUpperCase(language.getValue()), Config.getErrorReportingURL())
+                            .formatted(toLookUp.toUpperCase(language.getValue()), StuffNThings.getConfig().getCore().getReportingUrl())
                         )
                         .setColor(EmbedColor.ERROR.getColor())
                         .build()
@@ -230,7 +231,7 @@ public class Dictionary implements ICommandSlash {
             case 500 -> {
                 event.getHook().sendMessageEmbeds(
                     eb.setDescription("Looks like something went wrong with the API. Please report this incident [here](%s)"
-                            .formatted(Config.getErrorReportingURL()))
+                            .formatted(StuffNThings.getConfig().getCore().getReportingUrl()))
                         .setColor(EmbedColor.ERROR.getColor())
                         .build()
                 ).queue();
@@ -273,6 +274,6 @@ public class Dictionary implements ICommandSlash {
 
     @Override
     public boolean isWorking() {
-        return !Config.Credentials.OXFORD.isDefault();
+        return false;
     }
 }

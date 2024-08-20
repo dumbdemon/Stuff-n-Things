@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.mtg;
 
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.Ban;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.MtGSet;
 import com.terransky.stuffnthings.dataSources.whatsInStandard.WhatsInStandardData;
@@ -8,7 +9,6 @@ import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.Pojo;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
-import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -47,14 +47,14 @@ public class WhatsInStandard implements ICommandSlash {
         List<String> setCodes = mtgSets.stream().filter(IS_VALID_SET).map(MtGSet::getCode).toList();
         for (Ban card : banList.stream().filter(card -> setCodes.stream().anyMatch(set -> set.equals(card.getSetCode()))).toList()) {
             theBans.append("""
-                - [**%s (%s)**](%s)%s
-                """.formatted(
+                    - [**%s (%s)**](%s)%s
+                    """.formatted(
                     card.getCardName(),
                     card.getSetCode(),
-                "https://scryfall.com/search?q=\"%s\" set:%s"
+                    "https://scryfall.com/search?q=\"%s\" set:%s"
                         .formatted(card.getCardName(), card.getSetCode())
-                    .replaceAll(" ", "%20"),
-                withReason ? "\n - " + card.getReason() : ""
+                        .replaceAll(" ", "%20"),
+                    withReason ? "\n - " + card.getReason() : ""
                 )
             );
         }
@@ -98,7 +98,7 @@ public class WhatsInStandard implements ICommandSlash {
         WhatsInStandardData wisData = Pojo.getMapperObject().readValue(wis, WhatsInStandardData.class);
         if (wisData.isDeprecated()) {
             event.getHook().sendMessageEmbeds(
-                eb.setDescription("Version %s has been deprecated. Please create an issue [here](%s).".formatted(version, Config.getErrorReportingURL()))
+                eb.setDescription("Version %s has been deprecated. Please create an issue [here](%s).".formatted(version, StuffNThings.getConfig().getCore().getReportingUrl()))
                     .setColor(EmbedColor.ERROR.getColor())
                     .build()
             ).queue();

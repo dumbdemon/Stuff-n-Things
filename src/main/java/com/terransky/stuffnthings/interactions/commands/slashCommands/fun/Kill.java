@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.database.helpers.PropertyMapping;
 import com.terransky.stuffnthings.database.helpers.entry.UserGuildEntry;
@@ -12,8 +13,8 @@ import com.terransky.stuffnthings.utilities.command.CommandCategory;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.Mastermind;
 import com.terransky.stuffnthings.utilities.command.Metadata;
-import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
+import com.terransky.stuffnthings.utilities.general.configobjects.CoreConfig;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -32,6 +33,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Kill implements ICommandSlash {
+
+    private final CoreConfig CORE_CONFIG = StuffNThings.getConfig().getCore();
 
     private void killRandom(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, EmbedBuilder eb) {
         List<String> randomStrings = DatabaseManager.INSTANCE
@@ -73,9 +76,9 @@ public class Kill implements ICommandSlash {
             entry.resetAttempts();
         }
 
-        if (!event.getUser().getId().equals(Config.getDeveloperId()) &&
-            !blob.getGuildId().equals(Config.getSupportGuildId()) &&
-            !Config.isTestingMode()) {
+        if (!event.getUser().getId().equals(CORE_CONFIG.getOwnerId()) &&
+            blob.getGuildIdLong() != CORE_CONFIG.getSupportGuild().getId() &&
+            !CORE_CONFIG.getTestingMode()) {
             long maxKills = entry.getMaxKills();
             long attempts = entry.getKillAttempts();
 
@@ -116,7 +119,7 @@ public class Kill implements ICommandSlash {
             Take a chance and try to kill a random member in your server! Or just *that guy* cause they've been annoying you recently.
             """, Mastermind.USER, CommandCategory.FUN,
             Metadata.parseDate(2022, 8, 24, 11, 10),
-            Metadata.parseDate(2024, 2, 9, 16, 11)
+            Metadata.parseDate(2024, 8, 20, 12, 3)
         )
             .addSubcommands(
                 new SubcommandData("random", "Try your hand at un-aliving someone!"),

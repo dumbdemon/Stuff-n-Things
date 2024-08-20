@@ -14,6 +14,7 @@ import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import com.mongodb.reactivestreams.client.MongoDatabase;
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.dataSources.kitsu.KitsuAuth;
 import com.terransky.stuffnthings.database.helpers.KillStorage;
 import com.terransky.stuffnthings.database.helpers.Property;
@@ -24,7 +25,7 @@ import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.utilities.apiHandlers.KitsuHandler;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.Formatter;
-import com.terransky.stuffnthings.utilities.general.Config;
+import com.terransky.stuffnthings.utilities.general.configobjects.DatabaseConfig;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -65,24 +66,23 @@ public class MongoDBDataSource implements DatabaseManager {
 
     public MongoDBDataSource() {
         this.log = LoggerFactory.getLogger(MongoDBDataSource.class);
-        Config.Credentials credentials = Config.Credentials.DATABASE;
-        assert credentials.getUsername() != null;
-        String username = URLEncoder.encode(credentials.getUsername(), StandardCharsets.UTF_8);
-        String password = URLEncoder.encode(credentials.getPassword(), StandardCharsets.UTF_8);
+        DatabaseConfig databaseConfig = StuffNThings.getConfig().getDatabase();
+        String username = URLEncoder.encode(databaseConfig.getUsername(), StandardCharsets.UTF_8);
+        String password = URLEncoder.encode(databaseConfig.getPassword(), StandardCharsets.UTF_8);
 
         this.CODEC_REGISTRY = fromRegistries(getDefaultCodecRegistry(), fromProviders(PojoCodecProvider.builder().automatic(true).build()));
         MongoClient client = MongoClients.create(
             MongoClientSettings.builder()
-                .applicationName(Config.getApplicationName() + (Config.isTestingMode() ? "_TEST" : ""))
+                .applicationName(databaseConfig.getApplicationName() + (StuffNThings.getConfig().getCore().getEnableDatabase() ? "_TEST" : ""))
                 .serverApi(ServerApi.builder()
                     .version(ServerApiVersion.V1)
                     .build()
                 )
-                .applyConnectionString(new ConnectionString("mongodb+srv://" + username + ":" + password + "@" + Config.getMongoHostname()))
+                .applyConnectionString(new ConnectionString("mongodb+srv://" + username + ":" + password + "@" + databaseConfig.getHostname()))
                 .retryWrites(true)
                 .build()
         );
-        this.DATABASE = client.getDatabase(Config.getDatabaseName());
+        this.DATABASE = client.getDatabase(databaseConfig.getName());
     }
 
     private void ifAnErrorOccurs(String success, String failed, RuntimeException throwable) {
@@ -147,7 +147,7 @@ public class MongoDBDataSource implements DatabaseManager {
 
     @Override
     public boolean uploadKitsuAuth(KitsuAuth kitsuAuth) {
-        if (!Config.isDatabaseEnabled()) {
+        if (!StuffNThings.getConfig().getCore().getEnableDatabase()) {
             try {
                 kitsuAuth.saveAsJsonFile(new File(KitsuHandler.FILE_NAME));
                 return true;
@@ -179,7 +179,7 @@ public class MongoDBDataSource implements DatabaseManager {
 
     @Override
     public Optional<KitsuAuth> getKitsuAuth() {
-        if (!Config.isDatabaseEnabled()) {
+        if (!StuffNThings.getConfig().getCore().getEnableDatabase()) {
             File kitsuAuth = new File(KitsuHandler.FILE_NAME);
             if (kitsuAuth.exists())
                 try {
@@ -202,7 +202,7 @@ public class MongoDBDataSource implements DatabaseManager {
 
     @Override
     public <T extends Game<?>> void uploadGameData(@NotNull EventBlob blob, Games games, T game) {
-        if (!Config.isDatabaseEnabled()) return;
+        if (!StuffNThings.getConfig().getCore().getEnableDatabase()) return;
         MongoCollection<GuildEntry> guilds = getGuilds();
         if (Games.BINGO.equals(games)) {
             var finder = getSubscriber(guilds, Filters.eq(ID_REFERENCE.getPropertyName(Table.GUILD), blob.getGuildId()));
@@ -225,7 +225,7 @@ public class MongoDBDataSource implements DatabaseManager {
 
     @Override
     public Optional<? extends Game<?>> getGameData(@NotNull EventBlob blob, String channelId, @NotNull Games games) {
-        if (!Config.isDatabaseEnabled()) return Optional.empty();
+        if (!StuffNThings.getConfig().getCore().getEnableDatabase()) return Optional.empty();
         MongoCollection<GuildEntry> guilds = getGuilds();
         var finder = getSubscriber(guilds, Filters.eq(ID_REFERENCE.getPropertyName(Table.GUILD), blob.getGuildId()));
 
@@ -242,7 +242,7 @@ public class MongoDBDataSource implements DatabaseManager {
 
     @Override
     public Optional<Object> getFromDatabase(@NotNull EventBlob blob, @NotNull Property property) {
-        if (!Config.isDatabaseEnabled()) return Optional.empty();
+        if (!StuffNThings.getConfig().getCore().getEnableDatabase()) return Optional.empty();
         MongoCollection<?> collection = getCollection(property);
         String target = property.getTable().getTarget(blob);
 
@@ -404,7 +404,7 @@ public class MongoDBDataSource implements DatabaseManager {
 
     @Override
     public void addGuild(@NotNull Guild guild) {
-        if (!Config.isDatabaseEnabled()) return;
+        if (!StuffNThings.getConfig().getCore().getEnableDatabase()) return;
         String guildName = guild.getName(),
             guildId = guild.getId();
         MongoCollection<GuildEntry> guilds = getGuilds();
@@ -427,7 +427,7 @@ public class MongoDBDataSource implements DatabaseManager {
 
     @Override
     public void removeGuild(@NotNull Guild guild) {
-        if (!Config.isDatabaseEnabled()) return;
+        if (!StuffNThings.getConfig().getCore().getEnableDatabase()) return;
         String guildId = guild.getId(),
             guildName = guild.getName();
         MongoCollection<GuildEntry> guilds = getGuilds();
@@ -444,7 +444,7 @@ public class MongoDBDataSource implements DatabaseManager {
 
     @Override
     public void addUser(@NotNull EventBlob blob) {
-        if (!Config.isDatabaseEnabled()) return;
+        if (!StuffNThings.getConfig().getCore().getEnableDatabase()) return;
         String userId = blob.getMemberId(),
             guildId = blob.getGuildId();
         MongoCollection<UserEntry> users = getUsers();
@@ -488,7 +488,7 @@ public class MongoDBDataSource implements DatabaseManager {
 
     @Override
     public void removeUser(String userId, @NotNull Guild guild) {
-        if (!Config.isDatabaseEnabled()) return;
+        if (!StuffNThings.getConfig().getCore().getEnableDatabase()) return;
         MongoCollection<UserEntry> users = getUsers();
 
         var finder = getSubscriber(users, Filters.eq(ID_REFERENCE.getPropertyName(Table.USER), userId));

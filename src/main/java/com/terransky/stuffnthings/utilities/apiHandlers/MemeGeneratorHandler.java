@@ -1,8 +1,8 @@
 package com.terransky.stuffnthings.utilities.apiHandlers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.dataSources.DatumPojo;
-import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.io.IOException;
@@ -25,7 +25,7 @@ public class MemeGeneratorHandler extends Handler {
 
     public MemeGeneratorHandler() {
         super("Meme-Generator");
-        X_RapidAPI_Key = Config.Credentials.MEME_GENERATOR.getPassword();
+        X_RapidAPI_Key = StuffNThings.getConfig().getTokens().getMemeGeneratorKey();
     }
 
     public FileUpload generateMeme(String meme, String topText, String bottomText) throws InterruptedException, IOException {

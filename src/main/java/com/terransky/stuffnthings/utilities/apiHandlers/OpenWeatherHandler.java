@@ -2,10 +2,10 @@ package com.terransky.stuffnthings.utilities.apiHandlers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.neovisionaries.i18n.CountryCode;
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.dataSources.DatumPojo;
 import com.terransky.stuffnthings.dataSources.openWeather.OpenWeatherData;
 import com.terransky.stuffnthings.dataSources.openWeather.OpenWeatherGeoData;
-import com.terransky.stuffnthings.utilities.general.Config;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,9 +26,9 @@ import java.util.concurrent.Executors;
  */
 public class OpenWeatherHandler extends Handler {
 
-    private final Config.Credentials CREDENTIALS = Config.Credentials.OPEN_WEATHER;
+    private final String OPEN_WEATHER_KEY = StuffNThings.getConfig().getTokens().getOpenWeatherKey();
     private final String BASE_URL = String.format("https://api.openweathermap.org/data/3.0/onecall?lat={}&lon={}&exclude=minutely,hourly,daily&appid=%s",
-        CREDENTIALS.getPassword()).replaceAll("\\{}", "%s");
+        StuffNThings.getConfig().getTokens().getOpenWeatherKey()).replaceAll("\\{}", "%s");
 
     public OpenWeatherHandler() {
         super("OpenWeather");
@@ -59,9 +59,8 @@ public class OpenWeatherHandler extends Handler {
      *
      * @param zipcode A US zipcode
      * @return An {@link OpenWeatherData}
-     * @throws IOException If an i/o exception occurs
      */
-    public OpenWeatherData getWeatherData(int zipcode) throws IOException {
+    public OpenWeatherData getWeatherData(int zipcode) {
         String zicodeString = String.valueOf(zipcode);
         int difference = 5 - zicodeString.length();
         return getWeatherData("0".repeat(difference) + zicodeString, CountryCode.US);
@@ -81,7 +80,7 @@ public class OpenWeatherHandler extends Handler {
                 .uri(URI.create(String.format("http://api.openweathermap.org/geo/1.0/zip?zip=%s,%s&appid=%s",
                     URLEncoder.encode(zipcode, StandardCharsets.UTF_8),
                     countryCode.getAlpha2(),
-                    CREDENTIALS.getPassword()
+                    OPEN_WEATHER_KEY
                 )))
                 .build();
             HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
@@ -108,7 +107,7 @@ public class OpenWeatherHandler extends Handler {
             HttpClient client = getHttpClient(service);
             HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://api.openweathermap.org/geo/1.0/direct?q=" + city + "," + (state != null ? state + "," : "") + code.getAlpha2() +
-                    "&limit=1&appid=" + CREDENTIALS.getPassword()))
+                    "&limit=1&appid=" + OPEN_WEATHER_KEY))
                 .build();
             HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
             DatumPojo<OpenWeatherGeoData> locations = new DatumPojo<>(getObjectMapper().readValue(response.body(), new TypeReference<>() {

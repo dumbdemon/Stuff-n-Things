@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.listeners;
 
 import com.terransky.stuffnthings.Managers;
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandMessage;
@@ -8,7 +9,6 @@ import com.terransky.stuffnthings.interfaces.interactions.ICommandUser;
 import com.terransky.stuffnthings.managers.CommandIManager;
 import com.terransky.stuffnthings.managers.SlashIManager;
 import com.terransky.stuffnthings.utilities.command.EmbedColor;
-import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
@@ -33,7 +33,7 @@ public class ListeningForEvents extends ListenerAdapter {
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         JDA jda = event.getJDA();
-        if (Config.isTestingMode()) {
+        if (StuffNThings.getConfig().getCore().getTestingMode()) {
             jda.updateCommands().queue();
             return;
         }
@@ -93,7 +93,7 @@ public class ListeningForEvents extends ListenerAdapter {
             .addCommands(messageManager.getCommandData(guild))
             .addCommands(userManager.getCommandData(guild));
 
-        if (Config.isTestingMode()) {
+        if (StuffNThings.getConfig().getCore().getTestingMode()) {
             updateAction.addCommands(slashManager.getCommandData())
                 .addCommands(messageManager.getCommandData())
                 .addCommands(userManager.getCommandData())
@@ -108,15 +108,11 @@ public class ListeningForEvents extends ListenerAdapter {
 
     @Override
     public void onGuildBan(@NotNull GuildBanEvent event) {
-        if (!Config.getSupportGuildId().equals(event.getGuild().getId()))
-            return;
         DatabaseManager.INSTANCE.botBan(event.getUser(), true);
     }
 
     @Override
     public void onGuildUnban(@NotNull GuildUnbanEvent event) {
-        if (!Config.getSupportGuildId().equals(event.getGuild().getId()))
-            return;
         DatabaseManager.INSTANCE.removeBotBan(event.getUser());
     }
 

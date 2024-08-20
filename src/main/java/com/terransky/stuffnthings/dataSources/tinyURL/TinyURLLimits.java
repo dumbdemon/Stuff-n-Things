@@ -1,6 +1,6 @@
 package com.terransky.stuffnthings.dataSources.tinyURL;
 
-import com.terransky.stuffnthings.utilities.general.Config;
+import com.terransky.stuffnthings.StuffNThings;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,12 +52,11 @@ public class TinyURLLimits {
         }
     }
 
-    @SuppressWarnings("SpellCheckingInspection")
     public enum Domain {
         DEFAULT("tinyurl.com", 0),
         LOL("rotf.lol", 1),
         ONE("tiny.one", 2),
-        CUSTOM(Config.getTinyURlDomain(), 3);
+        CUSTOM(StuffNThings.getConfig().getTokens().getTinyUrl().getDomain(), 3);
 
         private final String domain;
         private final int key;
@@ -71,7 +70,7 @@ public class TinyURLLimits {
         public static List<Command.Choice> getDomainsAsChoices() {
             final List<Domain> domains = new ArrayList<>(EnumSet.allOf(Domain.class).stream().toList());
 
-            if (CUSTOM.getDomain().equals(""))
+            if (CUSTOM.getDomain() == null)
                 domains.remove(CUSTOM);
 
             return new ArrayList<>() {{

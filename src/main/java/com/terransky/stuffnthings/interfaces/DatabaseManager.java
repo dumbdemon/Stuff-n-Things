@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interfaces;
 
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.dataSources.kitsu.KitsuAuth;
 import com.terransky.stuffnthings.database.MongoDBDataSource;
 import com.terransky.stuffnthings.database.helpers.KillStorage;
@@ -8,7 +9,6 @@ import com.terransky.stuffnthings.database.helpers.PropertyMapping;
 import com.terransky.stuffnthings.database.helpers.entry.UserGuildEntry;
 import com.terransky.stuffnthings.games.Game;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
-import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
@@ -217,7 +217,7 @@ public interface DatabaseManager {
      * @return A long containing the user count
      */
     default long getUserCount(@NotNull JDA jda) {
-        if (Config.isDatabaseEnabled())
+        if (StuffNThings.getConfig().getCore().getEnableDatabase())
             return getUserCount();
         return jda.getUserCache().stream().count();
     }
@@ -238,7 +238,7 @@ public interface DatabaseManager {
      * @return A long containing the guild count
      */
     default long getGuildsCount(@NotNull JDA jda) {
-        if (Config.isDatabaseEnabled())
+        if (StuffNThings.getConfig().getCore().getEnableDatabase())
             return getGuildsCount();
         return jda.getGuildCache().stream().count();
     }

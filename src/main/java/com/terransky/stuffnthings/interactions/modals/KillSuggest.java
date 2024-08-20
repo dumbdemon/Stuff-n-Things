@@ -1,11 +1,11 @@
 package com.terransky.stuffnthings.interactions.modals;
 
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.IModal;
 import com.terransky.stuffnthings.utilities.command.EmbedColor;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
-import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -45,7 +45,7 @@ public class KillSuggest {
         }};
 
         java.util.Random rando = new java.util.Random(seed.get());
-        TextChannel requestChannel = event.getJDA().getTextChannelById(Config.getRequestChannelID());
+        TextChannel requestChannel = event.getJDA().getTextChannelById(StuffNThings.getConfig().getCore().getRequest().getChannelId());
 
         if (requestChannel == null)
             throw new DiscordAPIException("Either the channel does not exist or I could not obtain the channel.");

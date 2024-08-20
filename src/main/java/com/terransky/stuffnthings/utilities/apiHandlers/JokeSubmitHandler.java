@@ -1,8 +1,8 @@
 package com.terransky.stuffnthings.utilities.apiHandlers;
 
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.dataSources.jokeAPI.JokeSubmitForm;
 import com.terransky.stuffnthings.dataSources.jokeAPI.JokeSubmitResponse;
-import com.terransky.stuffnthings.utilities.general.Config;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class JokeSubmitHandler extends Handler {
         try (ExecutorService service = Executors.newSingleThreadExecutor(getThreadFactory())) {
             HttpClient client = getHttpClient(service);
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://v2.jokeapi.dev/submit" + (Config.isTestingMode() ? "?dry-run" : "")))
+                .uri(URI.create("https://v2.jokeapi.dev/submit" + (StuffNThings.getConfig().getCore().getTestingMode() ? "?dry-run" : "")))
                 .POST(HttpRequest.BodyPublishers.ofString(submission.getAsJsonString()))
                 .build();
             HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());

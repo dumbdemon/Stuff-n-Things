@@ -3,7 +3,7 @@ package com.terransky.stuffnthings.utilities.jda;
 import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
-import com.terransky.stuffnthings.utilities.general.Config;
+import com.terransky.stuffnthings.StuffNThings;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Webhook;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ public class DiscordWebhook {
     }
 
     public DiscordWebhook(String threadName) {
-        this(threadName, Config.getRequestWebhookURL());
+        this(threadName, StuffNThings.getConfig().getCore().getRequest().getWebhookUrl());
     }
 
     public DiscordWebhook(String threadName, @NotNull Webhook webhook) {

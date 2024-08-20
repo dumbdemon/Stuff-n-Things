@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.neovisionaries.i18n.CountryCode;
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.dataSources.openWeather.Current;
 import com.terransky.stuffnthings.dataSources.openWeather.OpenWeatherData;
 import com.terransky.stuffnthings.dataSources.openWeather.Weather;
@@ -10,7 +11,6 @@ import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.apiHandlers.OpenWeatherHandler;
 import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
 import com.terransky.stuffnthings.utilities.command.*;
-import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.DegreeToQuadrant;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -41,7 +41,7 @@ public class GetWeather implements ICommandSlash {
             If you don't know your country's code, you can use [this website](https://www.iso.org/obp/ui/#search).
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate(2023, 2, 1, 16, 27),
-            Metadata.parseDate(2024, 2, 9, 16, 11)
+            Metadata.parseDate(2024, 8, 20, 12, 3)
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("by-coordinates", "Get the weather by coordinates.")
@@ -117,7 +117,7 @@ public class GetWeather implements ICommandSlash {
             event.getHook().sendMessageEmbeds(
                 blob.getStandardEmbed(getNameReadable(), EmbedColor.ERROR)
                     .setDescription(String.format("Location provided is invalid. Please try again.%nIf this continues, [please make a report](%s).",
-                        Config.getErrorReportingURL()))
+                        StuffNThings.getConfig().getCore().getReportingUrl()))
                     .build()
             ).queue();
             return;

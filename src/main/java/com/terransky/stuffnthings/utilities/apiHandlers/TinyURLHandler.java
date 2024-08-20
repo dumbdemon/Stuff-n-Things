@@ -1,11 +1,11 @@
 package com.terransky.stuffnthings.utilities.apiHandlers;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.dataSources.tinyURL.ErrorTinyURLResponse;
 import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLForm;
 import com.terransky.stuffnthings.dataSources.tinyURL.TinyURLResponse;
 import com.terransky.stuffnthings.dataSources.tinyURL.ValidTinyURLResponse;
-import com.terransky.stuffnthings.utilities.general.Config;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -38,7 +38,7 @@ public class TinyURLHandler extends Handler {
             HttpClient client = getHttpClient(service);
 
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.tinyurl.com/create?api_token=" + Config.Credentials.TINYURL.getPassword()))
+                .uri(URI.create("https://api.tinyurl.com/create?api_token=" + StuffNThings.getConfig().getTokens().getTinyUrl().getToken()))
                 .setHeader("accept", "application/json")
                 .setHeader("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(tinyURLForm.getAsJsonString()))

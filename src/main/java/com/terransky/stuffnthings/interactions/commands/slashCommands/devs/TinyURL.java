@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.devs;
 
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.dataSources.tinyURL.*;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
@@ -7,7 +8,6 @@ import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.apiHandlers.TinyURLHandler;
 import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
 import com.terransky.stuffnthings.utilities.command.*;
-import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -57,7 +57,7 @@ public class TinyURL implements ICommandSlash {
      */
     @Override
     public boolean isDeveloperCommand() {
-        return !Config.getTinyURlDomain().isEmpty();
+        return !StuffNThings.getConfig().getTokens().getTinyUrl().getToken().isEmpty();
     }
 
     @Override
@@ -65,7 +65,7 @@ public class TinyURL implements ICommandSlash {
         return new Metadata(getName(), "Create short URLs with TinyURL",
             Mastermind.DEVELOPER, CommandCategory.DEVS,
             Metadata.parseDate(2023, 1, 6, 16, 4),
-            Metadata.parseDate(2024, 2, 9, 16, 11)
+            Metadata.parseDate(2024, 8, 20, 12, 3)
         )
             .addOptions(
                 new OptionData(OptionType.STRING, "url", "A URL to shorten.", true),
@@ -95,9 +95,9 @@ public class TinyURL implements ICommandSlash {
             TinyURLHandler tinyURLHandler = new TinyURLHandler();
             TinyURLResponse response = tinyURLHandler.sendRequest(tinyURLForm);
             String requestData = tinyURLForm.getAsJsonString(),
-                reportingURL = Config.getErrorReportingURL();
+                reportingURL = StuffNThings.getConfig().getCore().getReportingUrl();
 
-            if (Config.isTestingMode())
+            if (StuffNThings.getConfig().getCore().getTestingMode())
                 embedBuilder.setDescription(String.format("Data Packet Sent%n```json%n%s%n```", requestData));
 
             switch ((int) (long) response.getCode()) {
@@ -142,7 +142,7 @@ public class TinyURL implements ICommandSlash {
                 embedBuilder.setDescription("""
                         URL is not valid.
                         Please verify that the URL is correct and try again.
-                                            
+                        
                         Note: Valid URls start with `http://` or `https://` and must end with a domain such as `.com`, `.gov`, `.xyz`, etc.
                         """)
                     .setColor(EmbedColor.ERROR.getColor())

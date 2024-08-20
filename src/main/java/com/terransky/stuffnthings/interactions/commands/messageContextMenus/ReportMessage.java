@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.messageContextMenus;
 
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.database.helpers.PropertyMapping;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
@@ -7,7 +8,6 @@ import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandMessage;
 import com.terransky.stuffnthings.utilities.command.EmbedColor;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
-import com.terransky.stuffnthings.utilities.general.Config;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
 import com.terransky.stuffnthings.utilities.jda.DiscordWebhook;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -51,7 +51,7 @@ public class ReportMessage implements ICommandMessage {
 
     @Override
     public boolean isWorking() {
-        return Config.isDatabaseEnabled();
+        return StuffNThings.getConfig().getCore().getEnableDatabase();
     }
 
     @Override

@@ -1,0 +1,32 @@
+#file: noinspection SpellCheckingInspection
+core:
+  token:
+  testingMode: yes
+  enableDatabase: no
+  ownerId:
+  supportGuild:
+    id:
+    invite:
+  reportingUrl:
+  logoUrl:
+  #Use the API's policy on the User-Agent header https://icanhazdadjoke.com/api#custom-user-agent
+  userAgent:
+  repoLink:
+  request:
+    webhookUrl:
+    channelId:
+database:
+  username:
+  password:
+  name:
+  hostname:
+  applicationName:
+tokens:
+  tinyUrl:
+    token:
+    domain:
+  kitsuIo:
+    username:
+    password:
+  openWeatherKey:
+  memeGeneratorKey:

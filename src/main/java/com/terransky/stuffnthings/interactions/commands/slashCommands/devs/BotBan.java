@@ -1,10 +1,10 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.devs;
 
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
-import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -57,7 +57,7 @@ public class BotBan implements ICommandSlash {
         return new Metadata(getName(), "Ban a user from ever using the bot again.",
             Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate(2023, 2, 28, 12, 47),
-            Metadata.parseDate(2024, 2, 9, 16, 11)
+            Metadata.parseDate(2024, 8, 20, 12, 3)
         )
             .addOptions(
                 new OptionData(OptionType.USER, "user", "This person does not deserve to use this bot...", true)
@@ -71,6 +71,6 @@ public class BotBan implements ICommandSlash {
 
     @Override
     public List<Long> getServerRestrictions() {
-        return List.of(Config.getSupportGuildIdLong());
+        return List.of(StuffNThings.getConfig().getCore().getSupportGuild().getId());
     }
 }

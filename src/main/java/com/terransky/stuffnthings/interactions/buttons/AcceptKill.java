@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interactions.buttons;
 
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.database.helpers.KillStorage;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interactions.modals.KillSuggest;
@@ -7,7 +8,6 @@ import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.IButton;
 import com.terransky.stuffnthings.utilities.command.EmbedColor;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
-import com.terransky.stuffnthings.utilities.general.Config;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -35,7 +35,7 @@ public class AcceptKill {
     }
 
     private static void doExecute(@NotNull ButtonInteractionEvent event, @NotNull EventBlob blob, boolean isRandom) {
-        if (!event.getUser().getId().equals(Config.getDeveloperId())) {
+        if (!event.getUser().getId().equals(StuffNThings.getConfig().getCore().getOwnerId())) {
             event.replyEmbeds(youAreNotAllowed(event, blob)).setEphemeral(true).queue();
             return;
         }
