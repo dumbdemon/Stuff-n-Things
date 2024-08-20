@@ -30,6 +30,8 @@ import com.terransky.stuffnthings.managers.SlashIManager;
 
 public class Managers {
 
+    public static final Managers INSTANCE = new Managers();
+
     private final SlashIManager slashIManager = new SlashIManager(
         //Admin Commands
         new ChannelUnLock(),
@@ -80,7 +82,6 @@ public class Managers {
         new TinyURL(),
         new UserInfo()
     );
-
     private final IManager<IButton> buttonIManager = new IManager<>(
         new AcceptKill.Random(),
         new AcceptKill.Target(),
@@ -88,26 +89,19 @@ public class Managers {
         new ExpiredButton(),
         new GetMoreDadJokes()
     );
-
     private final IManager<IModal> modalIManager = new IManager<>(
         new KillSuggest.Random(),
         new KillSuggest.Target(),
         new RandomMemeBuilder()
     );
-
     private final CommandIManager<ICommandMessage> messageCommandIManager = new CommandIManager<>(
         new ReportMessage()
     );
-
     private final CommandIManager<ICommandUser> userCommandIManager = new CommandIManager<>(
         new UserInfoMenu()
     );
-
     private final IManager<ISelectMenuEntity> entitySelectMenuIManager = new IManager<>();
-
     private final IManager<ISelectMenuString> stringSelectMenuIManager = new IManager<>();
-
-    public static Managers INSTANCE = new Managers();
 
     public SlashIManager getSlashManager() {
         return slashIManager;
