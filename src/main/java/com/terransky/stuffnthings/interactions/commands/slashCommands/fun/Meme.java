@@ -9,6 +9,7 @@ import com.terransky.stuffnthings.interactions.modals.RandomMemeBuilder;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.configobjects.CoreConfig;
+import com.terransky.stuffnthings.utilities.jda.BotEmojis;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -46,7 +47,7 @@ public class Meme implements ICommandSlash {
             """, Mastermind.DEVELOPER,
             CommandCategory.FUN,
             Metadata.parseDate(2022, 8, 24, 11, 10),
-            Metadata.parseDate(2024, 8, 20, 12, 3)
+            Metadata.parseDate(2024, 8, 21, 11, 11)
         )
             .addSubcommands(
                 new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, or from r/me_irl.")
@@ -145,7 +146,7 @@ public class Meme implements ICommandSlash {
                 .setImage(memeData.getUrl())
                 .addField("Author", "[" + memeData.getAuthor() + "](https://www.reddit.com/user/" + memeData.getAuthor() + ")", true)
                 .addField("Subreddit", "[" + memeData.getSubreddit() + "](https://www.reddit.com/r/" + memeData.getSubreddit() + ")", true)
-                .addField("<:reddit_upvote:1069025452250890330> Upvotes", largeNumber.format(memeData.getUps()), true);
+                .addField(BotEmojis.getEmoji(BotEmojis.UPVOTE) + " Upvotes", largeNumber.format(memeData.getUps()), true);
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
         } catch (InterruptedException | IOException e) {

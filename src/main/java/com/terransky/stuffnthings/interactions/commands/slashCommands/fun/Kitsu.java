@@ -14,6 +14,7 @@ import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.apiHandlers.KitsuHandler;
 import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
 import com.terransky.stuffnthings.utilities.command.*;
+import com.terransky.stuffnthings.utilities.jda.BotEmojis;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -35,7 +36,7 @@ public class Kitsu {
 
     @NotNull
     private static OffsetDateTime getGlobalLastUpdated() {
-        return Metadata.parseDate(2024, 2, 9, 16, 11);
+        return Metadata.parseDate(2024, 8, 21, 11, 1);
     }
 
     private static Metadata getStandard(String name) {
@@ -76,7 +77,7 @@ public class Kitsu {
             builder.addField(":calendar_spiral: Aired", getDates(attributes), false)
                 .addField(":minidisc: Total Episodes", String.valueOf(animeAttributes.getEpisodeCount()), true)
                 .addField(":stopwatch: Duration", String.format("%s minutes", animeAttributes.getEpisodeLength()), true)
-                .addField("<:youtube:1066104323987230720> Trailer", String.format("[link](https://www.youtube.com/watch?v=%s)", animeAttributes.getYoutubeVideoId()), true);
+                .addField(BotEmojis.getEmoji(BotEmojis.YOUTUBE) + " Trailer", String.format("[link](https://www.youtube.com/watch?v=%s)", animeAttributes.getYoutubeVideoId()), true);
         } else if (attributes instanceof MangaAttributes mangaAttributes) {
             String chapters = mangaAttributes.getChapterCount() == 0 ? "?" : String.valueOf(mangaAttributes.getChapterCount()),
                 volumes = mangaAttributes.getVolumeCount() == 0 ? "?" : String.valueOf(mangaAttributes.getVolumeCount());
@@ -128,7 +129,7 @@ public class Kitsu {
                 lastUpdated = animeLastUpdated.isAfter(getGlobalLastUpdated()) ? animeLastUpdated : getGlobalLastUpdated();
             return getStandard(getName())
                 .setLastUpdated(lastUpdated)
-                .setDescripstions("Search for an anime using Kitsu.io");
+                .setDescripstions("Search for an anime using Kitsu.app");
         }
 
         @Override
@@ -178,7 +179,7 @@ public class Kitsu {
                 lastUpdated = mangaLastUpdated.isAfter(getGlobalLastUpdated()) ? mangaLastUpdated : getGlobalLastUpdated();
             return getStandard(getName())
                 .setLastUpdated(lastUpdated)
-                .setDescripstions("Search for a manga using Kitsu.io");
+                .setDescripstions("Search for a manga using Kitsu.app");
         }
 
         @Override

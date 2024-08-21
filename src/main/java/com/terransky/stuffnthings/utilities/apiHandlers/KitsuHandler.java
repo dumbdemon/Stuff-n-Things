@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Handler for Kitsu.io API requests
+ * Handler for Kitsu.app API requests
  */
 @SuppressWarnings("SpellCheckingInspection")
 public class KitsuHandler extends Handler {
@@ -36,20 +36,21 @@ public class KitsuHandler extends Handler {
     private static final Logger log = LoggerFactory.getLogger(KitsuHandler.class);
     private static final File KITSU_AUTH = new File(FILE_NAME);
     private static final UserPassword credentials = StuffNThings.getConfig().getTokens().getKitsuIo();
-    private final String BASE_URL = "https://kitsu.io/api/edge/";
+    private final String BASE_URL = "https://kitsu.app/api/edge/";
     private final String token;
 
     /**
-     * API handler for Kitsu.io's API
+     * API handler for Kitsu.app's API
      */
     public KitsuHandler() {
-        super("KitsuDotIO");
+        super("KitsuApp");
+        upsertAuthorizationToken();
         Optional<KitsuAuth> kitsuAuth = DatabaseManager.INSTANCE.getKitsuAuth();
         token = kitsuAuth.map(KitsuAuth::getBearerString).orElse(null);
     }
 
     /**
-     * Obtain or update an authorization token for <a href="">Kitsu.io</a> API.
+     * Obtain or update an authorization token for <a href="">Kitsu.app</a> API.
      *
      * @return True if the process was successful.
      * @throws IllegalArgumentException If {@link UserPassword#isEmpty()} returns true.
@@ -88,7 +89,7 @@ public class KitsuHandler extends Handler {
 
             HttpRequest request = HttpRequest.newBuilder()
                 .setHeader("Content-Type", "application/json")
-                .uri(URI.create("https://kitsu.io/api/oauth/token"))
+                .uri(URI.create("https://kitsu.app/api/oauth/token"))
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
@@ -119,7 +120,7 @@ public class KitsuHandler extends Handler {
     }
 
     /**
-     * Get manga from Kitsu.io
+     * Get manga from Kitsu.app
      *
      * @param search Query for search
      * @return A {@link MangaKitsuData}
@@ -131,7 +132,7 @@ public class KitsuHandler extends Handler {
     }
 
     /**
-     * Get anime from Kitsu.io
+     * Get anime from Kitsu.app
      *
      * @param search Query for search
      * @return A {@link AnimeKitsuData}
@@ -155,9 +156,9 @@ public class KitsuHandler extends Handler {
     }
 
     /**
-     * Get the {@link InputStream} for Kitsu.io.
+     * Get the {@link InputStream} for Kitsu.app.
      *
-     * @param uri A Kitsu.io API endpoint URL
+     * @param uri A Kitsu.app API endpoint URL
      * @return An {@link InputStream}
      */
     @NotNull

@@ -32,7 +32,6 @@ public class CheckPerms implements ICommandSlash {
             add(Permission.MESSAGE_SEND);
             add(Permission.MESSAGE_ADD_REACTION);
             add(Permission.MESSAGE_EMBED_LINKS);
-            add(Permission.MESSAGE_EXT_EMOJI);
             add(Permission.MESSAGE_EXT_STICKER);
             add(Permission.VIEW_CHANNEL);
 
