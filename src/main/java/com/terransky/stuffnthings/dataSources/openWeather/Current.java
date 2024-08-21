@@ -129,11 +129,15 @@ public class Current {
 
     @JsonIgnore
     public String getSunriseAsTimeStamp() {
+        if (sunrise == null)
+            return "N/A";
         return Timestamp.getDateAsTimestamp(sunrise);
     }
 
     @JsonIgnore
     public String getSunriseAsTimeStamp(Timestamp timestamp) {
+        if (sunrise == null)
+            return "N/A";
         return Timestamp.getDateAsTimestamp(sunrise, timestamp);
     }
 
@@ -149,11 +153,15 @@ public class Current {
 
     @JsonIgnore
     public String getSunsetAsTimestamp() {
+        if (sunset == null)
+            return "N/A";
         return Timestamp.getDateAsTimestamp(sunset);
     }
 
     @JsonIgnore
     public String getSunsetAsTimestamp(Timestamp timestamp) {
+        if (sunrise == null)
+            return "N/A";
         return Timestamp.getDateAsTimestamp(sunset, timestamp);
     }
 

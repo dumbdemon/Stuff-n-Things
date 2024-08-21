@@ -41,7 +41,7 @@ public class GetWeather implements ICommandSlash {
             If you don't know your country's code, you can use [this website](https://www.iso.org/obp/ui/#search).
             """, Mastermind.DEVELOPER, CommandCategory.FUN,
             Metadata.parseDate(2023, 2, 1, 16, 27),
-            Metadata.parseDate(2024, 8, 20, 12, 3)
+            Metadata.parseDate(2024, 8, 21, 11, 52)
         )
             .addSubcommandGroups(
                 new SubcommandGroupData("by-coordinates", "Get the weather by coordinates.")
@@ -136,6 +136,11 @@ public class GetWeather implements ICommandSlash {
         DegreeToQuadrant toQuadrant = new DegreeToQuadrant();
         EmbedBuilder response = getBuilder(blob.getStandardEmbed(String.format("Weather for %s", where)), weatherData);
 
+        if (current == null) {
+            event.getHook().sendMessageEmbeds(response.build()).queue();
+            return;
+        }
+
         if (current.getWindGust() != null) {
             response.addField("Wind Gust", current.getWindGustAsString(), true);
         }
@@ -209,6 +214,9 @@ public class GetWeather implements ICommandSlash {
     @NotNull
     private EmbedBuilder getBuilder(@NotNull EmbedBuilder builder, @NotNull OpenWeatherData weatherData) {
         Current current = weatherData.getCurrent();
+        if (current == null)
+            return new EmbedBuilder(builder)
+                .setDescription("No weather data available.");
         return new EmbedBuilder(builder)
             .addField("Timezone", weatherData.getTimezone(), true)
             .addField("Current Time", current.getDtAsTimeStamp(), false)
