@@ -78,7 +78,7 @@ public class Subscribers {
          * @return A {@link RuntimeException} or null
          */
         public RuntimeException getError() {
-            if (errors.size() > 0) {
+            if (!errors.isEmpty()) {
                 return errors.get(0);
             }
             return null;
