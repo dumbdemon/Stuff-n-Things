@@ -20,6 +20,8 @@ public class ConfigHandler {
 
     private static ConfigHandler configHandler;
 
+    private static final Object LOCK = new Object();
+
     Config config;
 
     private ConfigHandler(Path configPath) throws FileNotFoundException {
@@ -31,10 +33,12 @@ public class ConfigHandler {
     }
 
     public static ConfigHandler getInstance(Path configPath) throws FileNotFoundException {
-        if (configHandler == null) {
-            configHandler = new ConfigHandler(configPath);
+        synchronized (LOCK) {
+            if (configHandler == null) {
+                configHandler = new ConfigHandler(configPath);
+            }
+            return configHandler;
         }
-        return configHandler;
     }
 
     public Config loadConfig(@NotNull Path configPath) throws FileNotFoundException {
