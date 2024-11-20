@@ -9,6 +9,7 @@ import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.Pojo;
 import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.command.*;
+import com.terransky.stuffnthings.utilities.general.Timestamp;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -58,7 +59,8 @@ public class WhatsInStandard implements ICommandSlash {
                 )
             );
         }
-        return theBans.toString();
+        return theBans.toString().isEmpty() ? String.format("*No bans as of %s.*", Timestamp.getDateAsTimestamp(OffsetDateTime.now(), Timestamp.LONG_DATE_W_DoW_SHORT_TIME)) :
+            theBans.toString();
     }
 
     @Override

@@ -89,7 +89,7 @@ public class KitsuHandler extends Handler {
 
             HttpRequest request = HttpRequest.newBuilder()
                 .setHeader("Content-Type", "application/json")
-                .uri(URI.create("https://kitsu.app/api/oauth/token"))
+                .uri(URI.create("https://kitsu.io/api/oauth/token"))
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 

@@ -1,5 +1,7 @@
 package com.terransky.stuffnthings.utilities.apiHandlers;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.StreamReadFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.http.HttpClient;
@@ -33,6 +35,10 @@ class Handler {
     }
 
     protected ObjectMapper getObjectMapper() {
-        return new ObjectMapper();
+        return new ObjectMapper(
+            JsonFactory.builder()
+                .enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION)
+                .build()
+        );
     }
 }

@@ -209,7 +209,7 @@ public class MongoDBDataSource implements DatabaseManager {
 
             GuildEntry guildEntry = finder.first().orElse(new GuildEntry(blob.getGuildId()));
 
-            List<BingoGame> bingoGames = guildEntry.getBingoGames() == null ? new ArrayList<>() : guildEntry.getBingoGames();
+            List<BingoGame> bingoGames = new ArrayList<>(guildEntry.getBingoGames() == null ? new ArrayList<>() : guildEntry.getBingoGames());
             bingoGames.stream().filter(bingoGame -> bingoGame.getChannelId().equals(game.getChannelId()))
                 .findFirst()
                 .ifPresent(bingoGames::remove);
