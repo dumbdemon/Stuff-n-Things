@@ -6,6 +6,7 @@ import com.terransky.stuffnthings.interfaces.Pojo;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -63,6 +64,11 @@ public record DatumPojo<T>(Collection<T> datum) implements Pojo {
     public <R> DatumPojo<R> map(Function<? super T, R> mapper) {
         Objects.requireNonNull(mapper);
         return new DatumPojo<>(datum.stream().map(mapper).toList());
+    }
+
+    @NotNull
+    public List<T> toList() {
+        return datum.stream().toList();
     }
 
     @Override

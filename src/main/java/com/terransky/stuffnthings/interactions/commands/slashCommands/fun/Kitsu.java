@@ -1,5 +1,6 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
+import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.dataSources.kitsu.Attributes;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.EntryAttributes;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.anime.AnimeAttributes;
@@ -14,6 +15,7 @@ import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
 import com.terransky.stuffnthings.utilities.apiHandlers.KitsuHandler;
 import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
 import com.terransky.stuffnthings.utilities.command.*;
+import com.terransky.stuffnthings.utilities.general.configobjects.UserPassword;
 import com.terransky.stuffnthings.utilities.jda.BotEmojis;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -50,6 +52,7 @@ public class Kitsu {
             );
     }
 
+    @NotNull
     private static String getDates(@NotNull EntryAttributes attributes) {
         if (attributes.getEndDate() == null)
             return String.format("from **%s** to **?**", attributes.getStartDate());
@@ -116,6 +119,11 @@ public class Kitsu {
             .build();
     }
 
+    private static boolean hasKitsuToken() {
+        UserPassword kistuIo = StuffNThings.getConfig().getTokens().getKitsuIo();
+        return !kistuIo.getUsername().isEmpty() || !kistuIo.getPassword().isEmpty();
+    }
+
     public static class Anime implements ICommandSlash {
 
         @Override
@@ -130,6 +138,11 @@ public class Kitsu {
             return getStandard(getName())
                 .setLastUpdated(lastUpdated)
                 .setDescripstions("Search for an anime using Kitsu.app");
+        }
+
+        @Override
+        public boolean isWorking() {
+            return hasKitsuToken();
         }
 
         @Override
@@ -180,6 +193,11 @@ public class Kitsu {
             return getStandard(getName())
                 .setLastUpdated(lastUpdated)
                 .setDescripstions("Search for a manga using Kitsu.app");
+        }
+
+        @Override
+        public boolean isWorking() {
+            return hasKitsuToken();
         }
 
         @Override

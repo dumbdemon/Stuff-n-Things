@@ -78,6 +78,11 @@ public class TinyURL implements ICommandSlash {
     }
 
     @Override
+    public boolean isWorking() {
+        return isDeveloperCommand();
+    }
+
+    @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         event.deferReply().queue();
         Optional<String> ifUrl = Optional.ofNullable(event.getOption("url", OptionMapping::getAsString)),

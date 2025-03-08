@@ -82,6 +82,11 @@ public class GetWeather implements ICommandSlash {
     }
 
     @Override
+    public boolean isWorking() {
+        return !StuffNThings.getConfig().getTokens().getOpenWeatherKey().isEmpty();
+    }
+
+    @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         event.deferReply().queue();
         String subcommandGroup = event.getSubcommandGroup();

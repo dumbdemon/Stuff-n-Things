@@ -61,7 +61,7 @@ public class MemeGeneratorHandler extends Handler {
             HttpResponse<String> response = getHttpClient(service).send(request, HttpResponse.BodyHandlers.ofString());
 
             return new DatumPojo<String>(getObjectMapper().readValue(response.body(), new TypeReference<>() {
-            })).datum().stream().toList();
+            })).toList();
         }
     }
 
