@@ -34,7 +34,7 @@ dependencies {
     implementation 'javax.validation:validation-api:2.0.1.Final'
     implementation('com.neovisionaries:nv-i18n:1.29')
     implementation('com.thedeanda:lorem:2.2')
-    implementation('org.yaml:snakeyaml:2.3')
+    implementation('org.yaml:snakeyaml:2.5')
 }
 
 test {
