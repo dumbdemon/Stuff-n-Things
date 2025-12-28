@@ -38,7 +38,7 @@ public class MtGSet {
     @JsonProperty("name")
     @JsonPropertyDescription("The human-friendly name of the set, if known.")
     @NotNull
-    private Object name;
+    private String name;
 
     /**
      * Code
@@ -114,7 +114,7 @@ public class MtGSet {
      * 
      */
     @JsonProperty("name")
-    public Object getName() {
+    public String getName() {
         return name;
     }
 
@@ -126,7 +126,7 @@ public class MtGSet {
      * 
      */
     @JsonProperty("name")
-    public void setName(Object name) {
+    public void setName(String name) {
         this.name = name;
     }
 

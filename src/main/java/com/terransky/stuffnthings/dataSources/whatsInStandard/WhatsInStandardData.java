@@ -115,7 +115,7 @@ public class WhatsInStandardData {
      */
     @JsonProperty("sets")
     public List<MtGSet> getSets() {
-        return mtgSets;
+        return List.copyOf(mtgSets);
     }
 
     /**
