@@ -29,7 +29,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
@@ -57,12 +56,6 @@ public class Kitsu {
     @NotNull
     private static OffsetDateTime getMangaLastUpdated() {
         return SlashCommandInteraction.parseDate(2023, 2, 5, 11, 52);
-    }
-
-    @NotNull
-    @Contract(" -> new")
-    private static OptionData getKitsuOption() {
-        return new OptionData(OptionType.STRING, "search", "Queary for search", true);
     }
 
     @NotNull
@@ -173,7 +166,7 @@ public class Kitsu {
                 parseDate(2023, 1, 17, 12, 43),
                 getAnimeLastUpdated().isAfter(getGlobalLastUpdated()) ? getAnimeLastUpdated() : getGlobalLastUpdated()
             );
-            addOptions(getKitsuOption());
+            addOptions(new OptionData(OptionType.STRING, "search", "Queary for search", true));
         }
 
         @Override
@@ -220,7 +213,7 @@ public class Kitsu {
                 parseDate(2023, 2, 5, 11, 52),
                 getMangaLastUpdated().isAfter(getGlobalLastUpdated()) ? getMangaLastUpdated() : getGlobalLastUpdated()
             );
-            addOptions(getKitsuOption());
+            addOptions(new OptionData(OptionType.STRING, "search", "Queary for search", true));
         }
 
         @Override

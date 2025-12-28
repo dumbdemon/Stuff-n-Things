@@ -43,7 +43,7 @@ public class InteractionListener extends ListenerAdapter {
             List.of(
                 TextDisplay.of("### There is an issue with this command and will need to be disabled until further notice."),
                 Separator.createDivider(Separator.Spacing.SMALL),
-                TextDisplay.of(String.format("### Reason\n```%s```", message))
+                TextDisplay.of(String.format("### Reason%n```%s```", message))
             )
         );
     }

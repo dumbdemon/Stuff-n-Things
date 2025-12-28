@@ -21,7 +21,7 @@ public class FibonacciSequence extends SlashCommandInteraction {
     public FibonacciSequence() {
         super("fibonacci", "Get the nth number in the Fibonacci sequence.", Mastermind.DEVELOPER, CommandCategory.MATHS,
             parseDate(2022, 11, 11, 20, 50),
-            parseDate(2025, 12, 27, 3, 50)
+            parseDate(2025, 12, 28, 12, 12)
         );
         addSubcommands(
             new SubcommandData("at-nth", "Get a specific value.")
@@ -70,7 +70,7 @@ public class FibonacciSequence extends SlashCommandInteraction {
                 .replaceAll(".0 ", " ")
                 .replaceAll(".0,", ",");
 
-            textDisplay = TextDisplay.of(String.format("### The Fibonacci sequence up to the %s%s value is\n```%s```",
+            textDisplay = TextDisplay.of(String.format("### The Fibonacci sequence up to the %s%s value is%n```%s```",
                 nth,
                 nthSuffix,
                 returnString.replace(".0", "")

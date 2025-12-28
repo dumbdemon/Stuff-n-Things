@@ -91,7 +91,7 @@ public class KillSuggest {
             doExecute(event, blob, true);
         }
 
-        //TODO: Research new Modal system
+        //Research new Modal system
         @Override
         public Modal getContructedModal() {
             return getBuilder()
@@ -107,7 +107,7 @@ public class KillSuggest {
             super("target-kill-suggest", "Suggest Kill-String");
         }
 
-        //TODO: Research new Modal system
+        //Research new Modal system
         @Override
         public Modal getContructedModal() {
             return getBuilder()

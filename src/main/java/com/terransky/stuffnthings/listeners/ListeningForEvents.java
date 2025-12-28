@@ -5,11 +5,15 @@ import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.utilities.command.BotColors;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.components.section.Section;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
+import net.dv8tion.jda.api.components.thumbnail.Thumbnail;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.unions.DefaultGuildChannelUnion;
 import net.dv8tion.jda.api.events.guild.*;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -51,11 +55,15 @@ public class ListeningForEvents extends ListenerAdapter {
         upsertGuildCommands(event);
         DatabaseManager.INSTANCE.addGuild(event.getGuild());
 
-        EmbedBuilder eb = new EmbedBuilder()
-            .setColor(BotColors.DEFAULT.getColor())
-            .setAuthor(theBot.getName(), null, theBot.getAvatarUrl())
-            .setDescription("> *What am I doing here?*\n> *Why am I here?*\n> *Am I supposed to be here?*");
-        Objects.requireNonNull(event.getGuild().getDefaultChannel()).asTextChannel().sendMessageEmbeds(eb.build()).queue();
+        DefaultGuildChannelUnion defaultChannel = event.getGuild().getDefaultChannel();
+        if (defaultChannel != null)
+            defaultChannel.asTextChannel().sendMessageComponents(
+                Container.of(Section.of(
+                        Thumbnail.fromUrl(theBot.getEffectiveAvatarUrl()),
+                        TextDisplay.of("> *What am I doing here?*\n> *Why am I here?*\n> *Am I supposed to be here?*")
+                    ))
+                    .withAccentColor(BotColors.DEFAULT.getColor())
+            ).queue();
     }
 
     @Override

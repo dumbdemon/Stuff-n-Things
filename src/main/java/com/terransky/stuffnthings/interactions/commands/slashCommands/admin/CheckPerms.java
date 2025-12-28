@@ -32,7 +32,7 @@ public class CheckPerms extends SlashCommandInteraction {
     public CheckPerms() {
         super("check-perms", "Check if I have all of my perms needed for all of my commands.", Mastermind.DEVELOPER,
             CommandCategory.ADMIN, parseDate(2022, 6, 30, 16, 14),
-            parseDate(2025, 12, 27, 1, 0)
+            parseDate(2025, 12, 28, 12, 14)
         );
         setDefaultMemberPermissions(Permission.MANAGE_ROLES);
         addSubcommands(
@@ -96,10 +96,10 @@ public class CheckPerms extends SlashCommandInteraction {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("I'm missing the following permissions for %s:\n```json\n[\n", ifToCheck ? toCheck.getAsMention() : "this server"));
+        sb.append(String.format("I'm missing the following permissions for %s:%n```json%n[%n", ifToCheck ? toCheck.getAsMention() : "this server"));
         for (Permission permission : doNotHaveThis.stream().sorted().toList()) {
             String oneWord = permission.getName().replace("(s)", "s").replaceAll(" ", "_");
-            sb.append("\s\s\s\s").append(oneWord).append(" : false,\n");
+            sb.append("\s\s\s\s").append(oneWord).append(" : false,%n");
         }
         sb.replace(sb.length() - 1, sb.length() - 1, "");
         sb.append("]```");

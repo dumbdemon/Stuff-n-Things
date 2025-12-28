@@ -14,10 +14,8 @@ import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.components.container.ContainerChildComponent;
 import net.dv8tion.jda.api.components.mediagallery.MediaGallery;
 import net.dv8tion.jda.api.components.mediagallery.MediaGalleryItem;
-import net.dv8tion.jda.api.components.section.Section;
 import net.dv8tion.jda.api.components.separator.Separator;
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
-import net.dv8tion.jda.api.components.thumbnail.Thumbnail;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -48,7 +46,7 @@ public class Meme extends SlashCommandInteraction {
             Mastermind.DEVELOPER,
             CommandCategory.FUN,
             parseDate(2022, 8, 24, 11, 10),
-            parseDate(2025, 12, 27, 22, 30)
+            parseDate(2025, 12, 28, 12, 30)
         );
         addSubcommands(
             new SubcommandData("reddit", "Get a random meme from Reddit. DEFAULT: pulls from r/memes, r/dankmemes, or from r/me_irl.")
@@ -93,7 +91,6 @@ public class Meme extends SlashCommandInteraction {
     private void goForReddit(@NotNull SlashCommandInteractionEvent event, DecimalFormat largeNumber) {
         event.deferReply().queue();
         String subreddit = event.getOption("subreddit", "", OptionMapping::getAsString);
-        String redditLogo = "https://cdn.discordapp.com/attachments/1004795281734377564/1005203741026299954/Reddit_Mark_OnDark.png";
         try (ExecutorService service = Executors.newSingleThreadExecutor()) {
             HttpClient client = HttpClient.newBuilder()
                 .followRedirects(HttpClient.Redirect.ALWAYS)
@@ -146,9 +143,9 @@ public class Meme extends SlashCommandInteraction {
             children.add(Separator.createDivider(Separator.Spacing.SMALL));
             children.add(MediaGallery.of(MediaGalleryItem.fromUrl(memeData.getUrl())));
             children.add(Separator.createDivider(Separator.Spacing.SMALL));
-            children.add(Formatter.getLinkButtonSection(String.format("https://www.reddit.com/user/%s", memeData.getAuthor()), String.format("## Author\n%s", memeData.getAuthor())));
+            children.add(Formatter.getLinkButtonSection(String.format("https://www.reddit.com/user/%s", memeData.getAuthor()), String.format("## Author%n%s", memeData.getAuthor())));
             children.add(Separator.createDivider(Separator.Spacing.SMALL));
-            children.add(Formatter.getLinkButtonSection(String.format("https://www.reddit.com/r/%s", memeData.getSubreddit()), String.format("## Subreddit\n%s", memeData.getSubreddit())));
+            children.add(Formatter.getLinkButtonSection(String.format("https://www.reddit.com/r/%s", memeData.getSubreddit()), String.format("## Subreddit%n%s", memeData.getSubreddit())));
             children.add(Separator.createDivider(Separator.Spacing.SMALL));
             children.add(TextDisplay.ofFormat("## %s %s Upvotes", BotEmojis.getEmoji(BotEmojis.UPVOTE), largeNumber.format(memeData.getUps())));
 

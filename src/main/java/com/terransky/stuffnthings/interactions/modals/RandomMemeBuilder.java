@@ -23,7 +23,7 @@ public class RandomMemeBuilder extends ModalInteraction {
         super("random-meme-builder", "Random Meme Builder");
     }
 
-    //TODO: Research new Modal system
+    //Research new Modal system
     @Override
     public Modal getContructedModal() {
         return null;

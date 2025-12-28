@@ -47,7 +47,7 @@ public class NumbersAPI extends SlashCommandInteraction {
     public NumbersAPI() {
         super("number-facts", "Get some fun info on a number", Mastermind.DEVELOPER, CommandCategory.MATHS,
             parseDate(2022, 11, 10, 20, 45),
-            parseDate(2025, 12, 27, 4, 20)
+            parseDate(2025, 12, 28, 12, 12)
         );
         List<Command.Choice> monthChoices = new ArrayList<>() {{
             String[] months = new DateFormatSymbols().getMonths();
@@ -141,8 +141,8 @@ public class NumbersAPI extends SlashCommandInteraction {
                 StandardResponse.getResponseContainer(title, List.of(
                     TextDisplay.of("Missing value. Both values must be entered."),
                     Separator.createDivider(Separator.Spacing.SMALL),
-                    TextDisplay.of(String.format("### Option Given\n%s", uMonth.isPresent() ? "Month" : "Day")),
-                    TextDisplay.of(String.format("### Option Value\n %s", uMonth.isPresent() ? String.valueOf(uMonth.get()) : String.valueOf(uDay.get())))
+                    TextDisplay.of(String.format("### Option Given%n%s", uMonth.isPresent() ? "Month" : "Day")),
+                    TextDisplay.of(String.format("### Option Value%n%s", uMonth.isPresent() ? String.valueOf(uMonth.get()) : String.valueOf(uDay.get())))
                 ), BotColors.ERROR)
             ).queue();
             return;

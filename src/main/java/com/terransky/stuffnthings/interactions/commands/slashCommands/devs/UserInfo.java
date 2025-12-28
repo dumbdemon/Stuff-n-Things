@@ -37,7 +37,7 @@ public class UserInfo extends SlashCommandInteraction {
     public UserInfo() {
         super("user-info", "Get info on a specific user on the server! Defaults to you.", Mastermind.DEFAULT, CommandCategory.DEVS,
             parseDate(2023, 8, 24, 11, 10),
-            parseDate(2025, 12, 27, 5, 56)
+            parseDate(2025, 12, 28, 12, 13)
         );
         addOptions(
             new OptionData(OptionType.USER, "user", "Who you want to know about.")
@@ -107,19 +107,19 @@ public class UserInfo extends SlashCommandInteraction {
                     member.getEffectiveAvatarUrl()
                 ),
                 TextDisplay.of("## " + WordUtils.capitalize(member.getEffectiveName()) + "'s Info"),
-                TextDisplay.of(String.format("### Username\n%s", member.getUser().getName())),
-                TextDisplay.of(String.format("### User ID\n%s", member.getId()))
+                TextDisplay.of(String.format("### Username%n%s", member.getUser().getName())),
+                TextDisplay.of(String.format("### User ID%n%s", member.getId()))
             )
         );
 
         if (member.getUser().isBot())
-            children.add(TextDisplay.of(String.format("Is System?\n%s", member.getUser().isSystem() ? "Yes" : "No")));
+            children.add(TextDisplay.of(String.format("Is System?%n%s", member.getUser().isSystem() ? "Yes" : "No")));
 
         children.add(Separator.createDivider(Separator.Spacing.SMALL));
-        children.add(TextDisplay.of(String.format("### User Status\n%s", permissionStatus)));
-        children.add(TextDisplay.of(String.format("### Top Role\n%s", topRole.getAsMention())));
-        children.add(TextDisplay.of(String.format("### Total Roles\n%d role%s", roleCount, roleCount > 1 ? "s" : "")));
-        children.add(TextDisplay.of(String.format("### Server Permissions\n```%s```".formatted(userPerms))));
+        children.add(TextDisplay.of(String.format("### User Status%n%s", permissionStatus)));
+        children.add(TextDisplay.of(String.format("### Top Role%n%s", topRole.getAsMention())));
+        children.add(TextDisplay.of(String.format("### Total Roles%n%d role%s", roleCount, roleCount > 1 ? "s" : "")));
+        children.add(TextDisplay.of(String.format("### Server Permissions%n```%s```".formatted(userPerms))));
         children.add(Separator.createDivider(Separator.Spacing.SMALL));
         if (!member.getUser().isBot()) {
             String boostedText = (member.getTimeBoosted() != null) ?
