@@ -5,9 +5,10 @@ import com.terransky.stuffnthings.database.helpers.Property;
 import com.terransky.stuffnthings.database.helpers.PropertyMapping;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
-import com.terransky.stuffnthings.interfaces.interactions.ICommandMessage;
-import com.terransky.stuffnthings.utilities.command.EmbedColor;
+import com.terransky.stuffnthings.interfaces.interactions.MessageCommandInteraction;
+import com.terransky.stuffnthings.utilities.command.BotColors;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.StandardResponse;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
 import com.terransky.stuffnthings.utilities.jda.DiscordWebhook;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -25,7 +26,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-public class ReportMessage implements ICommandMessage {
+public class ReportMessage extends MessageCommandInteraction {
+
+    public ReportMessage() {
+        super("Report Message");
+        setWorking(StuffNThings.getConfig().getCore().getEnableDatabase());
+    }
 
     @NotNull
     @Contract(pure = true)
@@ -33,6 +39,7 @@ public class ReportMessage implements ICommandMessage {
         return Math.abs(value) != 1 ? "s" : "";
     }
 
+    @NotNull
     private String getEditedMessage(@NotNull Message message) {
         if (!message.isEdited())
             return "No";
@@ -45,27 +52,18 @@ public class ReportMessage implements ICommandMessage {
     }
 
     @Override
-    public String getName() {
-        return "Report Message";
-    }
-
-    @Override
-    public boolean isWorking() {
-        return StuffNThings.getConfig().getCore().getEnableDatabase();
-    }
-
-    @Override
-    public void execute(@NotNull MessageContextInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException {
+    public void execute(@NotNull MessageContextInteractionEvent event, EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException {
         Optional<String> ifWebhookId = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.REPORT_WEBHOOK, PropertyMapping::getAsString);
         String reportResponse = DatabaseManager.INSTANCE
             .getFromDatabase(blob, Property.REPORT_RESPONSE, "Got it. Message has been reported.", PropertyMapping::getAsString);
 
         if (ifWebhookId.isEmpty()) {
-            event.replyEmbeds(
-                blob.getStandardEmbed(getName(), EmbedColor.ERROR)
-                    .setDescription("Message reporting has not been set up yet!\nTell your server admins to set up with `/config report`!")
-                    .setFooter(blob.getMemberName(), blob.getMemberEffectiveAvatarUrl())
-                    .build()
+            event.replyComponents(
+                StandardResponse.getResponseContainer(
+                    this,
+                    "Message reporting has not been set up yet!\nTell your server admins to set up with `/config report`!",
+                    BotColors.ERROR
+                )
             ).setEphemeral(true).queue();
             return;
         }
@@ -73,11 +71,13 @@ public class ReportMessage implements ICommandMessage {
         Message message = event.getTarget();
 
         if (message.getAuthor().isBot()) {
-            event.replyEmbeds(
-                blob.getStandardEmbed(getName(), EmbedColor.ERROR)
-                    .setDescription("Bot messages should be reported to either the developers or to" +
-                        " [Discord Trust & Safety](https://support.discord.com/hc/en-us/requests/new).")
-                    .build()
+            event.replyComponents(
+                StandardResponse.getResponseContainer(
+                    this,
+                    "Bot messages should be reported to either the developers or to" +
+                        " [Discord Trust & Safety](https://support.discord.com/hc/en-us/requests/new).",
+                    BotColors.ERROR
+                )
             ).setEphemeral(true).queue();
             return;
         }
@@ -88,7 +88,9 @@ public class ReportMessage implements ICommandMessage {
         Set<Role> roles = mentions.getRolesBag().uniqueSet();
         Set<User> users = mentions.getUsersBag().uniqueSet();
 
-        EmbedBuilder report = blob.getStandardEmbed("Message Reported", message.getJumpUrl(), EmbedColor.SUB_DEFAULT)
+        EmbedBuilder report = new EmbedBuilder()
+            .setTitle("Message Reported", message.getJumpUrl())
+            .setColor(BotColors.SUB_DEFAULT.getColor())
             .setDescription(String.format("The following message has been reported:%n```%s```", message.getContentRaw()))
             .setFooter(String.format("Reported by %s | %s", blob.getMemberName(), blob.getMemberId()), blob.getMemberEffectiveAvatarUrl())
             .addField("Mentions",
@@ -115,9 +117,8 @@ public class ReportMessage implements ICommandMessage {
         new DiscordWebhook("Report-Message", webhook)
             .sendMessage(report.build());
 
-        event.replyEmbeds(blob.getStandardEmbed(getName())
-            .setDescription(reportResponse)
-            .build()
+        event.replyComponents(
+            StandardResponse.getResponseContainer(this, reportResponse)
         ).setEphemeral(true).queue();
     }
 }

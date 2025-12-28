@@ -3,10 +3,13 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.terransky.stuffnthings.dataSources.catAAS.CatAASData;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
-import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
+import com.terransky.stuffnthings.interfaces.interactions.SlashCommandInteraction;
 import com.terransky.stuffnthings.utilities.command.*;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.components.mediagallery.MediaGallery;
+import net.dv8tion.jda.api.components.mediagallery.MediaGalleryItem;
+import net.dv8tion.jda.api.components.separator.Separator;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -19,42 +22,38 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Optional;
 
-public class GetRandomCat implements ICommandSlash {
-    @NotNull
-    private static MessageEmbed getMessageEmbed(@NotNull EmbedBuilder response, @NotNull CatAASData catAASData) {
-        return response.setColor(EmbedColor.ERROR.getColor())
-            .setDescription(String.format("I couldn't get a cat because: `%s`", catAASData.getMessage()))
-            .appendDescription("\nTry using different options?")
-            .build();
-    }
-
-    @Override
-    public String getName() {
-        return "random-cat";
-    }
-
-    @Override
-    public Metadata getMetadata() {
-        return new Metadata(getName(), "Get a random image of a cat",
+public class GetRandomCat extends SlashCommandInteraction {
+    public GetRandomCat() {
+        super("random-cat", "Get a random image of a cat",
             Mastermind.DEVELOPER, CommandCategory.FUN,
-            Metadata.parseDate(2023, 2, 9, 13, 17),
-            Metadata.parseDate(2024, 2, 9, 16, 11)
-        )
-            .addOptions(
-                new OptionData(OptionType.BOOLEAN, "gif", "Whether not you just want gifs."),
-                new OptionData(OptionType.STRING, "says", "Add text to the image."),
-                new OptionData(OptionType.STRING, "filter", "Add a filter to the image.")
-                    .addChoices(
-                        new Command.Choice("Blur", "blur"),
-                        new Command.Choice("Monochrome", "mono"),
-                        new Command.Choice("Sepia", "sepia"),
-                        new Command.Choice("Negative", "negative"),
-                        new Command.Choice("Paint", "paint"),
-                        new Command.Choice("Pixel", "pixel")
-                    )
-            );
+            parseDate(2023, 2, 9, 13, 17),
+            parseDate(2025, 12, 28, 0, 18)
+        );
+        addOptions(
+            new OptionData(OptionType.BOOLEAN, "gif", "Whether not you just want gifs."),
+            new OptionData(OptionType.STRING, "says", "Add text to the image."),
+            new OptionData(OptionType.STRING, "filter", "Add a filter to the image.")
+                .addChoices(
+                    new Command.Choice("Blur", "blur"),
+                    new Command.Choice("Monochrome", "mono"),
+                    new Command.Choice("Sepia", "sepia"),
+                    new Command.Choice("Negative", "negative"),
+                    new Command.Choice("Paint", "paint"),
+                    new Command.Choice("Pixel", "pixel")
+                )
+        );
+    }
+
+    @NotNull
+    private Container getMessageEmbed(@NotNull CatAASData catAASData) {
+        return StandardResponse.getResponseContainer(
+            this,
+            TextDisplay.ofFormat("I couldn't get a cat because: `%s`\nTry using different options?", catAASData.getMessage()),
+            BotColors.ERROR
+        );
     }
 
     @Override
@@ -64,7 +63,6 @@ public class GetRandomCat implements ICommandSlash {
         Optional<String> says = Optional.ofNullable(event.getOption("says", OptionMapping::getAsString));
         Optional<String> filter = Optional.ofNullable(event.getOption("filter", OptionMapping::getAsString));
         String baseURL = "https://cataas.com";
-        EmbedBuilder response = blob.getStandardEmbed(getNameReadable());
         ObjectMapper mapper = new ObjectMapper();
 
         String url = baseURL + "/c" +
@@ -73,11 +71,11 @@ public class GetRandomCat implements ICommandSlash {
             filter.map(s -> sendGifs ? "" : String.format("fi=%s", s)).orElse("") +
             (filter.isPresent() && !sendGifs ? "&" : "") + "json=true";
 
-        CatAASData catAASData = mapper.readValue(new URL(url), CatAASData.class);
+        CatAASData catAASData = mapper.readValue(new URL(url).openStream(), CatAASData.class);
 
         if (catAASData.hasError()) {
-            event.getHook().sendMessageEmbeds(
-                getMessageEmbed(response, catAASData)
+            event.getHook().sendMessageComponents(
+                getMessageEmbed(catAASData)
             ).queue();
             return;
         }
@@ -85,24 +83,24 @@ public class GetRandomCat implements ICommandSlash {
         HttpURLConnection catAAS = (HttpURLConnection) new URL(baseURL + catAASData.getUrl()).openConnection();
         if (catAAS.getResponseCode() != 200) {
             CatAASData err = mapper.readValue(catAAS.getErrorStream(), CatAASData.class);
-            event.getHook().sendMessageEmbeds(
-                getMessageEmbed(response, err)
+            event.getHook().sendMessageComponents(
+                getMessageEmbed(err)
             ).queue();
             return;
         }
 
-        if (sendGifs && filter.isPresent()) {
-            response.setDescription("***Cannot have gif and filter. Skipping filter parameter.***");
-        }
-
-        event.getHook().sendMessageEmbeds(
-                response.setAuthor(WordUtils.capitalize(catAASData.getEffectiveOwner()))
-                    .addField("Created at", catAASData.getCreatedAtAsTimestamp(), true)
-                    .addField("Last Updated", catAASData.getUpdatedAtAsTimestamp(), true)
-                    .addField("Tags", catAASData.getTagsAsString(), false)
-                    .build()
+        event.getHook().sendMessageComponents(
+                StandardResponse.getResponseContainer(WordUtils.capitalize(catAASData.getEffectiveOwner()), new ArrayList<>() {{
+                    if (sendGifs && filter.isPresent()) {
+                        add(TextDisplay.of("***Cannot have gif and filter. Skipping filter parameter.***"));
+                    }
+                    add(TextDisplay.ofFormat("Created at %s", catAASData.getCreatedAtAsTimestamp()));
+                    add(TextDisplay.ofFormat("Last Updated on %s", catAASData.getUpdatedAtAsTimestamp()));
+                    add(TextDisplay.ofFormat("Tag%s\n%s", catAASData.getTags().size() > 1 ? "s" : "", catAASData.getTagsAsString()));
+                    add(Separator.createDivider(Separator.Spacing.SMALL));
+                    add(MediaGallery.of(MediaGalleryItem.fromFile(FileUpload.fromData(catAAS.getInputStream(), catAASData.getFile()))));
+                }})
             )
-            .setFiles(FileUpload.fromData(catAAS.getInputStream(), catAASData.getFile()))
             .queue();
     }
 }

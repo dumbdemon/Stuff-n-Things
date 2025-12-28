@@ -27,7 +27,7 @@ public class TinyURLHandler extends Handler {
     }
 
     /**
-     * Get a shorten url
+     * Get a shortened url
      *
      * @param tinyURLForm The body {@link com.terransky.stuffnthings.interfaces.Pojo POJO} to be sent to the API
      * @return A {@link TinyURLResponse}

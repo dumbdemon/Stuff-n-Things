@@ -2,7 +2,7 @@ package com.terransky.stuffnthings.interactions.commands.userContextMenus;
 
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.devs.UserInfo;
-import com.terransky.stuffnthings.interfaces.interactions.ICommandUser;
+import com.terransky.stuffnthings.interfaces.interactions.UserCommandInteraction;
 import com.terransky.stuffnthings.utilities.cannedAgenda.GuildOnly;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.InteractionType;
@@ -12,10 +12,10 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-public class UserInfoMenu implements ICommandUser {
-    @Override
-    public String getName() {
-        return "More Info";
+public class UserInfoMenu extends UserCommandInteraction {
+
+    public UserInfoMenu() {
+        super("More Info");
     }
 
     @Override
@@ -24,7 +24,8 @@ public class UserInfoMenu implements ICommandUser {
             GuildOnly.interactionResponse(event, InteractionType.COMMAND_USER);
             return;
         }
-        event.replyEmbeds(UserInfo.getUserInfo(event.getTargetMember(), blob))
+
+        event.replyComponents(UserInfo.getUserInfo(event.getTargetMember(), blob))
             .setEphemeral(true)
             .queue();
     }

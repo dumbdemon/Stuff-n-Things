@@ -1,16 +1,18 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
-import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
+import com.terransky.stuffnthings.interfaces.interactions.SlashCommandInteraction;
 import com.terransky.stuffnthings.utilities.command.CommandCategory;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.Mastermind;
-import com.terransky.stuffnthings.utilities.command.Metadata;
+import com.terransky.stuffnthings.utilities.command.StandardResponse;
 import com.terransky.stuffnthings.utilities.cyphers.Base64Cypher;
 import com.terransky.stuffnthings.utilities.cyphers.HexCypher;
 import com.terransky.stuffnthings.utilities.cyphers.ReverseCypher;
 import com.terransky.stuffnthings.utilities.cyphers.Rot13Cypher;
 import com.thedeanda.lorem.LoremIpsum;
+import net.dv8tion.jda.api.components.separator.Separator;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -27,14 +29,15 @@ import java.util.List;
 /**
  * Command the encodes/decodes messages.
  */
-public class CypherCmd implements ICommandSlash {
-    @Override
-    public String getName() {
-        return "cypher";
-    }
+public class CypherCmd extends SlashCommandInteraction {
 
-    @Override
-    public Metadata getMetadata() {
+    public CypherCmd() {
+        super("cypher", "Encode/Decode messages using different cyphers.",
+            Mastermind.DEVELOPER, CommandCategory.FUN,
+            parseDate(2023, 2, 5, 14, 41),
+            parseDate(2024, 2, 9, 16, 11)
+        );
+
         final List<SubcommandData> enDeCode = List.of(
             new SubcommandData("encode", "Encode a message")
                 .addOptions(
@@ -47,28 +50,17 @@ public class CypherCmd implements ICommandSlash {
                         .setRequiredLength(5, MessageEmbed.DESCRIPTION_MAX_LENGTH / 4)
                 )
         );
-        return new Metadata(getName(), "Encode/Decode messages using different cyphers.", """
-            Encode/Decode messages using different cyphers.
-            Current Cyphers:
-            ```
-            • Base64
-            • Rot13
-            • Reverse
-            ```
-            """, Mastermind.DEVELOPER, CommandCategory.FUN,
-            Metadata.parseDate(2023, 2, 5, 14, 41),
-            Metadata.parseDate(2024, 2, 9, 16, 11)
-        )
-            .addSubcommandGroups(
-                new SubcommandGroupData("base64", "Base64 Cypher")
-                    .addSubcommands(enDeCode),
-                new SubcommandGroupData("rot13", "Rot13 Cypher")
-                    .addSubcommands(enDeCode),
-                new SubcommandGroupData("reverse", "Reverse Cypher")
-                    .addSubcommands(enDeCode),
-                new SubcommandGroupData("hexadecimal", "Hexadecimal Cypher")
-                    .addSubcommands(enDeCode)
-            );
+
+        addSubcommandGroups(
+            new SubcommandGroupData("base64", "Base64 Cypher")
+                .addSubcommands(enDeCode),
+            new SubcommandGroupData("rot13", "Rot13 Cypher")
+                .addSubcommands(enDeCode),
+            new SubcommandGroupData("reverse", "Reverse Cypher")
+                .addSubcommands(enDeCode),
+            new SubcommandGroupData("hexadecimal", "Hexadecimal Cypher")
+                .addSubcommands(enDeCode)
+        );
     }
 
     @Override
@@ -93,11 +85,14 @@ public class CypherCmd implements ICommandSlash {
             default -> throw new IllegalStateException("Unexpected value: " + cypher);
         }
 
-        event.replyEmbeds(
-            blob.getStandardEmbed(String.format("%s - %s %s", getNameReadable(), WordUtils.capitalize(cypher), isEncode ? " Encode" : " Decode"))
-                .addField("Original", String.format("```%s```", message), false)
-                .addField(isEncode ? "Encoded Message" : "Decoded Message", String.format("```%s```", enDecodedString), false)
-                .build()
+        event.replyComponents(
+            StandardResponse.getResponseContainer(String.format("%s - %s %s", getNameReadable(), WordUtils.capitalize(cypher), isEncode ? " Encode" : " Decode"),
+                List.of(
+                    TextDisplay.ofFormat("## Original ```%s```", message),
+                    Separator.createDivider(Separator.Spacing.SMALL),
+                    TextDisplay.ofFormat("## %s ```%s```", isEncode ? "Encoded Message" : "Decoded Message", enDecodedString)
+                )
+            )
         ).queue();
     }
 }

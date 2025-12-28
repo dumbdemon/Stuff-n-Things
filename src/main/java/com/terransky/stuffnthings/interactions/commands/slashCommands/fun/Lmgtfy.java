@@ -1,11 +1,10 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
-import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
+import com.terransky.stuffnthings.interfaces.interactions.SlashCommandInteraction;
 import com.terransky.stuffnthings.utilities.command.CommandCategory;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.Mastermind;
-import com.terransky.stuffnthings.utilities.command.Metadata;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -22,33 +21,27 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
 
-public class Lmgtfy implements ICommandSlash {
-    @Override
-    public String getName() {
-        return "lmgtfy";
-    }
+public class Lmgtfy extends SlashCommandInteraction {
 
-    @Override
-    public Metadata getMetadata() {
-        return new Metadata(this.getName(), "Let me Google that for you!", """
-            When a person is too lazy to search it up themselves, call this on 'em.
-            """, Mastermind.DEVELOPER,
+    public Lmgtfy() {
+        super("lmgtfy", "Let me Google that for you!",
+            Mastermind.DEVELOPER,
             CommandCategory.FUN,
-            Metadata.parseDate(2022, 8, 24, 11, 10),
-            Metadata.parseDate(2024, 2, 9, 16, 11)
-        )
-            .addSubcommands(
-                new SubcommandData("web", "Let me Google that for you!")
-                    .addOptions(
-                        new OptionData(OptionType.STRING, "search", "What to search for.", true),
-                        new OptionData(OptionType.USER, "victim", "Ping this person to victimize them!")
-                    ),
-                new SubcommandData("images", "Let me Google an image for you!")
-                    .addOptions(
-                        new OptionData(OptionType.STRING, "search", "What to search for.", true),
-                        new OptionData(OptionType.USER, "victim", "Ping this person to victimize them!")
-                    )
-            );
+            parseDate(2022, 8, 24, 11, 10),
+            parseDate(2024, 2, 9, 16, 11)
+        );
+        addSubcommands(
+            new SubcommandData("web", "Let me Google that for you!")
+                .addOptions(
+                    new OptionData(OptionType.STRING, "search", "What to search for.", true),
+                    new OptionData(OptionType.USER, "victim", "Ping this person to victimize them!")
+                ),
+            new SubcommandData("images", "Let me Google an image for you!")
+                .addOptions(
+                    new OptionData(OptionType.STRING, "search", "What to search for.", true),
+                    new OptionData(OptionType.USER, "victim", "Ping this person to victimize them!")
+                )
+        );
     }
 
     @Override
@@ -67,10 +60,10 @@ public class Lmgtfy implements ICommandSlash {
             Color embedColor = victimsProfile.getAccentColorRaw() == User.DEFAULT_ACCENT_COLOR_RAW ? Color.WHITE : victimsProfile.getAccentColor();
             builder.setColor(embedColor);
             event.reply(victim.getAsMention())
-                .addEmbeds(builder.build()).queue();
+                .addEmbeds(builder.build()).useComponentsV2(false).queue();
         } else {
             builder.setColor(Color.WHITE);
-            event.replyEmbeds(builder.build()).queue();
+            event.replyEmbeds(builder.build()).useComponentsV2(false).queue();
         }
     }
 }

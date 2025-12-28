@@ -4,11 +4,7 @@ import com.terransky.stuffnthings.Managers;
 import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
-import com.terransky.stuffnthings.interfaces.interactions.ICommandMessage;
-import com.terransky.stuffnthings.interfaces.interactions.ICommandUser;
-import com.terransky.stuffnthings.managers.CommandIManager;
-import com.terransky.stuffnthings.managers.SlashIManager;
-import com.terransky.stuffnthings.utilities.command.EmbedColor;
+import com.terransky.stuffnthings.utilities.command.BotColors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
@@ -39,9 +35,9 @@ public class ListeningForEvents extends ListenerAdapter {
         }
 
         jda.updateCommands()
-            .addCommands(Managers.INSTANCE.getSlashManager().getCommandData())
-            .addCommands(Managers.INSTANCE.getMessageContextManager().getCommandData())
-            .addCommands(Managers.INSTANCE.getUserContextManager().getCommandData())
+            .addCommands((new Managers.SlashCommands()).getCommandData())
+            .addCommands((new Managers.UserContextMenu()).getCommandData())
+            .addCommands((new Managers.MessageContextMenu()).getCommandData())
             .queue(commands -> log.info("{} global commands loaded!", commands.size()), DiscordAPIException::new);
 
         long timer = TimeUnit.MINUTES.toMillis(10);
@@ -56,7 +52,7 @@ public class ListeningForEvents extends ListenerAdapter {
         DatabaseManager.INSTANCE.addGuild(event.getGuild());
 
         EmbedBuilder eb = new EmbedBuilder()
-            .setColor(EmbedColor.DEFAULT.getColor())
+            .setColor(BotColors.DEFAULT.getColor())
             .setAuthor(theBot.getName(), null, theBot.getAvatarUrl())
             .setDescription("> *What am I doing here?*\n> *Why am I here?*\n> *Am I supposed to be here?*");
         Objects.requireNonNull(event.getGuild().getDefaultChannel()).asTextChannel().sendMessageEmbeds(eb.build()).queue();
@@ -83,20 +79,16 @@ public class ListeningForEvents extends ListenerAdapter {
     }
 
     private void upsertGuildCommands(@NotNull GenericGuildEvent event) {
-        SlashIManager slashManager = Managers.INSTANCE.getSlashManager();
-        CommandIManager<ICommandMessage> messageManager = Managers.INSTANCE.getMessageContextManager();
-        CommandIManager<ICommandUser> userManager = Managers.INSTANCE.getUserContextManager();
-
         Guild guild = event.getGuild();
         CommandListUpdateAction updateAction = guild.updateCommands()
-            .addCommands(slashManager.getCommandData(guild))
-            .addCommands(messageManager.getCommandData(guild))
-            .addCommands(userManager.getCommandData(guild));
+            .addCommands((new Managers.SlashCommands()).getCommandData(guild))
+            .addCommands((new Managers.UserContextMenu()).getCommandData(guild))
+            .addCommands((new Managers.MessageContextMenu()).getCommandData(guild));
 
         if (StuffNThings.getConfig().getCore().getTestingMode()) {
-            updateAction.addCommands(slashManager.getCommandData())
-                .addCommands(messageManager.getCommandData())
-                .addCommands(userManager.getCommandData())
+            updateAction.addCommands((new Managers.SlashCommands()).getCommandData())
+                .addCommands((new Managers.UserContextMenu()).getCommandData())
+                .addCommands((new Managers.MessageContextMenu()).getCommandData())
                 .queue(commands -> log.info("{} global commands loaded as guild commands on {}[{}]", commands.size(), guild.getName(), guild.getId()),
                     DiscordAPIException::new);
             return;

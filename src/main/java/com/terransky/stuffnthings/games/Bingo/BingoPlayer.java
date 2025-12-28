@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.terransky.stuffnthings.games.Player;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -105,7 +105,7 @@ public class BingoPlayer extends Player {
                     .append(board[i][j] == -1 ? "[]" : number)
                     .append(", ");
             }
-            prettyBoard.append(row.substring(0, row.length() - 2)).append("\n");
+            prettyBoard.append(row, 0, row.length() - 2).append("\n");
         }
 
         return prettyBoard.append("```\n").toString();
@@ -113,7 +113,7 @@ public class BingoPlayer extends Player {
 
     @JsonIgnore
     @BsonIgnore
-    public MessageEmbed.Field getNumberGotField() {
+    public TextDisplay getNumberGotTextDisplay() {
         List<String> numbersGotten = new ArrayList<>();
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
@@ -127,7 +127,7 @@ public class BingoPlayer extends Player {
         StringBuilder numbersGot = new StringBuilder();
         numbersGotten.stream().sorted().forEach(number -> numbersGot.append(number).append(", "));
         String numbers = numbersGot.isEmpty() ? "None" : numbersGot.substring(0, numbersGot.length() - 2);
-        return new MessageEmbed.Field("Numbers Gotten", numbers, false);
+        return TextDisplay.ofFormat("# Numbers Gotten\n%s", numbers, false);
     }
 
     /**

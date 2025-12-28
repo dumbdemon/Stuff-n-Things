@@ -2,13 +2,20 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.devs;
 
 import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
-import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
-import com.terransky.stuffnthings.utilities.command.*;
+import com.terransky.stuffnthings.interfaces.interactions.SlashCommandInteraction;
+import com.terransky.stuffnthings.utilities.command.BotColors;
+import com.terransky.stuffnthings.utilities.command.CommandCategory;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.Mastermind;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.components.container.ContainerChildComponent;
+import net.dv8tion.jda.api.components.section.Section;
+import net.dv8tion.jda.api.components.separator.Separator;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
+import net.dv8tion.jda.api.components.thumbnail.Thumbnail;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -20,11 +27,23 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class UserInfo implements ICommandSlash {
+public class UserInfo extends SlashCommandInteraction {
+
+    public UserInfo() {
+        super("user-info", "Get info on a specific user on the server! Defaults to you.", Mastermind.DEFAULT, CommandCategory.DEVS,
+            parseDate(2023, 8, 24, 11, 10),
+            parseDate(2025, 12, 27, 5, 56)
+        );
+        addOptions(
+            new OptionData(OptionType.USER, "user", "Who you want to know about.")
+        );
+    }
+
     private static String setUserPerms(@NotNull Member member) {
         StringBuilder userPerms = new StringBuilder();
         String finalUserPerms;
@@ -70,7 +89,7 @@ public class UserInfo implements ICommandSlash {
     }
 
     @NotNull
-    public static MessageEmbed getUserInfo(@NotNull Member member, @NotNull EventBlob blob) throws ExecutionException, InterruptedException {
+    public static Container getUserInfo(@NotNull Member member, @NotNull EventBlob blob) throws ExecutionException, InterruptedException {
         List<Role> roles = member.getRoles().stream().sorted().toList();
         int roleCount = roles.size() + 1;
         Role topRole = roles.isEmpty() ? blob.getGuild().getPublicRole() : roles.get(roles.size() - 1);
@@ -78,58 +97,41 @@ public class UserInfo implements ICommandSlash {
         String permissionStatus = setPermissionStatus(member, blob.getSelfMember());
         String userPerms = setUserPerms(member);
         User.Profile profile = member.getUser().retrieveProfile().submit().get();
-        Color embedColor = profile.getAccentColor() == null ? EmbedColor.SUB_DEFAULT.getColor() : profile.getAccentColor();
+        Color embedColor = profile.getAccentColor() == null ? BotColors.SUB_DEFAULT.getColor() : profile.getAccentColor();
 
-        EmbedBuilder infoEmbed = blob.getStandardEmbed(WordUtils.capitalize(member.getEffectiveName()) + "'s Info", embedColor)
-            .setThumbnail(member.getEffectiveAvatarUrl())
-            .addField("Username", member.getUser().getName(), false)
-            .addField("User ID", member.getId(), true);
+        List<ContainerChildComponent> children = new ArrayList<>();
+
+        children.add(
+            Section.of(
+                Thumbnail.fromUrl(
+                    member.getEffectiveAvatarUrl()
+                ),
+                TextDisplay.of("## " + WordUtils.capitalize(member.getEffectiveName()) + "'s Info"),
+                TextDisplay.of(String.format("### Username\n%s", member.getUser().getName())),
+                TextDisplay.of(String.format("### User ID\n%s", member.getId()))
+            )
+        );
+
         if (member.getUser().isBot())
-            infoEmbed.addField("Is System?", member.getUser().isSystem() ? "Yes" : "No", true);
-        infoEmbed.addField("User Status", permissionStatus, false)
-            .addField("Total Roles", "%d role%s".formatted(roleCount, roleCount > 1 ? "s" : ""), true)
-            .addField("Top Role", topRole.getAsMention(), true)
-            .addField("Server Permissions", "```%s```".formatted(userPerms), false)
-            .addField("Joined Discord on", Timestamp.getDateAsTimestamp(member.getUser().getTimeCreated()), true)
-            .addField("Joined Server on", Timestamp.getDateAsTimestamp(member.getTimeJoined()), true)
-            .setFooter("Requested by " + blob.getMemberName() + " | " + blob.getMemberId(), blob.getMemberEffectiveAvatarUrl());
+            children.add(TextDisplay.of(String.format("Is System?\n%s", member.getUser().isSystem() ? "Yes" : "No")));
 
+        children.add(Separator.createDivider(Separator.Spacing.SMALL));
+        children.add(TextDisplay.of(String.format("### User Status\n%s", permissionStatus)));
+        children.add(TextDisplay.of(String.format("### Top Role\n%s", topRole.getAsMention())));
+        children.add(TextDisplay.of(String.format("### Total Roles\n%d role%s", roleCount, roleCount > 1 ? "s" : "")));
+        children.add(TextDisplay.of(String.format("### Server Permissions\n```%s```".formatted(userPerms))));
+        children.add(Separator.createDivider(Separator.Spacing.SMALL));
         if (!member.getUser().isBot()) {
             String boostedText = (member.getTimeBoosted() != null) ?
-                String.format(":gem: %s (%s)", Timestamp.getDateAsTimestamp(member.getTimeBoosted()),
-                    Timestamp.getDateAsTimestamp(member.getTimeBoosted(), Timestamp.RELATIVE)) : ":x: Not Boosting.";
-            infoEmbed.addField("Boosting Since", boostedText, false);
+                String.format("Boosting Since :gem: %s (%s)", Timestamp.getDateAsTimestamp(member.getTimeBoosted()),
+                    Timestamp.getDateAsTimestamp(member.getTimeBoosted(), Timestamp.RELATIVE)) : ":x: Not Boosting";
+            children.add(TextDisplay.of(boostedText));
         }
+        children.add(TextDisplay.of(String.format("Joined Discord on %s", Timestamp.getDateAsTimestamp(member.getUser().getTimeCreated()))));
+        children.add(TextDisplay.of(String.format("Joined Server on %s", Timestamp.getDateAsTimestamp(member.getTimeJoined()))));
 
-        return infoEmbed.build();
-    }
 
-    @Override
-    public String getName() {
-        return "user-info";
-    }
-
-    @Override
-    public Metadata getMetadata() {
-        return new Metadata(this.getName(), "Get info on a specific user on the server! Defaults to you.", """
-            Get info on a user or bot.
-            The following info with be returned:
-            • User ID
-            • User Status
-            • Total Roles
-            • Top Tole
-            • Server Permissions
-            • Server Joined Date
-            • Discord Joined Date
-            • Boosting Status (if user)
-            """, Mastermind.DEFAULT,
-            CommandCategory.DEVS,
-            Metadata.parseDate(2023, 8, 24, 11, 10),
-            Metadata.parseDate(2024, 8, 20, 12, 3)
-        )
-            .addOptions(
-                new OptionData(OptionType.USER, "user", "Who you want to know about.")
-            );
+        return Container.of(children).withAccentColor(embedColor);
     }
 
     @Override
@@ -137,6 +139,6 @@ public class UserInfo implements ICommandSlash {
         String memberId = event.getOption("user", blob.getMember(), OptionMapping::getAsMember).getId();
         Member member = blob.getGuild().retrieveMemberById(memberId).submit().get();
 
-        event.replyEmbeds(getUserInfo(member, blob)).queue();
+        event.replyComponents(getUserInfo(member, blob)).queue();
     }
 }
