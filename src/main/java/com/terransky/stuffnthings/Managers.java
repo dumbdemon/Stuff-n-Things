@@ -59,8 +59,7 @@ public class Managers {
             addInteraction(new GetWeather());
             addInteraction(new JokesV2());
             addInteraction(new Kill());
-            addInteraction(new Kitsu.Anime());
-            addInteraction(new Kitsu.Manga());
+            addInteraction(new Kitsu());
             addInteraction(new Lmgtfy());
             addInteraction(new Meme());
             addInteraction(new RobFailChance());

@@ -10,6 +10,7 @@ import com.terransky.stuffnthings.dataSources.kitsu.entries.enums.Subtype;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.manga.MangaAttributes;
 import com.terransky.stuffnthings.dataSources.kitsu.entries.manga.MangaDatum;
 import com.terransky.stuffnthings.dataSources.kitsu.relationships.categories.CategoriesKitsuData;
+import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.SlashCommandInteraction;
 import com.terransky.stuffnthings.utilities.apiHandlers.KitsuHandler;
@@ -29,6 +30,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
@@ -36,26 +38,27 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("SpellCheckingInspection")
-public class Kitsu {
+public class Kitsu extends SlashCommandInteraction {
 
-    @NotNull
-    private static OffsetDateTime getGlobalLastUpdated() {
-        return SlashCommandInteraction.parseDate(2024, 8, 21, 11, 1);
-    }
-
-    @NotNull
-    private static OffsetDateTime getAnimeLastUpdated() {
-        return SlashCommandInteraction.parseDate(2023, 1, 18, 16, 19);
-    }
-
-    @NotNull
-    private static OffsetDateTime getMangaLastUpdated() {
-        return SlashCommandInteraction.parseDate(2023, 2, 5, 11, 52);
+    public Kitsu() {
+        super("kitsu", "Search Kitsu.io",
+            Mastermind.DEVELOPER, CommandCategory.FUN,
+            parseDate(2023, 1, 17, 12, 43),
+            parseDate(2025, 12, 28, 12, 40)
+        );
+        OptionData search = new OptionData(OptionType.STRING, "search", "Queary for search", true);
+        setWorking(hasKitsuToken());
+        addSubcommands(
+            new SubcommandData("anime", "Search for an anime using Kitsu.app")
+                .addOptions(search),
+            new SubcommandData("manga", "Search for an manga using Kitsu.app")
+                .addOptions(search)
+        );
     }
 
     @NotNull
@@ -67,6 +70,17 @@ public class Kitsu {
             return String.format("on **%s**", attributes.getStartDate());
 
         return String.format("from **%s** to **%s**", attributes.getStartDate(), attributes.getEndDate());
+    }
+
+    @Override
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException {
+        String subcommand = event.getSubcommandName();
+        if (subcommand == null) throw new DiscordAPIException("No subcommand given.");
+
+        switch (subcommand) {
+            case "manga" -> mangaExecute(event);
+            case "anime" -> animeExecute(event);
+        }
     }
 
     @NotNull
@@ -158,97 +172,61 @@ public class Kitsu {
         return !kistuIo.getUsername().isEmpty() || !kistuIo.getPassword().isEmpty();
     }
 
-    public static class Anime extends SlashCommandInteraction {
+    public void animeExecute(@NotNull SlashCommandInteractionEvent event) throws FailedInteractionException, IOException {
+        event.deferReply().queue();
+        String query = event.getOption("search", "dragon maid", OptionMapping::getAsString);
 
-        public Anime() {
-            super("anime", "Search for an anime using Kitsu.app",
-                Mastermind.DEVELOPER, CommandCategory.FUN,
-                parseDate(2023, 1, 17, 12, 43),
-                getAnimeLastUpdated().isAfter(getGlobalLastUpdated()) ? getAnimeLastUpdated() : getGlobalLastUpdated()
-            );
-            addOptions(new OptionData(OptionType.STRING, "search", "Queary for search", true));
-        }
-
-        @Override
-        public boolean isWorking() {
-            return hasKitsuToken();
-        }
-
-        @Override
-        public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
-            event.deferReply().queue();
-            String query = event.getOption("search", "dragon maid", OptionMapping::getAsString);
-
-            try {
-                KitsuHandler handler = new KitsuHandler();
-                List<AnimeDatum> animeData = handler.getAnime(query).getData();
-                if (animeData.isEmpty()) {
-                    event.getHook().sendMessageComponents(getNoResultsMessage("Anime")).queue();
-                    return;
-                }
-                AnimeDatum animeDatum = animeData.get(0);
-                CategoriesKitsuData categories = handler.getCategories(animeDatum.getRelationships());
-                AnimeAttributes attributes = animeDatum.getAttributes();
-                Container message;
-
-                if (attributes.getNsfw() && !event.getChannel().asTextChannel().isNSFW())
-                    message = getNSFWMessage("Anime");
-                else message = getResponseContainer(attributes, categories);
-
-                event.getHook().sendMessageComponents(message).queue();
-            } catch (InterruptedException e) {
-                LoggerFactory.getLogger(getClass()).error("error during network operation", e);
-                event.getHook().sendMessageComponents(
-                    StandardResponse.getResponseContainer("Anime Search", Responses.NETWORK_OPERATION)
-                ).queue();
+        try {
+            KitsuHandler handler = new KitsuHandler();
+            List<AnimeDatum> animeData = handler.getAnime(query).getData();
+            if (animeData.isEmpty()) {
+                event.getHook().sendMessageComponents(getNoResultsMessage("Anime")).queue();
+                return;
             }
+            AnimeDatum animeDatum = animeData.get(0);
+            CategoriesKitsuData categories = handler.getCategories(animeDatum.getRelationships());
+            AnimeAttributes attributes = animeDatum.getAttributes();
+            Container message;
+
+            if (attributes.getNsfw() && !event.getChannel().asTextChannel().isNSFW())
+                message = getNSFWMessage("Anime");
+            else message = getResponseContainer(attributes, categories);
+
+            event.getHook().sendMessageComponents(message).queue();
+        } catch (InterruptedException e) {
+            LoggerFactory.getLogger(getClass()).error("error during network operation", e);
+            event.getHook().sendMessageComponents(
+                StandardResponse.getResponseContainer("Anime Search", Responses.NETWORK_OPERATION)
+            ).queue();
         }
     }
 
-    public static class Manga extends SlashCommandInteraction {
+    public void mangaExecute(@NotNull SlashCommandInteractionEvent event) throws FailedInteractionException, IOException {
+        event.deferReply().queue();
+        String query = event.getOption("search", "dragon maid", OptionMapping::getAsString);
 
-        public Manga() {
-            super("manga", "Search for a manga using Kitsu.app",
-                Mastermind.DEVELOPER, CommandCategory.FUN,
-                parseDate(2023, 2, 5, 11, 52),
-                getMangaLastUpdated().isAfter(getGlobalLastUpdated()) ? getMangaLastUpdated() : getGlobalLastUpdated()
-            );
-            addOptions(new OptionData(OptionType.STRING, "search", "Queary for search", true));
-        }
-
-        @Override
-        public boolean isWorking() {
-            return hasKitsuToken();
-        }
-
-        @Override
-        public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
-            event.deferReply().queue();
-            String query = event.getOption("search", "dragon maid", OptionMapping::getAsString);
-
-            try {
-                KitsuHandler handler = new KitsuHandler();
-                List<MangaDatum> mangaData = handler.getManga(query).getData();
-                if (mangaData.isEmpty()) {
-                    event.getHook().sendMessageComponents(getNoResultsMessage("Manga")).queue();
-                    return;
-                }
-                MangaDatum mangaDatum = mangaData.get(0);
-                CategoriesKitsuData categories = handler.getCategories(mangaDatum.getRelationships());
-                MangaAttributes attributes = mangaDatum.getAttributes();
-                Container message;
-
-                if (attributes.getAgeRatingEnum().isAdult() && !event.getChannel().asTextChannel().isNSFW())
-                    message = getNSFWMessage("Manga");
-                else message = getResponseContainer(attributes, categories);
-
-                event.getHook().sendMessageComponents(message).queue();
-            } catch (InterruptedException e) {
-                LoggerFactory.getLogger(getClass()).error("error during network operation", e);
-                event.getHook().sendMessageComponents(
-                    StandardResponse.getResponseContainer("Manga Search", Responses.NETWORK_OPERATION)
-                ).queue();
+        try {
+            KitsuHandler handler = new KitsuHandler();
+            List<MangaDatum> mangaData = handler.getManga(query).getData();
+            if (mangaData.isEmpty()) {
+                event.getHook().sendMessageComponents(getNoResultsMessage("Manga")).queue();
+                return;
             }
+            MangaDatum mangaDatum = mangaData.get(0);
+            CategoriesKitsuData categories = handler.getCategories(mangaDatum.getRelationships());
+            MangaAttributes attributes = mangaDatum.getAttributes();
+            Container message;
+
+            if (attributes.getAgeRatingEnum().isAdult() && !event.getChannel().asTextChannel().isNSFW())
+                message = getNSFWMessage("Manga");
+            else message = getResponseContainer(attributes, categories);
+
+            event.getHook().sendMessageComponents(message).queue();
+        } catch (InterruptedException e) {
+            LoggerFactory.getLogger(getClass()).error("error during network operation", e);
+            event.getHook().sendMessageComponents(
+                StandardResponse.getResponseContainer("Manga Search", Responses.NETWORK_OPERATION)
+            ).queue();
         }
     }
 }
