@@ -12,7 +12,6 @@ import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.Role
 import com.terransky.stuffnthings.interactions.commands.slashCommands.devs.*;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.*;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.games.Bingo;
-import com.terransky.stuffnthings.interactions.commands.slashCommands.general.About;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.general.Ping;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.general.Suggest;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.maths.FibonacciSequence;
@@ -21,113 +20,107 @@ import com.terransky.stuffnthings.interactions.commands.slashCommands.maths.Solv
 import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.CalculateRats;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.WhatsInStandard;
 import com.terransky.stuffnthings.interactions.commands.userContextMenus.UserInfoMenu;
-import com.terransky.stuffnthings.interactions.modals.KillSuggest;
-import com.terransky.stuffnthings.interactions.modals.RandomMemeBuilder;
 import com.terransky.stuffnthings.interfaces.interactions.*;
-import com.terransky.stuffnthings.managers.CommandIManager;
-import com.terransky.stuffnthings.managers.IManager;
-import com.terransky.stuffnthings.managers.SlashIManager;
+import com.terransky.stuffnthings.utilities.managers.CommandInteractionManager;
+import com.terransky.stuffnthings.utilities.managers.InteractionManager;
 
 public class Managers {
 
-    public static final Managers INSTANCE = new Managers();
-
-    private final SlashIManager slashIManager = new SlashIManager(
-        //Admin Commands
-        new ChannelUnLock(),
-        new CheckPerms(),
-        new ConfigCmd(),
-        new RolesController(),
-
-        //Math Commands
-        new FibonacciSequence(),
-        new NumbersAPI(),
-        new SolveQuadratic(),
-
-        //M:tG Commands
-        new CalculateRats(),
-        new WhatsInStandard(),
-
-        //Games
-        new Bingo(),
-
-        //Fun Commands
-        new ColorInfo(),
-        new CypherCmd(),
-        new Dictionary(),
-        new EightBall(),
-        new GetDadJokes(),
-        new GetRandomCat(),
-        new GetRandomDog(),
-        new GetWeather(),
-        new JokesV2(),
-        new Kill(),
-        new Kitsu.Anime(),
-        new Kitsu.Manga(),
-        new Lmgtfy(),
-        new Meme(),
-        new RobFailChance(),
-        new Say(),
-
-        //General Commands
-        new About(),
-        new Ping(),
-        new Suggest(),
-
-        //Dev commands
-        new AddToWatchlist(),
-        new BotBan(),
-        new GetInvite(),
-        new Test(),
-        new TinyURL(),
-        new UserInfo()
-    );
-    private final IManager<IButton> buttonIManager = new IManager<>(
-        new AcceptKill.Random(),
-        new AcceptKill.Target(),
-        new DenyKill(),
-        new ExpiredButton(),
-        new GetMoreDadJokes()
-    );
-    private final IManager<IModal> modalIManager = new IManager<>(
-        new KillSuggest.Random(),
-        new KillSuggest.Target(),
-        new RandomMemeBuilder()
-    );
-    private final CommandIManager<ICommandMessage> messageCommandIManager = new CommandIManager<>(
-        new ReportMessage()
-    );
-    private final CommandIManager<ICommandUser> userCommandIManager = new CommandIManager<>(
-        new UserInfoMenu()
-    );
-    private final IManager<ISelectMenuEntity> entitySelectMenuIManager = new IManager<>();
-    private final IManager<ISelectMenuString> stringSelectMenuIManager = new IManager<>();
-
-    public SlashIManager getSlashManager() {
-        return slashIManager;
+    Managers() {
     }
 
-    public IManager<IButton> getButtonManager() {
-        return buttonIManager;
+    public static class SlashCommands extends CommandInteractionManager<SlashCommandInteraction> {
+
+        public SlashCommands() {
+            //Admin
+            addInteraction(new ChannelUnLock());
+            addInteraction(new CheckPerms());
+            addInteraction(new ConfigCmd());
+            addInteraction(new RolesController());
+
+            //Developer
+            addInteraction(new AddToWatchlist());
+            addInteraction(new BotBan());
+            addInteraction(new GetInvite());
+            addInteraction(new test());
+            addInteraction(new TinyURL());
+            addInteraction(new UserInfo());
+
+            //Games
+            addInteraction(new Bingo());
+
+            //Fun
+            addInteraction(new ColorInfo());
+            addInteraction(new CypherCmd());
+            addInteraction(new EightBall());
+            addInteraction(new GetDadJokes());
+            addInteraction(new GetRandomCat());
+            addInteraction(new GetRandomDog());
+            addInteraction(new GetWeather());
+            addInteraction(new JokesV2());
+            addInteraction(new Kill());
+            addInteraction(new Kitsu.Anime());
+            addInteraction(new Kitsu.Manga());
+            addInteraction(new Lmgtfy());
+            addInteraction(new Meme());
+            addInteraction(new RobFailChance());
+            addInteraction(new Say());
+
+            //General
+            addInteraction(new Ping());
+            addInteraction(new Suggest());
+
+            //Maths
+            addInteraction(new NumbersAPI());
+            addInteraction(new SolveQuadratic());
+            addInteraction(new FibonacciSequence());
+
+            //Magic: the Gathering
+            addInteraction(new CalculateRats());
+            addInteraction(new WhatsInStandard());
+        }
     }
 
-    public CommandIManager<ICommandMessage> getMessageContextManager() {
-        return messageCommandIManager;
+    public static class DiscordButtons extends InteractionManager<ButtonInteraction> {
+
+        public DiscordButtons() {
+            addInteraction(new ExpiredButton());
+            addInteraction(new AcceptKill.Random());
+            addInteraction(new AcceptKill.Target());
+            addInteraction(new GetMoreDadJokes());
+            addInteraction(new DenyKill());
+        }
     }
 
-    public CommandIManager<ICommandUser> getUserContextManager() {
-        return userCommandIManager;
+    public static class MessageContextMenu extends CommandInteractionManager<MessageCommandInteraction> {
+
+        public MessageContextMenu() {
+            addInteraction(new ReportMessage());
+        }
     }
 
-    public IManager<IModal> getModalManager() {
-        return modalIManager;
+    public static class UserContextMenu extends CommandInteractionManager<UserCommandInteraction> {
+
+        public UserContextMenu() {
+            addInteraction(new UserInfoMenu());
+        }
     }
 
-    public IManager<ISelectMenuEntity> getEntitySelectMenuManager() {
-        return entitySelectMenuIManager;
+    public static class EntitySelectMenu extends InteractionManager<SelectMenuEntityInteraction> {
+
+        public EntitySelectMenu() {
+        }
     }
 
-    public IManager<ISelectMenuString> getStringSelectMenuManager() {
-        return stringSelectMenuIManager;
+    public static class StringSelectMenu extends InteractionManager<SelectMenuStringInteraction> {
+
+        public StringSelectMenu() {
+        }
+    }
+
+    public static class ModalInteractions extends InteractionManager<ModalInteraction> {
+
+        public ModalInteractions() {
+        }
     }
 }

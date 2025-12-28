@@ -2,7 +2,7 @@ package com.terransky.stuffnthings.utilities.command;
 
 import java.awt.*;
 
-public enum EmbedColor {
+public enum BotColors {
 
     DEFAULT(102, 51, 102),
     SUB_DEFAULT(153, 102, 153),
@@ -10,7 +10,7 @@ public enum EmbedColor {
 
     private final Color color;
 
-    EmbedColor(int r, int g, int b) {
+    BotColors(int r, int g, int b) {
         this.color = new Color(r, g, b);
     }
 

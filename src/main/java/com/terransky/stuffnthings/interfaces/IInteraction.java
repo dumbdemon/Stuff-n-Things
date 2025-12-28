@@ -4,6 +4,12 @@ import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.general.InteractionType;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
+import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -18,6 +24,10 @@ public interface IInteraction<T extends GenericInteractionCreateEvent> extends C
      */
     String getName();
 
+    default String getNameReadable() {
+        return WordUtils.capitalize(this.getName().replaceAll("-", " "));
+    }
+
     /**
      * Get the interaction type.
      *
@@ -26,6 +36,7 @@ public interface IInteraction<T extends GenericInteractionCreateEvent> extends C
     default InteractionType getInteractionType() {
         return InteractionType.UNKNOWN;
     }
+
 
     /**
      * The main handler for all interactions
@@ -47,5 +58,36 @@ public interface IInteraction<T extends GenericInteractionCreateEvent> extends C
     default int compareTo(@NotNull IInteraction iInteraction) {
         return String.CASE_INSENSITIVE_ORDER.compare(getName(), iInteraction.getName()) |
             getInteractionType().compareTo(iInteraction.getInteractionType());
+    }
+
+    interface ICommand<T extends GenericCommandInteractionEvent> extends IInteraction<T> {
+    }
+
+    interface IButton extends IInteraction<ButtonInteractionEvent> {
+        @Override
+        default InteractionType getInteractionType() {
+            return InteractionType.BUTTON;
+        }
+    }
+
+    interface IModal extends IInteraction<ModalInteractionEvent> {
+        @Override
+        default InteractionType getInteractionType() {
+            return InteractionType.MODAL;
+        }
+    }
+
+    interface ISelectMenuEntity extends IInteraction<EntitySelectInteractionEvent> {
+        @Override
+        default InteractionType getInteractionType() {
+            return InteractionType.SELECTION_ENTITY;
+        }
+    }
+
+    interface ISelectMenuString extends IInteraction<StringSelectInteractionEvent> {
+        @Override
+        default InteractionType getInteractionType() {
+            return InteractionType.SELECTION_STRING;
+        }
     }
 }

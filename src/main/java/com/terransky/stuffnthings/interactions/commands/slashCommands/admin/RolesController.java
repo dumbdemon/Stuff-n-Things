@@ -1,7 +1,7 @@
 package com.terransky.stuffnthings.interactions.commands.slashCommands.admin;
 
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
-import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
+import com.terransky.stuffnthings.interfaces.interactions.SlashCommandInteraction;
 import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
 import com.terransky.stuffnthings.utilities.command.*;
 import net.dv8tion.jda.api.Permission;
@@ -21,31 +21,50 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-public class RolesController implements ICommandSlash {
+public class RolesController extends SlashCommandInteraction {
+
+    public RolesController() {
+        super("roles", "Adds or Removes a role from a user.", Mastermind.USER, CommandCategory.ADMIN,
+            parseDate(2024, 1, 28, 12, 34),
+            parseDate(2025, 12, 27, 5, 37)
+        );
+        setDefaultMemberPermissions(Permission.MANAGE_ROLES);
+        List<OptionData> options = List.of(
+            new OptionData(OptionType.USER, "user", "User to manage roles of", true),
+            new OptionData(OptionType.ROLE, "role", "Role to give/remove a user", true)
+        );
+        addSubcommands(
+            new SubcommandData("add", "Adds a role to a user.")
+                .addOptions(options),
+            new SubcommandData("remove", "Removes a rol from a user")
+                .addOptions(options)
+        );
+    }
+
     private static void addRole(@NotNull SlashCommandInteractionEvent event, EventBlob blob, @NotNull Member targetMember,
                                 Role roleToGive, String errorEmbedTitle) {
         if (targetMember.getRoles().contains(roleToGive)) {
-            event.replyEmbeds(blob.getStandardEmbed(errorEmbedTitle, EmbedColor.ERROR)
-                    .setDescription(String.format("User [%s] already has the %s role.",
-                        targetMember.getAsMention(),
-                        roleToGive.getAsMention()
-                    )).build())
+            event.replyComponents(StandardResponse.getResponseContainer(errorEmbedTitle, String.format("User [%s] already has the %s role.",
+                            targetMember.getAsMention(),
+                            roleToGive.getAsMention()
+                        ),
+                        BotColors.ERROR)
+                )
                 .setEphemeral(true)
                 .queue();
             return;
         }
 
         blob.getGuild().addRoleToMember(targetMember, roleToGive).queue(ignored ->
-                event.replyEmbeds(blob.getStandardEmbed("Role Added to member")
-                    .setDescription(String.format("Role [%s] was successfully added to member [%s]!",
+                event.replyComponents(StandardResponse.getResponseContainer("Role Added to member",
+                    String.format("Role [%s] was successfully added to member [%s]!",
                         roleToGive.getAsMention(),
                         targetMember.getAsMention()
-                    ))
-                    .build()).queue(),
+                    ))).queue(),
             error -> {
-                event.replyEmbeds(blob.getStandardEmbed("Failed to Give Role to Member", EmbedColor.ERROR)
-                        .setDescription(Responses.INTERACTION_FAILED.getMessage())
-                        .build())
+                event.replyComponents(StandardResponse.getResponseContainer("Failed to Give Role to Member",
+                        Responses.INTERACTION_FAILED)
+                    )
                     .setEphemeral(true)
                     .queue();
                 LoggerFactory.getLogger(RolesController.class).error("Error in assigning role.", error);
@@ -56,27 +75,29 @@ public class RolesController implements ICommandSlash {
     private static void removeRole(@NotNull SlashCommandInteractionEvent event, EventBlob blob, @NotNull Member targetMember,
                                    Role roleToGive, String errorEmbedTitle) {
         if (!targetMember.getRoles().contains(roleToGive)) {
-            event.replyEmbeds(blob.getStandardEmbed(errorEmbedTitle, EmbedColor.ERROR)
-                    .setDescription(String.format("User [%s] does not have the %s role.",
-                        targetMember.getAsMention(),
-                        roleToGive.getAsMention()
-                    )).build())
+            event.replyComponents(
+                    StandardResponse.getResponseContainer(errorEmbedTitle, String.format("User [%s] does not have the %s role.",
+                            targetMember.getAsMention(),
+                            roleToGive.getAsMention()
+                        ),
+                        BotColors.ERROR
+                    )
+                )
                 .setEphemeral(true)
                 .queue();
             return;
         }
 
         blob.getGuild().removeRoleFromMember(targetMember, roleToGive).queue(ignored ->
-                event.replyEmbeds(blob.getStandardEmbed("Role removed from member")
-                    .setDescription(String.format("Role [%s] was successfully removed from member [%s]!",
+                event.replyComponents(StandardResponse.getResponseContainer("Role removed from member",
+                    String.format("Role [%s] was successfully removed from member [%s]!",
                         roleToGive.getAsMention(),
-                        targetMember.getAsMention()
-                    ))
-                    .build()).queue(),
+                        targetMember
+                    ))).queue(),
             error -> {
-                event.replyEmbeds(blob.getStandardEmbed("Failed to Remove Role to Member", EmbedColor.ERROR)
-                        .setDescription(Responses.INTERACTION_FAILED.getMessage())
-                        .build())
+                event.replyComponents(StandardResponse.getResponseContainer("Failed to Remove Role to Member",
+                        Responses.INTERACTION_FAILED)
+                    )
                     .setEphemeral(true)
                     .queue();
                 LoggerFactory.getLogger(RolesController.class).error("Error in removing role.", error);
@@ -85,26 +106,25 @@ public class RolesController implements ICommandSlash {
     }
 
     @Override
-    public String getName() {
-        return "roles";
-    }
-
-    @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, EventBlob blob) throws FailedInteractionException,
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException,
         IOException, ExecutionException, InterruptedException {
         boolean isRemove = "remove".equals(event.getSubcommandName());
         Optional<Role> optionalRole = Optional.ofNullable(event.getOption("role", OptionMapping::getAsRole));
         Optional<Member> optionalMember = Optional.ofNullable(event.getOption("user", OptionMapping::getAsMember));
 
         if (optionalRole.isEmpty()) {
-            event.replyEmbeds(blob.getStandardEmbed("Invalid Role", EmbedColor.ERROR)
-                    .setDescription("Role provided either does not exist or an error occurred in retrieval.").build())
+            event.replyComponents(StandardResponse.getResponseContainer("Invalid Role",
+                    "Role provided either does not exist or an error occurred in retrieval.",
+                    BotColors.ERROR)
+                )
                 .setEphemeral(true)
                 .queue();
             return;
         } else if (optionalMember.isEmpty()) {
-            event.replyEmbeds(blob.getStandardEmbed("Invalid User", EmbedColor.ERROR)
-                    .setDescription("Member either does not exist or an error occurred in retrieval.").build())
+            event.replyComponents(StandardResponse.getResponseContainer("Invalid User",
+                    "Member either does not exist or an error occurred in retrieval.",
+                    BotColors.ERROR)
+                )
                 .setEphemeral(true)
                 .queue();
             return;
@@ -116,19 +136,18 @@ public class RolesController implements ICommandSlash {
         String errorEmbedTitle = String.format("Cannot %s Role %s User", isRemove ? "Remove" : "Give",
             isRemove ? "from" : "to");
         if (!blob.getSelfMember().canInteract(targetMember)) {
-            event.replyEmbeds(blob.getStandardEmbed(errorEmbedTitle, EmbedColor.ERROR)
-                    .setDescription(String.format("Unable to give role [%s] to %s.%nPlease make sure my role [%s] is above all regular members.",
+            event.replyComponents(StandardResponse.getResponseContainer(errorEmbedTitle,
+                    String.format("Unable to give role [%s] to %s.%nPlease make sure my role [%s] is above all regular members.",
                         roleToGive.getAsMention(),
                         targetMember.getAsMention(),
                         Objects.requireNonNull(blob.getGuild().getBotRole()).getAsMention()
-                    )).build())
+                    ), BotColors.ERROR))
                 .setEphemeral(true)
                 .queue();
             return;
         } else if (!blob.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
-            event.replyEmbeds(blob.getStandardEmbed("Cannot Give Role to User", EmbedColor.ERROR)
-                    .setDescription(String.format("Cannot perform action due to a lack of Permission. Need `%s` to proceed.",
-                        Permission.MANAGE_ROLES.getName())).build())
+            event.replyComponents(StandardResponse.getResponseContainer("Cannot Give Role to User", String.format("Cannot perform action due to a lack of Permission. Need `%s` to proceed.",
+                    Permission.MANAGE_ROLES.getName()), BotColors.ERROR))
                 .setEphemeral(true)
                 .queue();
             return;
@@ -140,23 +159,5 @@ public class RolesController implements ICommandSlash {
         }
 
         addRole(event, blob, targetMember, roleToGive, errorEmbedTitle);
-    }
-
-    @Override
-    public Metadata getMetadata() {
-        List<OptionData> options = List.of(
-            new OptionData(OptionType.USER, "user", "User to manage roles of", true),
-            new OptionData(OptionType.ROLE, "role", "Role to give/remove a user", true)
-        );
-        return new Metadata(getName(), "Adds or Removes a role from a user.", Mastermind.USER, CommandCategory.ADMIN,
-            Metadata.parseDate(2024, 1, 28, 12, 34),
-            Metadata.parseDate(2024, 2, 9, 16, 11))
-            .addDefaultPerms(Permission.MANAGE_ROLES)
-            .addSubcommands(
-                new SubcommandData("add", "Adds a role to a user.")
-                    .addOptions(options),
-                new SubcommandData("remove", "Removes a rol from a user")
-                    .addOptions(options)
-            );
     }
 }

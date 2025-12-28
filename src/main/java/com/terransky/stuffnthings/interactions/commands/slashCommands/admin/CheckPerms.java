@@ -2,10 +2,15 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.admin;
 
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
-import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
-import com.terransky.stuffnthings.utilities.command.*;
-import net.dv8tion.jda.api.EmbedBuilder;
+import com.terransky.stuffnthings.interfaces.interactions.SlashCommandInteraction;
+import com.terransky.stuffnthings.utilities.command.CommandCategory;
+import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.Mastermind;
+import com.terransky.stuffnthings.utilities.command.StandardResponse;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.components.container.ContainerChildComponent;
+import net.dv8tion.jda.api.components.separator.Separator;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -22,7 +27,23 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
-public class CheckPerms implements ICommandSlash {
+public class CheckPerms extends SlashCommandInteraction {
+
+    public CheckPerms() {
+        super("check-perms", "Check if I have all of my perms needed for all of my commands.", Mastermind.DEVELOPER,
+            CommandCategory.ADMIN, parseDate(2022, 6, 30, 16, 14),
+            parseDate(2025, 12, 27, 1, 0)
+        );
+        setDefaultMemberPermissions(Permission.MANAGE_ROLES);
+        addSubcommands(
+            new SubcommandData("server", "Check if I have all of my perms needed for all of my commands for the server."),
+            new SubcommandData("channel", "Check if I have all of my perms needed for all of my commands in a specific channel.")
+                .addOptions(
+                    new OptionData(OptionType.CHANNEL, "check-channel", "The channel to check.", true)
+                        .setChannelTypes(ChannelType.TEXT, ChannelType.VOICE)
+                )
+        );
+    }
 
     @NotNull
     @Contract(" -> new")
@@ -43,41 +64,6 @@ public class CheckPerms implements ICommandSlash {
     }
 
     @Override
-    public String getName() {
-        return "check-perms";
-    }
-
-    @Override
-    public Metadata getMetadata() {
-        var permString = new StringBuilder();
-
-        for (Permission requiredPerm : getRequiredPerms()) {
-            permString.append(requiredPerm.getName()).append(", ");
-        }
-
-        return new Metadata(this.getName(), "Check if I have all of my perms needed for all of my commands.", """
-            Checks if the bot has **all necessary** permissions for this server or channel.
-            Currently the bot requires:
-            ```
-            %s```
-            """.formatted(permString.substring(0, permString.length() - 2)),
-            Mastermind.DEVELOPER,
-            CommandCategory.ADMIN,
-            Metadata.parseDate(2022, 6, 30, 16, 14),
-            Metadata.parseDate(2024, 2, 9, 16, 11)
-        )
-            .addDefaultPerms(Permission.MANAGE_ROLES)
-            .addSubcommands(
-                new SubcommandData("server", "Check if I have all of my perms needed for all of my commands for the server."),
-                new SubcommandData("channel", "Check if I have all of my perms needed for all of my commands in a specific channel.")
-                    .addOptions(
-                        new OptionData(OptionType.CHANNEL, "check-channel", "The channel to check.", true)
-                            .setChannelTypes(ChannelType.TEXT, ChannelType.VOICE)
-                    )
-            );
-    }
-
-    @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         EnumSet<Permission> myPerms;
         GuildChannel toCheck = null;
@@ -92,29 +78,31 @@ public class CheckPerms implements ICommandSlash {
         }
 
         List<Permission> doNotHaveThis = new ArrayList<>(getRequiredPerms().stream().filter(permission -> !myPerms.contains(permission)).toList());
-        EmbedBuilder eb = blob.getStandardEmbed("Permission Checker");
+        List<ContainerChildComponent> children = new ArrayList<>();
 
         boolean ifToCheck = toCheck != null,
             adminCheck = doNotHaveThis.size() == 1 && doNotHaveThis.stream().anyMatch(permission -> permission.equals(Permission.ADMINISTRATOR));
 
         if (doNotHaveThis.isEmpty() || adminCheck) {
             if (adminCheck)
-                eb.addField("WARNING: Administrator", "One or more commands needs `Administrator` to work without extra effort from the user.", false);
+                children.addAll(List.of(
+                    TextDisplay.of("WARNING: One or more commands needs `Administrator` to work without extra effort from the user. This is **not** required."),
+                    Separator.createDivider(Separator.Spacing.SMALL)
+                ));
+            children.add(TextDisplay.of(String.format("I have all necessary permissions for %s. Thank you! :heart:", ifToCheck ? toCheck.getAsMention() : "this server")));
 
-            event.replyEmbeds(eb.setDescription("I have all necessary permissions for %s. Thank you! :heart:"
-                .formatted(ifToCheck ? toCheck.getAsMention() : "this server")).build()).queue();
+            event.replyComponents(StandardResponse.getResponseContainer(this, children)).queue();
             return;
         }
 
         StringBuilder sb = new StringBuilder();
-        eb.setDescription("I'm missing the following permissions for %s:\n```json\n[\n".formatted(ifToCheck ? toCheck.getAsMention() : "this server"));
+        sb.append(String.format("I'm missing the following permissions for %s:\n```json\n[\n", ifToCheck ? toCheck.getAsMention() : "this server"));
         for (Permission permission : doNotHaveThis.stream().sorted().toList()) {
             String oneWord = permission.getName().replace("(s)", "s").replaceAll(" ", "_");
             sb.append("\s\s\s\s").append(oneWord).append(" : false,\n");
         }
-        eb.appendDescription(sb.substring(0, sb.length() - 2))
-            .appendDescription("\n]```")
-            .setColor(EmbedColor.ERROR.getColor());
-        event.replyEmbeds(eb.build()).queue();
+        sb.replace(sb.length() - 1, sb.length() - 1, "");
+        sb.append("]```");
+        event.replyComponents(StandardResponse.getResponseContainer(this, sb.toString())).queue();
     }
 }

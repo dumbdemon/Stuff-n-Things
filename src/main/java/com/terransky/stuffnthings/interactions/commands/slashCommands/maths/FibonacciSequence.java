@@ -2,74 +2,55 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.maths;
 
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
-import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
+import com.terransky.stuffnthings.interfaces.interactions.SlashCommandInteraction;
 import com.terransky.stuffnthings.utilities.command.*;
-import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
-import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-public class FibonacciSequence implements ICommandSlash {
+public class FibonacciSequence extends SlashCommandInteraction {
 
     private static float[] fibonacciCache;
 
-    @Override
-    public String getName() {
-        return "fibonacci";
-    }
-
-    @Override
-    public Metadata getMetadata() {
-        return new Metadata(this.getName(), "Get the nth number in the Fibonacci sequence.", """
-            *From Oxford Languages*
-            > a series of numbers in which each number (Fibonacci number) is the sum of the two preceding numbers.
-                        
-            This command returns the nth value in the *Fibonacci Sequence* or its whole sequence up to the nth value. Although the *Fibonacci Sequence* can go into infinity, this command has been limited to return up to the 186th value. Any higher and the command will return ∞ (infinity). This is due to the limitation of the Java data type Float. You can read more [here](https://www.w3schools.com/java/ref_keyword_float.asp).
-            """, Mastermind.DEVELOPER,
-            CommandCategory.MATHS,
-            Metadata.parseDate(2022, 11, 11, 20, 50),
-            Metadata.parseDate(2024, 2, 9, 16, 11)
-        )
-            .addSubcommands(
-                new SubcommandData("at-nth", "Get a specific value.")
-                    .addOptions(
-                        new OptionData(OptionType.INTEGER, "nth", "Which value to return.", true)
-                            .setRequiredRange(1, 186)
-                    ),
-                new SubcommandData("whole-sequence", "Get the whole sequence until the nth value")
-                    .addOptions(
-                        new OptionData(OptionType.INTEGER, "nth", "Which value to return up to.", true)
-                            .setRequiredRange(1, 186)
-                    )
-            );
+    public FibonacciSequence() {
+        super("fibonacci", "Get the nth number in the Fibonacci sequence.", Mastermind.DEVELOPER, CommandCategory.MATHS,
+            parseDate(2022, 11, 11, 20, 50),
+            parseDate(2025, 12, 27, 3, 50)
+        );
+        addSubcommands(
+            new SubcommandData("at-nth", "Get a specific value.")
+                .addOptions(
+                    new OptionData(OptionType.INTEGER, "nth", "Which value to return.", true)
+                        .setRequiredRange(1, 186)
+                ),
+            new SubcommandData("whole-sequence", "Get the whole sequence until the nth value")
+                .addOptions(
+                    new OptionData(OptionType.INTEGER, "nth", "Which value to return up to.", true)
+                        .setRequiredRange(1, 186)
+                )
+        );
     }
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         String subcommand = event.getSubcommandName();
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
+        event.deferReply().queue();
+        TextDisplay textDisplay;
 
         int nth = event.getOption("nth", 3, OptionMapping::getAsInt);
-        EmbedBuilder eb = blob.getStandardEmbed(getNameReadable());
-        MessageEditData messageEditData;
 
         fibonacciCache = new float[nth + 1];
         fibonacciCache[1] = 1;
         float nthValue = getFibonacciAt(nth);
-        String nthSuffix = nth % 10 == 2 ? "nd" : (nth % 10 == 3 ? "rd" : "th"),
+        String nthSuffix = nth % 10 == 2 && nth != 12 ? "nd" : (nth % 10 == 3 && nth != 13 ? "rd" : "th"),
             returnString;
-
-        event.replyEmbeds(
-            eb.setDescription("Please wait. This may take a while...")
-                .build()
-        ).queue();
 
         if (subcommand.equals("at-nth")) {
             String replace;
@@ -78,13 +59,7 @@ public class FibonacciSequence implements ICommandSlash {
             } else replace = " ";
 
             returnString = Formatter.largeNumberFormat(nthValue).replace(".0" + replace, replace);
-            messageEditData = new MessageEditBuilder()
-                .setEmbeds(
-                    eb.setDescription("The %s%s value of the Fibonacci sequence is:\n```%s```"
-                            .formatted(nth, nthSuffix, returnString))
-                        .build()
-                )
-                .build();
+            textDisplay = TextDisplay.of(String.format("### The %s%s value is\n```%s```", nth, nthSuffix, returnString));
         } else {
             StringBuilder fibonacciString = new StringBuilder();
 
@@ -95,16 +70,14 @@ public class FibonacciSequence implements ICommandSlash {
                 .replaceAll(".0 ", " ")
                 .replaceAll(".0,", ",");
 
-            messageEditData = new MessageEditBuilder()
-                .setEmbeds(
-                    eb.setDescription("The Fibonacci sequence up to the %s%s value is:\n```%s```"
-                            .formatted(nth, nthSuffix, returnString.replace(".0", "")))
-                        .build()
-                )
-                .build();
+            textDisplay = TextDisplay.of(String.format("### The Fibonacci sequence up to the %s%s value is\n```%s```",
+                nth,
+                nthSuffix,
+                returnString.replace(".0", "")
+            ));
         }
 
-        event.getHook().editOriginal(messageEditData).queue();
+        event.getHook().sendMessageComponents(StandardResponse.getResponseContainer(this, textDisplay)).queue();
     }
 
     private float getFibonacciAt(int n) {

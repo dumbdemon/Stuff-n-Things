@@ -3,22 +3,24 @@ package com.terransky.stuffnthings.interactions.buttons;
 import com.terransky.stuffnthings.dataSources.icanhazdadjoke.ICanHazDadJokeData;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.GetDadJokes;
-import com.terransky.stuffnthings.interfaces.interactions.IButton;
+import com.terransky.stuffnthings.interfaces.interactions.ButtonInteraction;
 import com.terransky.stuffnthings.utilities.apiHandlers.ICanHazDadJokeHandler;
 import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
-import com.terransky.stuffnthings.utilities.command.EmbedColor;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.StandardResponse;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.List;
 
-public class GetMoreDadJokes implements IButton {
-    @Override
-    public String getName() {
-        return "get-dad-joke";
+public class GetMoreDadJokes extends ButtonInteraction {
+
+    public GetMoreDadJokes() {
+        super("get-dad-joke");
     }
 
     @Override
@@ -28,19 +30,17 @@ public class GetMoreDadJokes implements IButton {
         try {
             theJoke = new ICanHazDadJokeHandler().getDadJoke();
         } catch (InterruptedException e) {
-            event.replyEmbeds(
-                blob.getStandardEmbed(new GetDadJokes().getNameReadable(), EmbedColor.ERROR)
-                    .setDescription(Responses.NETWORK_OPERATION.getMessage())
-                    .build()
+            event.replyComponents(
+                StandardResponse.getResponseContainer(new GetDadJokes().getNameReadable(), Responses.NETWORK_OPERATION)
             ).setEphemeral(true).queue();
             return;
         }
 
         MessageEditData message = new MessageEditBuilder()
-            .setEmbeds(blob.getStandardEmbed()
-                .setDescription(theJoke.getJoke())
-                .setFooter("%s | ID#%s".formatted(event.getUser().getName(), theJoke.getId()), blob.getMemberEffectiveAvatarUrl())
-                .build()
+            .setComponents(StandardResponse.getResponseContainer(new GetDadJokes(), List.of(
+                    TextDisplay.of(theJoke.getJoke()),
+                    TextDisplay.ofFormat("ID#%s", theJoke.getId())
+                ))
             ).build();
 
         event.editMessage(message).queue();

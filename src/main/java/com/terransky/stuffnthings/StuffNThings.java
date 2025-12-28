@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.dv8tion.jda.api.utils.messages.MessageRequest;
 
 import java.io.FileNotFoundException;
 import java.util.Date;
@@ -47,6 +48,7 @@ public class StuffNThings {
             .setMemberCachePolicy(MemberCachePolicy.ALL)
             .setStatus(OnlineStatus.DO_NOT_DISTURB);
 
+        MessageRequest.setDefaultUseComponentsV2(true);
         List<String> watchList = DatabaseManager.INSTANCE.getWatchList();
         Random random = new Random(new Date().getTime());
         shards.setActivity(Activity.watching(watchList.get(random.nextInt(watchList.size()))));

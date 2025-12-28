@@ -1,13 +1,11 @@
 package com.terransky.stuffnthings.interactions.modals;
 
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
-import com.terransky.stuffnthings.interfaces.interactions.IModal;
+import com.terransky.stuffnthings.interfaces.interactions.ModalInteraction;
 import com.terransky.stuffnthings.utilities.apiHandlers.MemeGeneratorHandler;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
-import net.dv8tion.jda.api.interactions.modals.Modal;
+import net.dv8tion.jda.api.modals.Modal;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,14 +14,19 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
-public class RandomMemeBuilder implements IModal {
+public class RandomMemeBuilder extends ModalInteraction {
 
     private final String TOP_TEXT = "top-text";
     private final String BOTTOM_TEXT = "bottom-text";
 
+    public RandomMemeBuilder() {
+        super("random-meme-builder", "Random Meme Builder");
+    }
+
+    //TODO: Research new Modal system
     @Override
-    public String getName() {
-        return "random-meme-builder";
+    public Modal getContructedModal() {
+        return null;
     }
 
     @Override
@@ -37,22 +40,22 @@ public class RandomMemeBuilder implements IModal {
         }
     }
 
-    @Override
-    public Modal getConstructedModal() {
-        TextInput topText = TextInput.create(TOP_TEXT, "Top Text", TextInputStyle.SHORT)
-            .setRequired(true)
-            .setRequiredRange(1, 100)
-            .setPlaceholder("Top Text")
-            .build();
-        TextInput bottomText = TextInput.create(BOTTOM_TEXT, "Bottom Text", TextInputStyle.SHORT)
-            .setRequired(true)
-            .setRequiredRange(1, 100)
-            .setPlaceholder("Bottom Text")
-            .build();
-
-        return Modal.create(getName(), "Random Meme Builder")
-            .addActionRow(topText)
-            .addActionRow(bottomText)
-            .build();
-    }
+//    @Override
+//    public Modal getConstructedModal() {
+//        TextInput topText = TextInput.create(TOP_TEXT, "Top Text", TextInputStyle.SHORT)
+//            .setRequired(true)
+//            .setRequiredRange(1, 100)
+//            .setPlaceholder("Top Text")
+//            .build();
+//        TextInput bottomText = TextInput.create(BOTTOM_TEXT, "Bottom Text", TextInputStyle.SHORT)
+//            .setRequired(true)
+//            .setRequiredRange(1, 100)
+//            .setPlaceholder("Bottom Text")
+//            .build();
+//
+//        return Modal.create(getName(), "Random Meme Builder")
+//            .addActionRow(topText)
+//            .addActionRow(bottomText)
+//            .build();
+//    }
 }

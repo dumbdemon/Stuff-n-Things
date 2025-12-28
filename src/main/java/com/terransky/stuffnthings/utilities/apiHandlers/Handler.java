@@ -9,7 +9,7 @@ import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadFactory;
 
-class Handler {
+abstract class Handler {
 
     private final ThreadFactory threadFactory;
 

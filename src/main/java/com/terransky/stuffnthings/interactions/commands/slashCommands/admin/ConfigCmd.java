@@ -7,11 +7,12 @@ import com.terransky.stuffnthings.database.helpers.PropertyMapping;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.DatabaseManager;
-import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
+import com.terransky.stuffnthings.interfaces.interactions.SlashCommandInteraction;
 import com.terransky.stuffnthings.utilities.command.*;
-import com.terransky.stuffnthings.utilities.general.configobjects.CoreConfig;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.components.container.ContainerChildComponent;
+import net.dv8tion.jda.api.components.separator.Separator;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.entities.Icon;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Webhook;
@@ -24,87 +25,85 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class ConfigCmd implements ICommandSlash {
+public class ConfigCmd extends SlashCommandInteraction {
     private final Logger log = LoggerFactory.getLogger(ConfigCmd.class);
-    private final CoreConfig CORE_CONFIG = StuffNThings.getConfig().getCore();
 
-    @Override
-    public String getName() {
-        return "config";
+    public ConfigCmd() {
+        super("config", "Server config manager.", Mastermind.DEVELOPER, CommandCategory.ADMIN,
+            parseDate(2022, 8, 28, 21, 46),
+            OffsetDateTime.now()
+        );
+        setDefaultMemberPermissions(Permission.MANAGE_SERVER);
+        setWorking(StuffNThings.getConfig().getCore().getEnableDatabase());
+        addSubcommandGroups(
+            new SubcommandGroupData("general", "Change settings shared by some commands.")
+                .addSubcommands(
+                    new SubcommandData("verbose", "Do not iterate through anything. NO SPAMMING!")
+                        .addOption(OptionType.BOOLEAN, "do-verbose", "Do not iterate through anything. NO SPAMMING!")
+                ),
+            new SubcommandGroupData("kill", "Change the config settings for the kill command.")
+                .addSubcommands(
+                    new SubcommandData("max-kills", "Get the max kills for the `/kill target` command.")
+                        .addOptions(
+                            new OptionData(OptionType.INTEGER, "set-max", "Set the max kills for the server.")
+                                .setRequiredRange(1, 99)
+                        ),
+                    new SubcommandData("timeout", "\"X\" amount of kills within \"Y\" amount of time… what's \"Y\"?")
+                        .addOptions(
+                            new OptionData(OptionType.INTEGER, "set-timeout", "Set the timeout of the kill command in whole minutes up to an hour.")
+                                .setRequiredRange(1, 60)
+                        )
+                ),
+            new SubcommandGroupData("report-message", "Change the config for reporting a message.")
+                .addSubcommands(
+                    new SubcommandData("reporting-channel", "Set, change, or view the current reporting channel.")
+                        .addOptions(
+                            new OptionData(OptionType.CHANNEL, "channel", "The channel the messages are reporting to.")
+                                .setChannelTypes(ChannelType.TEXT)
+                        ),
+                    new SubcommandData("reporting-response", "Set, change, or view the response the bot gives when reporting.")
+                        .addOptions(
+                            new OptionData(OptionType.STRING, "report-message", "The message the bot gives when a user reports.")
+                                .setRequiredLength(10, MessageEmbed.DESCRIPTION_MAX_LENGTH / 4)
+                        )
+                ),
+            new SubcommandGroupData("joke-flags", "Allow or deny certain flags from being shown.")
+                .addSubcommands(
+                    new SubcommandData("view-flags", "View current flags"),
+                    new SubcommandData("set-flags", "Allow/Deny flags")
+                        .addOptions(
+                            new OptionData(OptionType.BOOLEAN, "religious", "Allow/Deny religious jokes.", true),
+                            new OptionData(OptionType.BOOLEAN, "political", "Allow/Deny political jokes.", true),
+                            new OptionData(OptionType.BOOLEAN, "racist", "Allow/Deny racist jokes.", true),
+                            new OptionData(OptionType.BOOLEAN, "sexist", "Allow/Deny sexist jokes.", true),
+                            new OptionData(OptionType.BOOLEAN, "safe-mode", "Set the entire server to safe mode.")
+                        )
+                )
+        );
     }
 
-    @Override
-    public Metadata getMetadata() {
-        return new Metadata(this.getName(), "The config manager.", """
-            Sets certain constant values of specific commands.
-            """,
-            Mastermind.DEVELOPER,
-            CommandCategory.ADMIN,
-            Metadata.parseDate(2022, 8, 28, 21, 46),
-            Metadata.parseDate(2024, 8, 20, 12, 3)
-        )
-            .addDefaultPerms(Permission.MANAGE_SERVER)
-            .addSubcommandGroups(
-                new SubcommandGroupData("general", "Change settings shared by some commands.")
-                    .addSubcommands(
-                        new SubcommandData("verbose", "Do not iterate through anything. NO SPAMMING!")
-                            .addOption(OptionType.BOOLEAN, "do-verbose", "Do not iterate through anything. NO SPAMMING!")
-                    ),
-                new SubcommandGroupData("kill", "Change the config settings for the kill command.")
-                    .addSubcommands(
-                        new SubcommandData("max-kills", "Get the max kills for the `/kill target` command.")
-                            .addOptions(
-                                new OptionData(OptionType.INTEGER, "set-max", "Set the max kills for the server.")
-                                    .setRequiredRange(1, 99)
-                            ),
-                        new SubcommandData("timeout", "\"X\" amount of kills within \"Y\" amount of time… what's \"Y\"?")
-                            .addOptions(
-                                new OptionData(OptionType.INTEGER, "set-timeout", "Set the timeout of the kill command in whole minutes up to an hour.")
-                                    .setRequiredRange(1, 60)
-                            )
-                    ),
-                new SubcommandGroupData("report-message", "Change the config for reporting a message.")
-                    .addSubcommands(
-                        new SubcommandData("reporting-channel", "Set, change, or view the current reporting channel.")
-                            .addOptions(
-                                new OptionData(OptionType.CHANNEL, "channel", "The channel the messages are reporting to.")
-                                    .setChannelTypes(ChannelType.TEXT)
-                            ),
-                        new SubcommandData("reporting-response", "Set, change, or view the response the bot gives when reporting.")
-                            .addOptions(
-                                new OptionData(OptionType.STRING, "report-message", "The message the bot gives when a user reports.")
-                                    .setRequiredLength(10, MessageEmbed.DESCRIPTION_MAX_LENGTH / 4)
-                            )
-                    ),
-                new SubcommandGroupData("joke-flags", "Allow or deny certain flags from being shown.")
-                    .addSubcommands(
-                        new SubcommandData("view-flags", "View current flags"),
-                        new SubcommandData("set-flags", "Allow/Deny flags")
-                            .addOptions(
-                                new OptionData(OptionType.BOOLEAN, "religious", "Allow/Deny religious jokes.", true),
-                                new OptionData(OptionType.BOOLEAN, "political", "Allow/Deny political jokes.", true),
-                                new OptionData(OptionType.BOOLEAN, "racist", "Allow/Deny racist jokes.", true),
-                                new OptionData(OptionType.BOOLEAN, "sexist", "Allow/Deny sexist jokes.", true),
-                                new OptionData(OptionType.BOOLEAN, "safe-mode", "Set the entire server to safe mode.")
-                            )
-                    )
-            );
-    }
-
-    @Override
-    public boolean isWorking() {
-        return CORE_CONFIG.getEnableDatabase();
+    @Contract("_, _ -> new")
+    @NotNull
+    private static List<ContainerChildComponent> getComponents(long oldValue, long newValue) {
+        return List.of(
+            TextDisplay.of("## Config Updated"),
+            TextDisplay.ofFormat("**Old Timeout** - %s", oldValue),
+            TextDisplay.ofFormat("**New Timeout** - %s", newValue)
+        );
     }
 
     @Override
@@ -125,40 +124,37 @@ public class ConfigCmd implements ICommandSlash {
     private void updateVerbose(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
         Optional<Boolean> verbose = Optional.ofNullable(event.getOption("do-verbose", OptionMapping::getAsBoolean));
         boolean databaseVerbose = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.VERBOSE, true, PropertyMapping::getAsBoolean);
-        EmbedBuilder eb = blob.getStandardEmbed(getNameReadable() + " - Verbose Iteration");
+        String title = getNameReadable() + " - Verbose Iteration";
 
         if (verbose.isEmpty()) {
-            event.replyEmbeds(
-                eb.setDescription("Verbose is set to: **" + (databaseVerbose ? "True" : "False") + "**!")
-                    .build()
+            event.replyComponents(
+                StandardResponse.getResponseContainer(title, "Verbose is set to: **" + (databaseVerbose ? "True" : "False") + "**!")
             ).queue();
             return;
         }
 
         if (verbose.get() == databaseVerbose) {
-            event.replyEmbeds(
-                eb.setDescription("No change was made!\nVerbose is set to: **" + (databaseVerbose ? "True" : "False") + "**!")
-                    .build()
+            event.replyComponents(
+                StandardResponse.getResponseContainer(title, "No change was made!\nVerbose is set to: **" + (databaseVerbose ? "True" : "False") + "**!")
             ).queue();
             return;
         }
 
         DatabaseManager.INSTANCE.updateProperty(blob, Property.VERBOSE, verbose.get());
 
-        event.replyEmbeds(
-            eb.setDescription("Verbose was changed to: **" + (verbose.get() ? "True" : "False") + "**!")
-                .build()
+        event.replyComponents(
+            StandardResponse.getResponseContainer(title, "Verbose was changed to: **" + (verbose.get() ? "True" : "False") + "**!")
         ).queue();
     }
 
     private void updateFlags(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, @NotNull String subcommand) {
         Flags serverFlags = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.JOKE_FLAGS, new Flags(), PropertyMapping::getAsFlags);
-        EmbedBuilder eb = blob.getStandardEmbed();
+        String title;
 
         if (subcommand.equals("view-flags")) {
-            eb.setTitle(getNameReadable() + " - View Joke Flags");
+            title = getNameReadable() + " - View Joke Flags";
         } else {
-            eb.setTitle(getNameReadable() + " - Set Joke Flags");
+            title = getNameReadable() + " - Set Joke Flags";
 
             boolean religious = !event.getOption("religious", true, OptionMapping::getAsBoolean);
             boolean political = !event.getOption("political", true, OptionMapping::getAsBoolean);
@@ -172,34 +168,37 @@ public class ConfigCmd implements ICommandSlash {
             serverFlags.setSexist(sexist);
             serverFlags.setSafeMode(safeMode);
         }
+        List<ContainerChildComponent> children = new ArrayList<>();
 
         if (serverFlags.getSafeMode()) {
-            eb.setDescription("**NOTICE: Server is in safe mode.**");
+            children.add(TextDisplay.of("**NOTICE: Server is in safe mode.**"));
+            children.add(Separator.createDivider(Separator.Spacing.SMALL));
         }
 
         DatabaseManager.INSTANCE.updateProperty(blob, Property.JOKE_FLAGS, serverFlags);
         String allow = ":white_check_mark: **Allowed**",
             deny = ":ripx: ***Denied***";
 
-        event.replyEmbeds(
-            eb.addField("Religious", serverFlags.getReligious() ? deny : allow, false)
-                .addField("Political", serverFlags.getPolitical() ? deny : allow, false)
-                .addField("Racist", serverFlags.getRacist() ? deny : allow, false)
-                .addField("Sexist", serverFlags.getSexist() ? deny : allow, false)
-                .build()
+        children.addAll(List.of(
+            TextDisplay.of(String.format("Religious - %s", serverFlags.getReligious() ? deny : allow)),
+            TextDisplay.of(String.format("Political - %s", serverFlags.getPolitical() ? deny : allow)),
+            TextDisplay.of(String.format("Racist - %s", serverFlags.getRacist() ? deny : allow)),
+            TextDisplay.of(String.format("Sexist - %s", serverFlags.getSexist() ? deny : allow))
+        ));
+
+        event.replyComponents(
+            StandardResponse.getResponseContainer(title, children)
         ).queue();
     }
 
     private void updateReportingWebhook(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws IOException, ExecutionException, InterruptedException {
         event.deferReply().queue();
         Optional<GuildChannelUnion> channel = Optional.ofNullable(event.getOption("channel", OptionMapping::getAsChannel));
-        EmbedBuilder eb = blob.getStandardEmbed(getNameReadable() + " - Reporting Channel");
+        String title = getNameReadable() + " - Report Webhook";
 
         if (!blob.getSelfMember().hasPermission(Permission.MANAGE_WEBHOOKS)) {
-            event.getHook().sendMessageEmbeds(
-                eb.setColor(EmbedColor.ERROR.getColor())
-                    .setDescription("Unable to proceed. Missing permission to manage webhooks.")
-                    .build()
+            event.getHook().sendMessageComponents(
+                StandardResponse.getResponseContainer(title, "Unable to proceed. Missing permission to manage webhooks.", BotColors.ERROR)
             ).queue();
             return;
         }
@@ -210,17 +209,14 @@ public class ConfigCmd implements ICommandSlash {
             Optional<Webhook> webhook = webhooks.stream().filter(hook -> hook.getId().equals(webhookId)).findFirst();
 
             if (webhook.isEmpty()) {
-                event.getHook().sendMessageEmbeds(
-                    eb.setDescription("Reporting has not been set up yet.")
-                        .setColor(EmbedColor.ERROR.getColor())
-                        .build()
+                event.getHook().sendMessageComponents(
+                    StandardResponse.getResponseContainer(title, "Unable to proceed. Missing webhook.", BotColors.ERROR)
                 ).queue();
                 return;
             }
 
-            event.getHook().sendMessageEmbeds(
-                eb.setDescription(String.format("Reporting to %s.", webhook.get().getChannel().getAsMention()))
-                    .build()
+            event.getHook().sendMessageComponents(
+                StandardResponse.getResponseContainer(title, String.format("Reporting to %s.", webhook.get().getChannel().getAsMention()))
             ).queue();
             return;
         }
@@ -236,37 +232,34 @@ public class ConfigCmd implements ICommandSlash {
             });
 
         Webhook hook = textChannel.createWebhook("Message Reporting")
-            .setAvatar(Icon.from(new URL(CORE_CONFIG.getLogoUrl()).openStream()))
+            .setAvatar(Icon.from(new URL(StuffNThings.getConfig().getCore().getLogoUrl()).openStream()))
             .submit().get();
         DatabaseManager.INSTANCE.updateProperty(blob, Property.REPORT_WEBHOOK, hook.getId());
 
-        event.getHook().sendMessageEmbeds(
-            eb.setDescription(String.format("The reporting channel was set to %s.", textChannel.getAsMention()))
-                .build()
+        event.getHook().sendMessageComponents(
+            StandardResponse.getResponseContainer(title, "Report Webhook has been sent.")
         ).queue();
     }
 
     private void updateReportingResponse(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
         event.deferReply().queue();
         Optional<String> ifResponse = Optional.ofNullable(event.getOption("report-message", OptionMapping::getAsString));
-        EmbedBuilder eb = blob.getStandardEmbed(getNameReadable() + " - Reporting Message");
+        String title = getNameReadable() + " - Report Response";
 
         if (ifResponse.isEmpty()) {
             String response = DatabaseManager.INSTANCE
                 .getFromDatabase(blob, Property.REPORT_RESPONSE, "Got it. Message has been reported.", PropertyMapping::getAsString);
 
-            event.getHook().sendMessageEmbeds(
-                eb.setDescription("Current Set: ```" + response + "```")
-                    .build()
+            event.getHook().sendMessageComponents(
+                StandardResponse.getResponseContainer(title, String.format("Current Set: ```%s```", response))
             ).queue();
             return;
         }
 
         DatabaseManager.INSTANCE.updateProperty(blob, Property.REPORT_RESPONSE, ifResponse.get());
 
-        event.getHook().sendMessageEmbeds(
-            eb.setDescription("Reporting response was updated successfully to: ```" + ifResponse.get() + "```")
-                .build()
+        event.getHook().sendMessageComponents(
+            StandardResponse.getResponseContainer(title, String.format("Reporting response was updated successfully to: ```%s```", ifResponse.get()))
         ).queue();
     }
 
@@ -275,12 +268,11 @@ public class ConfigCmd implements ICommandSlash {
         Optional<Integer> ifNewTimeout = Optional.ofNullable(event.getOption("set-timeout", OptionMapping::getAsInt));
         long oldTimeout = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILLS_TIMEOUT, TimeUnit.MINUTES.toMillis(10), PropertyMapping::getAsLong);
         long oldTimeoutMinutes = TimeUnit.MILLISECONDS.toMinutes(oldTimeout);
-        EmbedBuilder eb = blob.getStandardEmbed(getNameReadable() + " - Kill Timeout");
+        String title = getNameReadable() + " - Kill Timeout";
 
         if (ifNewTimeout.isEmpty()) {
-            event.getHook().sendMessageEmbeds(
-                eb.addField("Timeout", String.format("%d minutes", oldTimeoutMinutes), false)
-                    .build()
+            event.getHook().sendMessageComponents(
+                StandardResponse.getResponseContainer(title, String.format("Current Set: ```%s minutes````", oldTimeout))
             ).queue();
             return;
         }
@@ -288,10 +280,10 @@ public class ConfigCmd implements ICommandSlash {
             newTimeoutMillis = (int) TimeUnit.MINUTES.toMillis(newTimeoutMinutes);
 
         if (newTimeoutMillis == oldTimeout) {
-            log.debug("No change for {}", blob.getGuildId());
-            event.getHook().sendMessageEmbeds(
-                eb.setDescription(String.format("Currently set Timeout is requested amount: `%d minutes`.", oldTimeoutMinutes))
-                    .build()
+            logNoChange(blob);
+            event.getHook().sendMessageComponents(
+                StandardResponse.getResponseContainer(title, String.format("Currently set Timeout is requested amount: `%d minutes`.", oldTimeoutMinutes),
+                    BotColors.SUB_DEFAULT)
             ).queue();
             return;
         }
@@ -299,36 +291,36 @@ public class ConfigCmd implements ICommandSlash {
         try {
             DatabaseManager.INSTANCE.updateProperty(blob, Property.KILLS_TIMEOUT, newTimeoutMillis);
         } catch (Exception e) {
-            log.error(String.format("Unable to update property %s", Property.KILLS_TIMEOUT), e);
+            logPropertyUpdateFailure(Property.KILLS_TIMEOUT, e);
         }
 
-        eb.setTitle("Config Updated")
-            .addField("Old Timeout", String.valueOf(oldTimeoutMinutes), true)
-            .addField("New Timeout", String.valueOf(newTimeoutMinutes), true);
+        event.getHook().sendMessageComponents(StandardResponse.getResponseContainer(title, getComponents(oldTimeoutMinutes, newTimeoutMinutes))).queue();
+    }
 
-        event.getHook().sendMessageEmbeds(eb.build()).queue();
+    private void logNoChange(@NotNull EventBlob blob) {
+        log.debug("No change for {}", blob.getGuildId());
     }
 
     private void updateKillMaxKills(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
         event.deferReply().queue();
         Optional<Long> ifNewMax = Optional.ofNullable(event.getOption("set-max", OptionMapping::getAsLong));
         long oldMax = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILLS_MAX, 5L, PropertyMapping::getAsLong);
-        EmbedBuilder eb = blob.getStandardEmbed(getNameReadable() + " - Max Kills");
+        String title = getNameReadable() + " - Max Kills";
 
         if (ifNewMax.isEmpty()) {
-            event.getHook().sendMessageEmbeds(
-                eb.addField("Max Kills", String.valueOf(oldMax), false)
-                    .build()
+            event.getHook().sendMessageComponents(
+                StandardResponse.getResponseContainer(title, String.format("Current Set: ```%s````", oldMax))
             ).queue();
             return;
         }
         long newMax = ifNewMax.get();
 
         if (newMax == oldMax) {
-            log.debug("No change for {}", blob.getGuildId());
-            event.getHook().sendMessageEmbeds(
-                eb.setDescription("Currently set Max Kills is requested amount: `%d Max Kills`.".formatted(newMax))
-                    .build()
+            logNoChange(blob);
+            event.getHook().sendMessageComponents(
+                StandardResponse.getResponseContainer(title, String.format("Currently set Max Kills is requested amount: `%d Max Kills`.", newMax),
+                    BotColors.SUB_DEFAULT
+                )
             ).queue();
             return;
         }
@@ -336,13 +328,13 @@ public class ConfigCmd implements ICommandSlash {
         try {
             DatabaseManager.INSTANCE.updateProperty(blob, Property.KILLS_MAX, newMax);
         } catch (Exception e) {
-            log.error(String.format("Unable to update property %s", Property.KILLS_MAX), e);
+            logPropertyUpdateFailure(Property.KILLS_MAX, e);
         }
 
-        eb.setTitle("Config Updated")
-            .addField("Old Max", String.valueOf(oldMax), true)
-            .addField("New Max", String.valueOf(newMax), true);
+        event.getHook().sendMessageComponents(StandardResponse.getResponseContainer(title, getComponents(oldMax, newMax))).queue();
+    }
 
-        event.getHook().sendMessageEmbeds(eb.build()).queue();
+    private void logPropertyUpdateFailure(Property property, Exception e) {
+        log.error(String.format("Unable to update property %s", property), e);
     }
 }

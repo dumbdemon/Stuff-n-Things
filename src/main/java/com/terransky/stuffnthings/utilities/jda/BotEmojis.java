@@ -3,7 +3,7 @@ package com.terransky.stuffnthings.utilities.jda;
 import com.terransky.stuffnthings.StuffNThings;
 
 /**
-Enums containing emojis uploaded to the Discord Developer console.
+ * Enums containing emojis uploaded to the Discord Developer console.
  */
 public enum BotEmojis {
 

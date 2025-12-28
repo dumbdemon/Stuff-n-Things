@@ -2,10 +2,11 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.fun;
 
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
-import com.terransky.stuffnthings.interfaces.interactions.ICommandSlash;
+import com.terransky.stuffnthings.interfaces.interactions.SlashCommandInteraction;
 import com.terransky.stuffnthings.utilities.command.*;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.components.separator.Separator;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -17,13 +18,49 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ColorInfo implements ICommandSlash {
+public class ColorInfo extends SlashCommandInteraction {
     private static final DecimalFormat HSB = new DecimalFormat("##.##%");
     private final String HEX_TRIPLET_REGEX = "^#?(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$";
     private final Pattern HEX_TRIPLET_PATTERN = Pattern.compile(HEX_TRIPLET_REGEX);
+
+    public ColorInfo() {
+        super("color-info", "Get more info on a color.", Mastermind.DEVELOPER,
+            CommandCategory.FUN,
+            parseDate(2022, 9, 20, 12, 10),
+            parseDate(2024, 2, 9, 16, 11)
+        );
+        addSubcommands(
+            new SubcommandData("hex-triplet", "Get more info on a hex triplet. EX: #663366")
+                .addOptions(
+                    new OptionData(OptionType.STRING, "triplet", "Enter a Hex Triplet.", true)
+                        .setRequiredLength(3, 7)
+                ),
+            new SubcommandData("rgb", "Get more info on an RGB code. EX: R 102, G 51, B 102")
+                .addOptions(
+                    new OptionData(OptionType.INTEGER, "red", "The red value.", true)
+                        .setRequiredRange(0, 255),
+                    new OptionData(OptionType.INTEGER, "blue", "The blue value.", true)
+                        .setRequiredRange(0, 255),
+                    new OptionData(OptionType.INTEGER, "green", "The green value", true)
+                        .setRequiredRange(0, 255)
+                ),
+            new SubcommandData("cmyk", "Get more info on a CMYK code. EX: C 0, M 50, Y 0, K 60")
+                .addOptions(
+                    new OptionData(OptionType.INTEGER, "cyan", "The cyan percentage.", true)
+                        .setRequiredRange(0, 100),
+                    new OptionData(OptionType.INTEGER, "magenta", "The magenta percentage", true)
+                        .setRequiredRange(0, 100),
+                    new OptionData(OptionType.INTEGER, "yellow", "The yellow percentage", true)
+                        .setRequiredRange(0, 100),
+                    new OptionData(OptionType.INTEGER, "black", "The black percentage", true)
+                        .setRequiredRange(0, 100)
+                )
+        );
+    }
 
     @NotNull
     @Contract(pure = true)
@@ -55,25 +92,26 @@ public class ColorInfo implements ICommandSlash {
         return new int[]{c, m, y, (int) Math.floor(k)};
     }
 
-    private void runHexTriplet(@NotNull SlashCommandInteractionEvent event, EmbedBuilder eb) {
+    private void runHexTriplet(@NotNull SlashCommandInteractionEvent event) {
         String hexCode = event.getOption("triplet", "#636", OptionMapping::getAsString);
         Matcher matcher = HEX_TRIPLET_PATTERN.matcher(hexCode);
 
         if (!matcher.matches()) {
             DecimalFormat bigNumber = new DecimalFormat("##,###");
-            eb.setTitle("Invalid Hex Triplet!")
-                .setDescription(String.format("""
-                    You've given an invalid hex triplet!
-                    Correct example: `#663366` or `#636`
-
-                    **NOTE:** Hex triplets are 3 or 6 characters that uses 0-9 and A-F in various combinations. On another note, `#0055FF` is equivalent to `#05F`.
-
-                    FUN FACT!
-                    > There are %s combinations for 6 character hex triplets and of those combinations, %s are for 3 character hex triplets!
-                    """, bigNumber.format(Math.pow(16, 6)), bigNumber.format(Math.pow(16, 3))))
-                .setColor(EmbedColor.ERROR.getColor())
-                .addField("Provided", hexCode.toUpperCase(), false);
-            event.replyEmbeds(eb.build()).setEphemeral(true).queue();
+            event.replyComponents(
+                StandardResponse.getResponseContainer("Invalid Hex Triplet!", List.of(
+                    TextDisplay.ofFormat("""
+                        You've given an invalid hex triplet!
+                        Correct example: `#663366` or `#636`
+                        
+                        **NOTE:** Hex triplets are 3 or 6 characters that uses 0-9 and A-F in various combinations. On another note, `#0055FF` is equivalent to `#05F`.
+                        
+                        FUN FACT!
+                        > There are %s combinations for 6 character hex triplets and of those combinations, %s are for 3 character hex triplets!
+                        """, bigNumber.format(Math.pow(16, 6)), bigNumber.format(Math.pow(16, 3))),
+                    TextDisplay.ofFormat("Provided: `%s`", hexCode.toUpperCase())
+                ), BotColors.ERROR)
+            ).setEphemeral(true).queue();
             return;
         }
 
@@ -97,102 +135,59 @@ public class ColorInfo implements ICommandSlash {
             color.getBlue()
         };
 
-        event.replyEmbeds(getResponse(eb, rgbToCmyk(rgb), rgb)).queue();
+        event.replyComponents(getResponse(rgbToCmyk(rgb), rgb)).queue();
     }
 
-    private void runRGB(@NotNull SlashCommandInteractionEvent event, @NotNull EmbedBuilder eb) {
+    private void runRGB(@NotNull SlashCommandInteractionEvent event) {
         int[] rgb = {
             event.getOption("red", 102, OptionMapping::getAsInt),
             event.getOption("blue", 51, OptionMapping::getAsInt),
             event.getOption("green", 102, OptionMapping::getAsInt)
         };
-        event.replyEmbeds(getResponse(eb, rgbToCmyk(rgb), rgb)).queue();
+        event.replyComponents(getResponse(rgbToCmyk(rgb), rgb)).queue();
     }
 
-    private void runCMYK(@NotNull SlashCommandInteractionEvent event, @NotNull EmbedBuilder eb) {
+    private void runCMYK(@NotNull SlashCommandInteractionEvent event) {
         int[] cmyk = {
             event.getOption("cyan", 0, OptionMapping::getAsInt),
             event.getOption("magenta", 50, OptionMapping::getAsInt),
             event.getOption("yellow", 0, OptionMapping::getAsInt),
             event.getOption("black", 60, OptionMapping::getAsInt)
         };
-        event.replyEmbeds(getResponse(eb, cmyk, cmykToRgb(cmyk))).queue();
+        event.replyComponents(getResponse(cmyk, cmykToRgb(cmyk))).queue();
     }
 
     @NotNull
-    private MessageEmbed getResponse(@NotNull EmbedBuilder eb, @NotNull int[] cmyk, @NotNull int[] rgb) {
+    private Container getResponse(@NotNull int[] cmyk, @NotNull int[] rgb) {
         int r = rgb[0];
         int g = rgb[1];
         int b = rgb[2];
         float[] hsv = Color.RGBtoHSB(r, g, b, null);
         String hexTriplet = "#%02X%02X%02X".formatted(r, g, b);
 
-        return eb.addField("Hex Triplet", hexTriplet, true)
-            .addField("RGB", "rgb(**%d**, **%d**, **%d**)".formatted(r, g, b), true)
-            .addField("CMYK", "**%d**, **%d**, **%d**, **%d**".formatted(cmyk[0], cmyk[1], cmyk[2], cmyk[3]), true)
-            .addField("HSB/HSV", String.format("Hue **%s**%nSaturation **%s**%nBrightness **%s**",
+        return StandardResponse.getResponseContainer(this, List.of(
+            TextDisplay.ofFormat("## Hex Triplet\n%s", hexTriplet),
+            TextDisplay.ofFormat("## RGB\nrgb(**%d**, **%d**, **%d**)", r, g, b),
+            TextDisplay.ofFormat("## CMYK\n**%d**, **%d**, **%d**, **%d**", cmyk[0], cmyk[1], cmyk[2], cmyk[3]),
+            TextDisplay.ofFormat("## HSB/HSV\nHue **%s**\nSaturation **%s**\nBrightness **%s**",
                 HSB.format(hsv[0]).replace("%", "°"),
                 HSB.format(hsv[1]),
                 HSB.format(hsv[2])
-            ), false)
-            .addField("More Info", "[link](https://www.colorhexa.com/%s)".formatted(hexTriplet.substring(1)), false)
-            .setColor(new Color(r, g, b))
-            .build();
-    }
-
-    @Override
-    public String getName() {
-        return "color-info";
-    }
-
-    @Override
-    public Metadata getMetadata() {
-        return new Metadata(this.getName(), "Get more info on a color.", """
-            Given a hex triplet, RGB, or CMYK code, it will return the other values and give a link to more info.
-            """, Mastermind.DEVELOPER,
-            CommandCategory.FUN,
-            Metadata.parseDate(2022, 9, 20, 12, 10),
-            Metadata.parseDate(2024, 2, 9, 16, 11)
-        )
-            .addSubcommands(
-                new SubcommandData("hex-triplet", "Get more info on a hex triplet. EX: #663366")
-                    .addOptions(
-                        new OptionData(OptionType.STRING, "triplet", "Enter a Hex Triplet.", true)
-                            .setRequiredLength(3, 7)
-                    ),
-                new SubcommandData("rgb", "Get more info on an RGB code. EX: R 102, G 51, B 102")
-                    .addOptions(
-                        new OptionData(OptionType.INTEGER, "red", "The red value.", true)
-                            .setRequiredRange(0, 255),
-                        new OptionData(OptionType.INTEGER, "blue", "The blue value.", true)
-                            .setRequiredRange(0, 255),
-                        new OptionData(OptionType.INTEGER, "green", "The green value", true)
-                            .setRequiredRange(0, 255)
-                    ),
-                new SubcommandData("cmyk", "Get more info on a CMYK code. EX: C 0, M 50, Y 0, K 60")
-                    .addOptions(
-                        new OptionData(OptionType.INTEGER, "cyan", "The cyan percentage.", true)
-                            .setRequiredRange(0, 100),
-                        new OptionData(OptionType.INTEGER, "magenta", "The magenta percentage", true)
-                            .setRequiredRange(0, 100),
-                        new OptionData(OptionType.INTEGER, "yellow", "The yellow percentage", true)
-                            .setRequiredRange(0, 100),
-                        new OptionData(OptionType.INTEGER, "black", "The black percentage", true)
-                            .setRequiredRange(0, 100)
-                    )
-            );
+            ),
+            Separator.createDivider(Separator.Spacing.SMALL),
+            Formatter.getLinkButtonSection(String.format("https://www.colorhexa.com/%s", hexTriplet.substring(1)), "Learn more on ColorHexa")
+        ), new Color(r, g, b));
     }
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
         String subcommand = event.getSubcommandName();
-        EmbedBuilder eb = blob.getStandardEmbed(getNameReadable());
         if (subcommand == null) throw new DiscordAPIException("No subcommand was given.");
 
         switch (subcommand) {
-            case "hex-triplet" -> runHexTriplet(event, eb);
-            case "rgb" -> runRGB(event, eb);
-            case "cmyk" -> runCMYK(event, eb);
+            case "hex-triplet" -> runHexTriplet(event);
+            case "rgb" -> runRGB(event);
+            case "cmyk" -> runCMYK(event);
         }
     }
 }

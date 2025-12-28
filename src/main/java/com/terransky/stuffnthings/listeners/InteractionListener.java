@@ -7,11 +7,12 @@ import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.interfaces.interactions.*;
 import com.terransky.stuffnthings.utilities.cannedAgenda.GuildOnly;
 import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
-import com.terransky.stuffnthings.utilities.command.EmbedColor;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
+import com.terransky.stuffnthings.utilities.command.StandardResponse;
 import com.terransky.stuffnthings.utilities.general.InteractionType;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.components.separator.Separator;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
@@ -37,18 +38,19 @@ public class InteractionListener extends ListenerAdapter {
     private final Logger log = LoggerFactory.getLogger(InteractionListener.class);
 
     @NotNull
-    private MessageEmbed getDisabledMessage(@NotNull EventBlob blob, String message) {
-        return new EmbedBuilder(blob.getStandardEmbed("This command has been disabled!", EmbedColor.ERROR))
-            .setDescription("There is an issue with this command and will need to be disabled until further notice.")
-            .addField("Reason", message, false)
-            .build();
+    private Container getDisabledMessage(String message) {
+        return StandardResponse.getResponseContainer("This command has been disabled!",
+            List.of(
+                TextDisplay.of("### There is an issue with this command and will need to be disabled until further notice."),
+                Separator.createDivider(Separator.Spacing.SMALL),
+                TextDisplay.of(String.format("### Reason\n```%s```", message))
+            )
+        );
     }
 
     @NotNull
-    private MessageEmbed getFailedInteractionMessage(@NotNull EventBlob blob) {
-        return blob.getStandardEmbed("Oops!", EmbedColor.ERROR)
-            .setDescription(Responses.INTERACTION_FAILED.getMessage(blob.getInteractionType()))
-            .build();
+    private Container getFailedInteractionMessage(@NotNull EventBlob blob) {
+        return StandardResponse.getResponseContainer("Oops!", Responses.INTERACTION_FAILED, blob.getInteractionType());
     }
 
     private void logInteractionFailure(String interactionName, @NotNull String guildId, @NotNull Exception e) {
@@ -57,39 +59,35 @@ public class InteractionListener extends ListenerAdapter {
 
     private void errorHandler(@NotNull GenericCommandInteractionEvent event, @NotNull IInteraction<?> interaction,
                               EventBlob blob, Exception e) {
-        MessageEmbed commandFailed = getFailedInteractionMessage(blob);
+        Container commandFailed = getFailedInteractionMessage(blob);
         logInteractionFailure(interaction.getName(), blob.getGuildId(), e);
         if (event.isAcknowledged()) {
-            event.getHook().sendMessageEmbeds(commandFailed).queue();
-        } else event.replyEmbeds(commandFailed).setEphemeral(true).queue();
+            event.getHook().sendMessageComponents(commandFailed).queue();
+        } else event.replyComponents(commandFailed).setEphemeral(true).queue();
     }
 
     private void errorHandler(@NotNull GenericComponentInteractionCreateEvent event, @NotNull IInteraction<?> interaction,
                               EventBlob blob, Exception e) {
-        MessageEmbed componentFailed = getFailedInteractionMessage(blob);
+        Container componentFailed = getFailedInteractionMessage(blob);
         logInteractionFailure(interaction.getName(), blob.getGuildId(), e);
         if (event.isAcknowledged()) {
-            event.getHook().sendMessageEmbeds(componentFailed).queue();
-        } else event.replyEmbeds(componentFailed).setEphemeral(true).queue();
+            event.getHook().sendMessageComponents(componentFailed).queue();
+        } else event.replyComponents(componentFailed).setEphemeral(true).queue();
     }
 
     private void commandIsOwnerOnly(@NotNull GenericCommandInteractionEvent event, @NotNull EventBlob blob) {
         String typeName = blob.getInteractionType().getName();
-        event.replyEmbeds(new EmbedBuilder()
-            .setTitle(String.format("%s is Owner Only", typeName))
-            .setDescription(String.format("This %s can only be ran by the Owner.", typeName))
-            .setFooter(blob.getMemberName(), blob.getMemberEffectiveAvatarUrl())
-            .build()
+        event.replyComponents(
+            StandardResponse.getResponseContainer(String.format("%s is Owner Only", typeName),
+                String.format("This %s can only be ran by the Owner.", typeName))
         ).setEphemeral(true).queue();
     }
 
     private void commandIsDevsOnly(@NotNull GenericCommandInteractionEvent event, @NotNull EventBlob blob) {
         String typeName = blob.getInteractionType().getName();
-        event.replyEmbeds(new EmbedBuilder()
-            .setTitle(String.format("%s is for Devs Only", typeName))
-            .setDescription(String.format("This %s can only be ran by Developers.", typeName))
-            .setFooter(blob.getMemberName(), blob.getMemberEffectiveAvatarUrl())
-            .build()
+        event.replyComponents(
+            StandardResponse.getResponseContainer(String.format("%s is for Devs Only", typeName),
+                String.format("Command [%s] can only be ran by the Devs.", typeName))
         ).setEphemeral(true).queue();
     }
 
@@ -101,8 +99,7 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        var slashManager = Managers.INSTANCE.getSlashManager();
-        Optional<ICommandSlash> ifSlash = slashManager.getInteraction(event.getName());
+        Optional<SlashCommandInteraction> ifSlash = (new Managers.SlashCommands()).getInteraction(event.getName());
         if (ifSlash.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
@@ -111,7 +108,7 @@ public class InteractionListener extends ListenerAdapter {
         if (StuffNThings.getConfig().getCore().getEnableDatabase()) DatabaseManager.INSTANCE.addUser(blob);
         if (DatabaseManager.INSTANCE.isBanned(blob)) return;
 
-        ICommandSlash slash = ifSlash.get();
+        SlashCommandInteraction slash = ifSlash.get();
         log.debug("Command {} called on {} [{}]", slash.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
 
         if (slash.isOwnerOnly() && !blob.getMember().isOwner()) {
@@ -119,13 +116,14 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        if (slash.isDeveloperCommand() && !blob.getMemberId().equals(StuffNThings.getConfig().getCore().getOwnerId())) {
+        if (slash.isDeveloperOnly() && !blob.getMemberId().equals(StuffNThings.getConfig().getCore().getOwnerId())) {
             commandIsDevsOnly(event, blob);
             return;
         }
 
         if (slash.isDisabled()) {
-            event.replyEmbeds(getDisabledMessage(blob, slash.getDisabledReason()))
+            event.replyComponents(getDisabledMessage(slash.getDisabledReason()))
+
                 .setEphemeral(true)
                 .queue();
             return;
@@ -146,8 +144,7 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        var contextManager = Managers.INSTANCE.getMessageContextManager();
-        Optional<ICommandMessage> ifMenu = contextManager.getInteraction(event.getName());
+        Optional<MessageCommandInteraction> ifMenu = (new Managers.MessageContextMenu()).getInteraction(event.getName());
         if (ifMenu.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
@@ -156,21 +153,22 @@ public class InteractionListener extends ListenerAdapter {
         if (StuffNThings.getConfig().getCore().getEnableDatabase()) DatabaseManager.INSTANCE.addUser(blob);
         if (DatabaseManager.INSTANCE.isBanned(blob)) return;
 
-        ICommandMessage commandMessage = ifMenu.get();
-        log.debug("Command \"{}\" called on {} [{}]", commandMessage.getName().toUpperCase(), blob.getGuild().getName(), blob.getGuildIdLong());
+        MessageCommandInteraction commandMessage = ifMenu.get();
+        logInteractionEvent(commandMessage, blob);
 
         if (commandMessage.isOwnerOnly() && !blob.getMember().isOwner()) {
             commandIsOwnerOnly(event, blob);
             return;
         }
 
-        if (commandMessage.isDeveloperCommand() && !blob.getMemberId().equals(StuffNThings.getConfig().getCore().getOwnerId())) {
+        if (commandMessage.isDeveloperOnly() && !blob.getMemberId().equals(StuffNThings.getConfig().getCore().getOwnerId())) {
             commandIsDevsOnly(event, blob);
             return;
         }
 
         if (commandMessage.isDisabled()) {
-            event.replyEmbeds(getDisabledMessage(blob, commandMessage.getDisabledReason()))
+            event.replyComponents(getDisabledMessage(commandMessage.getDisabledReason()))
+
                 .setEphemeral(true)
                 .queue();
             return;
@@ -190,8 +188,7 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        var contextManager = Managers.INSTANCE.getUserContextManager();
-        Optional<ICommandUser> ifMenu = contextManager.getInteraction(event.getName());
+        Optional<UserCommandInteraction> ifMenu = (new Managers.UserContextMenu()).getInteraction(event.getName());
         if (ifMenu.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
@@ -199,21 +196,21 @@ public class InteractionListener extends ListenerAdapter {
         if (StuffNThings.getConfig().getCore().getEnableDatabase()) DatabaseManager.INSTANCE.addUser(blob);
         if (DatabaseManager.INSTANCE.isBanned(blob)) return;
 
-        ICommandUser commandUser = ifMenu.get();
-        log.debug("Command \"{}\" called on {} [{}]", commandUser.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
+        UserCommandInteraction commandUser = ifMenu.get();
+        logInteractionEvent(commandUser, blob);
 
         if (commandUser.isOwnerOnly() && !blob.getMember().isOwner()) {
             commandIsOwnerOnly(event, blob);
             return;
         }
 
-        if (commandUser.isDeveloperCommand() && !blob.getMemberId().equals(StuffNThings.getConfig().getCore().getOwnerId())) {
+        if (commandUser.isDeveloperOnly() && !blob.getMemberId().equals(StuffNThings.getConfig().getCore().getOwnerId())) {
             commandIsDevsOnly(event, blob);
             return;
         }
 
         if (commandUser.isDisabled()) {
-            event.replyEmbeds(getDisabledMessage(blob, commandUser.getDisabledReason()))
+            event.replyComponents(getDisabledMessage(commandUser.getDisabledReason()))
                 .setEphemeral(true)
                 .queue();
             return;
@@ -227,16 +224,18 @@ public class InteractionListener extends ListenerAdapter {
         }
     }
 
+    private <T extends IInteraction<?>> void logInteractionEvent(@NotNull T interaction, @NotNull EventBlob blob) {
+        log.debug("Command \"{}\" called on {} [{}]", interaction.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
+    }
+
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
-        if (event.getButton().getId() == null) return;
-        else if (event.getGuild() == null) {
+        if (event.getGuild() == null) {
             GuildOnly.interactionResponse(event, InteractionType.BUTTON);
             return;
         }
 
-        var buttonManager = Managers.INSTANCE.getButtonManager();
-        Optional<IButton> ifButton = buttonManager.getInteraction(event.getButton().getId());
+        Optional<ButtonInteraction> ifButton = (new Managers.DiscordButtons()).getInteraction(event.getButton().getLabel());
         if (ifButton.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
@@ -244,7 +243,7 @@ public class InteractionListener extends ListenerAdapter {
             .setChannelUnion(event.getChannel());
         if (DatabaseManager.INSTANCE.isBanned(blob)) return;
 
-        IButton iButton = ifButton.get();
+        ButtonInteraction iButton = ifButton.get();
         log.debug("Button {} called on {} [{}]", iButton.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
         try {
             iButton.execute(event, blob);
@@ -260,16 +259,15 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        var selectMenuManager = Managers.INSTANCE.getEntitySelectMenuManager();
-        Optional<ISelectMenuEntity> ifMenu = selectMenuManager.getInteraction(event.getInteraction().getComponentId());
+        Optional<SelectMenuEntityInteraction> ifMenu = (new Managers.EntitySelectMenu()).getInteraction(event.getInteraction().getComponentId());
         if (ifMenu.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
             .setInteractionType(InteractionType.SELECTION_ENTITY)
             .setChannelUnion(event.getChannel());
         if (DatabaseManager.INSTANCE.isBanned(blob)) return;
-        ISelectMenuEntity menu = ifMenu.get();
-        log.debug("Select Menu {} called on {} [{}]", menu.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
+        SelectMenuEntityInteraction menu = ifMenu.get();
+        logSelectMenu(menu.getName().toUpperCase(), blob);
         try {
             menu.execute(event, blob);
         } catch (RuntimeException | IOException | ExecutionException | InterruptedException e) {
@@ -284,24 +282,23 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        var modalManager = Managers.INSTANCE.getModalManager();
-        Optional<IModal> ifModal = modalManager.getInteraction(event.getModalId());
+        Optional<ModalInteraction> ifModal = (new Managers.ModalInteractions()).getInteraction(event.getModalId());
         if (ifModal.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())
             .setInteractionType(InteractionType.MODAL)
             .setChannelUnion(event.getChannel());
         if (DatabaseManager.INSTANCE.isBanned(blob)) return;
-        IModal modal = ifModal.get();
+        ModalInteraction modal = ifModal.get();
         log.debug("Modal {} called on {} [{}]", modal.getName().toUpperCase(), blob.getGuild().getName(), blob.getGuildIdLong());
         try {
             modal.execute(event, blob);
         } catch (RuntimeException | IOException | ExecutionException | InterruptedException e) {
-            MessageEmbed modalFailed = getFailedInteractionMessage(blob);
+            Container modalFailed = getFailedInteractionMessage(blob);
             logInteractionFailure(modal.getName(), blob.getGuildId(), e);
             if (event.isAcknowledged()) {
-                event.getHook().sendMessageEmbeds(modalFailed).queue();
-            } else event.replyEmbeds(modalFailed).setEphemeral(true).queue();
+                event.getHook().sendMessageComponents(modalFailed).queue();
+            } else event.replyComponents(modalFailed).setEphemeral(true).queue();
         }
     }
 
@@ -312,8 +309,8 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        List<ISelectMenuString> menus = new ArrayList<>() {{
-            var selectMenuManager = Managers.INSTANCE.getStringSelectMenuManager();
+        List<SelectMenuStringInteraction> menus = new ArrayList<>() {{
+            var selectMenuManager = new Managers.StringSelectMenu();
             for (String menuName : event.getInteraction().getValues()) {
                 selectMenuManager.getInteraction(menuName).ifPresent(this::add);
             }
@@ -325,14 +322,18 @@ public class InteractionListener extends ListenerAdapter {
             .setChannelUnion(event.getChannel());
         if (DatabaseManager.INSTANCE.isBanned(blob)) return;
 
-        for (ISelectMenuString stringMenu : menus) {
+        for (SelectMenuStringInteraction stringMenu : menus) {
             String interactionName = "%s[%s]".formatted(componentId.toUpperCase(), stringMenu.getName().toUpperCase());
-            log.debug("Select Menu {} called on {} [{}]", interactionName, blob.getGuildName(), blob.getGuildIdLong());
+            logSelectMenu(interactionName, blob);
             try {
                 stringMenu.execute(event, blob);
             } catch (RuntimeException | IOException | ExecutionException | InterruptedException e) {
                 errorHandler(event, stringMenu, blob, e);
             }
         }
+    }
+
+    private void logSelectMenu(String interactionName, @NotNull EventBlob blob) {
+        log.debug("Select Menu {} called on {} [{}]", interactionName, blob.getGuildName(), blob.getGuildIdLong());
     }
 }

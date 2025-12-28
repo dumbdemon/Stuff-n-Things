@@ -1,5 +1,9 @@
 package com.terransky.stuffnthings.utilities.command;
 
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.section.Section;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URLEncoder;
@@ -46,6 +50,28 @@ public class Formatter {
         float truncated = value / (divideBy / 10);
         boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
         return hasDecimal ? simpleNum.format(truncated / 10d) + suffix : simpleNum.format(truncated / 10) + suffix;
+    }
+
+    @NotNull
+    public static Section getLinkButtonSection(String link, String message) {
+        return Section.of(
+            Button.link(
+                link,
+                Emoji.fromUnicode("U+1F517")
+            ),
+            TextDisplay.ofFormat(message)
+        );
+    }
+
+    @NotNull
+    public static Section getLinkButtonSection(String link, String message, Emoji emoji) {
+        return Section.of(
+            Button.link(
+                link,
+                emoji
+            ),
+            TextDisplay.ofFormat(message)
+        );
     }
 
     @NotNull

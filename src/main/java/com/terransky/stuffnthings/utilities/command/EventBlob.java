@@ -2,15 +2,11 @@ package com.terransky.stuffnthings.utilities.command;
 
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.utilities.general.InteractionType;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -198,50 +194,6 @@ public class EventBlob {
     public EventBlob setChannelUnion(MessageChannelUnion channelUnion) {
         this.channelUnion = channelUnion;
         return this;
-    }
-
-    public EmbedBuilder getStandardEmbed() {
-        return new EmbedBuilder()
-            .setColor(EmbedColor.DEFAULT.getColor())
-            .setTimestamp(OffsetDateTime.now())
-            .setFooter(getMemberName(), getMemberEffectiveAvatarUrl());
-    }
-
-    public EmbedBuilder getStandardEmbed(String embedTitle) {
-        return getStandardEmbed()
-            .setTitle(embedTitle);
-    }
-
-    public EmbedBuilder getStandardEmbed(Color color) {
-        return getStandardEmbed()
-            .setColor(color);
-    }
-
-    public EmbedBuilder getStandardEmbed(@NotNull EmbedColor color) {
-        return getStandardEmbed(color.getColor());
-    }
-
-    public EmbedBuilder getStandardEmbed(String embedTitle, String url) {
-        return getStandardEmbed()
-            .setTitle(embedTitle, url);
-    }
-
-    public EmbedBuilder getStandardEmbed(String embedTitle, Color color) {
-        return getStandardEmbed(color)
-            .setTitle(embedTitle);
-    }
-
-    public EmbedBuilder getStandardEmbed(String embedTitle, @NotNull EmbedColor color) {
-        return getStandardEmbed(embedTitle, color.getColor());
-    }
-
-    public EmbedBuilder getStandardEmbed(String embedTitle, String url, Color color) {
-        return getStandardEmbed(color)
-            .setTitle(embedTitle, url);
-    }
-
-    public EmbedBuilder getStandardEmbed(String embedTitle, String url, @NotNull EmbedColor color) {
-        return getStandardEmbed(embedTitle, url, color.getColor());
     }
 
     @Override
