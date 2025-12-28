@@ -151,7 +151,7 @@ public class WhatsInStandardData {
      */
     @JsonProperty("bans")
     public void setBans(List<Ban> bans) {
-        this.bans = bans;
+        this.bans = List.copyOf(bans);
     }
 
     @JsonAnyGetter
