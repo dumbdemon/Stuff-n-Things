@@ -139,7 +139,7 @@ public class WhatsInStandardData {
      */
     @JsonProperty("bans")
     public List<Ban> getBans() {
-        return bans;
+        return List.copyOf(bans);
     }
 
     /**

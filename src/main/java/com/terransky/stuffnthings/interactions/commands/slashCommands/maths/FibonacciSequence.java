@@ -59,7 +59,7 @@ public class FibonacciSequence extends SlashCommandInteraction {
             } else replace = " ";
 
             returnString = Formatter.largeNumberFormat(nthValue).replace(".0" + replace, replace);
-            textDisplay = TextDisplay.of(String.format("### The %s%s value is\n```%s```", nth, nthSuffix, returnString));
+            textDisplay = TextDisplay.of(String.format("### The %s%s value is%n```%s```", nth, nthSuffix, returnString));
         } else {
             StringBuilder fibonacciString = new StringBuilder();
 
