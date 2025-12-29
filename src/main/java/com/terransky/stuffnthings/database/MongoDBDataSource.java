@@ -472,7 +472,7 @@ public class MongoDBDataSource implements DatabaseManager {
         List<PerServer> perServers = new ArrayList<>(user.getPerServers());
 
         if (perServers.stream().anyMatch(lock -> lock.getGuildReference().equals(guildId))) {
-            log.info("User [{}] already has {} for server ID [{}]", userId, THAT_NAME, guildId);
+            log.debug("User [{}] already has {} for server ID [{}]", userId, THAT_NAME, guildId);
             return;
         }
 
