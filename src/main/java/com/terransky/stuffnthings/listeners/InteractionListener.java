@@ -235,7 +235,7 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
-        Optional<ButtonInteraction> ifButton = (new Managers.DiscordButtons()).getInteraction(event.getButton().getLabel());
+        Optional<ButtonInteraction> ifButton = (new Managers.DiscordButtons()).getInteraction(event.getComponentId());
         if (ifButton.isEmpty()) return;
 
         EventBlob blob = new EventBlob(event.getGuild(), event.getMember())

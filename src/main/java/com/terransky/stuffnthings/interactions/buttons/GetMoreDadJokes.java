@@ -8,6 +8,8 @@ import com.terransky.stuffnthings.utilities.apiHandlers.ICanHazDadJokeHandler;
 import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.StandardResponse;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
@@ -40,7 +42,8 @@ public class GetMoreDadJokes extends ButtonInteraction {
             .setComponents(StandardResponse.getResponseContainer(new GetDadJokes(), List.of(
                     TextDisplay.of(theJoke.getJoke()),
                     TextDisplay.ofFormat("ID#%s", theJoke.getId())
-                ))
+                )),
+                ActionRow.of(new GetMoreDadJokes().getButton(ButtonStyle.SUCCESS, "Get a new Dad Joke!"))
             ).build();
 
         event.editMessage(message).queue();
