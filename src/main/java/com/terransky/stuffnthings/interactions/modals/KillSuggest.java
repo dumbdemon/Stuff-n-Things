@@ -3,6 +3,7 @@ package com.terransky.stuffnthings.interactions.modals;
 import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
+import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.interfaces.interactions.ModalInteraction;
 import com.terransky.stuffnthings.utilities.command.BotColors;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
@@ -10,7 +11,10 @@ import com.terransky.stuffnthings.utilities.command.StandardResponse;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
+import net.dv8tion.jda.api.components.textinput.TextInput;
+import net.dv8tion.jda.api.components.textinput.TextInputStyle;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
@@ -31,6 +35,18 @@ public class KillSuggest {
     public static final String ACCEPT_TARGET_BUTTON = "accept-target-kill";
     public static final String DENY_BUTTON = "deny-kill";
     public static final String MODAL_TEXT_INPUT_NAME = "kill-suggestion";
+    private static final String MODAL_LABEL = "Suggest Kill-String";
+    private static final Label INPUT_LABEL = Label.of(
+        "Suggestion",
+        TextInput.create(MODAL_TEXT_INPUT_NAME, TextInputStyle.PARAGRAPH)
+            .setRequired(true)
+            .setRequiredRange(10, IInteraction.MAX_MESSAGE_LENGTH / 4)
+            .setPlaceholder("Use \"%s\" to represent your target.")
+            .build()
+    );
+
+    KillSuggest() {
+    }
 
     private static void doExecute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob, boolean isRandom) throws RuntimeException, IOException {
         event.deferReply().queue();
@@ -78,12 +94,7 @@ public class KillSuggest {
     public static class Random extends ModalInteraction {
 
         public Random() {
-            super("random-kill-suggest", MODAL_TEXT_INPUT_NAME);
-        }
-
-        @Override
-        public String getName() {
-            return "random-kill-suggest";
+            super("random-kill-suggest", MODAL_LABEL);
         }
 
         @Override
@@ -91,34 +102,21 @@ public class KillSuggest {
             doExecute(event, blob, true);
         }
 
-        //Research new Modal system
         @Override
         public Modal getContructedModal() {
-            return getBuilder()
-                .addComponents(
-                    TextDisplay.of("")
-                ).build();
+            return getBuilder().addComponents(INPUT_LABEL).build();
         }
     }
 
     public static class Target extends ModalInteraction {
 
         public Target() {
-            super("target-kill-suggest", "Suggest Kill-String");
+            super("target-kill-suggest", MODAL_LABEL);
         }
 
-        //Research new Modal system
         @Override
         public Modal getContructedModal() {
-            return getBuilder()
-                .addComponents(
-                    TextDisplay.of("")
-                ).build();
-        }
-
-        @Override
-        public String getName() {
-            return "target-kill-suggest";
+            return getBuilder().addComponents(INPUT_LABEL).build();
         }
 
         @Override
@@ -126,18 +124,5 @@ public class KillSuggest {
             doExecute(event, blob, false);
         }
 
-//        @Override
-//        public Modal getConstructedModal() {
-//            TextInput suggestion = TextInput.create(MODAL_TEXT_INPUT_NAME, "Suggestion", TextInputStyle.PARAGRAPH)
-//                .setRequired(true)
-//                .setRequiredRange(10, MessageEmbed.DESCRIPTION_MAX_LENGTH / 4)
-//                .setPlaceholder("Use \"%s\" to represent your target.")
-//                .build();
-//
-//
-//            return Modal.create(getName(), "Suggest Kill-String")
-//                .addActionRow(suggestion)
-//                .build();
-//        }
     }
 }

@@ -41,7 +41,7 @@ public class Kill extends SlashCommandInteraction {
             Mastermind.USER,
             CommandCategory.FUN,
             parseDate(2022, 8, 24, 11, 10),
-            parseDate(2025, 12, 28, 1, 58)
+            parseDate(2025, 12, 29, 19, 11)
         );
         addSubcommands(
             new SubcommandData("random", "Try your hand at un-aliving someone!"),
@@ -76,7 +76,7 @@ public class Kill extends SlashCommandInteraction {
         if (message.contains(blob.getSelfMember().getAsMention()))
             message += " :O";
 
-        event.replyComponents(StandardResponse.getResponseContainer(this, "… " + message)).queue();
+        event.replyComponents(StandardResponse.getResponseContainer(blob.getMember().getUser().getAsTag(), "… " + message)).queue();
     }
 
     private void killTarget(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob, Random random) {
@@ -117,7 +117,7 @@ public class Kill extends SlashCommandInteraction {
             .getFromDatabase(blob, Property.KILL_TARGET, List.of("tried to kill %s but they couldn't because that's bad manners!"), PropertyMapping::getAsListOfString);
 
         event.replyComponents(StandardResponse.getResponseContainer(
-                this,
+                blob.getMember().getUser().getAsTag(),
                 TextDisplay.ofFormat(
                     "… %s",
                     targetStrings.get(random.nextInt(targetStrings.size())).formatted(target))

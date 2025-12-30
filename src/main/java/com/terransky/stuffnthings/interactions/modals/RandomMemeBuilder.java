@@ -4,6 +4,9 @@ import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.ModalInteraction;
 import com.terransky.stuffnthings.utilities.apiHandlers.MemeGeneratorHandler;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
+import net.dv8tion.jda.api.components.label.Label;
+import net.dv8tion.jda.api.components.textinput.TextInput;
+import net.dv8tion.jda.api.components.textinput.TextInputStyle;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.modals.Modal;
 import net.dv8tion.jda.api.utils.FileUpload;
@@ -23,10 +26,28 @@ public class RandomMemeBuilder extends ModalInteraction {
         super("random-meme-builder", "Random Meme Builder");
     }
 
-    //Research new Modal system
     @Override
     public Modal getContructedModal() {
-        return null;
+        return getBuilder()
+            .addComponents(
+                Label.of(
+                    "Top Text",
+                    TextInput.create(TOP_TEXT, TextInputStyle.SHORT)
+                        .setRequired(true)
+                        .setRequiredRange(1, 100)
+                        .setPlaceholder("Top Text")
+                        .build()
+                ),
+                Label.of(
+                    "Bottom Text",
+                    TextInput.create(BOTTOM_TEXT, TextInputStyle.SHORT)
+                        .setRequired(true)
+                        .setRequiredRange(1, 100)
+                        .setPlaceholder("Bottom Text")
+                        .build()
+                )
+            )
+            .build();
     }
 
     @Override
@@ -39,23 +60,4 @@ public class RandomMemeBuilder extends ModalInteraction {
             event.replyFiles(fileUpload).queue();
         }
     }
-
-//    @Override
-//    public Modal getConstructedModal() {
-//        TextInput topText = TextInput.create(TOP_TEXT, "Top Text", TextInputStyle.SHORT)
-//            .setRequired(true)
-//            .setRequiredRange(1, 100)
-//            .setPlaceholder("Top Text")
-//            .build();
-//        TextInput bottomText = TextInput.create(BOTTOM_TEXT, "Bottom Text", TextInputStyle.SHORT)
-//            .setRequired(true)
-//            .setRequiredRange(1, 100)
-//            .setPlaceholder("Bottom Text")
-//            .build();
-//
-//        return Modal.create(getName(), "Random Meme Builder")
-//            .addActionRow(topText)
-//            .addActionRow(bottomText)
-//            .build();
-//    }
 }

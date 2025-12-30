@@ -23,6 +23,8 @@ public interface IInteraction<T extends GenericInteractionCreateEvent> extends C
      * @return A {@link String} of this bot element.
      */
     String getName();
+    
+    int MAX_MESSAGE_LENGTH = 4000 - 32;
 
     default String getNameReadable() {
         return WordUtils.capitalize(this.getName().replaceAll("-", " "));
