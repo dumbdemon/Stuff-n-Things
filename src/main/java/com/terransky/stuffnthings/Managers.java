@@ -20,6 +20,8 @@ import com.terransky.stuffnthings.interactions.commands.slashCommands.maths.Solv
 import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.CalculateRats;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.WhatsInStandard;
 import com.terransky.stuffnthings.interactions.commands.userContextMenus.UserInfoMenu;
+import com.terransky.stuffnthings.interactions.modals.KillSuggest;
+import com.terransky.stuffnthings.interactions.modals.RandomMemeBuilder;
 import com.terransky.stuffnthings.interfaces.interactions.*;
 import com.terransky.stuffnthings.utilities.managers.CommandInteractionManager;
 import com.terransky.stuffnthings.utilities.managers.InteractionManager;
@@ -120,6 +122,9 @@ public class Managers {
     public static class ModalInteractions extends InteractionManager<ModalInteraction> {
 
         public ModalInteractions() {
+            addInteraction(new KillSuggest.Random());
+            addInteraction(new KillSuggest.Target());
+            addInteraction(new RandomMemeBuilder());
         }
     }
 }

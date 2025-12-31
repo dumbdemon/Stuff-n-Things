@@ -123,7 +123,6 @@ public class InteractionListener extends ListenerAdapter {
 
         if (slash.isDisabled()) {
             event.replyComponents(getDisabledMessage(slash.getDisabledReason()))
-
                 .setEphemeral(true)
                 .queue();
             return;
