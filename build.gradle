@@ -31,7 +31,7 @@ dependencies {
     implementation('com.fasterxml.jackson.core:jackson-databind:2.20.1')
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.1'
     implementation('org.apache.commons:commons-text:1.15.0')
-    implementation 'org.apache.commons:commons-lang3:3.18.0'
+    implementation 'org.apache.commons:commons-lang3:3.20.0'
     implementation 'org.mongodb:mongodb-driver-reactivestreams:5.6.2'
     implementation 'javax.validation:validation-api:2.0.1.Final'
     implementation('com.neovisionaries:nv-i18n:1.29')
