@@ -40,6 +40,7 @@ public class AcceptKill {
     }
 
     private static void doExecute(@NotNull ButtonInteractionEvent event, boolean isRandom) {
+        event.deferEdit().queue();
         if (!event.getUser().getId().equals(StuffNThings.getConfig().getCore().getOwnerId())) {
             event.replyComponents(youAreNotAllowed(event)).setEphemeral(true).queue();
             return;
@@ -58,9 +59,10 @@ public class AcceptKill {
         MessageEditData messageEditData = new MessageEditBuilder()
             .setContent("Kill Suggestion was accepted.")
             .setComponents(new ArrayList<>())
+            .useComponentsV2(false)
             .build();
 
-        event.getMessage().editMessage(messageEditData).queue();
+        event.getMessage().editMessage(messageEditData).useComponentsV2(false).queue();
     }
 
     public static class Random extends ButtonInteraction {

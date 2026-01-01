@@ -13,7 +13,6 @@ import com.terransky.stuffnthings.utilities.cyphers.Rot13Cypher;
 import com.thedeanda.lorem.LoremIpsum;
 import net.dv8tion.jda.api.components.separator.Separator;
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -35,19 +34,19 @@ public class CypherCmd extends SlashCommandInteraction {
         super("cypher", "Encode/Decode messages using different cyphers.",
             Mastermind.DEVELOPER, CommandCategory.FUN,
             parseDate(2023, 2, 5, 14, 41),
-            parseDate(2024, 2, 9, 16, 11)
+            parseDate(2025, 12, 21, 16, 28)
         );
 
         final List<SubcommandData> enDeCode = List.of(
             new SubcommandData("encode", "Encode a message")
                 .addOptions(
                     new OptionData(OptionType.STRING, "message", "The message to encode", true)
-                        .setRequiredLength(5, MessageEmbed.DESCRIPTION_MAX_LENGTH / 4)
+                        .setRequiredLength(5, MAX_MESSAGE_LENGTH / 4)
                 ),
             new SubcommandData("decode", "Decode a message")
                 .addOptions(
                     new OptionData(OptionType.STRING, "message", "The message to decode", true)
-                        .setRequiredLength(5, MessageEmbed.DESCRIPTION_MAX_LENGTH / 4)
+                        .setRequiredLength(5, MAX_MESSAGE_LENGTH / 4)
                 )
         );
 
@@ -88,9 +87,9 @@ public class CypherCmd extends SlashCommandInteraction {
         event.replyComponents(
             StandardResponse.getResponseContainer(String.format("%s - %s %s", getNameReadable(), WordUtils.capitalize(cypher), isEncode ? " Encode" : " Decode"),
                 List.of(
-                    TextDisplay.ofFormat("## Original ```%s```", message),
+                    TextDisplay.ofFormat("## Original\n```%s```", message),
                     Separator.createDivider(Separator.Spacing.SMALL),
-                    TextDisplay.ofFormat("## %s ```%s```", isEncode ? "Encoded Message" : "Decoded Message", enDecodedString)
+                    TextDisplay.ofFormat("## %s\n```%s```", isEncode ? "Encoded Message" : "Decoded Message", enDecodedString.toUpperCase())
                 )
             )
         ).queue();

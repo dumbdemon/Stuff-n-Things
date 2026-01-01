@@ -37,7 +37,7 @@ public class UserInfo extends SlashCommandInteraction {
     public UserInfo() {
         super("user-info", "Get info on a specific user on the server! Defaults to you.", Mastermind.DEFAULT, CommandCategory.DEVS,
             parseDate(2023, 8, 24, 11, 10),
-            parseDate(2025, 12, 28, 12, 13)
+            parseDate(2025, 12, 31, 16, 57)
         );
         addOptions(
             new OptionData(OptionType.USER, "user", "Who you want to know about.")
@@ -113,7 +113,7 @@ public class UserInfo extends SlashCommandInteraction {
         );
 
         if (member.getUser().isBot())
-            children.add(TextDisplay.of(String.format("Is System?%n%s", member.getUser().isSystem() ? "Yes" : "No")));
+            children.add(TextDisplay.of(String.format("### Is System?%n%s", member.getUser().isSystem() ? "Yes" : "No")));
 
         children.add(Separator.createDivider(Separator.Spacing.SMALL));
         children.add(TextDisplay.of(String.format("### User Status%n%s", permissionStatus)));

@@ -10,7 +10,6 @@ import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.StandardResponse;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
-import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.components.textinput.TextInput;
@@ -49,7 +48,6 @@ public class KillSuggest {
     }
 
     private static void doExecute(@NotNull ModalInteractionEvent event, @NotNull EventBlob blob, boolean isRandom) throws RuntimeException, IOException {
-        event.deferReply().queue();
         Optional<ModalMapping> ifSuggestion = Optional.ofNullable(event.getValue(MODAL_TEXT_INPUT_NAME));
         String suggestion = ifSuggestion.orElseThrow(DiscordAPIException::new).getAsString();
 
@@ -67,15 +65,15 @@ public class KillSuggest {
         if (requestChannel == null)
             throw new DiscordAPIException("Either the channel does not exist or I could not obtain the channel.");
 
-        requestChannel.sendMessageComponents(
-            Container.of(List.of(
-                TextDisplay.ofFormat("… %s", suggestion),
+        requestChannel.sendMessage(suggestion)
+            .addComponents(
                 ActionRow.of(
                     Button.success(isRandom ? ACCEPT_RANDOM_BUTTON : ACCEPT_TARGET_BUTTON, "Accept"),
                     Button.danger(DENY_BUTTON, "Deny")
                 )
-            )).withAccentColor(BotColors.DEFAULT.getColor())
-        ).queue();
+            )
+            .useComponentsV2(false)
+            .queue();
 
         String testKillString = suggestion.formatted(
             victims.get(rando.nextInt(victims.size())),
@@ -84,7 +82,7 @@ public class KillSuggest {
             victims.get(rando.nextInt(victims.size()))
         );
 
-        event.getHook().sendMessageComponents(
+        event.getChannel().sendMessageComponents(
             StandardResponse.getResponseContainer("Suggestion received!", TextDisplay.of("The next embed will show what your suggestion will look like!\n" +
                 "***Note: Will not show up automatically!***"), BotColors.SUB_DEFAULT),
             StandardResponse.getResponseContainer(blob.getMember().getEffectiveName(), TextDisplay.ofFormat("… %s", testKillString))

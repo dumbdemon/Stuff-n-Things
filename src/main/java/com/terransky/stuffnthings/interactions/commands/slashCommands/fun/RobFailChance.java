@@ -4,6 +4,7 @@ import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.interactions.SlashCommandInteraction;
 import com.terransky.stuffnthings.utilities.command.*;
 import net.dv8tion.jda.api.components.container.ContainerChildComponent;
+import net.dv8tion.jda.api.components.separator.Separator;
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -28,7 +29,7 @@ public class RobFailChance extends SlashCommandInteraction {
         );
         addOptions(
             new OptionData(OptionType.INTEGER, "your-net-worth", "Your net-worth.", true)
-                .setMaxValue(1),
+                .setMinValue(1),
             new OptionData(OptionType.INTEGER, "their-cash", "The amount of cash for the person you are trying to rob", true)
                 .setMinValue(1)
         );
@@ -52,6 +53,7 @@ public class RobFailChance extends SlashCommandInteraction {
         if (blob.getGuild().getRoleByBot(356950275044671499L) != null || blob.getGuild().getRoleByBot(292953664492929025L) != null) {
             event.replyComponents(StandardResponse.getResponseContainer(title, children)).queue();
         } else {
+            children.add(Separator.createDivider(Separator.Spacing.SMALL));
             children.add(Formatter.getLinkButtonSection(
                 "https://discord.com/oauth2/authorize?client_id=292953664492929025&scope=bot%20applications.commands&permissions=829811966&response_type=code&redirect_uri=https://unbelievaboat.com/landing",
                 "**UnbelievaBoat is not on this sever!** " +
