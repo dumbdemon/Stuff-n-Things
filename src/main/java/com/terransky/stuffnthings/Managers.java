@@ -54,6 +54,7 @@ public class Managers {
             //Fun
             addInteraction(new ColorInfo());
             addInteraction(new CypherCmd());
+            addInteraction(new Dictionary());
             addInteraction(new EightBall());
             addInteraction(new GetDadJokes());
             addInteraction(new GetRandomCat());
@@ -64,6 +65,7 @@ public class Managers {
             addInteraction(new Kitsu());
             addInteraction(new Lmgtfy());
             addInteraction(new Meme());
+            addInteraction(new RandomCatFacts());
             addInteraction(new RobFailChance());
             addInteraction(new Say());
 

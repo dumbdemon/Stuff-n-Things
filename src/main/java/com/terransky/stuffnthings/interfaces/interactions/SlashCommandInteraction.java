@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.IntegrationType;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.build.*;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -153,6 +154,12 @@ public abstract class SlashCommandInteraction extends CommandInteraction<SlashCo
     @NotNull
     public static OffsetDateTime parseDate(@NotNull String date) {
         return parseDate(date, TimeZone.getDefault());
+    }
+
+    @NotNull
+    @Contract(" -> new")
+    public static OffsetDateTime now() {
+        return OffsetDateTime.now();
     }
 
     public String getDescription() {
