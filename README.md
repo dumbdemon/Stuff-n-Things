@@ -14,8 +14,8 @@ Command info moved to [GitHub Wiki](https://github.com/dumbdemon/Stuff-n-Things/
 * There is also a `/test` command that would be located in the
   [dev commands folder](https://github.com/dumbdemon/Stuff-n-Things/tree/master/src/main/java/com/terransky/stuffnthings/interactions/commands/slashCommands/devs)
   is not included as it would contain hardcoded IDs that I do not wish to expose. If you would like the command for
-  yourself, please create one implementing
-  [ICommandSlash](https://github.com/dumbdemon/Stuff-n-Things/blob/master/src/main/java/com/terransky/stuffnthings/interfaces/interactions/ICommandSlash.java)
+  yourself, please create one extending
+  [CommandInteraction](https://github.com/dumbdemon/Stuff-n-Things/blob/master/src/main/java/com/terransky/stuffnthings/interfaces/interactions/CommandInteraction.java)
   or delete/comment out the `new test(),` line in the
   [Managers](https://github.com/dumbdemon/Stuff-n-Things/blob/master/src/main/java/com/terransky/stuffnthings/Managers.java)
   class.
