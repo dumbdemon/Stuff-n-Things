@@ -52,7 +52,7 @@ public class ListeningForEvents extends ListenerAdapter {
     @Override
     public void onSessionDisconnect(@NotNull SessionDisconnectEvent event) {
         CloseCode closeCode = event.getCloseCode();
-        log.warn("Disconnected from Discord for reason > {}.", closeCode == null ? "UNKNOWN" : closeCode.getMeaning());
+        log.warn("Disconnected from Discord for reason > {}", closeCode == null ? "UNKNOWN." : closeCode.getMeaning());
     }
 
     @Override
