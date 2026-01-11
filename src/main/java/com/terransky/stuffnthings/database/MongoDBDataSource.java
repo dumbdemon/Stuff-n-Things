@@ -43,6 +43,7 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -496,7 +497,12 @@ public class MongoDBDataSource implements DatabaseManager {
         List<PerServer> perServers = finder.first().orElse(new UserEntry(guild.getId())).getPerServers();
         PerServer perServer = perServers.stream().filter(lock -> lock.getGuildReference().equals(guild.getId()))
             .findFirst()
-            .orElseThrow(finder::getError);
+            .orElseThrow(() -> {
+                if (finder.hasError())
+                    return finder.getError();
+                else
+                    return new NoSuchElementException("User not in database.");
+            });
 
         perServers.remove(perServer);
         var updater = new ObjectSubscriber<UpdateResult>();
