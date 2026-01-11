@@ -16,8 +16,9 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.unions.DefaultGuildChannelUnion;
 import net.dv8tion.jda.api.events.guild.*;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
-import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.events.session.*;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.CloseCode;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import org.jetbrains.annotations.NotNull;
@@ -46,6 +47,22 @@ public class ListeningForEvents extends ListenerAdapter {
 
         long timer = TimeUnit.MINUTES.toMillis(10);
         new Timer().scheduleAtFixedRate(new SetWatcherTask(jda.getShardManager()), timer, timer);
+    }
+
+    @Override
+    public void onSessionDisconnect(@NotNull SessionDisconnectEvent event) {
+        CloseCode closeCode = event.getCloseCode();
+        log.warn("Disconnected from Discord for reason > {}.", closeCode == null ? "UNKNOWN" : closeCode.getMeaning());
+    }
+
+    @Override
+    public void onSessionResume(@NotNull SessionResumeEvent event) {
+        log.warn("Reconnected to Discord.");
+    }
+
+    @Override
+    public void onSessionInvalidate(@NotNull SessionInvalidateEvent event) {
+        log.warn("Discord invalidated session.");
     }
 
     @Override
