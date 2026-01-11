@@ -64,7 +64,7 @@ public class Definition {
 
     @JsonProperty("synonyms")
     public void setSynonyms(List<String> synonyms) {
-        this.synonyms = synonyms;
+        this.synonyms = List.copyOf(synonyms);
     }
 
     @JsonProperty("antonyms")
@@ -74,7 +74,7 @@ public class Definition {
 
     @JsonProperty("antonyms")
     public void setAntonyms(List<String> antonyms) {
-        this.antonyms = antonyms;
+        this.antonyms = List.copyOf(antonyms);
     }
 
     @JsonAnyGetter

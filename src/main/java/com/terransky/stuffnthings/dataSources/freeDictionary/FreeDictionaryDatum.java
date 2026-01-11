@@ -67,7 +67,7 @@ public class FreeDictionaryDatum {
 
     @JsonProperty("phonetics")
     public void setPhonetics(List<Phonetic> phonetics) {
-        this.phonetics = phonetics;
+        this.phonetics = List.copyOf(phonetics);
     }
 
     @JsonProperty("origin")
@@ -87,7 +87,7 @@ public class FreeDictionaryDatum {
 
     @JsonProperty("meanings")
     public void setMeanings(List<Meaning> meanings) {
-        this.meanings = meanings;
+        this.meanings = List.copyOf(meanings);
     }
 
     @JsonAnyGetter

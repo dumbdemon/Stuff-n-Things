@@ -47,7 +47,7 @@ public class Meaning {
 
     @JsonProperty("definitions")
     public void setDefinitions(List<Definition> definitions) {
-        this.definitions = definitions;
+        this.definitions = List.copyOf(definitions);
     }
 
     @JsonAnyGetter
