@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +91,7 @@ public class WhatsInStandard extends SlashCommandInteraction {
         if (subcommand == null) throw new DiscordAPIException("No subcommand received");
         int version = 6;
 
-        InputStream wis = new URL("https://whatsinstandard.com/api/v%s/standard.json".formatted(version)).openStream();
+        InputStream wis = URI.create("https://whatsinstandard.com/api/v%s/standard.json".formatted(version)).toURL().openStream();
         WhatsInStandardData wisData = Pojo.getMapperObject().readValue(wis, WhatsInStandardData.class);
         if (wisData.getDeprecated()) {
             event.getHook().sendMessageComponents(

@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 
 public class GetRandomDog extends SlashCommandInteraction {
 
@@ -23,13 +23,13 @@ public class GetRandomDog extends SlashCommandInteraction {
         super("random-dog", "Random Dogs! Go!",
             Mastermind.DEVELOPER, CommandCategory.FUN,
             parseDate(2023, 2, 6, 17, 34),
-            parseDate(2025, 12, 28, 0, 36)
+            parseDate(2026, 1, 16, 1, 13)
         );
     }
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
-        RandomDog randomDog = new ObjectMapper().readValue(new URL("https://random.dog/woof.json").openStream(), RandomDog.class);
+        RandomDog randomDog = new ObjectMapper().readValue(URI.create("https://random.dog/woof.json").toURL().openStream(), RandomDog.class);
 
         event.replyComponents(
             Container.of(

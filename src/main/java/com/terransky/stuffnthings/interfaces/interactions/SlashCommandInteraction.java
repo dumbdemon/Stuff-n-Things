@@ -1,8 +1,6 @@
 package com.terransky.stuffnthings.interfaces.interactions;
 
-import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.utilities.command.CommandCategory;
-import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.Mastermind;
 import com.terransky.stuffnthings.utilities.general.InteractionType;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -12,7 +10,6 @@ import net.dv8tion.jda.api.interactions.commands.build.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -20,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.concurrent.ExecutionException;
 
 public abstract class SlashCommandInteraction extends CommandInteraction<SlashCommandInteractionEvent> {
 
@@ -228,9 +224,6 @@ public abstract class SlashCommandInteraction extends CommandInteraction<SlashCo
     public InteractionType getInteractionType() {
         return InteractionType.COMMAND_SLASH;
     }
-
-    @Override
-    public abstract void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException;
 
     public enum Time {
         AM,

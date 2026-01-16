@@ -31,8 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URL;
-import java.time.OffsetDateTime;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,7 +44,7 @@ public class ConfigCmd extends SlashCommandInteraction {
     public ConfigCmd() {
         super("config", "Server config manager.", Mastermind.DEVELOPER, CommandCategory.ADMIN,
             parseDate(2022, 8, 28, 21, 46),
-            OffsetDateTime.now()
+            parseDate(2026, 1, 16, 1, 42)
         );
         setDefaultMemberPermissions(Permission.MANAGE_SERVER);
         setWorking(StuffNThings.getConfig().getCore().getEnableDatabase());
@@ -232,7 +231,7 @@ public class ConfigCmd extends SlashCommandInteraction {
             });
 
         Webhook hook = textChannel.createWebhook("Message Reporting")
-            .setAvatar(Icon.from(new URL(StuffNThings.getConfig().getCore().getLogoUrl()).openStream()))
+            .setAvatar(Icon.from(URI.create(StuffNThings.getConfig().getCore().getLogoUrl()).toURL().openStream()))
             .submit().get();
         DatabaseManager.INSTANCE.updateProperty(blob, Property.REPORT_WEBHOOK, hook.getId());
 

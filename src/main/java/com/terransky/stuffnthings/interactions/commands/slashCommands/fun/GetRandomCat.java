@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -71,7 +71,7 @@ public class GetRandomCat extends SlashCommandInteraction {
             filter.map(s -> sendGifs ? "" : String.format("fi=%s", s)).orElse("") +
             (filter.isPresent() && !sendGifs ? "&" : "") + "json=true";
 
-        CatAASData catAASData = mapper.readValue(new URL(url).openStream(), CatAASData.class);
+        CatAASData catAASData = mapper.readValue(URI.create(url).toURL().openStream(), CatAASData.class);
 
         if (catAASData.hasError()) {
             event.getHook().sendMessageComponents(
@@ -80,7 +80,7 @@ public class GetRandomCat extends SlashCommandInteraction {
             return;
         }
 
-        HttpURLConnection catAAS = (HttpURLConnection) new URL(baseURL + catAASData.getUrl()).openConnection();
+        HttpURLConnection catAAS = (HttpURLConnection) URI.create(baseURL + catAASData.getUrl()).toURL().openConnection();
         if (catAAS.getResponseCode() != 200) {
             CatAASData err = mapper.readValue(catAAS.getErrorStream(), CatAASData.class);
             event.getHook().sendMessageComponents(

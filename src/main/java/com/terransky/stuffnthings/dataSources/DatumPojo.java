@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -61,8 +60,7 @@ public record DatumPojo<T>(Collection<T> datum) implements Pojo {
      * @return The DatumPojo with the new element list
      */
     @NotNull
-    public <R> DatumPojo<R> map(Function<? super T, R> mapper) {
-        Objects.requireNonNull(mapper);
+    public <R> DatumPojo<R> map(@NotNull Function<? super T, R> mapper) {
         return new DatumPojo<>(datum.stream().map(mapper).toList());
     }
 
