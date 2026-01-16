@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ public class JokesV2 extends SlashCommandInteraction {
         super("jokes", "Get a random joke",
             Mastermind.DEVELOPER, CommandCategory.FUN,
             parseDate(2023, 2, 6, 18, 34),
-            parseDate(2025, 12, 28, 2, 6)
+            parseDate(2026, 1, 16, 1, 30)
         );
         OptionData language = new OptionData(OptionType.STRING, "language", "Get output language. Defaults to English.")
             .addChoices(
@@ -180,7 +181,7 @@ public class JokesV2 extends SlashCommandInteraction {
         }
 
         String URL = getEffectiveURL(event, blob, command[2]);
-        URL jokeApi = new URL(URL);
+        URL jokeApi = URI.create(URL).toURL();
         if (StuffNThings.getConfig().getCore().getTestingMode()) LoggerFactory.getLogger(JokesV2.class).debug(URL);
         ObjectMapper mapper = new ObjectMapper();
         JokeAPI theJoke = mapper.readValue(jokeApi.openStream(), JokeAPI.class);

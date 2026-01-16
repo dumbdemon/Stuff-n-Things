@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
@@ -47,7 +48,7 @@ public class NumbersAPI extends SlashCommandInteraction {
     public NumbersAPI() {
         super("number-facts", "Get some fun info on a number", Mastermind.DEVELOPER, CommandCategory.MATHS,
             parseDate(2022, 11, 10, 20, 45),
-            parseDate(2025, 12, 28, 12, 12)
+            parseDate(2026, 1, 16, 1, 36)
         );
         List<Command.Choice> monthChoices = new ArrayList<>() {{
             String[] months = new DateFormatSymbols().getMonths();
@@ -97,7 +98,7 @@ public class NumbersAPI extends SlashCommandInteraction {
             theUrl += "random/year";
 
         logURL(theUrl);
-        URL request = new URL(theUrl);
+        URL request = URI.create(theUrl).toURL();
         HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
         numbersAPI.addRequestProperty("Content-Type", "application/json");
 
@@ -173,7 +174,7 @@ public class NumbersAPI extends SlashCommandInteraction {
         }
 
         logURL(theUrl);
-        URL request = new URL(theUrl);
+        URL request = URI.create(theUrl).toURL();
         HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
         numbersAPI.addRequestProperty("Content-Type", "application/json");
 
@@ -208,7 +209,7 @@ public class NumbersAPI extends SlashCommandInteraction {
             theUrl += "random/math";
 
         logURL(theUrl);
-        URL request = new URL(theUrl);
+        URL request = URI.create(theUrl).toURL();
         HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
         numbersAPI.addRequestProperty("Content-Type", "application/json");
 
@@ -230,7 +231,7 @@ public class NumbersAPI extends SlashCommandInteraction {
             theUrl += "random";
 
         logURL(theUrl);
-        URL request = new URL(theUrl);
+        URL request = URI.create(theUrl).toURL();
         HttpURLConnection numbersAPI = (HttpURLConnection) request.openConnection();
         numbersAPI.addRequestProperty("Content-Type", "application/json");
 

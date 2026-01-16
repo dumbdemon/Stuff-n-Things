@@ -1,18 +1,13 @@
 package com.terransky.stuffnthings.interfaces.interactions;
 
-import com.terransky.stuffnthings.exceptions.FailedInteractionException;
 import com.terransky.stuffnthings.interfaces.IInteraction;
-import com.terransky.stuffnthings.utilities.command.EventBlob;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public abstract class CommandInteraction<T extends GenericCommandInteractionEvent> implements IInteraction.ICommand<T> {
 
@@ -100,7 +95,4 @@ public abstract class CommandInteraction<T extends GenericCommandInteractionEven
     public String getName() {
         return name;
     }
-
-    @Override
-    public abstract void execute(@NotNull T event, EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException;
 }

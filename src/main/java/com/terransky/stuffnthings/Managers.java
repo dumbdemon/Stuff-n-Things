@@ -12,6 +12,7 @@ import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.Role
 import com.terransky.stuffnthings.interactions.commands.slashCommands.devs.*;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.*;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.fun.games.Bingo;
+import com.terransky.stuffnthings.interactions.commands.slashCommands.general.About;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.general.Ping;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.general.Suggest;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.maths.FibonacciSequence;
@@ -23,8 +24,12 @@ import com.terransky.stuffnthings.interactions.commands.userContextMenus.UserInf
 import com.terransky.stuffnthings.interactions.modals.KillSuggest;
 import com.terransky.stuffnthings.interactions.modals.RandomMemeBuilder;
 import com.terransky.stuffnthings.interfaces.interactions.*;
+import com.terransky.stuffnthings.utilities.command.SlashCommandMetadata;
+import com.terransky.stuffnthings.utilities.managers.ButtonInteractionManager;
 import com.terransky.stuffnthings.utilities.managers.CommandInteractionManager;
 import com.terransky.stuffnthings.utilities.managers.InteractionManager;
+
+import java.util.List;
 
 public class Managers {
 
@@ -70,6 +75,7 @@ public class Managers {
             addInteraction(new Say());
 
             //General
+            addInteraction(new About());
             addInteraction(new Ping());
             addInteraction(new Suggest());
 
@@ -82,14 +88,22 @@ public class Managers {
             addInteraction(new CalculateRats());
             addInteraction(new WhatsInStandard());
         }
+
+        public List<SlashCommandMetadata> getCommandMetadata() {
+            return interactions.stream()
+                .map(SlashCommandMetadata::new)
+                .sorted()
+                .toList();
+        }
     }
 
-    public static class DiscordButtons extends InteractionManager<ButtonInteraction> {
+    public static class DiscordButtons extends ButtonInteractionManager {
 
         public DiscordButtons() {
             addInteraction(new ExpiredButton());
             addInteraction(new AcceptKill.Random());
             addInteraction(new AcceptKill.Target());
+            addInteraction(new About.AboutCommand());
             addInteraction(new GetMoreDadJokes());
             addInteraction(new DenyKill());
         }
