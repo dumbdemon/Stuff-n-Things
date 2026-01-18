@@ -4,6 +4,7 @@ import com.terransky.stuffnthings.interfaces.interactions.SlashCommandInteractio
 import org.jetbrains.annotations.NotNull;
 
 import java.time.OffsetDateTime;
+import java.util.Objects;
 
 public class SlashCommandMetadata implements Comparable<SlashCommandMetadata> {
 
@@ -56,5 +57,12 @@ public class SlashCommandMetadata implements Comparable<SlashCommandMetadata> {
     @Override
     public int compareTo(@NotNull SlashCommandMetadata o) {
         return String.CASE_INSENSITIVE_ORDER.compare(this.getName(), o.getName());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        SlashCommandMetadata that = (SlashCommandMetadata) o;
+        return Objects.equals(getName(), that.getName());
     }
 }
