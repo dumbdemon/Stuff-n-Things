@@ -14,12 +14,16 @@ import net.dv8tion.jda.api.components.separator.Separator;
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
@@ -33,6 +37,10 @@ public class About extends SlashCommandInteraction {
         addSubcommands(
             new SubcommandData("bot", "Info about the bot."),
             new SubcommandData("command", "Info about a command.")
+                .addOptions(
+                    new OptionData(OptionType.STRING, "category", "Filter commands by category", false)
+                        .addChoices(CommandCategory.getCategoriesAsChoices())
+                )
         );
     }
 
@@ -42,7 +50,16 @@ public class About extends SlashCommandInteraction {
         if (subcommand == null) throw new DiscordAPIException("No Subcommand given");
 
         if (subcommand.equals("command")) {
-            List<SlashCommandMetadata> commandMetadataList = (new Managers.SlashCommands()).getCommandMetadata().stream().sorted().toList();
+            Optional<String> commandCategory = Optional.ofNullable(event.getOption("category", OptionMapping::getAsString));
+            List<SlashCommandMetadata> commandMetadataList;
+            if (commandCategory.isPresent()) {
+                CommandCategory category = CommandCategory.getCategoryByChoice(commandCategory.get()).orElse(CommandCategory.GENERAL);
+
+                commandMetadataList = (new Managers.SlashCommands()).getCommandMetadata().stream()
+                    .filter(command -> command.getCategory() == category)
+                    .sorted()
+                    .toList();
+            } else commandMetadataList = (new Managers.SlashCommands()).getCommandMetadata().stream().sorted().toList();
             SlashCommandMetadata commandMetadata = commandMetadataList.get(0);
             List<ContainerChildComponent> children = new ArrayList<>(getContainerChildComponents(commandMetadata));
             children.add(

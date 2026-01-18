@@ -32,7 +32,7 @@ public abstract class SlashCommandInteraction extends CommandInteraction<SlashCo
 
     protected SlashCommandInteraction(String name, String description, Mastermind mastermind, CommandCategory category,
                                       OffsetDateTime createdAt, OffsetDateTime updatedAt) {
-        super(name);
+        super(name, InteractionType.COMMAND_SLASH);
         this.description = description;
         this.mastermind = mastermind;
         this.category = category;
@@ -134,10 +134,10 @@ public abstract class SlashCommandInteraction extends CommandInteraction<SlashCo
     @NotNull
     public static OffsetDateTime parseDate(int year, int month, int day, int hour, int min, TimeZone timeZone) {
         return parseDate(String.format("%d-%02d-%02dT%02d:%02dZ", year,
-            Math.min(month, Month.values().length),
-            Math.min(day, Month.of(month).maxLength()),
-            Math.min(hour, 24),
-            Math.min(min, 59)
+            Math.min(Math.max(month, 1), Month.values().length),
+            Math.min(Math.max(day, 1), Month.of(month).maxLength()),
+            Math.min(Math.max(hour, 0), 23),
+            Math.min(Math.max(min, 1), 59)
         ), timeZone);
     }
 
@@ -209,20 +209,12 @@ public abstract class SlashCommandInteraction extends CommandInteraction<SlashCo
             return commandData.addOptions(options);
         }
 
-        if (!subcommands.isEmpty()) {
-            return commandData.addSubcommands(subcommands);
-        }
-
-        if (!subcommandGroups.isEmpty()) {
-            return commandData.addSubcommandGroups(subcommandGroups);
+        if (!subcommands.isEmpty() || !subcommandGroups.isEmpty()) {
+            return commandData.addSubcommands(subcommands)
+                .addSubcommandGroups(subcommandGroups);
         }
 
         return commandData;
-    }
-
-    @Override
-    public InteractionType getInteractionType() {
-        return InteractionType.COMMAND_SLASH;
     }
 
     public enum Time {

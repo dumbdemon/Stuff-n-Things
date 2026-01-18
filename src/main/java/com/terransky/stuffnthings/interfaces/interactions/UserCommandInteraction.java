@@ -9,12 +9,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 public abstract class UserCommandInteraction extends CommandInteraction<UserContextInteractionEvent> {
 
     protected UserCommandInteraction(String name) {
-        super(name);
-    }
-
-    @Override
-    public InteractionType getInteractionType() {
-        return InteractionType.COMMAND_USER;
+        super(name, InteractionType.COMMAND_USER);
     }
 
     @Override

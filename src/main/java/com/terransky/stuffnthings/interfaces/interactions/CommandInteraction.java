@@ -1,6 +1,7 @@
 package com.terransky.stuffnthings.interfaces.interactions;
 
 import com.terransky.stuffnthings.interfaces.IInteraction;
+import com.terransky.stuffnthings.utilities.general.InteractionType;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -18,9 +19,11 @@ public abstract class CommandInteraction<T extends GenericCommandInteractionEven
     private boolean isDeveloperOnly = false;
     private String disabledReason = "";
     private final List<Permission> defaultMemberPermissions = new ArrayList<>();
+    private final InteractionType interactionType;
 
-    protected CommandInteraction(String name) {
+    protected CommandInteraction(String name, InteractionType interactionType) {
         this.name = name;
+        this.interactionType = interactionType;
     }
 
     public boolean isWorking() {
@@ -94,5 +97,10 @@ public abstract class CommandInteraction<T extends GenericCommandInteractionEven
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public InteractionType getInteractionType() {
+        return interactionType;
     }
 }
