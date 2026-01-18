@@ -243,7 +243,7 @@ public class InteractionListener extends ListenerAdapter {
         if (DatabaseManager.INSTANCE.isBanned(blob)) return;
 
         ButtonInteraction iButton = ifButton.get();
-        log.debug("Button {} called on {} [{}]", iButton.getName().toUpperCase(), blob.getGuildName(), blob.getGuildIdLong());
+        log.debug("Button {}<{}> called on {} [{}]", iButton.getName().toUpperCase(), event.getComponentId(), blob.getGuildName(), blob.getGuildIdLong());
         try {
             iButton.execute(event, blob);
         } catch (RuntimeException | IOException | ExecutionException | InterruptedException e) {

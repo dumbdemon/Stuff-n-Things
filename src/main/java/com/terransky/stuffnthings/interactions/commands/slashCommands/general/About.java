@@ -8,7 +8,7 @@ import com.terransky.stuffnthings.interfaces.interactions.SlashCommandInteractio
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
-import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.components.container.ContainerChildComponent;
 import net.dv8tion.jda.api.components.separator.Separator;
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
@@ -32,7 +32,7 @@ public class About extends SlashCommandInteraction {
     public About() {
         super("about", "Info about the bot, or it's commands.", Mastermind.DEVELOPER, CommandCategory.GENERAL,
             parseDate(2026, 1, 11, 0, 28),
-            now()
+            parseDate(2026, 1, 18, 13, 2)
         );
         addSubcommands(
             new SubcommandData("bot", "Info about the bot."),
@@ -51,24 +51,27 @@ public class About extends SlashCommandInteraction {
 
         if (subcommand.equals("command")) {
             Optional<String> commandCategory = Optional.ofNullable(event.getOption("category", OptionMapping::getAsString));
+            String identifier = "all";
             List<SlashCommandMetadata> commandMetadataList;
             if (commandCategory.isPresent()) {
-                CommandCategory category = CommandCategory.getCategoryByChoice(commandCategory.get()).orElse(CommandCategory.GENERAL);
+                CommandCategory category = CommandCategory.getCategoryByName(commandCategory.get()).orElse(CommandCategory.GENERAL);
 
                 commandMetadataList = (new Managers.SlashCommands()).getCommandMetadata().stream()
                     .filter(command -> command.getCategory() == category)
                     .sorted()
                     .toList();
+                identifier = commandCategory.get();
             } else commandMetadataList = (new Managers.SlashCommands()).getCommandMetadata().stream().sorted().toList();
             SlashCommandMetadata commandMetadata = commandMetadataList.get(0);
             List<ContainerChildComponent> children = new ArrayList<>(getContainerChildComponents(commandMetadata));
             children.add(
                 ActionRow.of(
-                    Button.primary(ButtonInteraction.DISABLED_BUTTON_ID, "Prev"),
-                    Button.secondary("ignore",
-                        String.format("Command (%s/%s)", commandMetadataList.indexOf(commandMetadata) + 1, commandMetadataList.size())
-                    ).asDisabled(),
-                    Button.primary(new AboutCommand().getButtonId(1), "Next")
+                    new AboutCommand().getButton("Prev", true),
+                    new AboutCommand().getButton(ButtonStyle.SECONDARY,
+                        String.format("Command (%s/%s)", commandMetadataList.indexOf(commandMetadata) + 1, commandMetadataList.size()),
+                        true
+                    ),
+                    new AboutCommand().getButton(1, identifier, "Next")
                 )
             );
             event.replyComponents(StandardResponse.getResponseContainer(String.format("About - %s", commandMetadata.getName()), children)).queue();
@@ -95,18 +98,24 @@ public class About extends SlashCommandInteraction {
 
     public static class AboutCommand extends ButtonInteraction {
         public AboutCommand() {
-            super("about-command", Pattern.compile("about-command-pg[0-9]+$"));
+            super("about-command", Pattern.compile("about-command-[0-9a-z]+-pg[0-9]+$"));
         }
 
         @Override
-        public String getButtonId(int page) {
-            return getName() + "-pg" + page;
+        public String getButtonId(int page, String identifier) {
+            return getName() + "-" + identifier + "-pg" + page;
         }
 
         @Override
         public void execute(@NotNull ButtonInteractionEvent event, EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException {
             int reference = Integer.parseInt(event.getComponentId().split("-pg")[1]);
-            List<SlashCommandMetadata> metadataList = (new Managers.SlashCommands()).getCommandMetadata().stream().sorted().toList();
+            String identifier = event.getComponentId().split("-")[2];
+            Optional<CommandCategory> categoryOptional = CommandCategory.getCategoryByName(identifier);
+            List<SlashCommandMetadata> metadataList = categoryOptional.map(category -> (new Managers.SlashCommands()).getCommandMetadata().stream()
+                .filter(metadata -> metadata.getCategory() == category)
+                .sorted()
+                .toList())
+                .orElseGet(() -> (new Managers.SlashCommands()).getCommandMetadata().stream().sorted().toList());
 
             SlashCommandMetadata commandMetadata = metadataList.get(reference);
 
@@ -116,11 +125,9 @@ public class About extends SlashCommandInteraction {
             List<ContainerChildComponent> children = new ArrayList<>(getContainerChildComponents(commandMetadata));
             children.add(
                 ActionRow.of(
-                    Button.primary(getButtonId(prevPage), "Prev").withDisabled(prevPage < 0),
-                    Button.secondary(ButtonInteraction.DISABLED_BUTTON_ID,
-                        String.format("Command (%s/%s)", reference + 1, metadataList.size())
-                    ).asDisabled(),
-                    Button.primary(getButtonId(nextPage), "Next").withDisabled(nextPage == metadataList.size())
+                    getButton(prevPage, identifier, "Prev", prevPage < 0),
+                    getButton(ButtonStyle.SECONDARY, String.format("Command (%s/%s)", reference + 1, metadataList.size()), true),
+                    getButton(nextPage, identifier, "Next", nextPage == metadataList.size())
                 )
             );
 

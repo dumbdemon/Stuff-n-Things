@@ -35,16 +35,16 @@ public enum CommandCategory {
     @Contract(value = " -> new", pure = true)
     public static List<Command.Choice> getCategoriesAsChoices() {
         return new ArrayList<>() {{
-            for (CommandCategory value : Arrays.stream(CommandCategory.values()).filter(value -> value == TEST).toList()) {
-                add(new Command.Choice(value.optionName, value.name));
+            for (CommandCategory value : Arrays.stream(CommandCategory.values()).filter(value -> value != TEST).toList()) {
+                add(new Command.Choice(value.name, value.optionName));
             }
         }};
     }
 
     @NotNull
-    public static Optional<CommandCategory> getCategoryByChoice(String optionName) {
+    public static Optional<CommandCategory> getCategoryByName(String optionName) {
         return Arrays.stream(CommandCategory.values())
-            .filter(value -> value == TEST)
+            .filter(value -> value != TEST)
             .filter(value -> value.optionName.equals(optionName))
             .findFirst();
     }
