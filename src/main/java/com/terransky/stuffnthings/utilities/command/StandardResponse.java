@@ -21,7 +21,7 @@ public class StandardResponse {
     @NotNull
     public static Container getResponseContainer(String title, List<ContainerChildComponent> components, @NotNull Color color) {
         List<ContainerChildComponent> children = new ArrayList<>();
-        children.add(TextDisplay.of(String.format("# %s", title)));
+        children.add(TextDisplay.ofFormat("# %s", title));
         children.add(Separator.createDivider(Separator.Spacing.SMALL));
         children.addAll(components);
 

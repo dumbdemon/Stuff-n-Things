@@ -42,16 +42,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-@SuppressWarnings("SpellCheckingInspection")
 public class Kitsu extends SlashCommandInteraction {
 
     public Kitsu() {
         super("kitsu", "Search Kitsu.io",
             Mastermind.DEVELOPER, CommandCategory.FUN,
             parseDate(2023, 1, 17, 12, 43),
-            parseDate(2025, 12, 28, 12, 40)
+            parseDate(2026, 1, 27, 9, 3)
         );
-        OptionData search = new OptionData(OptionType.STRING, "search", "Queary for search", true);
+        OptionData search = new OptionData(OptionType.STRING, "search", "Query for search", true);
         setWorking(hasKitsuToken());
         addSubcommands(
             new SubcommandData("anime", "Search for an anime using Kitsu.app")
@@ -155,7 +154,7 @@ public class Kitsu extends SlashCommandInteraction {
     private static Container getNSFWMessage(String keyword) {
         return StandardResponse.getResponseContainer(
             String.format("%s Search", keyword),
-            TextDisplay.ofFormat("%s recieved was rated for abults and this channel is not NSFW. Verify with your admins that this is correct.", keyword)
+            TextDisplay.ofFormat("%s received was rated for adults and this channel is not NSFW. Verify with your admins that this is correct.", keyword)
         );
     }
 
