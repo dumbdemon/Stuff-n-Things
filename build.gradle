@@ -1,20 +1,20 @@
 plugins {
     id 'java'
     id 'application'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'com.gradleup.shadow' version '9.3.1'
 }
 
 application {
     mainClass = 'com.terransky.stuffnthings.StuffNThings'
 }
 
-group 'com.terransky.stuffnthings'
-version '25.12'
+group = 'com.terransky.stuffnthings'
+version = '25.12'
 compileJava.options.encoding = 'UTF-8'
 
 shadowJar {
-    archiveBaseName.set('StuffNThings')
-    archiveClassifier.set('')
+    archiveBaseName = 'StuffNThings'
+    archiveClassifier = ''
 }
 
 repositories {
