@@ -25,6 +25,7 @@ import com.terransky.stuffnthings.interactions.modals.KillSuggest;
 import com.terransky.stuffnthings.interactions.modals.RandomMemeBuilder;
 import com.terransky.stuffnthings.interfaces.interactions.*;
 import com.terransky.stuffnthings.utilities.command.SlashCommandMetadata;
+import com.terransky.stuffnthings.utilities.general.InteractionType;
 import com.terransky.stuffnthings.utilities.managers.ButtonInteractionManager;
 import com.terransky.stuffnthings.utilities.managers.CommandInteractionManager;
 import com.terransky.stuffnthings.utilities.managers.InteractionManager;
@@ -39,6 +40,7 @@ public class Managers {
     public static class SlashCommands extends CommandInteractionManager<SlashCommandInteraction> {
 
         public SlashCommands() {
+            super(InteractionType.COMMAND_SLASH);
             //Admin
             addInteraction(new ChannelUnLock());
             addInteraction(new CheckPerms());
@@ -112,6 +114,7 @@ public class Managers {
     public static class MessageContextMenu extends CommandInteractionManager<MessageCommandInteraction> {
 
         public MessageContextMenu() {
+            super(InteractionType.COMMAND_MESSAGE);
             addInteraction(new ReportMessage());
         }
     }
@@ -119,6 +122,7 @@ public class Managers {
     public static class UserContextMenu extends CommandInteractionManager<UserCommandInteraction> {
 
         public UserContextMenu() {
+            super(InteractionType.COMMAND_USER);
             addInteraction(new UserInfoMenu());
         }
     }
@@ -126,18 +130,21 @@ public class Managers {
     public static class EntitySelectMenu extends InteractionManager<SelectMenuEntityInteraction> {
 
         public EntitySelectMenu() {
+            super(InteractionType.SELECTION_ENTITY);
         }
     }
 
     public static class StringSelectMenu extends InteractionManager<SelectMenuStringInteraction> {
 
         public StringSelectMenu() {
+            super(InteractionType.SELECTION_STRING);
         }
     }
 
     public static class ModalInteractions extends InteractionManager<ModalInteraction> {
 
         public ModalInteractions() {
+            super(InteractionType.MODAL);
             addInteraction(new KillSuggest.Random());
             addInteraction(new KillSuggest.Target());
             addInteraction(new RandomMemeBuilder());

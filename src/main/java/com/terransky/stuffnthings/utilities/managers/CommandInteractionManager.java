@@ -12,6 +12,10 @@ import java.util.List;
 
 public class CommandInteractionManager<T extends CommandInteraction<?>> extends InteractionManager<T> {
 
+    public CommandInteractionManager(InteractionType interactionType) {
+        super(interactionType);
+    }
+
     private int getLimit(@NotNull List<T> toDeployInteractions) {
         InteractionType interactionType = toDeployInteractions.get(0).getInteractionType();
         if (toDeployInteractions.size() > interactionType.getMaximum())

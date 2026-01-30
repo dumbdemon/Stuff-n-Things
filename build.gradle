@@ -9,7 +9,7 @@ application {
 }
 
 group = 'com.terransky.stuffnthings'
-version = '25.12'
+version = '25.13'
 compileJava.options.encoding = 'UTF-8'
 
 shadowJar {
