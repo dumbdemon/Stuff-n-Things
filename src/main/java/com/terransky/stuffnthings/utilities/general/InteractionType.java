@@ -8,7 +8,7 @@ public enum InteractionType {
     COMMAND_SLASH(0, "Slash Command", Commands.MAX_SLASH_COMMANDS, true),
     COMMAND_USER(1, "User Context Menu", Commands.MAX_USER_COMMANDS, true),
     COMMAND_MESSAGE(2, "Message Context Menu", Commands.MAX_MESSAGE_COMMANDS, true),
-    BUTTON(3, "Button"),
+    BUTTON(3, "Button", true),
     MODAL(4, "Modal"),
     SELECTION_STRING(5, "Selection Menu"),
     SELECTION_ENTITY(6, "Entity Selection Menu");
@@ -20,6 +20,10 @@ public enum InteractionType {
 
     InteractionType(int id, String name) {
         this(id, name, Integer.MAX_VALUE);
+    }
+
+    InteractionType(int id, String name, boolean hasDedicatedManager) {
+        this(id, name, Integer.MAX_VALUE, hasDedicatedManager);
     }
 
     InteractionType(int id, String name, int maximum) {

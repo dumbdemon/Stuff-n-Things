@@ -28,7 +28,7 @@ public enum Timestamp {
      */
     LONG_TIME('T'),
     /**
-     * Will show the difference between the current time and the markdown time
+     * Will show the difference between the current time and the Markdown time
      */
     RELATIVE('R'),
     /**
@@ -61,7 +61,7 @@ public enum Timestamp {
 
     /**
      * Get a timestamp Markdown code using an {@link OffsetDateTime}.<br/>
-     * This will use the enum {@link Timestamp#LONG_DATE_W_DoW_SHORT_TIME} for the markdown.
+     * This will use the enum {@link Timestamp#LONG_DATE_W_DoW_SHORT_TIME} for the Markdown.
      *
      * @param offsetDateTime An {@link OffsetDateTime}.
      * @return A formatted Markdown for a timestamp.
@@ -83,7 +83,7 @@ public enum Timestamp {
 
     /**
      * Get a timestamp Markdown code for a specific date.<br/>
-     * This will use the enum {@link Timestamp#LONG_DATE_W_DoW_SHORT_TIME} for the markdown.
+     * This will use the enum {@link Timestamp#LONG_DATE_W_DoW_SHORT_TIME} for the Markdown.
      *
      * @param date A {@link Date} to parse.
      * @return A formatted Markdown for a timestamp.
@@ -105,7 +105,7 @@ public enum Timestamp {
 
     /**
      * Get a timestamp Markdown code using epoch seconds.<br/>
-     * This will use the enum {@link Timestamp#LONG_DATE_W_DoW_SHORT_TIME} for the markdown.
+     * This will use the enum {@link Timestamp#LONG_DATE_W_DoW_SHORT_TIME} for the Markdown.
      *
      * @param epochSeconds Epoch seconds. NOTE: this <b>must</b> be in seconds.
      * @return A formatted Markdown for a timestamp.

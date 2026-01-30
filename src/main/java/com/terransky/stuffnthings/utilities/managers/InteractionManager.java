@@ -2,6 +2,7 @@ package com.terransky.stuffnthings.utilities.managers;
 
 import com.terransky.stuffnthings.interfaces.IInteraction;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -13,7 +14,10 @@ public class InteractionManager<T extends IInteraction<?>> {
     }
 
     protected final void addInteraction(@NotNull T interaction) {
-        interactions.add(interaction);
+        if (interaction.getInteractionType().hasDedicatedManager()) {
+            LoggerFactory.getLogger(getClass())
+                .error("Interaction has dedicated manager. Please us that manager instead", new IllegalArgumentException());
+        } else interactions.add(interaction);
     }
 
     public Optional<T> getInteraction(String interactionName) {
