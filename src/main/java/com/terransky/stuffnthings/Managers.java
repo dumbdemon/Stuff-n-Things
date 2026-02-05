@@ -2,7 +2,6 @@ package com.terransky.stuffnthings;
 
 import com.terransky.stuffnthings.interactions.buttons.AcceptKill;
 import com.terransky.stuffnthings.interactions.buttons.DenyKill;
-import com.terransky.stuffnthings.interactions.buttons.ExpiredButton;
 import com.terransky.stuffnthings.interactions.buttons.GetMoreDadJokes;
 import com.terransky.stuffnthings.interactions.commands.messageContextMenus.ReportMessage;
 import com.terransky.stuffnthings.interactions.commands.slashCommands.admin.ChannelUnLock;
@@ -102,7 +101,6 @@ public class Managers {
     public static class DiscordButtons extends ButtonInteractionManager {
 
         public DiscordButtons() {
-            addInteraction(new ExpiredButton());
             addInteraction(new AcceptKill.Random());
             addInteraction(new AcceptKill.Target());
             addInteraction(new About.AboutCommand());

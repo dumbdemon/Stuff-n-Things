@@ -54,7 +54,8 @@ public class InteractionListener extends ListenerAdapter {
     }
 
     private void logInteractionFailure(String interactionName, @NotNull String guildId, @NotNull Exception e) {
-        log.error(String.format("%S failed to execute on guild id %s", interactionName, guildId), e);
+        String message = String.format("%S failed to execute on guild id %s", interactionName, guildId);
+        log.error(message, e);
     }
 
     private void errorHandler(@NotNull GenericCommandInteractionEvent event, @NotNull IInteraction<?> interaction,

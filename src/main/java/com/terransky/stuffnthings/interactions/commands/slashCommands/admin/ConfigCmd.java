@@ -334,6 +334,7 @@ public class ConfigCmd extends SlashCommandInteraction {
     }
 
     private void logPropertyUpdateFailure(Property property, Exception e) {
-        log.error(String.format("Unable to update property %s", property), e);
+        String msg = String.format("Unable to update property %s", property);
+        log.error(msg, e);
     }
 }

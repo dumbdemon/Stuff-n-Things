@@ -14,8 +14,6 @@ import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
-import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +29,7 @@ public class GetDadJokes extends SlashCommandInteraction {
             Mastermind.USER,
             CommandCategory.FUN,
             parseDate(2022, 8, 25, 20, 53),
-            parseDate(2025, 12, 27, 23, 4));
+            parseDate(2026, 2, 4, 23, 30));
     }
 
     @Override
@@ -53,15 +51,10 @@ public class GetDadJokes extends SlashCommandInteraction {
                     TextDisplay.ofFormat("ID #%s", theJoke.getId())
                 ))
             ).addComponents(ActionRow.of(new GetMoreDadJokes().getButton(ButtonStyle.SUCCESS, "Get a new Dad Joke!")))
-            .queue(msg -> {
-                MessageEditData editData = new MessageEditBuilder()
-                    .setComponents(
-                        StandardResponse.getResponseContainer(this, "Action Expired! No more Dad jokes! Call the command again to get more!")
-                    )
-                    .build();
-                msg.editOriginal(editData).queueAfter(10, java.util.concurrent.TimeUnit.MINUTES, msg2 ->
-                    log.debug("Button on message [{}] on server with ID [{}] has expired.", msg2.getId(), msg2.getGuild().getId())
-                );
-            });
+            .queue(msg -> msg.editOriginalComponents(
+                StandardResponse.getResponseContainer(this, "Action Expired! No more Dad jokes! Call the command again to get more!")
+            ).queueAfter(10, java.util.concurrent.TimeUnit.MINUTES, msg2 ->
+                log.debug("Button on message [{}] on server with ID [{}] has expired.", msg2.getId(), msg2.getGuild().getId())
+            ));
     }
 }
