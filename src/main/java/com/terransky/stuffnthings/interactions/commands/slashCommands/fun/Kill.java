@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.modals.Modal;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class Kill extends SlashCommandInteraction {
             Mastermind.USER,
             CommandCategory.FUN,
             parseDate(2022, 8, 24, 11, 10),
-            parseDate(2025, 12, 29, 19, 11)
+            parseDate(2026, 2, 18, 23, 18)
         );
         addSubcommands(
             new SubcommandData("random", "Try your hand at un-aliving someone!"),
@@ -103,7 +104,7 @@ public class Kill extends SlashCommandInteraction {
                     StandardResponse.getResponseContainer(this,
                         TextDisplay.ofFormat("… tried to kill %s but they couldn't because that's bad manners!\nNext available kill %s.",
                             target,
-                            Timestamp.getDateAsTimestamp(endTime, Timestamp.RELATIVE))
+                            Timestamp.format(endTime, TimeFormat.RELATIVE))
                     )
                 ).setEphemeral(true).queue();
                 return;

@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class WhatsInStandard extends SlashCommandInteraction {
         super("whats-in-standard", "Get Magic: the Gathering's set list for the standard format.",
             Mastermind.DEVELOPER, CommandCategory.MTG,
             parseDate(2022, 10, 27, 12, 40),
-            parseDate(2025, 12, 27, 2, 49)
+            parseDate(2026, 2, 18, 23, 18)
         );
         addSubcommands(
             new SubcommandData("all", "Get all info about the standard format."),
@@ -79,7 +80,7 @@ public class WhatsInStandard extends SlashCommandInteraction {
                 )
             );
         }
-        return theBans.toString().isEmpty() ? String.format("*No bans as of %s.*", Timestamp.getDateAsTimestamp(OffsetDateTime.now(), Timestamp.LONG_DATE_W_DoW_SHORT_TIME)) :
+        return theBans.toString().isEmpty() ? String.format("*No bans as of %s.*", Timestamp.format(OffsetDateTime.now(), TimeFormat.DATE_TIME_SHORT)) :
             theBans.toString();
     }
 

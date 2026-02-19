@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,9 +46,9 @@ public class ReportMessage extends MessageCommandInteraction {
             return "No";
 
         return String.format("Yes, on %s.%nOriginal message was sent on%n%s (%s).",
-            Timestamp.getDateAsTimestamp(Objects.requireNonNull(message.getTimeEdited())),
-            Timestamp.getDateAsTimestamp(message.getTimeCreated()),
-            Timestamp.getDateAsTimestamp(message.getTimeCreated(), Timestamp.RELATIVE)
+            Timestamp.format(Objects.requireNonNull(message.getTimeEdited())),
+            Timestamp.format(message.getTimeCreated()),
+            Timestamp.format(message.getTimeCreated(), TimeFormat.RELATIVE)
         );
     }
 

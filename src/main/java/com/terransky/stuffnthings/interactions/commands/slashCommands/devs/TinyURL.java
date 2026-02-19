@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,7 @@ public class TinyURL extends SlashCommandInteraction {
     public TinyURL() {
         super("tinyurl", "Create short URLs with TinyURL", Mastermind.DEVELOPER, CommandCategory.DEVS,
             parseDate(2023, 1, 6, 16, 4),
-            parseDate(2025, 12, 27, 6, 31)
+            parseDate(2026, 2, 18, 23, 18)
         );
         setDeveloperOnly(!StuffNThings.getConfig().getTokens().getTinyUrl().getToken().isEmpty());
         setWorking(isDeveloperOnly());
@@ -97,9 +98,9 @@ public class TinyURL extends SlashCommandInteraction {
 
                     children.add(TextDisplay.ofFormat("### Long URL\n%s", url));
                     children.add(TextDisplay.ofFormat("### Shorten URL\n%s", urlData.getTinyUrl()));
-                    children.add(TextDisplay.ofFormat("### Created on %s", Timestamp.getDateAsTimestamp(createdAt, Timestamp.LONG_DATE_W_SHORT_TIME)));
+                    children.add(TextDisplay.ofFormat("### Created on %s", Timestamp.format(createdAt, TimeFormat.DATE_TIME_SHORT)));
                     children.add(TextDisplay.ofFormat("### Expires %s", expiresAt != null ?
-                        Timestamp.getDateAsTimestamp(expiresAt, Timestamp.LONG_DATE_W_SHORT_TIME) : "Never"));
+                        Timestamp.format(expiresAt, TimeFormat.DATE_TIME_SHORT) : "Never"));
 
                     event.getHook().sendMessageComponents(
                         StandardResponse.getResponseContainer(this, children)

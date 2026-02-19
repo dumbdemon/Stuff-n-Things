@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.terransky.stuffnthings.dataSources.CodesAndMessages;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
+import net.dv8tion.jda.api.utils.TimeFormat;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -95,7 +96,7 @@ public class CatAASData extends CodesAndMessages {
 
     @JsonIgnore
     public String getCreatedAtAsTimestamp() {
-        return Timestamp.getDateAsTimestamp(getCreatedAtAsDate(), Timestamp.LONG_DATE_W_SHORT_TIME);
+        return Timestamp.format(getCreatedAtAsDate(), TimeFormat.DATE_TIME_LONG);
     }
 
     @JsonProperty("updatedAt")
@@ -115,7 +116,7 @@ public class CatAASData extends CodesAndMessages {
 
     @JsonIgnore
     public String getUpdatedAtAsTimestamp() {
-        return Timestamp.getDateAsTimestamp(getUpdatedAtAsDate(), Timestamp.LONG_DATE_W_SHORT_TIME);
+        return Timestamp.format(getUpdatedAtAsDate(), TimeFormat.DATE_TIME_LONG);
     }
 
     @JsonProperty("validated")

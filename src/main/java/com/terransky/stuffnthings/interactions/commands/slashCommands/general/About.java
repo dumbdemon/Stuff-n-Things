@@ -3,10 +3,12 @@ package com.terransky.stuffnthings.interactions.commands.slashCommands.general;
 import com.terransky.stuffnthings.Managers;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
+import com.terransky.stuffnthings.interfaces.DatabaseManager;
 import com.terransky.stuffnthings.interfaces.interactions.ButtonInteraction;
 import com.terransky.stuffnthings.interfaces.interactions.SlashCommandInteraction;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.components.container.ContainerChildComponent;
@@ -32,7 +34,7 @@ public class About extends SlashCommandInteraction {
     public About() {
         super("about", "Info about the bot, or it's commands.", Mastermind.DEVELOPER, CommandCategory.GENERAL,
             parseDate(2026, 1, 11, 0, 28),
-            parseDate(2026, 1, 18, 13, 2)
+            parseDate(2026, 2, 18, 23, 17)
         );
         addSubcommands(
             new SubcommandData("bot", "Info about the bot."),
@@ -63,7 +65,7 @@ public class About extends SlashCommandInteraction {
                 identifier = commandCategory.get();
             } else commandMetadataList = (new Managers.SlashCommands()).getCommandMetadata().stream().sorted().toList();
             SlashCommandMetadata commandMetadata = commandMetadataList.get(0);
-            List<ContainerChildComponent> children = new ArrayList<>(getContainerChildComponents(commandMetadata));
+            List<ContainerChildComponent> children = new ArrayList<>(getContainerChildComponents(commandMetadata, event.getJDA()));
             children.add(
                 ActionRow.of(
                     new AboutCommand().getButton("Prev", true),
@@ -83,7 +85,7 @@ public class About extends SlashCommandInteraction {
     }
 
     @NotNull
-    private static List<ContainerChildComponent> getContainerChildComponents(@NotNull SlashCommandMetadata commandMetadata) {
+    private static List<ContainerChildComponent> getContainerChildComponents(@NotNull SlashCommandMetadata commandMetadata, JDA jda) {
         List<ContainerChildComponent> children = new ArrayList<>();
         children.add(TextDisplay.of(commandMetadata.getDescription()));
         children.add(TextDisplay.ofFormat("### NSFW?%n%s", commandMetadata.isNSFW() ? "Yes" : "No"));
@@ -91,8 +93,10 @@ public class About extends SlashCommandInteraction {
         children.add(TextDisplay.ofFormat("### Mastermind%n%s", commandMetadata.getMastermind().getWho()));
         children.add(TextDisplay.ofFormat("### Category%n%s", commandMetadata.getCategory().getName()));
         children.add(Separator.createDivider(Separator.Spacing.SMALL));
-        children.add(TextDisplay.ofFormat("### Created on %s", Timestamp.getDateAsTimestamp(commandMetadata.getCreatedAt())));
-        children.add(TextDisplay.ofFormat("### Last Updated on %s", Timestamp.getDateAsTimestamp(commandMetadata.getUpdatedAt())));
+        children.add(TextDisplay.ofFormat("### Created on %s", Timestamp.format(commandMetadata.getCreatedAt())));
+        children.add(TextDisplay.ofFormat("### Last Updated on %s", Timestamp.format(commandMetadata.getUpdatedAt())));
+        children.add(TextDisplay.ofFormat("### Active Users%n%s", DatabaseManager.INSTANCE.getUserCount(jda)));
+        children.add(TextDisplay.ofFormat("### Guild Count%n%s", DatabaseManager.INSTANCE.getGuildsCount(jda)));
         return children;
     }
 
@@ -122,7 +126,7 @@ public class About extends SlashCommandInteraction {
             int nextPage = reference + 1;
             int prevPage = reference - 1;
 
-            List<ContainerChildComponent> children = new ArrayList<>(getContainerChildComponents(commandMetadata));
+            List<ContainerChildComponent> children = new ArrayList<>(getContainerChildComponents(commandMetadata, event.getJDA()));
             children.add(
                 ActionRow.of(
                     getButton(prevPage, identifier, "Prev", prevPage < 0),

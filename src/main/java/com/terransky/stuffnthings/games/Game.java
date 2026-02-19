@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.Channel;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.jetbrains.annotations.NotNull;
 
@@ -204,7 +205,7 @@ public class Game<T extends Player> implements Pojo {
     @JsonIgnore
     @BsonIgnore
     public String getStartTimeAsTimestamp() {
-        return Timestamp.getDateAsTimestamp(getStartTimeAsODT());
+        return Timestamp.format(getStartTimeAsODT());
     }
 
     @JsonIgnore
@@ -214,8 +215,8 @@ public class Game<T extends Player> implements Pojo {
     }
 
     public String getStartTimeAsTimestampWithRelative(boolean newLine) {
-        return Timestamp.getDateAsTimestamp(getStartTimeAsODT()) + (newLine ? "\n" : " ") +
-            "(" + Timestamp.getDateAsTimestamp(getStartTimeAsODT(), Timestamp.RELATIVE) + ")";
+        return Timestamp.format(getStartTimeAsODT()) + (newLine ? "\n" : " ") +
+            "(" + Timestamp.format(getStartTimeAsODT(), TimeFormat.RELATIVE) + ")";
     }
 
     @JsonIgnore
@@ -235,7 +236,7 @@ public class Game<T extends Player> implements Pojo {
     @JsonIgnore
     @BsonIgnore
     public String getCompletedOnAsTimestamp() {
-        return Timestamp.getDateAsTimestamp(getCompletedOnAsODT());
+        return Timestamp.format(getCompletedOnAsODT());
     }
 
     @JsonIgnore
@@ -245,8 +246,8 @@ public class Game<T extends Player> implements Pojo {
     }
 
     public String getCompletedOnAsTimestampWithRelative(boolean newLine) {
-        return Timestamp.getDateAsTimestamp(getCompletedOnAsODT()) + (newLine ? "\n" : " ") +
-            "(" + Timestamp.getDateAsTimestamp(getCompletedOnAsODT(), Timestamp.RELATIVE) + ")";
+        return Timestamp.format(getCompletedOnAsODT()) + (newLine ? "\n" : " ") +
+            "(" + Timestamp.format(getCompletedOnAsODT(), TimeFormat.RELATIVE) + ")";
     }
 
     @JsonIgnore

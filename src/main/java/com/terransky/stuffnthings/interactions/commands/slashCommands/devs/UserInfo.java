@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +38,7 @@ public class UserInfo extends SlashCommandInteraction {
     public UserInfo() {
         super("user-info", "Get info on a specific user on the server! Defaults to you.", Mastermind.DEFAULT, CommandCategory.DEVS,
             parseDate(2023, 8, 24, 11, 10),
-            parseDate(2025, 12, 31, 16, 57)
+            parseDate(2026, 2, 18, 23, 18)
         );
         addOptions(
             new OptionData(OptionType.USER, "user", "Who you want to know about.")
@@ -123,12 +124,12 @@ public class UserInfo extends SlashCommandInteraction {
         children.add(Separator.createDivider(Separator.Spacing.SMALL));
         if (!member.getUser().isBot()) {
             String boostedText = (member.getTimeBoosted() != null) ?
-                String.format("Boosting Since :gem: %s (%s)", Timestamp.getDateAsTimestamp(member.getTimeBoosted()),
-                    Timestamp.getDateAsTimestamp(member.getTimeBoosted(), Timestamp.RELATIVE)) : ":x: Not Boosting";
+                String.format("Boosting Since :gem: %s (%s)", Timestamp.format(member.getTimeBoosted()),
+                    Timestamp.format(member.getTimeBoosted(), TimeFormat.RELATIVE)) : ":x: Not Boosting";
             children.add(TextDisplay.of(boostedText));
         }
-        children.add(TextDisplay.of(String.format("Joined Discord on %s", Timestamp.getDateAsTimestamp(member.getUser().getTimeCreated()))));
-        children.add(TextDisplay.of(String.format("Joined Server on %s", Timestamp.getDateAsTimestamp(member.getTimeJoined()))));
+        children.add(TextDisplay.of(String.format("Joined Discord on %s", Timestamp.format(member.getUser().getTimeCreated()))));
+        children.add(TextDisplay.of(String.format("Joined Server on %s", Timestamp.format(member.getTimeJoined()))));
 
 
         return Container.of(children).withAccentColor(embedColor);

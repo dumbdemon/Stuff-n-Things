@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
+import net.dv8tion.jda.api.utils.TimeFormat;
 
 import javax.annotation.Generated;
 import javax.validation.Valid;
@@ -109,12 +110,12 @@ public class Current {
 
     @JsonIgnore
     public String getDtAsTimeStamp() {
-        return Timestamp.getDateAsTimestamp(dt);
+        return Timestamp.format(dt);
     }
 
     @JsonIgnore
-    public String getDtAsTimeStamp(Timestamp timestamp) {
-        return Timestamp.getDateAsTimestamp(dt, timestamp);
+    public String getDtAsTimeStamp(TimeFormat timestamp) {
+        return Timestamp.format(dt, timestamp);
     }
 
     @JsonProperty("sunrise")
@@ -131,14 +132,14 @@ public class Current {
     public String getSunriseAsTimeStamp() {
         if (sunrise == null)
             return "N/A";
-        return Timestamp.getDateAsTimestamp(sunrise);
+        return Timestamp.format(sunrise);
     }
 
     @JsonIgnore
-    public String getSunriseAsTimeStamp(Timestamp timestamp) {
+    public String getSunriseAsTimeStamp(TimeFormat timestamp) {
         if (sunrise == null)
             return "N/A";
-        return Timestamp.getDateAsTimestamp(sunrise, timestamp);
+        return Timestamp.format(sunrise, timestamp);
     }
 
     @JsonProperty("sunset")
@@ -155,14 +156,14 @@ public class Current {
     public String getSunsetAsTimestamp() {
         if (sunset == null)
             return "N/A";
-        return Timestamp.getDateAsTimestamp(sunset);
+        return Timestamp.format(sunset);
     }
 
     @JsonIgnore
-    public String getSunsetAsTimestamp(Timestamp timestamp) {
+    public String getSunsetAsTimestamp(TimeFormat timestamp) {
         if (sunrise == null)
             return "N/A";
-        return Timestamp.getDateAsTimestamp(sunset, timestamp);
+        return Timestamp.format(sunset, timestamp);
     }
 
     @JsonProperty("temp")

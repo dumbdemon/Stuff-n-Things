@@ -12,7 +12,6 @@ import com.terransky.stuffnthings.utilities.apiHandlers.OpenWeatherHandler;
 import com.terransky.stuffnthings.utilities.cannedAgenda.Responses;
 import com.terransky.stuffnthings.utilities.command.*;
 import com.terransky.stuffnthings.utilities.general.DegreeToQuadrant;
-import com.terransky.stuffnthings.utilities.general.Timestamp;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.components.container.ContainerChildComponent;
 import net.dv8tion.jda.api.components.section.Section;
@@ -25,6 +24,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ public class GetWeather extends SlashCommandInteraction {
         super("weather", "Get the weather for a specific location.",
             Mastermind.DEVELOPER, CommandCategory.FUN,
             parseDate(2023, 2, 1, 16, 27),
-            parseDate(2025, 12, 29, 2, 25)
+            parseDate(2026, 2, 18, 23, 17)
         );
         addSubcommandGroups(
             new SubcommandGroupData("by-coordinates", "Get the weather by coordinates.")
@@ -158,8 +158,8 @@ public class GetWeather extends SlashCommandInteraction {
 
         children.add(TextDisplay.ofFormat("## Timezone\n%s", weatherData.getTimezone()));
         children.add(TextDisplay.ofFormat("## Current Time\n%s", current.getDtAsTimeStamp()));
-        children.add(TextDisplay.ofFormat("## Sunrise\n%s", current.getSunriseAsTimeStamp(Timestamp.SHORT_TIME)));
-        children.add(TextDisplay.ofFormat("## Sunset\n%s", current.getSunsetAsTimestamp(Timestamp.SHORT_TIME)));
+        children.add(TextDisplay.ofFormat("## Sunrise\n%s", current.getSunriseAsTimeStamp(TimeFormat.TIME_SHORT)));
+        children.add(TextDisplay.ofFormat("## Sunset\n%s", current.getSunsetAsTimestamp(TimeFormat.TIME_SHORT)));
         children.add(Separator.createInvisible(Separator.Spacing.SMALL));
         children.add(TextDisplay.ofFormat("## Temperature (Actual)\n%s", current.getTempsAsString()));
         children.add(TextDisplay.ofFormat("## Dew Point\n%s", current.getDewPiontsAsString()));

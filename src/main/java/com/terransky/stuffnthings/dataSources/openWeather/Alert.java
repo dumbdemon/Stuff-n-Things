@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.terransky.stuffnthings.utilities.general.Timestamp;
+import net.dv8tion.jda.api.utils.TimeFormat;
 
 import javax.annotation.Generated;
 import javax.validation.Valid;
@@ -69,12 +70,12 @@ public class Alert {
 
     @JsonIgnore
     public String getStartAsTimestamp() {
-        return Timestamp.getDateAsTimestamp(start);
+        return Timestamp.format(start);
     }
 
     @JsonIgnore
-    public String getStartAsTimestamp(Timestamp timestamp) {
-        return Timestamp.getDateAsTimestamp(start, timestamp);
+    public String getStartAsTimestamp(TimeFormat timestamp) {
+        return Timestamp.format(start, timestamp);
     }
 
     @JsonProperty("end")
@@ -89,12 +90,12 @@ public class Alert {
 
     @JsonIgnore
     public String getEndAsTimestamp() {
-        return Timestamp.getDateAsTimestamp(end);
+        return Timestamp.format(end);
     }
 
     @JsonIgnore
-    public String getEndAsTimestamp(Timestamp timestamp) {
-        return Timestamp.getDateAsTimestamp(end, timestamp);
+    public String getEndAsTimestamp(TimeFormat timestamp) {
+        return Timestamp.format(end, timestamp);
     }
 
     @JsonProperty("description")

@@ -70,9 +70,7 @@ public abstract class CommandInteraction<T extends GenericCommandInteractionEven
         this.disabledReason = disabledReason;
     }
 
-    public CommandData getCommandData() {
-        return null;
-    }
+    public abstract CommandData getCommandData();
 
     public List<Long> getRestrictedServers() {
         return List.copyOf(restrictedServers);
