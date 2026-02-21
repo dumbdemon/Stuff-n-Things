@@ -22,6 +22,7 @@ import com.terransky.stuffnthings.interactions.commands.slashCommands.mtg.WhatsI
 import com.terransky.stuffnthings.interactions.commands.userContextMenus.UserInfoMenu;
 import com.terransky.stuffnthings.interactions.modals.KillSuggest;
 import com.terransky.stuffnthings.interactions.modals.RandomMemeBuilder;
+import com.terransky.stuffnthings.interactions.modals.SuggestCommand;
 import com.terransky.stuffnthings.interfaces.interactions.*;
 import com.terransky.stuffnthings.utilities.command.SlashCommandMetadata;
 import com.terransky.stuffnthings.utilities.general.InteractionType;
@@ -146,6 +147,7 @@ public class Managers {
             addInteraction(new KillSuggest.Random());
             addInteraction(new KillSuggest.Target());
             addInteraction(new RandomMemeBuilder());
+            addInteraction(new SuggestCommand());
         }
     }
 }

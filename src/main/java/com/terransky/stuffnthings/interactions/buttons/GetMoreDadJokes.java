@@ -43,7 +43,7 @@ public class GetMoreDadJokes extends ButtonInteraction {
                     TextDisplay.of(theJoke.getJoke()),
                     TextDisplay.ofFormat("ID#%s", theJoke.getId())
                 )),
-                ActionRow.of(new GetMoreDadJokes().getButton(ButtonStyle.SUCCESS, "Get a new Dad Joke!"))
+                ActionRow.of(getButton(ButtonStyle.SUCCESS, "Get a new Dad Joke!"))
             ).build();
 
         event.editMessage(message).queue();

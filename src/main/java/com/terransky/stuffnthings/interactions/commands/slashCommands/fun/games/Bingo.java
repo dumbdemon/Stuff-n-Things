@@ -43,7 +43,8 @@ public class Bingo extends GameSlashCommandInteraction {
         super("bingo", "Play a game of bingo with up to 100 players!",
             Mastermind.DEVELOPER, CommandCategory.FUN,
             parseDate(2023, 2, 14, 9, 59),
-            parseDate(2024, 8, 20, 12, 3));
+            parseDate(2026, 2, 21, 5, 0)
+        );
 
         addSubcommands(
                 new SubcommandData(GameAction.NEW.getName(), "Start a new Bingo game in this channel.")
@@ -394,8 +395,8 @@ public class Bingo extends GameSlashCommandInteraction {
                     channelUnion.sendMessageComponents(
                         StandardResponse.getResponseContainer(new Bingo(), "Error occurred during verbose!\nSkipping to winner...", BotColors.ERROR)
                     ).queue();
-                    LoggerFactory.getLogger(Bingo.class)
-                        .error(String.format("Verbose for channel id %s interrupted", bingoGame.getChannelId()), e);
+                    String message = String.format("Verbose for channel id %s was interrupted", bingoGame.getChannelId());
+                    LoggerFactory.getLogger(Bingo.class).error(message, e);
                     break;
                 }
             }

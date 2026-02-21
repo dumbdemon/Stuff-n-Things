@@ -23,4 +23,8 @@ public abstract class ModalInteraction implements IInteraction.IModal {
     public String getName() {
         return id;
     }
+
+    public String getTitle() {
+        return title;
+    }
 }

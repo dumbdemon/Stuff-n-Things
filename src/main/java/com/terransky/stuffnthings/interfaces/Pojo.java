@@ -50,7 +50,7 @@ public interface Pojo {
     }
 
     /**
-     * Create a json file of this object with the class name as the file name.<br />
+     * Create a JSON file of this object with the class name as the file name.<br />
      * The file is saved to the <b>jsons</b> folder in the root directory.
      *
      * @throws IOException Is thrown if the file could not be saved or if {@link #getAsJsonString()} failed to parse.
@@ -62,7 +62,7 @@ public interface Pojo {
     }
 
     /**
-     * Create a json file of this object with a custom file name.<br />
+     * Create a JSON file of this object with a custom file name.<br />
      * The file is saved to the <b>jsons</b> folder in the root directory.
      *
      * @param name The name of the file
@@ -77,7 +77,7 @@ public interface Pojo {
     }
 
     /**
-     * Create a json file of this object.<br />
+     * Create a JSON file of this object.<br />
      * The file is saved to the <b>jsons</b> folder in the root directory.
      *
      * @param file A {@link File} to save to.
@@ -91,9 +91,9 @@ public interface Pojo {
     }
 
     /**
-     * Convert this object into a json string.
+     * Convert this object into a JSON string.
      *
-     * @return A json string of all non-null values
+     * @return A JSON string of all non-null values
      * @throws JsonProcessingException Thrown if it failed to parse
      */
     @JsonIgnore

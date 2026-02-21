@@ -3,13 +3,15 @@ package com.terransky.stuffnthings.interactions.modals;
 import com.terransky.stuffnthings.StuffNThings;
 import com.terransky.stuffnthings.exceptions.DiscordAPIException;
 import com.terransky.stuffnthings.exceptions.FailedInteractionException;
+import com.terransky.stuffnthings.interactions.buttons.AcceptKill;
+import com.terransky.stuffnthings.interactions.buttons.DenyKill;
 import com.terransky.stuffnthings.interfaces.IInteraction;
 import com.terransky.stuffnthings.interfaces.interactions.ModalInteraction;
 import com.terransky.stuffnthings.utilities.command.BotColors;
 import com.terransky.stuffnthings.utilities.command.EventBlob;
 import com.terransky.stuffnthings.utilities.command.StandardResponse;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
-import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.components.textinput.TextInput;
@@ -68,8 +70,9 @@ public class KillSuggest {
         requestChannel.sendMessage(suggestion)
             .addComponents(
                 ActionRow.of(
-                    Button.success(isRandom ? ACCEPT_RANDOM_BUTTON : ACCEPT_TARGET_BUTTON, "Accept"),
-                    Button.danger(DENY_BUTTON, "Deny")
+                    isRandom ? new AcceptKill.Random().getButton(ButtonStyle.SUCCESS, "Accept") :
+                        new AcceptKill.Target().getButton(ButtonStyle.SUCCESS, "Accept"),
+                    new DenyKill().getButton(ButtonStyle.DANGER, "Deny")
                 )
             )
             .useComponentsV2(false)
