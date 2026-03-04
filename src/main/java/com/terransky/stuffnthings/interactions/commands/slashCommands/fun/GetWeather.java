@@ -25,13 +25,20 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import net.dv8tion.jda.api.utils.TimeFormat;
+import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class GetWeather extends SlashCommandInteraction {
 
@@ -39,7 +46,7 @@ public class GetWeather extends SlashCommandInteraction {
         super("weather", "Get the weather for a specific location.",
             Mastermind.DEVELOPER, CommandCategory.FUN,
             parseDate(2023, 2, 1, 16, 27),
-            parseDate(2026, 2, 18, 23, 17)
+            parseDate(2026, 3, 4, 7, 36)
         );
         addSubcommandGroups(
             new SubcommandGroupData("by-coordinates", "Get the weather by coordinates.")
@@ -156,15 +163,27 @@ public class GetWeather extends SlashCommandInteraction {
             children.add(TextDisplay.ofFormat("**%smm** of snow in the last hour", current.getSnow().get_1h()));
         }
 
+        Instant instant = Instant.ofEpochSecond(current.getDt());
+        ZoneId zoneId = ZoneId.of(weatherData.getTimezone());
+        String dayOfWeek = WordUtils.capitalize(instant.atZone(zoneId).getDayOfWeek().name().toLowerCase());
+
+        String localTime = instant.atOffset(zoneId.getRules().getOffset(instant))
+            .format(
+                DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG)
+                    .withLocale(Locale.ENGLISH)
+                    .withZone(zoneId)
+            );
+        DecimalFormat format =  new DecimalFormat("##,###");
+
         children.add(TextDisplay.ofFormat("## Timezone\n%s", weatherData.getTimezone()));
-        children.add(TextDisplay.ofFormat("## Current Time\n%s", current.getDtAsTimeStamp()));
+        children.add(TextDisplay.ofFormat("## Current Time\nLocal Time > %s, %s\nYour Time > %s", dayOfWeek, localTime, current.getDtAsTimeStamp()));
         children.add(TextDisplay.ofFormat("## Sunrise\n%s", current.getSunriseAsTimeStamp(TimeFormat.TIME_SHORT)));
         children.add(TextDisplay.ofFormat("## Sunset\n%s", current.getSunsetAsTimestamp(TimeFormat.TIME_SHORT)));
         children.add(Separator.createInvisible(Separator.Spacing.SMALL));
         children.add(TextDisplay.ofFormat("## Temperature (Actual)\n%s", current.getTempsAsString()));
-        children.add(TextDisplay.ofFormat("## Dew Point\n%s", current.getDewPiontsAsString()));
         children.add(TextDisplay.ofFormat("## Temperature (Feels Like)\n%s", current.getFeelsLikesAsString()));
-        children.add(TextDisplay.ofFormat("## Pressure\n%s", String.format("**%s** hPa", current.getPressure())));
+        children.add(TextDisplay.ofFormat("## Dew Point\n%s", current.getDewPiontsAsString()));
+        children.add(TextDisplay.ofFormat("## Pressure\n%s", String.format("**%s** hPa", format.format(current.getPressure()))));
         children.add(TextDisplay.ofFormat("## Humidity\n%s", String.format("**%s**%%", current.getHumidity())));
         children.add(TextDisplay.ofFormat("## Clouds\n%s", String.format("**%s**%%", current.getClouds())));
         children.add(TextDisplay.ofFormat("## UV Index\n%s", String.format("**%s**", current.getUvi())));
