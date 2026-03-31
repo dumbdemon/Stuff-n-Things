@@ -39,6 +39,13 @@ public interface IInteraction<T extends GenericInteractionCreateEvent> extends C
         return InteractionType.UNKNOWN;
     }
 
+    void setDeferReply();
+
+    boolean deferReply();
+
+    void setEphemeral();
+
+    boolean isEphemeral();
 
     /**
      * The main handler for all interactions

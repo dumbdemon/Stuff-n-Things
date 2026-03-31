@@ -44,10 +44,11 @@ public class ConfigCmd extends SlashCommandInteraction {
     public ConfigCmd() {
         super("config", "Server config manager.", Mastermind.DEVELOPER, CommandCategory.ADMIN,
             parseDate(2022, 8, 28, 21, 46),
-            parseDate(2026, 1, 16, 1, 42)
+            parseDate(2026, 3, 5, 9, 0)
         );
         setDefaultMemberPermissions(Permission.MANAGE_SERVER);
         setWorking(StuffNThings.getConfig().getCore().getEnableDatabase());
+        setDeferReply();
         addSubcommandGroups(
             new SubcommandGroupData("general", "Change settings shared by some commands.")
                 .addSubcommands(
@@ -185,13 +186,12 @@ public class ConfigCmd extends SlashCommandInteraction {
             TextDisplay.of(String.format("Sexist - %s", serverFlags.getSexist() ? deny : allow))
         ));
 
-        event.replyComponents(
+        event.getHook().sendMessageComponents(
             StandardResponse.getResponseContainer(title, children)
         ).queue();
     }
 
     private void updateReportingWebhook(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws IOException, ExecutionException, InterruptedException {
-        event.deferReply().queue();
         Optional<GuildChannelUnion> channel = Optional.ofNullable(event.getOption("channel", OptionMapping::getAsChannel));
         String title = getNameReadable() + " - Report Webhook";
 
@@ -241,7 +241,6 @@ public class ConfigCmd extends SlashCommandInteraction {
     }
 
     private void updateReportingResponse(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
-        event.deferReply().queue();
         Optional<String> ifResponse = Optional.ofNullable(event.getOption("report-message", OptionMapping::getAsString));
         String title = getNameReadable() + " - Report Response";
 
@@ -263,7 +262,6 @@ public class ConfigCmd extends SlashCommandInteraction {
     }
 
     private void updateKillTimeout(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
-        event.deferReply().queue();
         Optional<Integer> ifNewTimeout = Optional.ofNullable(event.getOption("set-timeout", OptionMapping::getAsInt));
         long oldTimeout = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILLS_TIMEOUT, TimeUnit.MINUTES.toMillis(10), PropertyMapping::getAsLong);
         long oldTimeoutMinutes = TimeUnit.MILLISECONDS.toMinutes(oldTimeout);
@@ -301,7 +299,6 @@ public class ConfigCmd extends SlashCommandInteraction {
     }
 
     private void updateKillMaxKills(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) {
-        event.deferReply().queue();
         Optional<Long> ifNewMax = Optional.ofNullable(event.getOption("set-max", OptionMapping::getAsLong));
         long oldMax = DatabaseManager.INSTANCE.getFromDatabase(blob, Property.KILLS_MAX, 5L, PropertyMapping::getAsLong);
         String title = getNameReadable() + " - Max Kills";

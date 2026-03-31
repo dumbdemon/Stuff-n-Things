@@ -29,6 +29,7 @@ public class RandomCatFacts extends SlashCommandInteraction {
             parseDate(2026, 1, 4, 1, 4),
             parseDate(2026, 1, 4, 1, 4)
         );
+        setDeferReply();
         addOptions(
             new OptionData(OptionType.INTEGER, "count", "How many facts? Defaults to one.")
                 .setRequiredRange(1, 10)
@@ -37,7 +38,6 @@ public class RandomCatFacts extends SlashCommandInteraction {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException {
-        event.deferReply().queue();
         RandomCatFactsHandler handler = new RandomCatFactsHandler();
         int count = event.getOption("count", 1, OptionMapping::getAsInt);
 

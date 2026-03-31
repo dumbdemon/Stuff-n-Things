@@ -30,8 +30,9 @@ public class GetRandomCat extends SlashCommandInteraction {
         super("random-cat", "Get a random image of a cat",
             Mastermind.DEVELOPER, CommandCategory.FUN,
             parseDate(2023, 2, 9, 13, 17),
-            parseDate(2025, 12, 28, 0, 18)
+            parseDate(2026, 3, 5, 9, 5)
         );
+        setDeferReply();
         addOptions(
             new OptionData(OptionType.BOOLEAN, "gif", "Whether not you just want gifs."),
             new OptionData(OptionType.STRING, "says", "Add text to the image."),
@@ -58,7 +59,6 @@ public class GetRandomCat extends SlashCommandInteraction {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
-        event.deferReply().queue();
         boolean sendGifs = event.getOption("gif", false, OptionMapping::getAsBoolean);
         Optional<String> says = Optional.ofNullable(event.getOption("says", OptionMapping::getAsString));
         Optional<String> filter = Optional.ofNullable(event.getOption("filter", OptionMapping::getAsString));

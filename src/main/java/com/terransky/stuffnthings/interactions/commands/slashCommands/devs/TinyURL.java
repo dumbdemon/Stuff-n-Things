@@ -32,10 +32,11 @@ public class TinyURL extends SlashCommandInteraction {
     public TinyURL() {
         super("tinyurl", "Create short URLs with TinyURL", Mastermind.DEVELOPER, CommandCategory.DEVS,
             parseDate(2023, 1, 6, 16, 4),
-            parseDate(2026, 2, 18, 23, 18)
+            parseDate(2026, 3, 5, 9, 2)
         );
         setDeveloperOnly(!StuffNThings.getConfig().getTokens().getTinyUrl().getToken().isEmpty());
         setWorking(isDeveloperOnly());
+        setDeferReply();
         addOptions(
             new OptionData(OptionType.STRING, "url", "A URL to shorten.", true),
             new OptionData(OptionType.STRING, "alias", "Customize the link.")
@@ -69,7 +70,6 @@ public class TinyURL extends SlashCommandInteraction {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
-        event.deferReply().queue();
         Optional<String> ifUrl = Optional.ofNullable(event.getOption("url", OptionMapping::getAsString)),
             alias = Optional.ofNullable(event.getOption("alias", OptionMapping::getAsString));
         TinyURLLimits.Domain domain = TinyURLLimits.Domain.getDomainByKey(event.getOption("domain", 0, OptionMapping::getAsInt));

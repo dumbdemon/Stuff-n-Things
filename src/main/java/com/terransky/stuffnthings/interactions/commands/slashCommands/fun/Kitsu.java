@@ -48,8 +48,9 @@ public class Kitsu extends SlashCommandInteraction {
         super("kitsu", "Search Kitsu.io",
             Mastermind.DEVELOPER, CommandCategory.FUN,
             parseDate(2023, 1, 17, 12, 43),
-            parseDate(2026, 1, 27, 9, 3)
+            parseDate(2026, 3, 5, 9, 8)
         );
+        setDeferReply();
         OptionData search = new OptionData(OptionType.STRING, "search", "Query for search", true);
         setWorking(hasKitsuToken());
         addSubcommands(
@@ -172,7 +173,6 @@ public class Kitsu extends SlashCommandInteraction {
     }
 
     public void animeExecute(@NotNull SlashCommandInteractionEvent event) throws FailedInteractionException, IOException {
-        event.deferReply().queue();
         String query = event.getOption("search", "dragon maid", OptionMapping::getAsString);
 
         try {
@@ -201,7 +201,6 @@ public class Kitsu extends SlashCommandInteraction {
     }
 
     public void mangaExecute(@NotNull SlashCommandInteractionEvent event) throws FailedInteractionException, IOException {
-        event.deferReply().queue();
         String query = event.getOption("search", "dragon maid", OptionMapping::getAsString);
 
         try {

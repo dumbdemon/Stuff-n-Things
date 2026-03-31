@@ -26,12 +26,12 @@ public class Dictionary extends SlashCommandInteraction {
         addOptions(
             new OptionData(OptionType.STRING, "word", "What to look up", true)
         );
+        setDeferReply();
         setDisabledReason("Being reworked with a new API. Stay tuned!");
     }
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException {
-        //event.deferReply().queue();
         FreeDictionaryHandler ignore = new FreeDictionaryHandler();
     }
 }

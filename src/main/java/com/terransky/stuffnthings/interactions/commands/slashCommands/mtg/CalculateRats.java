@@ -23,8 +23,9 @@ public class CalculateRats extends SlashCommandInteraction {
     public CalculateRats() {
         super("not-enough-rats", "How many rats you have?", Mastermind.DEVELOPER, CommandCategory.MTG,
             parseDate(2022, 10, 5, 11, 48),
-            parseDate(2025, 12, 27, 2, 26)
+            parseDate(2026, 3, 5, 9, 9)
         );
+        setDeferReply();
         addOptions(
             new OptionData(OptionType.INTEGER, "start-count", "How many do you have right now?", true)
                 .setMinValue(3),
@@ -35,7 +36,6 @@ public class CalculateRats extends SlashCommandInteraction {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException {
-        event.deferReply().queue();
         float startCNT = event.getOption("start-count", 3, OptionMapping::getAsInt);
         float triggers = event.getOption("triggers", 100, OptionMapping::getAsInt);
         float finalCNT = startCNT;

@@ -46,8 +46,9 @@ public class GetWeather extends SlashCommandInteraction {
         super("weather", "Get the weather for a specific location.",
             Mastermind.DEVELOPER, CommandCategory.FUN,
             parseDate(2023, 2, 1, 16, 27),
-            parseDate(2026, 3, 4, 7, 36)
+            parseDate(2026, 3, 5, 9, 5)
         );
+        setDeferReply();
         addSubcommandGroups(
             new SubcommandGroupData("by-coordinates", "Get the weather by coordinates.")
                 .addSubcommands(
@@ -93,7 +94,6 @@ public class GetWeather extends SlashCommandInteraction {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException {
-        event.deferReply().queue();
         String subcommandGroup = event.getSubcommandGroup();
         String subcommand = event.getSubcommandName();
         if (subcommandGroup == null || subcommand == null)

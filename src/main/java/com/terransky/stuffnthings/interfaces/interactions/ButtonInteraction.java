@@ -13,6 +13,8 @@ public abstract class ButtonInteraction implements IInteraction.IButton {
 
     private final String name;
     private final Pattern pagePattern;
+    private boolean deferReply = false;
+    private boolean ephemeral = false;
 
     protected ButtonInteraction(String name) {
         this(name, null);
@@ -71,6 +73,26 @@ public abstract class ButtonInteraction implements IInteraction.IButton {
             return false;
 
         return pagePattern.matcher(name).matches();
+    }
+
+    @Override
+    public void setDeferReply() {
+        this.deferReply = true;
+    }
+
+    @Override
+    public boolean deferReply() {
+        return this.deferReply;
+    }
+
+    @Override
+    public void setEphemeral() {
+        this.ephemeral = true;
+    }
+
+    @Override
+    public boolean isEphemeral() {
+        return this.ephemeral;
     }
 
     @Override

@@ -20,6 +20,8 @@ public abstract class CommandInteraction<T extends GenericCommandInteractionEven
     private String disabledReason = "";
     private final List<Permission> defaultMemberPermissions = new ArrayList<>();
     private final InteractionType interactionType;
+    private boolean deferReply = false;
+    private boolean ephemeral = false;
 
     protected CommandInteraction(String name, InteractionType interactionType) {
         this.name = name;
@@ -90,6 +92,26 @@ public abstract class CommandInteraction<T extends GenericCommandInteractionEven
 
     protected void setDefaultMemberPermissions(Permission... defaultMemberPermissions) {
         this.defaultMemberPermissions.addAll(Arrays.asList(defaultMemberPermissions));
+    }
+
+    @Override
+    public void setDeferReply() {
+        this.deferReply = true;
+    }
+
+    @Override
+    public boolean deferReply() {
+        return this.deferReply;
+    }
+
+    @Override
+    public void setEphemeral() {
+        this.ephemeral = true;
+    }
+
+    @Override
+    public boolean isEphemeral() {
+        return this.ephemeral;
     }
 
     @Override

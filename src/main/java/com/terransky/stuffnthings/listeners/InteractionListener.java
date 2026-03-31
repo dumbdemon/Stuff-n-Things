@@ -62,7 +62,7 @@ public class InteractionListener extends ListenerAdapter {
                               EventBlob blob, Exception e) {
         Container commandFailed = getFailedInteractionMessage(blob);
         logInteractionFailure(interaction.getName(), blob.getGuildId(), e);
-        if (event.isAcknowledged()) {
+        if (interaction.deferReply()) {
             event.getHook().sendMessageComponents(commandFailed).queue();
         } else event.replyComponents(commandFailed).setEphemeral(true).queue();
     }
@@ -129,6 +129,9 @@ public class InteractionListener extends ListenerAdapter {
             return;
         }
 
+        if (slash.deferReply())
+            event.deferReply(slash.isEphemeral()).queue();
+
         try {
             slash.execute(event, blob);
         } catch (RuntimeException | IOException | ExecutionException | InterruptedException e) {
@@ -168,7 +171,6 @@ public class InteractionListener extends ListenerAdapter {
 
         if (commandMessage.isDisabled()) {
             event.replyComponents(getDisabledMessage(commandMessage.getDisabledReason()))
-
                 .setEphemeral(true)
                 .queue();
             return;

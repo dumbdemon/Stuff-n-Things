@@ -41,6 +41,7 @@ public class WhatsInStandard extends SlashCommandInteraction {
             parseDate(2022, 10, 27, 12, 40),
             parseDate(2026, 2, 18, 23, 18)
         );
+        setDeferReply();
         addSubcommands(
             new SubcommandData("all", "Get all info about the standard format."),
             new SubcommandData("sets", "Get the standard sets only."),
@@ -86,7 +87,6 @@ public class WhatsInStandard extends SlashCommandInteraction {
 
     @Override
     public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException {
-        event.deferReply().queue();
         String subcommand = event.getSubcommandName();
         String title = "What's in standard?";
         if (subcommand == null) throw new DiscordAPIException("No subcommand received");
