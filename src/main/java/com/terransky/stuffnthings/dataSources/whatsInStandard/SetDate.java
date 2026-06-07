@@ -1,4 +1,3 @@
-
 package com.terransky.stuffnthings.dataSources.whatsInStandard;
 
 import com.fasterxml.jackson.annotation.*;
@@ -18,7 +17,7 @@ import java.util.Map;
  * Date
  * <p>
  * Date wraps both a rough date and an optional exact date.
- * 
+ *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -33,7 +32,7 @@ public class SetDate {
      * <p>
      * A day-precise date formatted as ISO 8601.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("exact")
     @JsonPropertyDescription("A day-precise date formatted as ISO 8601.")
@@ -45,7 +44,7 @@ public class SetDate {
      * <p>
      * A quarter- or month-precise date.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("rough")
     @JsonPropertyDescription("A quarter- or month-precise date.")
@@ -70,7 +69,7 @@ public class SetDate {
      * <p>
      * A day-precise date formatted as ISO 8601.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("exact")
     public Date getExact() {
@@ -82,7 +81,7 @@ public class SetDate {
      * <p>
      * A day-precise date formatted as ISO 8601.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("exact")
     public void setExact(Date exact) {
@@ -94,7 +93,7 @@ public class SetDate {
      * <p>
      * A quarter- or month-precise date.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("rough")
     public String getRough() {
@@ -106,7 +105,7 @@ public class SetDate {
      * <p>
      * A quarter- or month-precise date.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("rough")
     public void setRough(String rough) {

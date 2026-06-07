@@ -35,40 +35,40 @@ public abstract class GameSlashCommandInteraction extends SlashCommandInteractio
     /**
      * Function to create a new game
      *
-     * @param event    A {@link SlashCommandInteractionEvent}
-     * @param blob     An {@link EventBlob}
+     * @param event A {@link SlashCommandInteractionEvent}
+     * @param blob  An {@link EventBlob}
      */
     protected abstract void newGame(SlashCommandInteractionEvent event, EventBlob blob);
 
     /**
      * Function to join a game
      *
-     * @param event    A {@link SlashCommandInteractionEvent}
-     * @param blob     An {@link EventBlob}
+     * @param event A {@link SlashCommandInteractionEvent}
+     * @param blob  An {@link EventBlob}
      */
     protected abstract void joinGame(SlashCommandInteractionEvent event, EventBlob blob);
 
     /**
      * Function to start game
      *
-     * @param event    A {@link SlashCommandInteractionEvent}
-     * @param blob     An {@link EventBlob}
+     * @param event A {@link SlashCommandInteractionEvent}
+     * @param blob  An {@link EventBlob}
      */
     protected abstract void startGame(SlashCommandInteractionEvent event, EventBlob blob);
 
     /**
      * Function to view the stats of a user's last game in a channel.
      *
-     * @param event    A {@link SlashCommandInteractionEvent}
-     * @param blob     An {@link EventBlob}
+     * @param event A {@link SlashCommandInteractionEvent}
+     * @param blob  An {@link EventBlob}
      */
     protected abstract void lastGame(SlashCommandInteractionEvent event, EventBlob blob);
 
     /**
      * Function to cancel a game
      *
-     * @param event    A {@link SlashCommandInteractionEvent}
-     * @param blob     An {@link EventBlob}
+     * @param event A {@link SlashCommandInteractionEvent}
+     * @param blob  An {@link EventBlob}
      */
     protected abstract void cancelGame(SlashCommandInteractionEvent event, EventBlob blob);
 
@@ -77,8 +77,7 @@ public abstract class GameSlashCommandInteraction extends SlashCommandInteractio
         JOIN,
         START,
         LAST,
-        CANCEL
-        ;
+        CANCEL;
 
         @NotNull
         public String getName() {

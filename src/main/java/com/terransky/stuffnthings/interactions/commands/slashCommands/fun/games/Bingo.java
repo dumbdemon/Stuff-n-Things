@@ -34,39 +34,39 @@ import java.util.concurrent.TimeUnit;
 
 public class Bingo extends GameSlashCommandInteraction {
 
-    @NotNull
-    private static Container noGameHasStartedContainer() {
-        return StandardResponse.getResponseContainer(new Bingo(), "No game has started. Start one with `/bingo new`.", BotColors.ERROR);
-    }
-
     public Bingo() {
         super("bingo", "Play a game of bingo with up to 100 players!",
             Mastermind.DEVELOPER, CommandCategory.FUN,
             parseDate(2023, 2, 14, 9, 59),
-            parseDate(2026, 2, 21, 5, 0)
+            parseDate(2026, 6, 7, 3, 32)
         );
 
         addSubcommands(
-                new SubcommandData(GameAction.NEW.getName(), "Start a new Bingo game in this channel.")
-                    .addOptions(
-                        new OptionData(OptionType.BOOLEAN, "join-game", "Join the game you started?", true),
-                        new OptionData(OptionType.INTEGER, "max-players", "Change the max player count for this game. DEFAULT: 100")
-                            .setMinValue(2),
-                        new OptionData(OptionType.INTEGER, "delay", "The amount of minutes to delay the game by. DEFAULT: 10")
-                            .setRequiredRange(0, 60),
-                        new OptionData(OptionType.BOOLEAN, "ping", "Mention users in this channel that a bingo game has started."),
-                        new OptionData(OptionType.ROLE, "to-ping", "If ping is true, mention this role."),
-                        new OptionData(OptionType.BOOLEAN, "verbose", "Iterate through all called numbers into chat. WARNING: POTENTIAL SPAM!")
-                    ),
-                new SubcommandData(GameAction.JOIN.getName(), "Join in a game. You cannot join a game that has already started.")
-                    .addOption(OptionType.BOOLEAN, "dm-board", "Whether to send your board here or in you DMs. NOTE: DMs must be open!", true),
-                new SubcommandData(GameAction.START.getName(), "No waiting! Start the game now!"),
-                new SubcommandData(GameAction.LAST.getName(), "See your result on that last game on this channel.")
-                    .addOptions(
-                        new OptionData(OptionType.BOOLEAN, "hide-result", "Hide your results.", true)
-                    ),
-                new SubcommandData(GameAction.CANCEL.getName(), "Cancel a game from running.")
-            );
+            new SubcommandData(GameAction.NEW.getName(), "Start a new Bingo game in this channel.")
+                .addOptions(
+                    new OptionData(OptionType.BOOLEAN, "join-game", "Join the game you started?", true),
+                    new OptionData(OptionType.INTEGER, "max-players", "Change the max player count for this game. DEFAULT: 100")
+                        .setMinValue(2),
+                    new OptionData(OptionType.INTEGER, "delay", "The amount of minutes to delay the game by. DEFAULT: 10")
+                        .setRequiredRange(0, 60),
+                    new OptionData(OptionType.BOOLEAN, "ping", "Mention users in this channel that a bingo game has started."),
+                    new OptionData(OptionType.ROLE, "to-ping", "If ping is true, mention this role."),
+                    new OptionData(OptionType.BOOLEAN, "verbose", "Iterate through all called numbers into chat. WARNING: POTENTIAL SPAM!")
+                ),
+            new SubcommandData(GameAction.JOIN.getName(), "Join in a game. You cannot join a game that has already started.")
+                .addOption(OptionType.BOOLEAN, "dm-board", "Whether to send your board here or in you DMs. NOTE: DMs must be open!", true),
+            new SubcommandData(GameAction.START.getName(), "No waiting! Start the game now!"),
+            new SubcommandData(GameAction.LAST.getName(), "See your result on that last game on this channel.")
+                .addOptions(
+                    new OptionData(OptionType.BOOLEAN, "hide-result", "Hide your results.", true)
+                ),
+            new SubcommandData(GameAction.CANCEL.getName(), "Cancel a game from running.")
+        );
+    }
+
+    @NotNull
+    private static Container noGameHasStartedContainer() {
+        return StandardResponse.getResponseContainer(new Bingo(), "No game has started. Start one with `/bingo new`.", BotColors.ERROR);
     }
 
     @Override

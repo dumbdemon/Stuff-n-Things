@@ -9,8 +9,8 @@ import java.util.HashSet;
 import java.util.Optional;
 
 public class InteractionManager<T extends IInteraction<?>> {
-    protected HashSet<T> interactions = new HashSet<>();
     private final InteractionType interactionType;
+    protected HashSet<T> interactions = new HashSet<>();
 
     protected InteractionManager(InteractionType interactionType) {
         this.interactionType = interactionType;

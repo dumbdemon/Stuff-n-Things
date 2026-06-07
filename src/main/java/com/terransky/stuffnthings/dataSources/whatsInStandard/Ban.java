@@ -1,4 +1,3 @@
-
 package com.terransky.stuffnthings.dataSources.whatsInStandard;
 
 import com.fasterxml.jackson.annotation.*;
@@ -15,7 +14,7 @@ import java.util.Map;
  * Card
  * <p>
  * A card currently banned from Standard.
- * 
+ *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -32,7 +31,7 @@ public class Ban {
      * Card name
      * <p>
      * The official English name of the banned card.
-     * 
+     *
      */
     @JsonProperty("name")
     @JsonPropertyDescription("The official English name of the banned card.")
@@ -43,7 +42,7 @@ public class Ban {
      * <p>
      * A URL to an image of the banned card.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("cardImageUrl")
     @JsonPropertyDescription("A URL to an image of the banned card.")
@@ -55,7 +54,7 @@ public class Ban {
      * <p>
      * The set the banned card was printed into, specified by its `code` property.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("setCode")
     @JsonPropertyDescription("The set the banned card was printed into, specified by its `code` property.")
@@ -67,7 +66,7 @@ public class Ban {
      * <p>
      * Human-readable description for why the card was banned.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("reason")
     @JsonPropertyDescription("Human-readable description for why the card was banned.")
@@ -79,7 +78,7 @@ public class Ban {
      * <p>
      * A URL to the page where Wizards of the Coast officially announced the card would be banned.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("announcementUrl")
     @JsonPropertyDescription("A URL to the page where Wizards of the Coast officially announced the card would be banned.")
@@ -93,7 +92,7 @@ public class Ban {
      * Card name
      * <p>
      * The official English name of the banned card.
-     * 
+     *
      */
     @JsonProperty("cardName")
     public String getName() {
@@ -104,7 +103,7 @@ public class Ban {
      * Card name
      * <p>
      * The official English name of the banned card.
-     * 
+     *
      */
     @JsonProperty("cardName")
     public void setName(String name) {
@@ -116,7 +115,7 @@ public class Ban {
      * <p>
      * A URL to an image of the banned card.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("cardImageUrl")
     public URI getCardImageUrl() {
@@ -128,7 +127,7 @@ public class Ban {
      * <p>
      * A URL to an image of the banned card.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("cardImageUrl")
     public void setCardImageUrl(URI cardImageUrl) {
@@ -140,7 +139,7 @@ public class Ban {
      * <p>
      * The set the banned card was printed into, specified by its `code` property.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("setCode")
     public String getSetCode() {
@@ -152,7 +151,7 @@ public class Ban {
      * <p>
      * The set the banned card was printed into, specified by its `code` property.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("setCode")
     public void setSetCode(String setCode) {
@@ -164,7 +163,7 @@ public class Ban {
      * <p>
      * Human-readable description for why the card was banned.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("reason")
     public String getReason() {
@@ -176,7 +175,7 @@ public class Ban {
      * <p>
      * Human-readable description for why the card was banned.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("reason")
     public void setReason(String reason) {
@@ -188,7 +187,7 @@ public class Ban {
      * <p>
      * A URL to the page where Wizards of the Coast officially announced the card would be banned.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("announcementUrl")
     public URI getAnnouncementUrl() {
@@ -200,7 +199,7 @@ public class Ban {
      * <p>
      * A URL to the page where Wizards of the Coast officially announced the card would be banned.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("announcementUrl")
     public void setAnnouncementUrl(URI announcementUrl) {

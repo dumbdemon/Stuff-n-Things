@@ -13,12 +13,12 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public class StuffUser extends StuffShared {
 
+    private final String asTag;
     private String avatarId;
     private String avatarUrl;
     private String defaultAvatarId;
     private String defaultAvatarUrl;
     private String effectiveAvatarUrl;
-    private final String asTag;
     private boolean isBot;
     private boolean isSystem;
     private EnumSet<User.UserFlag> flags;

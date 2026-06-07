@@ -46,7 +46,7 @@ public class GetWeather extends SlashCommandInteraction {
         super("weather", "Get the weather for a specific location.",
             Mastermind.DEVELOPER, CommandCategory.FUN,
             parseDate(2023, 2, 1, 16, 27),
-            parseDate(2026, 3, 5, 9, 5)
+            parseDate(2026, 6, 7, 3, 32)
         );
         setDeferReply();
         addSubcommandGroups(
@@ -173,7 +173,7 @@ public class GetWeather extends SlashCommandInteraction {
                     .withLocale(Locale.ENGLISH)
                     .withZone(zoneId)
             );
-        DecimalFormat format =  new DecimalFormat("##,###");
+        DecimalFormat format = new DecimalFormat("##,###");
 
         children.add(TextDisplay.ofFormat("## Timezone\n%s", weatherData.getTimezone()));
         children.add(TextDisplay.ofFormat("## Current Time\nLocal Time > %s, %s\nYour Time > %s", dayOfWeek, localTime, current.getDtAsTimeStamp()));

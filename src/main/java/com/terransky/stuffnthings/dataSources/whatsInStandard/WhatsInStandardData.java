@@ -1,4 +1,3 @@
-
 package com.terransky.stuffnthings.dataSources.whatsInStandard;
 
 import com.fasterxml.jackson.annotation.*;
@@ -14,8 +13,8 @@ import java.util.Map;
 /**
  * What's in Standard? API v6
  * <p>
- * 
- * 
+ *
+ *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -35,7 +34,7 @@ public class WhatsInStandardData {
      * <p>
      * Whether this API version is deprecated or not. Configure your software to notify you if this field is ever true so you aren't caught off-guard if this version is deprecated then eventually killed.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("deprecated")
     @JsonPropertyDescription("Whether this API version is deprecated or not. Configure your software to notify you if this field is ever true so you aren't caught off-guard if this version is deprecated then eventually killed.")
@@ -47,7 +46,7 @@ public class WhatsInStandardData {
      * <p>
      * A superset of the sets in Standard, ordered from least recent release date (`enterDate.exact`) to newest. To get a list of Standard sets you MUST filter this array by comparing your local time to each set's enter and exit date, as the array by itself will contain sets that have already exited Standard as well as sets that have not yet entered it.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("sets")
     @JsonPropertyDescription("A superset of the sets in Standard, ordered from least recent release date (`enterDate.exact`) to newest. To get a list of Standard sets you MUST filter this array by comparing your local time to each set's enter and exit date, as the array by itself will contain sets that have already exited Standard as well as sets that have not yet entered it.")
@@ -60,7 +59,7 @@ public class WhatsInStandardData {
      * <p>
      * Cards that have been banned from Standard, ordered from oldest ban to newest. This array may contain bans from a previous rotation; you should filter them out based on the provided set `setCode` and that set's exit date from Standard.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("bans")
     @JsonPropertyDescription("Cards that have been banned from Standard, ordered from oldest ban to newest. This array may contain bans from a previous rotation; you should filter them out based on the provided set `setCode` and that set's exit date from Standard.")
@@ -87,7 +86,7 @@ public class WhatsInStandardData {
      * <p>
      * Whether this API version is deprecated or not. Configure your software to notify you if this field is ever true so you aren't caught off-guard if this version is deprecated then eventually killed.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("deprecated")
     public Boolean getDeprecated() {
@@ -99,7 +98,7 @@ public class WhatsInStandardData {
      * <p>
      * Whether this API version is deprecated or not. Configure your software to notify you if this field is ever true so you aren't caught off-guard if this version is deprecated then eventually killed.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("deprecated")
     public void setDeprecated(boolean deprecated) {
@@ -111,7 +110,7 @@ public class WhatsInStandardData {
      * <p>
      * A superset of the sets in Standard, ordered from least recent release date (`enterDate.exact`) to newest. To get a list of Standard sets you MUST filter this array by comparing your local time to each set's enter and exit date, as the array by itself will contain sets that have already exited Standard as well as sets that have not yet entered it.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("sets")
     public List<MtGSet> getSets() {
@@ -123,7 +122,7 @@ public class WhatsInStandardData {
      * <p>
      * A superset of the sets in Standard, ordered from least recent release date (`enterDate.exact`) to newest. To get a list of Standard sets you MUST filter this array by comparing your local time to each set's enter and exit date, as the array by itself will contain sets that have already exited Standard as well as sets that have not yet entered it.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("sets")
     public void setSets(List<MtGSet> mtgSets) {
@@ -135,7 +134,7 @@ public class WhatsInStandardData {
      * <p>
      * Cards that have been banned from Standard, ordered from oldest ban to newest. This array may contain bans from a previous rotation; you should filter them out based on the provided set `setCode` and that set's exit date from Standard.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("bans")
     public List<Ban> getBans() {
@@ -147,7 +146,7 @@ public class WhatsInStandardData {
      * <p>
      * Cards that have been banned from Standard, ordered from oldest ban to newest. This array may contain bans from a previous rotation; you should filter them out based on the provided set `setCode` and that set's exit date from Standard.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("bans")
     public void setBans(List<Ban> bans) {

@@ -20,13 +20,13 @@ public abstract class ButtonInteraction implements IInteraction.IButton {
         this(name, null);
     }
 
-    public String getButtonId(int page, String identifier) {
-        return "";
-    }
-
     protected ButtonInteraction(String name, Pattern pagePattern) {
         this.name = name;
         this.pagePattern = pagePattern;
+    }
+
+    public String getButtonId(int page, String identifier) {
+        return "";
     }
 
     private String getCustomId(boolean disabled) {
@@ -57,6 +57,7 @@ public abstract class ButtonInteraction implements IInteraction.IButton {
     public Button getButton(ButtonStyle style, int page, String identifier, String label, boolean disabled) {
         return new ButtonImpl(getCustomId(getButtonId(page, identifier), disabled), label, style, disabled, null);
     }
+
     public Button getButton(ButtonStyle style, int page, String identifier, String label) {
         return getButton(style, page, identifier, label, false);
     }
@@ -64,6 +65,7 @@ public abstract class ButtonInteraction implements IInteraction.IButton {
     public Button getButton(int page, String identifier, String label, boolean disabled) {
         return getButton(ButtonStyle.PRIMARY, page, identifier, label, disabled);
     }
+
     public Button getButton(int page, String identifier, String label) {
         return getButton(ButtonStyle.PRIMARY, page, identifier, label);
     }

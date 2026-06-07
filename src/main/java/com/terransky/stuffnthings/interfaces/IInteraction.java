@@ -17,14 +17,14 @@ import java.util.concurrent.ExecutionException;
 
 public interface IInteraction<T extends GenericInteractionCreateEvent> extends Comparable<IInteraction<T>> {
 
+    int MAX_MESSAGE_LENGTH = 4000 - 32;
+
     /**
      * The name or ID reference of this bot element.
      *
      * @return A {@link String} of this bot element.
      */
     String getName();
-    
-    int MAX_MESSAGE_LENGTH = 4000 - 32;
 
     default String getNameReadable() {
         return WordUtils.capitalize(this.getName().replaceAll("-", " "));

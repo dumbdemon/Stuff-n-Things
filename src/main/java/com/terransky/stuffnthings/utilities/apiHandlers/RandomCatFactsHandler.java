@@ -19,7 +19,7 @@ public class RandomCatFactsHandler extends Handler {
         super("RandomCatFacts");
     }
 
-    public List<String> getRandomCatFacts(int count)  throws IOException, InterruptedException {
+    public List<String> getRandomCatFacts(int count) throws IOException, InterruptedException {
         try (ExecutorService service = Executors.newSingleThreadExecutor(getThreadFactory())) {
             HttpClient client = getHttpClient(service);
             HttpRequest request = HttpRequest.newBuilder()

@@ -48,7 +48,7 @@ public class Kitsu extends SlashCommandInteraction {
         super("kitsu", "Search Kitsu.io",
             Mastermind.DEVELOPER, CommandCategory.FUN,
             parseDate(2023, 1, 17, 12, 43),
-            parseDate(2026, 3, 5, 9, 8)
+            parseDate(2026, 6, 7, 3, 32)
         );
         setDeferReply();
         OptionData search = new OptionData(OptionType.STRING, "search", "Query for search", true);
@@ -70,17 +70,6 @@ public class Kitsu extends SlashCommandInteraction {
             return String.format("on **%s**", attributes.getStartDate());
 
         return String.format("from **%s** to **%s**", attributes.getStartDate(), attributes.getEndDate());
-    }
-
-    @Override
-    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException {
-        String subcommand = event.getSubcommandName();
-        if (subcommand == null) throw new DiscordAPIException("No subcommand given.");
-
-        switch (subcommand) {
-            case "manga" -> mangaExecute(event);
-            case "anime" -> animeExecute(event);
-        }
     }
 
     @NotNull
@@ -170,6 +159,17 @@ public class Kitsu extends SlashCommandInteraction {
     private static boolean hasKitsuToken() {
         UserPassword kistuIo = StuffNThings.getConfig().getTokens().getKitsuIo();
         return !kistuIo.getUsername().isEmpty() || !kistuIo.getPassword().isEmpty();
+    }
+
+    @Override
+    public void execute(@NotNull SlashCommandInteractionEvent event, @NotNull EventBlob blob) throws FailedInteractionException, IOException, ExecutionException, InterruptedException {
+        String subcommand = event.getSubcommandName();
+        if (subcommand == null) throw new DiscordAPIException("No subcommand given.");
+
+        switch (subcommand) {
+            case "manga" -> mangaExecute(event);
+            case "anime" -> animeExecute(event);
+        }
     }
 
     public void animeExecute(@NotNull SlashCommandInteractionEvent event) throws FailedInteractionException, IOException {

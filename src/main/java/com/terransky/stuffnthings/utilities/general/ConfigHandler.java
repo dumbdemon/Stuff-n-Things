@@ -17,11 +17,8 @@ import java.nio.file.Paths;
 public class ConfigHandler {
 
     public static final Path configPath = Paths.get("./config.yaml");
-
-    private static ConfigHandler configHandler;
-
     private static final Object LOCK = new Object();
-
+    private static ConfigHandler configHandler;
     Config config;
 
     private ConfigHandler(Path configPath) throws FileNotFoundException {

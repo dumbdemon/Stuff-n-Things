@@ -14,12 +14,12 @@ public abstract class CommandInteraction<T extends GenericCommandInteractionEven
 
     private final String name;
     private final List<Long> restrictedServers = new ArrayList<>();
+    private final List<Permission> defaultMemberPermissions = new ArrayList<>();
+    private final InteractionType interactionType;
     private boolean isWorking = true;
     private boolean isOwnerOnly = false;
     private boolean isDeveloperOnly = false;
     private String disabledReason = "";
-    private final List<Permission> defaultMemberPermissions = new ArrayList<>();
-    private final InteractionType interactionType;
     private boolean deferReply = false;
     private boolean ephemeral = false;
 
@@ -56,12 +56,12 @@ public abstract class CommandInteraction<T extends GenericCommandInteractionEven
         return isDeveloperOnly;
     }
 
-    protected void setDeveloperOnly() {
-        isDeveloperOnly = true;
-    }
-
     protected void setDeveloperOnly(boolean developerOnly) {
         isDeveloperOnly = developerOnly;
+    }
+
+    protected void setDeveloperOnly() {
+        isDeveloperOnly = true;
     }
 
     public String getDisabledReason() {

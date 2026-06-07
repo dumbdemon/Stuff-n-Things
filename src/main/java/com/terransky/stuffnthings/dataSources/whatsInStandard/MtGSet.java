@@ -1,4 +1,3 @@
-
 package com.terransky.stuffnthings.dataSources.whatsInStandard;
 
 import com.fasterxml.jackson.annotation.*;
@@ -14,7 +13,7 @@ import java.util.Map;
  * Set
  * <p>
  * A Magic: The Gathering set.
- * 
+ *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -33,7 +32,7 @@ public class MtGSet {
      * <p>
      * The human-friendly name of the set, if known.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("name")
     @JsonPropertyDescription("The human-friendly name of the set, if known.")
@@ -45,7 +44,7 @@ public class MtGSet {
      * <p>
      * Wizards of the Coasts's official code for the set.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("code")
     @JsonPropertyDescription("Wizards of the Coasts's official code for the set.")
@@ -57,7 +56,7 @@ public class MtGSet {
      * <p>
      * Pre-launch development codename given to the set.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("codename")
     @JsonPropertyDescription("Pre-launch development codename given to the set.")
@@ -69,7 +68,7 @@ public class MtGSet {
      * <p>
      * Date wraps both a rough date and an optional exact date.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("enterDate")
     @JsonPropertyDescription("Date wraps both a rough date and an optional exact date.")
@@ -82,7 +81,7 @@ public class MtGSet {
      * <p>
      * Date wraps both a rough date and an optional exact date.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("exitDate")
     @JsonPropertyDescription("Date wraps both a rough date and an optional exact date.")
@@ -95,7 +94,7 @@ public class MtGSet {
      * <p>
      * A set of URLs to access this set's symbol.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("symbol")
     @JsonPropertyDescription("A set of URLs to access this set's symbol.")
@@ -111,7 +110,7 @@ public class MtGSet {
      * <p>
      * The human-friendly name of the set, if known.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("name")
     public String getName() {
@@ -123,7 +122,7 @@ public class MtGSet {
      * <p>
      * The human-friendly name of the set, if known.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("name")
     public void setName(String name) {
@@ -135,7 +134,7 @@ public class MtGSet {
      * <p>
      * Wizards of the Coasts's official code for the set.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("code")
     public String getCode() {
@@ -147,7 +146,7 @@ public class MtGSet {
      * <p>
      * Wizards of the Coasts's official code for the set.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("code")
     public void setCode(String code) {
@@ -159,7 +158,7 @@ public class MtGSet {
      * <p>
      * Pre-launch development codename given to the set.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("codename")
     public Object getCodename() {
@@ -171,7 +170,7 @@ public class MtGSet {
      * <p>
      * Pre-launch development codename given to the set.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("codename")
     public void setCodename(Object codename) {
@@ -183,7 +182,7 @@ public class MtGSet {
      * <p>
      * Date wraps both a rough date and an optional exact date.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("enterDate")
     public SetDate getEnterDate() {
@@ -195,7 +194,7 @@ public class MtGSet {
      * <p>
      * Date wraps both a rough date and an optional exact date.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("enterDate")
     public void setEnterDate(SetDate enterSetDate) {
@@ -207,7 +206,7 @@ public class MtGSet {
      * <p>
      * Date wraps both a rough date and an optional exact date.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("exitDate")
     public SetDate getExitDate() {
@@ -219,7 +218,7 @@ public class MtGSet {
      * <p>
      * Date wraps both a rough date and an optional exact date.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("exitDate")
     public void setExitDate(SetDate exitSetDate) {
@@ -231,7 +230,7 @@ public class MtGSet {
      * <p>
      * A set of URLs to access this set's symbol.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("symbol")
     public Symbol getSymbol() {
@@ -243,7 +242,7 @@ public class MtGSet {
      * <p>
      * A set of URLs to access this set's symbol.
      * (Required)
-     * 
+     *
      */
     @JsonProperty("symbol")
     public void setSymbol(Symbol symbol) {
